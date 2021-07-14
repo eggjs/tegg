@@ -1,0 +1,70 @@
+{
+  "name": "@eggjs/tegg-controller-plugin",
+  "eggPlugin": {
+    "name": "teggController",
+    "dependencies": [
+      "tegg"
+    ],
+    "optionalDependencies": [
+      "trserver"
+    ]
+  },
+  "version": "0.0.1",
+  "description": "controller decorator for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg"
+  ],
+  "files": [
+    "app.js",
+    "app.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "app/**/*.js",
+    "app/**/*.d.ts",
+    "typings/*.d.ts"
+  ],
+  "types": "typings/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/controller"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "^0.0.1",
+    "@eggjs/tegg-common-util": "^0.0.1",
+    "@eggjs/tegg": "^0.0.1",
+    "@eggjs/tegg-loader": "^0.0.1",
+    "@eggjs/tegg-metadata": "^0.0.1",
+    "@eggjs/tegg-runtime": "^0.0.1",
+    "@types/koa-router": "^7.0.40",
+    "koa-compose": "^3.2.1"
+  },
+  "devDependencies": {
+    "@eggjs/module-test-util": "^0.0.1",
+    "@eggjs/tegg-plugin": "^0.0.1",
+    "@eggjs/tegg-config": "^0.0.1",
+    "@eggjs/router": "^2.0.0",
+    "egg": "^2.26.0",
+    "egg-mock": "^3.25.1",
+    "egg-tracer": "^1.1.0",
+    "koa-router": "^8.0.8"
+  }
+}

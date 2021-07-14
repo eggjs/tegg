@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "core/*",
+    "plugin/*"
+  ],
+  "version": "independent",
+  "registry": "https://registry.npm.taobao.org",
+  "lerna": "3.22.1"
+}

@@ -1,0 +1,25 @@
+extends:
+  - '@istanbuljs/nyc-config-typescript'
+  - 'test-exclude'
+all: true
+check-coverage: true
+temp-directory: './node_modules/.nyc_output'
+report-dir: './coverage'
+reporter:
+  - text-summary
+  - json-summary
+  - json
+  - lcov
+lines: 80
+statements: 80
+exclude:
+  - core/*/.autod.conf.js
+  - core/*/typings
+  - core/*/dist
+  - plugin/*/.autod.conf.js
+  - plugin/*/typings
+  - plugin/*/dist
+  - coverage
+  - core/*/test/fixtures/**/*
+  - plugin/*/test/fixtures/**/*
+  - integration/*/test/fixtures/**/*

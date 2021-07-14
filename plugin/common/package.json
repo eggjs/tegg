@@ -1,0 +1,38 @@
+{
+  "name": "@eggjs/egg-module-common",
+  "version": "0.0.1",
+  "description": "common module",
+  "keywords": [
+    "egg",
+    "typescript",
+    "module",
+    "common",
+    "tegg"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
+  "types": "index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/common"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
