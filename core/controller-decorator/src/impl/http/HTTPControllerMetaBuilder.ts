@@ -52,7 +52,6 @@ export class HTTPControllerMetaBuilder {
         const desc = ClassUtil.classDescription(this.clazz);
         throw new Error(`class ${desc} method ${method.name} path ${realPath} not start with /`);
       }
-      assert(realPath.startsWith('/'), '');
     }
     return metadata;
   }

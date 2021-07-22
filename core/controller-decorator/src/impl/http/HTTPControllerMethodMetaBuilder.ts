@@ -84,7 +84,7 @@ export class HTTPControllerMethodMetaBuilder {
     }
     const controllerPath = HTTPInfoUtil.getHTTPPath(this.clazz);
     const methodPath = HTTPInfoUtil.getHTTPMethodPath(this.clazz, this.methodName)!;
-    const realPath = controllerPath ? path.join(controllerPath, methodPath) : methodPath;
+    const realPath = controllerPath ? path.posix.join(controllerPath, methodPath) : methodPath;
     const defaultPriority = HTTPPriorityUtil.calcPathPriority(realPath);
     if (defaultPriority > HTTPPriorityUtil.DEFAULT_PRIORITY) {
       throw new Error(`path ${realPath} is too long, should set priority manually`);

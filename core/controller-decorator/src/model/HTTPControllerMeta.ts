@@ -37,7 +37,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
 
   getMethodRealPath(method: HTTPMethodMeta) {
     if (this.path) {
-      return path.join(this.path, method.path);
+      return path.posix.join(this.path, method.path);
     }
     return method.path;
   }
