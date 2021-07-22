@@ -35,8 +35,5 @@
   },
   "engines": {
     "node": ">=14.0.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npm.alibaba-inc.com"
   }
 }

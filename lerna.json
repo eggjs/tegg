@@ -3,7 +3,7 @@
     "core/*",
     "plugin/*"
   ],
-  "version": "independent",
-  "registry": "https://registry.npm.taobao.org",
+  "version": "0.0.1",
+  "npmClientArgs": ["--package-lock=false", "--access public"],
   "lerna": "3.22.1"
 }
