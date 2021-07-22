@@ -40,5 +40,8 @@
     "@eggjs/tegg-lifecycle": "^0.0.1",
     "@eggjs/controller-decorator": "^0.0.1",
     "@eggjs/eventbus-decorator": "^0.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

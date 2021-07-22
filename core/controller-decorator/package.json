@@ -45,5 +45,8 @@
   },
   "devDependencies": {
     "egg": "^2.26.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

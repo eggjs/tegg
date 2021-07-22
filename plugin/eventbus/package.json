@@ -59,5 +59,8 @@
     "await-event": "^2.1.0",
     "egg": "^2.29.4",
     "egg-mock": "^4.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

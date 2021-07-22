@@ -41,5 +41,8 @@
   },
   "devDependencies": {
     "is-type-of": "^1.2.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

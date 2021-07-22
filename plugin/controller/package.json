@@ -66,5 +66,8 @@
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",
     "koa-router": "^8.0.8"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

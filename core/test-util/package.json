@@ -36,10 +36,10 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^1.1.4",
-    "@eggjs/tegg-lifecycle": "^1.0.1",
-    "@eggjs/tegg-loader": "^1.1.5",
-    "@eggjs/tegg-metadata": "^1.1.4",
-    "@eggjs/tegg-runtime": "^1.1.5"
+    "@eggjs/core-decorator": "^0.0.1",
+    "@eggjs/tegg-lifecycle": "^0.0.1",
+    "@eggjs/tegg-loader": "^0.0.1",
+    "@eggjs/tegg-metadata": "^0.0.1",
+    "@eggjs/tegg-runtime": "^0.0.1"
   }
 }

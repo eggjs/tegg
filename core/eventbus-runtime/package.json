@@ -55,5 +55,8 @@
     "coffee": "^5.4.0",
     "egg": "^2.29.3",
     "mm": "^3.2.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

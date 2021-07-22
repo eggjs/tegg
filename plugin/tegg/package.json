@@ -60,5 +60,8 @@
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",
     "mz-modules": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
