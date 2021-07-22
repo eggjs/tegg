@@ -17,7 +17,7 @@
   "scripts": {
     "lint:fix": "eslint . --ext .ts --fix",
     "lint": "eslint . --ext .ts",
-    "test": "NODE_ENV=test TS_NODE_TRANSPILE_ONLY=true mocha",
+    "test": "cross-env NODE_ENV=test TS_NODE_TRANSPILE_ONLY=true mocha",
     "cov": "npm run clean && nyc npm run test",
     "pub": "npm run bootstrap && lerna publish",
     "pub-canary": "npm run bootstrap && lerna publish --npm-client npm --contents dist --canary",
@@ -35,6 +35,7 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.7",
+    "cross-env": "^7.0.3",
     "eslint": "^6.8.0",
     "eslint-config-egg": "^8.0.1",
     "espower-typescript": "^9.0.2",
