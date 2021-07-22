@@ -5,8 +5,7 @@
   ],
   "version": "0.1.0",
   "npmClientArgs": [
-    "--package-lock=false",
-    "--access public"
+    "--package-lock=false"
   ],
   "lerna": "3.22.1"
 }
