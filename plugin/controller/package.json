@@ -9,7 +9,7 @@
       "trserver"
     ]
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^0.1.0",
-    "@eggjs/tegg": "^0.1.0",
+    "@eggjs/tegg": "^0.1.1",
     "@eggjs/tegg-common-util": "^0.1.0",
     "@eggjs/tegg-loader": "^0.1.0",
     "@eggjs/tegg-metadata": "^0.1.0",
@@ -61,7 +61,7 @@
     "@eggjs/module-test-util": "^0.0.1",
     "@eggjs/router": "^2.0.0",
     "@eggjs/tegg-config": "^0.1.0",
-    "@eggjs/tegg-plugin": "^0.1.0",
+    "@eggjs/tegg-plugin": "^0.1.1",
     "egg": "^2.26.0",
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",
