@@ -1,7 +1,6 @@
 {
   "name": "@eggjs/tegg",
   "version": "0.1.0",
-  "private": true,
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
