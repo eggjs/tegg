@@ -21,7 +21,7 @@
     "cov": "npm run clean && nyc npm run test",
     "pub": "npm run bootstrap && lerna publish",
     "pub-canary": "npm run bootstrap && lerna publish --npm-client npm --contents dist --canary",
-    "bootstrap": "lerna bootstrap --force-local",
+    "bootstrap": "lerna bootstrap --force-local --no-ci",
     "clean": "lerna run --parallel clean",
     "prepare-test": "lerna run --parallel prepare-test",
     "tsc": "lerna run tsc",

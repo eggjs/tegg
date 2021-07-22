@@ -4,6 +4,6 @@
     "plugin/*"
   ],
   "version": "0.0.1",
-  "npmClientArgs": ["--package-lock=false", "--access public"],
+  "npmClientArgs": ["--package-lock=false"],
   "lerna": "3.22.1"
 }

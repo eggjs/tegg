@@ -26,6 +26,9 @@ jobs:
     - name: Install Dependencies
       run: npm i -g npminstall && npminstall
 
+    - name: Lerna bootstrap
+      run: npm run bootstrap
+
     - name: Continuous integration
       run: npm run ci
 
