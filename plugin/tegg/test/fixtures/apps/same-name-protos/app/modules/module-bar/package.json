@@ -1,0 +1,6 @@
+{
+  "name": "module-bar",
+  "eggModule": {
+    "name": "bar"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@eggjs/tegg-config",
+  "eggPlugin": {
+    "name": "teggConfig"
+  },
+  "version": "0.0.1",
+  "description": "module config plugin for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "config",
+    "tegg"
+  ],
+  "files": [
+    "app.js",
+    "app.d.ts",
+    "typings/index.d.ts"
+  ],
+  "types": "typings/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/config"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@eggjs/tegg-common-util": "^0.0.1"
+  },
+  "devDependencies": {
+    "egg": "^2.26.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

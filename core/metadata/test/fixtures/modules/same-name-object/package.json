@@ -1,0 +1,6 @@
+{
+  "name": "same-name-object",
+  "eggModule": {
+    "name": "samename"
+  }
+}
