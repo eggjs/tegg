@@ -1,0 +1,66 @@
+{
+  "name": "@eggjs/tegg-eventbus-plugin",
+  "version": "0.0.1",
+  "eggPlugin": {
+    "name": "eventbusModule",
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "description": "tegg event plugin",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "eventbus",
+    "tegg"
+  ],
+  "files": [
+    "app.js",
+    "app.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "app/**/*.js",
+    "app/**/*.d.ts",
+    "typings/*.d.ts",
+    "config/*.js",
+    "config/*.d.ts"
+  ],
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/eventbus"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "^0.0.1",
+    "@eggjs/tegg": "^0.0.1",
+    "@eggjs/tegg-eventbus-runtime": "^0.0.1",
+    "@eggjs/tegg-metadata": "^0.0.1",
+    "@eggjs/tegg-runtime": "^0.0.1",
+    "egg-tracer": "^1.1.0"
+  },
+  "devDependencies": {
+    "@eggjs/tegg-plugin": "^0.0.1",
+    "@eggjs/tegg-config": "^0.0.1",
+    "await-event": "^2.1.0",
+    "egg": "^2.29.4",
+    "egg-mock": "^4.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

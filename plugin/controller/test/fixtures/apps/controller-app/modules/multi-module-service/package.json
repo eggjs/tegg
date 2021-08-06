@@ -1,0 +1,6 @@
+{
+  "name": "multi-module-service",
+  "eggModule": {
+    "name": "multiModuleService"
+  }
+}

@@ -1,0 +1,38 @@
+name: Continuous integration
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 2 * * *'
+jobs:
+  Runner:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        node-version: [ 14 ]
+    steps:
+    - name: Checkout Git Source
+      uses: actions/checkout@master
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Dependencies
+      run: npm i -g npminstall && npminstall
+
+    - name: Lerna bootstrap
+      run: npm run bootstrap
+
+    - name: Continuous integration
+      run: npm run ci
+
+    - name: Code Coverage
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}

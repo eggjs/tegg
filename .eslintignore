@@ -1,0 +1,16 @@
+docs
+coverage
+dist
+node_modules
+plugin/**/node_modules
+plugin/**/*.d.ts
+core/**/node_modules
+core/**/*.d.ts
+core/**/test/fixtures
+integration/**/node_modules
+integration/**/*.d.ts
+integration/**/test/fixtures
+plugin/*/test/fixtures/**/run
+plugin/*/test/fixtures/**/oneapi
+plugin/*/test/fixtures/**/logs
+!plugin/tegg-compatible/typings/index.d.ts

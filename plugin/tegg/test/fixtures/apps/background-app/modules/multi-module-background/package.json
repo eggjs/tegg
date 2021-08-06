@@ -1,0 +1,6 @@
+{
+  "name": "backgroundModule",
+  "eggModule": {
+    "name": "backgroundModule"
+  }
+}

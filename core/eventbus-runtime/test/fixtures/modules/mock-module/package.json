@@ -1,0 +1,6 @@
+{
+  "name": "mock-module",
+  "eggModule": {
+    "name": "mock"
+  }
+}

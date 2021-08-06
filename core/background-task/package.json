@@ -1,0 +1,50 @@
+{
+  "name": "@eggjs/tegg-background-task",
+  "description": "background util for tegg",
+  "version": "0.0.1",
+  "keywords": [
+    "egg",
+    "typescript",
+    "background",
+    "async",
+    "tegg"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/background-task"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eggjs/core-decorator": "^0.0.1",
+    "@eggjs/tegg-lifecycle": "^0.0.1"
+  },
+  "devDependencies": {
+    "egg": "^2.26.0",
+    "mz-modules": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
