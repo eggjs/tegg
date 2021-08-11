@@ -56,7 +56,7 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
     let serviceInstance: LoadUnitInstance;
 
     before(async () => {
-      commonInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-common');
+      commonInstance = await TestUtil.createLoadUnitInstance('multi-module/orm-module');
       repoInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-repo');
       serviceInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-service');
     });

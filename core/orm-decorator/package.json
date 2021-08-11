@@ -1,0 +1,51 @@
+{
+  "name": "@eggjs/tegg-orm-decorator",
+  "version": "0.1.2",
+  "description": "tegg orm decorator",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "keywords": [
+    "egg",
+    "typescript",
+    "runtime",
+    "tegg"
+  ],
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/orm-decorator"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "^0.1.2",
+    "@eggjs/tegg-common-util": "^0.1.2",
+    "@eggjs/tegg-metadata": "^0.1.2",
+    "lodash": "^4.17.21",
+    "pluralize": "^8.0.0"
+  },
+  "peerDependencies": {
+    "leoric": "^1.6.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
