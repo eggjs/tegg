@@ -1,6 +1,5 @@
-import { AccessLevel, ContextProto, EggProtoImplClass } from '@eggjs/core-decorator';
+import { AccessLevel, ContextProto, EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
-import { PrototypeUtil } from '@eggjs/core-decorator';
 import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 import ControllerInfoUtil from '../../util/ControllerInfoUtil';
 import { ControllerType } from '../../model';

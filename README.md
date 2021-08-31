@@ -583,6 +583,66 @@ export default class BackgroundService {
 - **推荐方式：将异步任务转发给单例对象（SingletonProto）来执行，单例对象永远不会释放**
 - 调整超时时间，对 `backgroundTaskHelper.timeout` 进行赋值即可
 
+### 动态注入
+
+#### 使用
+
+定义一个抽象类和一个类型枚举。
+```ts
+export enum HelloType {
+  FOO = 'FOO',
+  BAR = 'BAR',
+}
+
+export abstract class AbstractHello {
+  abstract hello(): string;
+}
+```
+
+定义一个自定义枚举。
+```ts
+import { ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import { ContextHelloType } from '../FooType';
+import { AbstractContextHello } from '../AbstractHello';
+
+export const HELLO_ATTRIBUTE = 'HELLO_ATTRIBUTE';
+
+export const Hello: ImplDecorator<AbstractHello, typeof HelloType> =
+  QualifierImplDecoratorUtil.generatorDecorator(AbstractHello, HELLO_ATTRIBUTE);
 
 
+```
+
+实现抽象类。
+```ts
+import { ContextProto } from '@eggjs/tegg';
+import { ContextHello } from '../decorator/Hello';
+import { ContextHelloType } from '../FooType';
+import { AbstractContextHello } from '../AbstractHello';
+
+@ContextProto()
+@Hello(HelloType.BAR)
+export class BarHello extends AbstractHello {
+  hello(): string {
+    return `hello, bar`;
+  }
+}
+
+```
+
+动态获取实现。
+```ts
+import { EggObjectFactory } from '@eggjs/tegg';
+
+@ContextProto()
+export class HelloService {
+  @Inject()
+  private readonly eggObjectFactory: EggObjectFactory;
+  
+  async hello(): Promise<string> {
+    const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, HelloType.BAR);
+    return helloImpl.hello();
+  }
+}
+```
 

@@ -52,6 +52,7 @@
     "@eggjs/tegg-loader": "^0.0.1",
     "@eggjs/tegg-metadata": "^0.0.1",
     "@eggjs/tegg-runtime": "^0.0.1",
+    "@eggjs/tegg-dynamic-inject-runtime": "^0.0.1",
     "sdk-base": "^3.6.0"
   },
   "devDependencies": {

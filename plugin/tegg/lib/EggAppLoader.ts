@@ -10,6 +10,7 @@ import {
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { EggContextObjectFactory, EggSingletonObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
 const DEFAULT_APP_CLAZZ = [];
 
 const DEFAULT_CONTEXT_CLAZZ = [
@@ -133,6 +134,8 @@ export class EggAppLoader implements Loader {
       // inner helper class list
       // TODO: should auto the inner class
       BackgroundTaskHelper,
+      EggContextObjectFactory,
+      EggSingletonObjectFactory,
     ];
   }
 }

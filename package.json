@@ -26,7 +26,7 @@
     "prepare-test": "lerna run --parallel prepare-test",
     "tsc": "lerna run tsc",
     "tsc:pub": "lerna run tsc:pub",
-    "ci": "npm run lint && npm run prepare-test && npm run tsc:pub && npm run cov"
+    "ci": "npm run prepare-test && npm run lint && npm run tsc:pub && npm run cov"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -38,6 +38,7 @@
     "cross-env": "^7.0.3",
     "eslint": "^6.8.0",
     "eslint-config-egg": "^8.0.1",
+    "eslint-plugin-import": "^2.24.2",
     "espower-typescript": "^9.0.2",
     "intelli-espower-loader": "^1.0.1",
     "lerna": "^3.22.1",

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import path from 'path';
 
-import { Graph, GraphNode, GraphNodeObj } from '@eggjs/tegg-common-util';
+import { Graph, GraphNode, GraphNodeObj, MapUtil } from '@eggjs/tegg-common-util';
 import {
   EggProtoImplClass,
   EggPrototypeName,
@@ -12,7 +12,6 @@ import {
   QualifierInfo,
   QualifierUtil,
 } from '@eggjs/core-decorator';
-import { MapUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 
 import { LoadUnit, LoadUnitLifecycleContext } from '../model/LoadUnit';

@@ -5,8 +5,7 @@ import { LoaderUtil } from '../LoaderUtil';
 
 import { EggProtoImplClass } from '@eggjs/core-decorator';
 import { LoaderFactory } from '../LoaderFactory';
-import { EggLoadUnitType } from '@eggjs/tegg-metadata';
-import { Loader } from '@eggjs/tegg-metadata';
+import { EggLoadUnitType, Loader } from '@eggjs/tegg-metadata';
 
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;

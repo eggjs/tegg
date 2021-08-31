@@ -1,0 +1,47 @@
+{
+  "name": "@eggjs/tegg-dynamic-inject",
+  "version": "0.0.1",
+  "description": "tegg dyniamic inject",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "keywords": [
+    "egg",
+    "typescript",
+    "runtime",
+    "tegg"
+  ],
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc-pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc-pub",
+    "autod": "autod"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/dynamic-inject"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "^0.0.1"
+  },
+  "devDependencies": {
+    "coffee": "^5.4.0"
+  }
+}

@@ -1,7 +1,6 @@
 import assert from 'assert';
 import yaml from 'js-yaml';
-import fs from 'fs';
-import { promises as fsPromise } from 'fs';
+import fs, { promises as fsPromise } from 'fs';
 import path from 'path';
 import globby from 'globby';
 import { FSUtil } from './FSUtil';

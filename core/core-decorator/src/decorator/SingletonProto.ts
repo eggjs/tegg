@@ -5,6 +5,7 @@ import { AccessLevel } from '../enum/AccessLevel';
 interface SingletonProtoParams {
   name?: string;
   accessLevel?: AccessLevel;
+  protoImplType?: string;
 }
 
 export function SingletonProto(params?: SingletonProtoParams) {

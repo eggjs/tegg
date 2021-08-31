@@ -1,4 +1,6 @@
 import TypedEventEmitter, { Arguments } from 'typed-emitter';
+// use @eggjs/tegg as namespace
+// eslint-disable-next-line import/no-unresolved
 import { Events } from '@eggjs/tegg';
 
 export type EventName = string | symbol;
