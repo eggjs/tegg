@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-lifecycle",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "tegg lifecycle definition",
   "keywords": [
     "egg",

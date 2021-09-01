@@ -3,7 +3,9 @@
     "core/*",
     "plugin/*"
   ],
-  "version": "0.0.1",
-  "npmClientArgs": ["--package-lock=false"],
+  "version": "0.1.1",
+  "npmClientArgs": [
+    "--package-lock=false"
+  ],
   "lerna": "3.22.1"
 }
