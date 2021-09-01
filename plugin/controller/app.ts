@@ -1,6 +1,6 @@
 import { Application } from 'egg';
-import './lib/ControllerLoadUnit';
-import './lib/ControllerLoadUnitInstance';
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit';
+import { ControllerLoadUnitInstance } from './lib/ControllerLoadUnitInstance';
 import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook';
 import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerType } from '@eggjs/tegg';
@@ -11,8 +11,6 @@ import { EggControllerHook } from './lib/EggControllerHook';
 import { LoadUnitInstanceLifecycleContext } from '@eggjs/tegg-runtime';
 import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit';
-import { ControllerLoadUnitInstance } from './lib/ControllerLoadUnitInstance';
 import { RootProtoManager } from './lib/RootProtoManager';
 
 // Load Controller process
@@ -57,12 +55,6 @@ export default class ControllerAppBootHook {
         return new ControllerLoadUnitInstance(ctx.loadUnit, this.app.loadUnitInstanceLifecycleUtil);
       },
     );
-
-    // init tr server middleware
-    if (this.app.plugins.trserver && this.app.plugins.trserver.enable) {
-      const middlewareNames = this.app.config.trserver.middleware || [];
-      this.app.config.trserver.middleware = this.prepareMiddleware(middlewareNames);
-    }
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);

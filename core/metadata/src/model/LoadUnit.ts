@@ -1,10 +1,9 @@
-import { LifecycleContext, LifecycleObject } from '@eggjs/tegg-lifecycle';
+import { LifecycleContext, LifecycleObject, LifecycleUtil } from '@eggjs/tegg-lifecycle';
 import { EggPrototypeName, QualifierInfo } from '@eggjs/core-decorator';
 
 import { EggLoadUnitTypeLike } from '../enum/EggLoadUnitType';
 import { EggPrototype } from './EggPrototype';
 import { Loader } from './Loader';
-import { LifecycleUtil } from '@eggjs/tegg-lifecycle';
 
 export interface LoadUnitLifecycleContext extends LifecycleContext {
   unitPath: string;

@@ -6,20 +6,8 @@ module.exports = function() {
     security: {
       csrf: {
         ignoreJSON: false,
-      }
-    },
-    trserver: {
-      namespace: 'com.alipay.tegg.trserver'
-    },
-    configclientManager: {
-      default: {
-        type: 'alipay',
       },
     },
-    zoneclient: {
-      zdrmdataRestUrl: 'http://zdrmdata-pool.stable.alipay.net',
-    },
-    zone: 'GZ00B',
     controller: {
       supportParams: true,
     },

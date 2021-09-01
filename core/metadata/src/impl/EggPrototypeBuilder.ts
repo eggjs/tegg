@@ -5,14 +5,13 @@ import {
   EggPrototypeName, InitTypeQualifierAttribute,
   ObjectInitTypeLike, PrototypeUtil,
   QualifierInfo, QualifierUtil,
-} from '@eggjs/core-decorator';
+  DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/core-decorator';
 import { LoadUnit } from '../model/LoadUnit';
 import { EggPrototype, EggPrototypeLifecycleContext, InjectObjectProto } from '../model/EggPrototype';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggPrototypeImpl } from '../impl/EggPrototypeImpl';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/core-decorator';
 import { MultiEggPrototypeFind } from '../errors';
 
 export interface InjectObject {

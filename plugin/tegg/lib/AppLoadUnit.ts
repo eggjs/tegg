@@ -9,7 +9,14 @@ import {
   LoadUnitLifecycleContext,
   EggPrototypeCreatorFactory,
 } from '@eggjs/tegg-metadata';
-import { Id, IdenticalUtil, EggPrototypeName, QualifierInfo } from '@eggjs/tegg';
+import {
+  Id,
+  IdenticalUtil,
+  EggPrototypeName,
+  QualifierInfo,
+  PrototypeUtil,
+  InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute, QualifierUtil,
+} from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 export class AppLoadUnit implements LoadUnit {
@@ -30,6 +37,18 @@ export class AppLoadUnit implements LoadUnit {
   async init() {
     const clazzList = this.loader.load();
     for (const clazz of clazzList) {
+      // TODO duplicate code, same in ModuleLoadUnit
+      const property = PrototypeUtil.getProperty(clazz)!;
+      const defaultQualifier = [{
+        attribute: InitTypeQualifierAttribute,
+        value: property.initType,
+      }, {
+        attribute: LoadUnitNameQualifierAttribute,
+        value: this.name,
+      }];
+      defaultQualifier.forEach(qualifier => {
+        QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
+      });
       const proto = await EggPrototypeCreatorFactory.createProto(clazz, this);
       EggPrototypeFactory.instance.registerPrototype(proto, this);
     }

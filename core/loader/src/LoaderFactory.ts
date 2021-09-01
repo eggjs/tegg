@@ -1,5 +1,4 @@
-import { EggLoadUnitType, EggLoadUnitTypeLike } from '@eggjs/tegg-metadata';
-import { Loader } from '@eggjs/tegg-metadata';
+import { EggLoadUnitType, EggLoadUnitTypeLike, Loader } from '@eggjs/tegg-metadata';
 
 export type LoaderCreator = (unitPath: string) => Loader;
 

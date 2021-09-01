@@ -4,9 +4,6 @@
     "name": "teggController",
     "dependencies": [
       "tegg"
-    ],
-    "optionalDependencies": [
-      "trserver"
     ]
   },
   "version": "0.0.1",
