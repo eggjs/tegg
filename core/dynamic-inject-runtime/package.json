@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject-runtime",
-  "version": "0.0.1",
+  "version": "0.1.2",
   "description": "tegg dyniamic inject",
   "main": "dist/index.js",
   "eggModule": {
@@ -42,15 +42,15 @@
     "registry": "https://registry.npm.alibaba-inc.com"
   },
   "dependencies": {
-    "@eggjs/tegg-runtime": "^0.0.1",
-    "@eggjs/tegg-common-util": "^0.0.1",
     "@eggjs/core-decorator": "^0.0.1",
+    "@eggjs/tegg-common-util": "^0.0.1",
+    "@eggjs/tegg-dynamic-inject": "^0.1.2",
     "@eggjs/tegg-lifecycle": "^0.0.1",
     "@eggjs/tegg-metadata": "^0.0.1",
-    "@eggjs/tegg-dynamic-inject": "^0.0.1"
+    "@eggjs/tegg-runtime": "^0.0.1"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^0.0.1",
-    "@eggjs/module-test-util": "^0.0.1"
+    "@eggjs/module-test-util": "^0.0.1",
+    "@eggjs/tegg-loader": "^0.0.1"
   }
 }
