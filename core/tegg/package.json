@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -38,7 +38,7 @@
     "@eggjs/controller-decorator": "^0.1.2",
     "@eggjs/core-decorator": "^0.1.2",
     "@eggjs/eventbus-decorator": "^0.1.2",
-    "@eggjs/tegg-dynamic-inject": "^0.1.2",
+    "@eggjs/tegg-dynamic-inject": "^0.1.4",
     "@eggjs/tegg-lifecycle": "^0.1.2"
   },
   "publishConfig": {

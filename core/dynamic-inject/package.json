@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "tegg dyniamic inject",
   "main": "dist/index.js",
   "files": [
