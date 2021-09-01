@@ -55,7 +55,7 @@
     "koa-compose": "^3.2.1"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^0.0.1",
+    "@eggjs/module-test-util": "^0.1.2",
     "@eggjs/router": "^2.0.0",
     "@eggjs/tegg-config": "^0.1.2",
     "@eggjs/tegg-plugin": "^0.1.3",

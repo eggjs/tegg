@@ -39,7 +39,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^0.0.1"
+    "@eggjs/core-decorator": "^0.1.2"
   },
   "devDependencies": {
     "coffee": "^5.4.0"

@@ -42,15 +42,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^0.0.1",
-    "@eggjs/tegg-common-util": "^0.0.1",
+    "@eggjs/core-decorator": "^0.1.2",
+    "@eggjs/tegg-common-util": "^0.1.2",
     "@eggjs/tegg-dynamic-inject": "^0.1.2",
-    "@eggjs/tegg-lifecycle": "^0.0.1",
-    "@eggjs/tegg-metadata": "^0.0.1",
-    "@eggjs/tegg-runtime": "^0.0.1"
+    "@eggjs/tegg-lifecycle": "^0.1.2",
+    "@eggjs/tegg-metadata": "^0.1.2",
+    "@eggjs/tegg-runtime": "^0.1.2"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^0.0.1",
-    "@eggjs/tegg-loader": "^0.0.1"
+    "@eggjs/module-test-util": "^0.1.2",
+    "@eggjs/tegg-loader": "^0.1.2"
   }
 }
