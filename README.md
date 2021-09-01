@@ -448,7 +448,7 @@ class FooService {
 
 由于 module 注入时，只可以注入对象，不能注入方法，如果需要使用现有 egg 的方法，就需要对方法进行一定的封装。
 
-举个例子：假设 context 上有一个方法时 `getHeader`，在 module 中需要使用这个方法需要如何封装。
+举个例子：假设 context 上有一个方法是 `getHeader`，在 module 中需要使用这个方法需要进行封装。
 ```typescript
 // extend/context.ts
 
@@ -475,6 +475,7 @@ class HeaderHelper {
   }
 }
 ```
+
 再将对象放到 Context 扩展上即可。
 ```typescript
 // extend/context.ts
@@ -486,7 +487,7 @@ export default {
     if (!this[HEADER_HELPER]) {
       this[HEADER_HELPER] = new HeaderHelper(this);
     }
-    return this[HEADER_HELPER]
+    return this[HEADER_HELPER];
   }
 }
 
@@ -544,7 +545,7 @@ class FooService implement EggObjectLifecycle {
   cache: Record<string, string>;
 
   async init() {
-    this.cache = this.cacheService.get(key);
+    this.cache = await this.cacheService.get(key);
   }
 }
 ```
@@ -566,7 +567,7 @@ import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 @ContextProto()
 export default class BackgroundService {
   @Inject()
-  private readonly backgroundTaskHelper:BackgroundTaskHelper
+  private readonly backgroundTaskHelper: BackgroundTaskHelper;
 
   async backgroundAdd() {
     this.backgroundTaskHelper.run(async () => {
@@ -578,7 +579,7 @@ export default class BackgroundService {
 
 
 #### 超时时间
-框架不会无限的等待异步任务执行，在默认 5s 之后如果异步任务还没有完成则会放弃等待开始执行释放过程。如果需要等待更长的时间，建议有两种方式
+框架不会无限的等待异步任务执行，在默认 5s 之后如果异步任务还没有完成则会放弃等待开始执行释放过程。如果需要等待更长的时间，建议有两种方式：
 
 - **推荐方式：将异步任务转发给单例对象（SingletonProto）来执行，单例对象永远不会释放**
 - 调整超时时间，对 `backgroundTaskHelper.timeout` 进行赋值即可
