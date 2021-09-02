@@ -1,0 +1,51 @@
+{
+  "name": "@eggjs/tegg-rocketmq-runtime",
+  "version": "0.0.1",
+  "description": "tegg rocketmq runtime",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "ci": "npm run lint && npm run cov",
+    "autod": "autod"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "^0.0.1",
+    "@eggjs/egg-module-common": "^0.0.1",
+    "@eggjs/tegg": "^0.0.1",
+    "@eggjs/tegg-loader": "^0.0.1",
+    "@eggjs/tegg-metadata": "^0.0.1",
+    "@eggjs/tegg-rocketmq-decorator": "^0.0.1",
+    "@eggjs/tegg-runtime": "^0.0.1",
+    "egg": "^2.30.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/rocketmq-runtime"
+  },
+  "keywords": [
+    "egg",
+    "typescript",
+    "rocketmq",
+    "tegg"
+  ],
+  "eggModule": {
+    "name": "rocketmqRuntime"
+  },
+  "author": "shaytang@163.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "homepage": "https://github.com/eggjs/tegg#readme",
+  "devDependencies": {
+    "@types/egg": "^1.5.0"
+  }
+}

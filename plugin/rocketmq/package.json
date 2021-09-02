@@ -1,0 +1,66 @@
+{
+  "name": "@eggjs/tegg-rocketmq-plugin",
+  "version": "0.0.1",
+  "eggPlugin": {
+    "name": "teggRocketmq",
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "description": "tegg rocketmq plugin",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "rocketmq",
+    "tegg"
+  ],
+  "files": [
+    "app.js",
+    "app.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "app/**/*.js",
+    "app/**/*.d.ts",
+    "typings/*.d.ts",
+    "config/*.js",
+    "config/*.d.ts"
+  ],
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/rocketmq"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "shaytang@163.com",
+  "license": "MIT",
+  "dependencies": {
+    "@aliyunmq/mq-http-sdk": "^1.0.3",
+    "@eggjs/egg-module-common": "^0.0.1",
+    "@eggjs/tegg": "^0.0.1",
+    "@eggjs/tegg-metadata": "^0.0.1",
+    "@eggjs/tegg-rocketmq-decorator": "^0.0.1",
+    "@eggjs/tegg-rocketmq-runtime": "^0.0.1",
+    "@eggjs/tegg-runtime": "^0.0.1",
+    "apache-rocketmq": "^1.0.0-rc1",
+    "egg": "^2.29.4"
+  },
+  "devDependencies": {
+    "@eggjs/tegg-plugin": "^0.0.1",
+    "@eggjs/tegg-config": "^0.0.1",
+    "egg": "^2.29.4",
+    "egg-mock": "^4.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

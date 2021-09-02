@@ -1,0 +1,39 @@
+{
+  "name": "@eggjs/tegg-rocketmq-decorator",
+  "version": "0.0.1",
+  "description": "tegg rocketmq decorator",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/rocketmq-decorator"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "^0.0.1",
+    "@eggjs/tegg": "^0.0.1",
+    "@eggjs/tegg-common-util": "^0.0.1",
+    "@eggjs/tegg-metadata": "^0.0.1",
+    "egg": "^2.30.0",
+    "path-to-regexp": "^1.8.0",
+    "reflect-metadata": "^0.1.13"
+  },
+  "keywords": [
+    "egg",
+    "typescript",
+    "rocketmq",
+    "tegg"
+  ],
+  "author": "shaytang@163.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "homepage": "https://github.com/eggjs/tegg#readme"
+}
