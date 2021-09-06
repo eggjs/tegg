@@ -3,7 +3,7 @@ import { App } from './model/App';
 
 @ContextProto()
 export class AppService {
-  // TODO impl inject Bone
+  // TODO impl inject Bone for context
   App: typeof App = App;
 
   async createApp(data: {

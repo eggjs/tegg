@@ -3,7 +3,7 @@ import path from 'path';
 import mm from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
 
-describe.only('test/orm.test.ts', () => {
+describe('test/orm.test.ts', () => {
   let app;
   let ctx;
 
