@@ -1,6 +1,6 @@
 import { Model } from '../../src/decorator/Model';
 import { DataSource } from '../../src/decorator/DataSource';
-import { Index } from '../../src/decorator';
+import { Index } from '../../src/decorator/Index';
 import { Attribute } from '../../src/decorator/Attribute';
 
 @Model({

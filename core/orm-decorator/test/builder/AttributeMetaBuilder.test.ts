@@ -11,6 +11,7 @@ describe('test/builder/AttributeMetaBuilder.test.ts', () => {
       const attributes = attributeMetaBuilder.build();
       assert.deepStrictEqual(attributes, [
         new AttributeMeta(
+          'varchar',
           'foo',
           'foo',
           true,
@@ -28,6 +29,7 @@ describe('test/builder/AttributeMetaBuilder.test.ts', () => {
       const attributes = attributeMetaBuilder.build();
       assert.deepStrictEqual(attributes, [
         new AttributeMeta(
+          'varchar',
           'foo',
           'foo_field',
           false,

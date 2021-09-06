@@ -14,6 +14,7 @@ describe('test/builder/ModelMetaBuilder.test.ts', () => {
       'a_foo_table',
       [
         new AttributeMeta(
+          'int',
           'id',
           'pid',
           false,
@@ -22,6 +23,7 @@ describe('test/builder/ModelMetaBuilder.test.ts', () => {
           false,
         ),
         new AttributeMeta(
+          'varchar(20)',
           'name',
           'name',
           true,
@@ -30,6 +32,7 @@ describe('test/builder/ModelMetaBuilder.test.ts', () => {
           false,
         ),
         new AttributeMeta(
+          'varchar(20)',
           'foo',
           'foo',
           true,
