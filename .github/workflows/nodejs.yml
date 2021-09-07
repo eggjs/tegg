@@ -65,7 +65,7 @@ jobs:
         run: brew install mysql@5.7
 
       - name: Start Mysql
-        run: mysql.server start
+        run: /usr/local/opt/mysql@5.7/bin/mysql.server start
 
       - name: Install Dependencies
         run: npm i -g npminstall && npminstall
