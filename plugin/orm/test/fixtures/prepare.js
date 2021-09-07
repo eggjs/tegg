@@ -8,7 +8,7 @@ const config = {
   port: 3306,
   password: '',
   user: 'root',
-  database: 'test',
+  database: '',
 };
 
 let connection;
@@ -31,7 +31,7 @@ async function query(sql) {
 }
 
 async function init() {
-  await query('DROP DATABASE test;');
+  await query('DROP DATABASE IF EXISTS `test`;');
   await query('CREATE DATABASE test;');
   await query('use test;');
   await query('CREATE TABLE `apps` (\n' +
