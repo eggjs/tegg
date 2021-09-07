@@ -7,8 +7,8 @@ on:
   schedule:
     - cron: '0 2 * * *'
 jobs:
-  Runner:
-    runs-on: ${{ matrix.os }}
+  Runner-ubuntu:
+    runs-on: ubuntu-latest
     services:
       mysql:
         image: mysql:5.7
@@ -22,7 +22,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
         node-version: [ 14 ]
     steps:
     - name: Checkout Git Source
@@ -46,3 +45,67 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+  Runner-macos:
+    runs-on: macOS-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [ 14 ]
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Mysql
+        run: brew install mysql@5.7
+
+      - name: Start Mysql
+        run: mysql.server start
+
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
+
+      - name: Lerna bootstrap
+        run: npm run bootstrap
+
+      - name: Continuous integration
+        run: npm run ci
+
+      - name: Code Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  Runner-windows:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [ 14 ]
+    steps:
+      - name: Checkout Git Source
+        uses: actions/checkout@master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: npm i -g npminstall && npminstall
+
+      - name: Lerna bootstrap
+        run: npm run bootstrap
+
+      - name: Continuous integration
+        run: npm run ci
+
+      - name: Code Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

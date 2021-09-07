@@ -1,6 +1,8 @@
 'use strict';
 
 const mysql = require('mysql');
+const os = require('os');
+
 const config = {
   host: '127.0.0.1',
   port: 3306,
@@ -9,8 +11,12 @@ const config = {
   database: 'test',
 };
 
-const connection = mysql.createConnection(config);
-connection.connect();
+let connection;
+
+function connect() {
+  connection = mysql.createConnection(config);
+  connection.connect();
+}
 
 async function query(sql) {
   return new Promise((resolve, reject) => {
@@ -36,13 +42,18 @@ async function init() {
     ');');
 }
 
-init()
-  .then(() => {
+(async () => {
+  try {
+    // TODO win32 ci not support mysql
+    if (os.platform() === 'win32') {
+      return;
+    }
+    connect();
+    await init();
     console.log('prepare database done');
     process.exit(0);
-  })
-  .catch(e => {
+  } catch (e) {
     console.log(e);
     process.exit(1);
-  });
-
+  }
+})();

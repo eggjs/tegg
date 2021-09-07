@@ -3,15 +3,10 @@ import { DataSourceManager, OrmConfig } from './DataSourceManager';
 import Realm from 'leoric';
 import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
 
-interface RealmPair {
-  models: object[];
-  realm: object;
-}
-
 export class LeoricRegister {
   private readonly modelProtoManager: ModelProtoManager;
   private readonly dataSourceManager: DataSourceManager;
-  private readonly realmMap: Map<string, RealmPair>;
+  private readonly realmMap: Map<string, any>;
 
   constructor(modelProtoManager: ModelProtoManager, dataSourceManager: DataSourceManager) {
     this.modelProtoManager = modelProtoManager;
@@ -19,7 +14,7 @@ export class LeoricRegister {
     this.realmMap = new Map();
   }
 
-  getOrCreateRealm(datasource: string | undefined): RealmPair {
+  getOrCreateRealm(datasource: string | undefined): any {
     let config: OrmConfig | undefined;
     if (!datasource) {
       config = this.dataSourceManager.getDefaultConfig();
@@ -29,18 +24,13 @@ export class LeoricRegister {
     if (!config) {
       throw new Error(`not found datasource for ${datasource}`);
     }
-    let realmPair = this.realmMap.get(config.database);
-    if (realmPair) {
-      return realmPair;
+    let realm = this.realmMap.get(config.database);
+    if (realm) {
+      return realm;
     }
-    const models = [];
-    const realm = new (Realm as any)({ ...config, models });
-    realmPair = {
-      realm,
-      models,
-    };
-    this.realmMap.set(config.database, realmPair);
-    return realmPair;
+    realm = new (Realm as any)({ ...config });
+    this.realmMap.set(config.database, realm);
+    return realm;
   }
 
   generateLeoricAttributes(metadata: ModelMetadata) {
@@ -63,8 +53,8 @@ export class LeoricRegister {
     for (const { proto, clazz } of this.modelProtoManager.getProtos()) {
       const metadata = ModelMetadataUtil.getControllerMetadata(clazz);
       if (!metadata) throw new Error(`not found metadata for model ${proto.id}`);
-      const { realm, models } = this.getOrCreateRealm(metadata.dataSource);
-      models.push(clazz);
+      const realm = this.getOrCreateRealm(metadata.dataSource);
+      realm.models[clazz.name] = clazz;
       realm[clazz.name] = clazz;
       const attributes = this.generateLeoricAttributes(metadata);
       (clazz as any).init(attributes, {
@@ -72,6 +62,6 @@ export class LeoricRegister {
       }, {});
     }
     await Promise.all(Array.from(this.realmMap.values())
-      .map(({ realm }) => (realm as any).connect()));
+      .map(realm => realm.connect()));
   }
 }

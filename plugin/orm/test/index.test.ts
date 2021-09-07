@@ -2,8 +2,14 @@ import assert from 'assert';
 import path from 'path';
 import mm from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
+import os from 'os';
 
 describe('test/orm.test.ts', () => {
+  // TODO win32 ci not support mysql
+  if (os.platform() === 'win32') {
+    return;
+  }
+
   let app;
   let ctx;
 
