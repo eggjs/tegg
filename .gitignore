@@ -35,3 +35,4 @@ plugin/dal/test/fixtures/modules/*/dal/
 !plugin/*/test/fixtures/apps/*/config/*.js
 !plugin/*/test/fixtures/apps/**/typings/*.d.ts
 !core/eventbus-decorator/src/type.d.ts
+!plugin/orm/test/fixtures/prepare.js
