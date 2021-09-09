@@ -38,7 +38,6 @@ export class LeoricRegister {
     for (const attribute of metadata.attributes) {
       attributes[attribute.propertyName] = {
         columnName: attribute.attributeName,
-        dataType: attribute.propertyName,
         type: attribute.dataType,
         allowNull: attribute.allowNull,
         primaryKey: attribute.primary,
