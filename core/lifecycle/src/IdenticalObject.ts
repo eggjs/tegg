@@ -29,8 +29,7 @@ export class IdenticalUtil {
     if (traceId) {
       return `CONTEXT:${traceId}:${this.ctxIndex++}`;
     }
-    return `CONTEXT:${this.ctxIndex}`;
-
+    return `CONTEXT:${this.ctxIndex++}`;
   }
 
   static createObjectId(protoId: Id, ctxId?: Id) {
