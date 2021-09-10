@@ -20,7 +20,7 @@
     "test": "cross-env NODE_ENV=test TS_NODE_TRANSPILE_ONLY=true mocha",
     "cov": "npm run clean && nyc npm run test",
     "pub": "npm run bootstrap && lerna publish",
-    "pub-canary": "npm run bootstrap && lerna publish --npm-client npm --contents dist --canary",
+    "pub-canary": "npm run bootstrap && lerna publish --canary",
     "bootstrap": "lerna bootstrap --force-local --no-ci",
     "clean": "lerna run --parallel clean",
     "prepare-test": "lerna run --parallel prepare-test",

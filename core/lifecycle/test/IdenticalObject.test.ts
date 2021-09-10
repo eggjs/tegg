@@ -8,4 +8,10 @@ describe('test/IdenticalObject.test.ts', () => {
     const id2 = IdenticalUtil.createContextId(traceId);
     assert(id1 !== id2);
   });
+
+  it('should generate unique ctx id', () => {
+    const id1 = IdenticalUtil.createContextId();
+    const id2 = IdenticalUtil.createContextId();
+    assert(id1 !== id2);
+  });
 });
