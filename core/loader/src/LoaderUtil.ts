@@ -35,7 +35,7 @@ export class LoaderUtil {
       // not load test files
       '!**/test',
       // extra file pattern
-      ...(this.config.extraFilePattern || [])
+      ...(this.config.extraFilePattern || []),
     ];
 
     return filePattern;
