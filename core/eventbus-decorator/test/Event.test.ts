@@ -22,7 +22,7 @@ describe('test/Event.test.ts', () => {
     )
       .debug()
       .expect('stdout', /Type 'number' is not assignable to type 'string'/)
-      .expect('code', 1)
+      .notExpect('code', 0)
       .end();
   });
 });
