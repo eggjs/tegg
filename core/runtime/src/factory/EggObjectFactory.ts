@@ -38,7 +38,7 @@ export class EggObjectFactory {
       loadUnitInstance: loadUnitInstance!,
     };
     const method = this.getEggObjectCreateMethod(proto.constructor as EggPrototypeClass);
-    const args = [ name, proto, lifecycleContext, ctx, loadUnitInstance ];
+    const args = [ name, proto, lifecycleContext, ctx ];
     const obj = await Reflect.apply(method, null, args);
     this.eggObjectMap.set(obj.id, { obj, ctx: lifecycleContext });
     return obj;
