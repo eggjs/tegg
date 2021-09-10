@@ -48,6 +48,6 @@
     "source-map-support": "^0.5.16",
     "test-exclude": "^6.0.0",
     "ts-node": "^10.1.0",
-    "typescript": "^3.8.2"
+    "typescript": "^4.0.0"
   }
 }

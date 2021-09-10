@@ -9,7 +9,7 @@ describe('test/typing.test.ts', () => {
     })
       .debug()
       .expect('stdout', /Argument of type '"WRONG_ENUM"' is not assignable to parameter of type 'ContextHelloType'/)
-      .expect('code', 1)
+      .notExpect('code', 0)
       .end();
   });
 
@@ -20,7 +20,7 @@ describe('test/typing.test.ts', () => {
     })
       .debug()
       .expect('stdout', / Property 'hello' is missing in type 'BarContextHello' but required in type 'AbstractContextHello'/)
-      .expect('code', 1)
+      .notExpect('code', 0)
       .end();
   });
 });

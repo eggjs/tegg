@@ -1,6 +1,6 @@
 import assert from 'assert';
 import path from 'path';
-import { LoaderFactory } from '..';
+import { LoaderFactory, LoaderUtil } from '..';
 import { EggLoadUnitType } from '@eggjs/tegg-metadata';
 
 describe('test/loader/Loader.test.ts', () => {
@@ -22,6 +22,14 @@ describe('test/loader/Loader.test.ts', () => {
 
     it('should not load test files', () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/module-with-test');
+      const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
+      const prototypes = loader.load();
+      assert(prototypes.length === 1);
+    });
+
+    it('should set extraFilePattern without error', () => {
+      LoaderUtil.setConfig({ extraFilePattern: [ '!extra' ] });
+      const repoModulePath = path.join(__dirname, './fixtures/modules/module-with-extra');
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
       const prototypes = loader.load();
       assert(prototypes.length === 1);

@@ -8,7 +8,15 @@ const Module = module.constructor.length > 1
   /* istanbul ignore next */
   : BuiltinModule;
 
+interface LoaderUtilConfig {
+  extraFilePattern?: string[];
+}
+
 export class LoaderUtil {
+  static config: LoaderUtilConfig = {};
+  static setConfig(config: LoaderUtilConfig) {
+    this.config = config;
+  }
 
   static filePattern(): string[] {
     const extensions = Object.keys((Module as any)._extensions);
@@ -16,6 +24,7 @@ export class LoaderUtil {
       // JSON file will not export class
       .filter(t => t !== 'json')
       .join('|');
+
     const filePattern = [
       // load file end with node module allow extensions
       `**/*.(${extensionPattern})`,
@@ -25,6 +34,8 @@ export class LoaderUtil {
       '!**/*.d.ts',
       // not load test files
       '!**/test',
+      // extra file pattern
+      ...(this.config.extraFilePattern || []),
     ];
 
     return filePattern;
