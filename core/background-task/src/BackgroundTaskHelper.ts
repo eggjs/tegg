@@ -26,7 +26,7 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
             // fn is rejected, resolve the task
             resolve();
           });
-      } catch (e: any) {
+      } catch (e) {
         e.message = '[BackgroundTaskHelper] create background throw error:' + e.message;
         this.logger.error(e);
         // create task failed, resolve the task
