@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-runtime",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "tegg runtime",
   "main": "dist/index.js",
   "files": [
@@ -42,7 +42,7 @@
     "@eggjs/tegg-metadata": "^0.1.6"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^0.1.6"
+    "@eggjs/tegg-loader": "^0.1.7"
   },
   "publishConfig": {
     "access": "public"
