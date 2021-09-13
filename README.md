@@ -301,7 +301,7 @@ export class HelloService {
 }
 ```
 ##### module 间原型名称冲突
-可能多个 module 都实现了名称为 `HelloService` 的原型，需要明确的告知 module 需要注入的原型来自哪个 module.
+可能多个 module 都实现了名称为 `HelloAdapter` 的原型, 且 `accessLevel = AccessLevel.PUBLIC`，需要明确的告知 module 需要注入的原型来自哪个 module.
 
 
 ###### 定义
