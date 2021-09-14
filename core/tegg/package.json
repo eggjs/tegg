@@ -38,7 +38,6 @@
     "@eggjs/controller-decorator": "^0.1.6",
     "@eggjs/core-decorator": "^0.1.5",
     "@eggjs/eventbus-decorator": "^0.1.7",
-    "@eggjs/module-test-util": "^0.1.0",
     "@eggjs/tegg-background-task": "^0.1.0",
     "@eggjs/tegg-common-util": "^0.1.0",
     "@eggjs/tegg-dynamic-inject": "^0.1.7",
