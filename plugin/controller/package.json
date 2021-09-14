@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^0.1.5",
-    "@eggjs/tegg": "^0.1.7",
+    "@eggjs/tegg": "^0.1.8",
     "@eggjs/tegg-common-util": "^0.1.5",
     "@eggjs/tegg-loader": "^0.1.7",
     "@eggjs/tegg-metadata": "^0.1.6",
@@ -58,7 +58,7 @@
     "@eggjs/module-test-util": "^0.1.7",
     "@eggjs/router": "^2.0.0",
     "@eggjs/tegg-config": "^0.1.5",
-    "@eggjs/tegg-plugin": "^0.1.7",
+    "@eggjs/tegg-plugin": "^0.1.8",
     "egg": "^2.26.0",
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",
