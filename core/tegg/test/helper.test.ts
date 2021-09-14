@@ -5,7 +5,6 @@ import {
   LoaderUtil,
   ModuleConfigUtil,
   LoadUnitLifecycleUtil,
-  testUtil,
 } from '../helper';
 
 describe('test/helper.test.ts', () => {
@@ -15,7 +14,5 @@ describe('test/helper.test.ts', () => {
     assert(LoaderUtil);
     assert(ModuleConfigUtil);
     assert(LoadUnitLifecycleUtil);
-    assert(testUtil.LoaderUtil);
-    assert(testUtil.TestLoader);
   });
 });
