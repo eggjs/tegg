@@ -10,6 +10,7 @@ import {
   PrototypeUtil,
   QualifierInfo,
   QualifierUtil,
+  AccessLevel,
 } from '@eggjs/tegg';
 
 export interface ModuleConfig {
@@ -47,6 +48,10 @@ export class ModuleNode implements GraphNodeObj {
     return this.clazzList;
   }
 
+  getPublicClazzList(): readonly EggProtoImplClass[] {
+    return this.clazzList.filter(clazz => PrototypeUtil.getProperty(clazz)?.accessLevel === AccessLevel.PUBLIC);
+  }
+
   toString() {
     return `${this.name}@${this.moduleConfig.path}`;
   }
@@ -66,12 +71,13 @@ export class ModuleNode implements GraphNodeObj {
     return selfQualifiers?.value === qualifier.value;
   }
 
-  findImplementClazzList(objName: EggPrototypeName, qualifiers: QualifierInfo[]): EggProtoImplClass[] {
+  findImplementClazzList(objName: EggPrototypeName, qualifiers: QualifierInfo[], innerFind: boolean): EggProtoImplClass[] {
     const moduleQualifier = qualifiers.find(t => t.attribute === LoadUnitNameQualifierAttribute);
     if (moduleQualifier && moduleQualifier.value !== this.name) {
       return [];
     }
-    const implList = this.clazzList
+    const clazzList = innerFind ? this.clazzList : this.getPublicClazzList();
+    const implList = clazzList
       .filter(clazz => PrototypeUtil.getProperty(clazz)?.name === objName)
       .filter(clazz => this.verifyQualifiers(clazz, qualifiers));
     if (implList.length === 1) {
@@ -105,10 +111,12 @@ export class AppGraph {
     }
   }
 
-  private findDependencyModule(objName: EggPrototypeName, qualifiers: QualifierInfo[]): Array<GraphNode<ModuleNode>> {
+  private findDependencyModule(objName: EggPrototypeName, properqualifiers: QualifierInfo[], protoQualifiers: QualifierInfo[]): Array<GraphNode<ModuleNode>> {
     const nodes: Array<GraphNode<ModuleNode>> = Array.from(this.graph.nodes.values());
+    const hostModuleName = protoQualifiers.find(t => t.attribute === LoadUnitNameQualifierAttribute)?.value;
     return nodes.filter(node => {
-      const clazzList = node.val.findImplementClazzList(objName, qualifiers);
+      // private 的类只能在当前 module 中被找到
+      const clazzList = node.val.findImplementClazzList(objName, properqualifiers, hostModuleName === node.val.name);
       return clazzList.length;
     });
   }
@@ -118,8 +126,9 @@ export class AppGraph {
       for (const clazz of node.val.getClazzList()) {
         const injectObjects = PrototypeUtil.getInjectObjects(clazz);
         for (const injectObject of injectObjects) {
-          const qualifiers = QualifierUtil.getProperQualifiers(clazz, injectObject.refName);
-          const dependencyModules = this.findDependencyModule(injectObject.objName, qualifiers);
+          const properqualifiers = QualifierUtil.getProperQualifiers(clazz, injectObject.refName);
+          const protoQualifiers = QualifierUtil.getProtoQualifiers(clazz);
+          const dependencyModules = this.findDependencyModule(injectObject.objName, properqualifiers, protoQualifiers);
           for (const moduleNode of dependencyModules) {
             if (node !== moduleNode) {
               this.graph.addEdge(node, moduleNode);
