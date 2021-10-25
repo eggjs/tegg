@@ -35,10 +35,27 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
     it('should init failed', async () => {
       const invalidateModulePath = path.join(__dirname, './fixtures/modules/invalidate-module');
       const loader = new TestLoader(invalidateModulePath);
-      await assert.rejects(
-        () => LoadUnitFactory.createLoadUnit(invalidateModulePath, EggLoadUnitType.MODULE, loader),
-        /Object persistenceService not found in LOAD_UNIT:multiModuleInvalidateService/,
-      );
+      try {
+        await LoadUnitFactory.createLoadUnit(invalidateModulePath, EggLoadUnitType.MODULE, loader);
+        throw new Error('should throw error');
+      } catch (e) {
+        assert(e.message.includes('Object persistenceService not found in LOAD_UNIT:multiModuleInvalidateService'));
+        assert(e.message.includes('faq/TEGG_EGG_PROTO_NOT_FOUND'));
+      }
+    });
+
+    it('should init failed with multi proto', async () => {
+      const invalidateModulePath = path.join(__dirname, './fixtures/modules/invalid-multimodule');
+      const loader = new TestLoader(invalidateModulePath);
+
+      try {
+        await LoadUnitFactory.createLoadUnit(invalidateModulePath, EggLoadUnitType.MODULE, loader);
+        throw new Error('should throw error');
+      } catch (e) {
+        assert(e.message.includes('multi proto find for name:invalidateService'));
+        assert(e.message.includes('result is'));
+        assert(e.message.includes('faq/TEGG_MULTI_PROTO_FIND'));
+      }
     });
   });
 

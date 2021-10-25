@@ -6,7 +6,8 @@ import {
 import { MapUtil } from '@eggjs/tegg-common-util';
 import { EggPrototype } from '../model/EggPrototype';
 import { LoadUnit } from '../model/LoadUnit';
-import { EggPrototypeNotFound, MultiEggPrototypeFind } from '../errors';
+import { FrameworkErrorFormater } from 'egg-errors';
+import { EggPrototypeNotFound, MultiPrototypeFind } from '../errors';
 
 
 export class EggPrototypeFactory {
@@ -41,12 +42,12 @@ export class EggPrototypeFactory {
     qualifiers = qualifiers || [];
     const protos = this.doGetPrototype(name, qualifiers, loadUnit);
     if (!protos.length) {
-      throw new EggPrototypeNotFound(name, loadUnit?.id);
+      throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(name, loadUnit?.id));
     }
     if (protos.length === 1) {
       return protos[0];
     }
-    throw new MultiEggPrototypeFind(name, qualifiers);
+    throw FrameworkErrorFormater.formatError(new MultiPrototypeFind(name, qualifiers));
   }
 
   private doGetPrototype(name: EggPrototypeName, qualifiers: QualifierInfo[], loadUnit?: LoadUnit): EggPrototype[] {

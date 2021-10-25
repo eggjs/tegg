@@ -37,7 +37,8 @@
   "dependencies": {
     "@eggjs/core-decorator": "^0.1.5",
     "@eggjs/tegg-common-util": "^0.1.5",
-    "@eggjs/tegg-lifecycle": "^0.1.6"
+    "@eggjs/tegg-lifecycle": "^0.1.6",
+    "egg-errors": "^2.2.3"
   },
   "devDependencies": {
     "is-type-of": "^1.2.1"
