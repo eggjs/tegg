@@ -15,16 +15,15 @@ export default class RocketMQAppHook {
     this.protoHook = new RocketMQMessageListenerProtoHook(this.protoManager);
   }
 
-  configDidLoad() {
+  async configDidLoad() {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.protoHook);
   }
 
-  async didLoad() {
-    await this.app.moduleHandler.ready();
+  async didReady() {
     await this.protoManager.register();
   }
 
-  beforeClose() {
+  async beforeClose() {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.protoHook);
   }
 }

@@ -1,52 +1,24 @@
 import { Application } from 'egg';
-import { MQClient } from '@aliyunmq/mq-http-sdk';
-import assert from 'assert';
-
-const EGG_READY = 'egg-ready';
-const ROCKETMQ_REGISTER = 'rocketmq-register';
-const ROCKETMQ_PREFIX = 'rocketmq';
-
-enum RocketMQInstanceStatus {
-  INITIAL = 'INITIAL',
-  PENDING = 'PENDING',
-  FULFILLED = 'FULFILLED',
-  REJECTED = 'REJECTED',
-}
-
-interface RocketMQInstance {
-  consumer: any;
-  key: string;
-  status: RocketMQInstanceStatus;
-}
+import { TEGG_ROCKETMQ_REG } from '@eggjs/tegg-rocketmq-decorator';
+import { RocketMQClient } from './lib/RocketMQClient';
 
 export default class RocketMQAgentHook {
   private readonly agent: Application;
-  private readonly client: MQClient;
-  private readonly instances: RocketMQInstance[];
+  private readonly client: RocketMQClient;
 
   constructor(agent: Application) {
-    assert(agent.config.rocketmq);
-    const { endpoint, accessKeyId, accessKeySecret } = agent.config.rocketmq || {};
     this.agent = agent;
-    this.client = new MQClient(endpoint, accessKeyId, accessKeySecret);
+    this.client = new RocketMQClient(agent);
   }
 
   async willReady() {
-    this.agent.messenger.on(EGG_READY, async () => {
-      // register
-      this.agent.messenger.on(ROCKETMQ_REGISTER, async (json: string) => {
-        const { topic, groupId, instanceId } = JSON.parse(json);
-        const key = `${ROCKETMQ_PREFIX}:${topic}:${groupId}:${instanceId}`;
-        if (this.instances.find(instance => instance.key === key)) {
-          return;
-        }
-        this.instances.push({
-          key,
-          consumer: this.client.getConsumer(instanceId, topic, groupId),
-          status: RocketMQInstanceStatus.INITIAL,
-        });
-      });
-      // subscribe
+    // register
+    this.agent.messenger.on(TEGG_ROCKETMQ_REG, async (json: string) => {
+      this.client.addMessageHandler(json);
     });
+  }
+  async serverDidReady() {
+    // start to listen
+    this.client.listen();
   }
 }

@@ -1,6 +1,6 @@
 import { Application, Context } from 'egg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { RocketMQMessageListenerHandler, RocketMQMetadata } from '@eggjs/tegg-rocketmq-decorator';
+import { RocketMQMessageListenerHandler, RocketMQMetadata, TEGG_ROCKETMQ_REG, TEGG_ROCKETMQ_SYN_PREFIX } from '@eggjs/tegg-rocketmq-decorator';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
 
@@ -24,10 +24,8 @@ export class RocketMQMessageListenerFactory {
       groupId = '',
     } = property;
 
-    const signal = `${instanceId}:${topic}:${groupId}`;
-
     class RocketMQMessageListenerAdapterImpl implements RocketMQMessageListenerAdapter {
-      ctx: any;
+      private ctx: any;
 
       constructor(ctx: Context) {
         this.ctx = ctx;
@@ -36,11 +34,21 @@ export class RocketMQMessageListenerFactory {
       }
 
       async subscribe(): Promise<void> {
-        app.messenger.on(signal, (data: string) => {
-          this.ctx.beginModuleScope(async () => {
-            const eggObject = await EggContainerFactory.getOrCreateEggObject(proto, proto.name, this.ctx.teggContext);
+        const { ctx } = this;
 
-            (eggObject.obj as RocketMQMessageListenerHandler).handle(data);
+        app.messenger.sendToAgent(TEGG_ROCKETMQ_REG, JSON.stringify(property));
+
+        app.messenger.on(`${TEGG_ROCKETMQ_SYN_PREFIX}${instanceId}:${topic}:${groupId}`, (json: string) => {
+          const { messageBody } = JSON.parse(json);
+
+          this.ctx.beginModuleScope(async () => {
+            try {
+              const eggObject = await EggContainerFactory.getOrCreateEggObject(proto, proto.name, this.ctx.teggContext);
+
+              (eggObject.obj as RocketMQMessageListenerHandler).handle(messageBody);
+            } catch (e) {
+              ctx.logger.error(e);
+            }
           });
         });
       }
