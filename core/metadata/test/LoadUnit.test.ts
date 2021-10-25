@@ -54,7 +54,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       } catch (e) {
         assert(e.message.includes('multi proto found for name:invalidateService'));
         assert(e.message.includes('result is'));
-        assert(e.message.includes('faq/TEGG_MULTI_PROTO_FIND'));
+        assert(e.message.includes('faq/TEGG_MULTI_PROTO_FOUND'));
       }
     });
   });
