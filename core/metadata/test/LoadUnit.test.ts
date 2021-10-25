@@ -52,7 +52,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
         await LoadUnitFactory.createLoadUnit(invalidateModulePath, EggLoadUnitType.MODULE, loader);
         throw new Error('should throw error');
       } catch (e) {
-        assert(e.message.includes('multi proto find for name:invalidateService'));
+        assert(e.message.includes('multi proto found for name:invalidateService'));
         assert(e.message.includes('result is'));
         assert(e.message.includes('faq/TEGG_MULTI_PROTO_FIND'));
       }

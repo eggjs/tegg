@@ -3,7 +3,7 @@ import { EggPrototypeName, QualifierInfo } from '@eggjs/core-decorator';
 
 export enum ErrorCodes {
   EGG_PROTO_NOT_FOUND = 'EGG_PROTO_NOT_FOUND',
-  MULTI_PROTO_FIND = 'MULTI_PROTO_FIND',
+  MULTI_PROTO_FOUND = 'MULTI_PROTO_FOUND',
 }
 
 export class TeggError extends FrameworkBaseError {
@@ -23,7 +23,7 @@ export class EggPrototypeNotFound extends TeggError {
 
 export class MultiPrototypeFind extends TeggError {
   constructor(name: EggPrototypeName, qualifier: QualifierInfo[], result?: string) {
-    const msg = `multi proto find for name:${String(name)} and qualifiers ${JSON.stringify(qualifier)}${result ? `, result is ${result}` : ''}`;
-    super(msg, ErrorCodes.MULTI_PROTO_FIND);
+    const msg = `multi proto found for name:${String(name)} and qualifiers ${JSON.stringify(qualifier)}${result ? `, result is ${result}` : ''}`;
+    super(msg, ErrorCodes.MULTI_PROTO_FOUND);
   }
 }
