@@ -12,8 +12,8 @@ import {
   QualifierInfo,
   QualifierUtil,
 } from '@eggjs/core-decorator';
+import { FrameworkErrorFormater } from 'egg-errors';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-
 import { LoadUnit, LoadUnitLifecycleContext } from '../model/LoadUnit';
 import { Loader } from '../model/Loader';
 import { EggPrototype } from '../model/EggPrototype';
@@ -21,6 +21,7 @@ import { EggLoadUnitType } from '../enum/EggLoadUnitType';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { LoadUnitFactory } from '../factory/LoadUnitFactory';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
+import { MultiPrototypeFound } from '../errors';
 
 let id = 0;
 
@@ -91,7 +92,7 @@ export class ModuleGraph {
     }
 
     const result = nodes.map(node => node.val.toString());
-    throw new Error(`multi proto find for name ${String(objName)} and qualifiers ${JSON.stringify(qualifiers)}, result is ${JSON.stringify(result)}`);
+    throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(String(objName), qualifiers, JSON.stringify(result)));
   }
 
   private build() {

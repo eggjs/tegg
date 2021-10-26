@@ -20,6 +20,6 @@ exclude:
   - plugin/*/typings
   - plugin/*/dist
   - coverage
-  - core/*/test/fixtures/**/*
-  - plugin/*/test/fixtures/**/*
-  - integration/*/test/fixtures/**/*
+  - core/*/test/**/*
+  - plugin/*/test/**/*
+  - integration/*/test/**/*

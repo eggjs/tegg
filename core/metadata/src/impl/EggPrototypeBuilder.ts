@@ -12,7 +12,7 @@ import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggPrototypeImpl } from '../impl/EggPrototypeImpl';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { MultiEggPrototypeFind } from '../errors';
+import { MultiPrototypeFound } from '../errors';
 
 export interface InjectObject {
   /**
@@ -70,7 +70,7 @@ export class EggPrototypeBuilder {
         // If multi proto found and property has no init type qualifier
         // try use self init type as init type qualifier
         if (
-          e instanceof MultiEggPrototypeFind
+          e instanceof MultiPrototypeFound
           && !propertyQualifiers.find(t => t.attribute === InitTypeQualifierAttribute)
         ) {
           propertyQualifiers.push({
