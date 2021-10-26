@@ -21,7 +21,7 @@ export class EggPrototypeNotFound extends TeggError {
   }
 }
 
-export class MultiPrototypeFind extends TeggError {
+export class MultiPrototypeFound extends TeggError {
   constructor(name: EggPrototypeName, qualifier: QualifierInfo[], result?: string) {
     const msg = `multi proto found for name:${String(name)} and qualifiers ${JSON.stringify(qualifier)}${result ? `, result is ${result}` : ''}`;
     super(msg, ErrorCodes.MULTI_PROTO_FOUND);

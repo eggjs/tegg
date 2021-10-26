@@ -21,7 +21,7 @@ import { EggLoadUnitType } from '../enum/EggLoadUnitType';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { LoadUnitFactory } from '../factory/LoadUnitFactory';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { MultiPrototypeFind } from '../errors';
+import { MultiPrototypeFound } from '../errors';
 
 let id = 0;
 
@@ -92,7 +92,7 @@ export class ModuleGraph {
     }
 
     const result = nodes.map(node => node.val.toString());
-    throw FrameworkErrorFormater.formatError(new MultiPrototypeFind(String(objName), qualifiers, JSON.stringify(result)));
+    throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(String(objName), qualifiers, JSON.stringify(result)));
   }
 
   private build() {
