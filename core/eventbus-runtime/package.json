@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-runtime",
-  "version": "0.1.7",
+  "version": "0.1.10",
   "description": "tegg eventbus runtime",
   "keywords": [
     "egg",
@@ -49,9 +49,9 @@
   },
   "devDependencies": {
     "@eggjs/tegg-common-util": "^0.1.5",
-    "@eggjs/tegg-loader": "^0.1.7",
-    "@eggjs/tegg-metadata": "^0.1.6",
-    "@eggjs/tegg-runtime": "^0.1.7",
+    "@eggjs/tegg-loader": "^0.1.10",
+    "@eggjs/tegg-metadata": "^0.1.10",
+    "@eggjs/tegg-runtime": "^0.1.10",
     "coffee": "^5.4.0",
     "egg": "^2.29.3",
     "mm": "^3.2.0"
