@@ -85,4 +85,17 @@ describe('test/params.test.ts', () => {
         });
       });
   });
+
+  it('controller path param should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .get('/foo/fooId/bar/barId')
+      .expect(200)
+      .expect(res => {
+        assert.deepStrictEqual(res.body, {
+          fooId: 'fooId',
+          barId: 'barId',
+        });
+      });
+  });
 });

@@ -1,4 +1,5 @@
 import {
+  ControllerWithParam,
   DefaultValueController,
   Error1Controller,
   Error2Controller,
@@ -72,6 +73,19 @@ describe('test/http/HTTPMeta.test.ts', () => {
         const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(Error1Controller)!;
         builder.build();
       }, /param 1 has no http param type/);
+    });
+  });
+
+  describe('controller has param', () => {
+    it('should throw error', () => {
+      const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(ControllerWithParam)!;
+      const controllerMeta = builder.build()! as HTTPControllerMeta;
+      const methodMeta = controllerMeta.methods[0];
+      const expectParamTypeMap = new Map<number, ParamMeta>([
+        [ 2, new PathParamMeta('fooId') ],
+        [ 1, new PathParamMeta('id') ],
+      ]);
+      assert.deepStrictEqual(methodMeta.paramMap, expectParamTypeMap);
     });
   });
 
