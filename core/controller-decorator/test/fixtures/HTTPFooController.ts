@@ -36,6 +36,21 @@ export class FooController {
 }
 
 @HTTPController({
+  path: '/foo/:fooId',
+})
+export class ControllerWithParam {
+  static fileName = __filename;
+
+  @HTTPMethod({
+    path: '/bar/:id',
+    method: HTTPMethodEnum.GET,
+  })
+  async bar(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPParam() fooId: string) {
+    console.log(ctx, id, fooId);
+  }
+}
+
+@HTTPController({
   controllerName: 'FxxController',
 })
 export class FoxController {

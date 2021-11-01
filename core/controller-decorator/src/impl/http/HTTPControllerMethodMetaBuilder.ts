@@ -99,12 +99,16 @@ export class HTTPControllerMethodMetaBuilder {
       return undefined;
     }
     const httpMethod = HTTPInfoUtil.getHTTPMethodMethod(this.clazz, this.methodName);
+    const parentPath = HTTPInfoUtil.getHTTPPath(this.clazz);
     const httpPath = HTTPInfoUtil.getHTTPMethodPath(this.clazz, this.methodName)!;
     const contextIndex = MethodInfoUtil.getMethodContextIndex(this.clazz, this.methodName);
     const middlewares = MethodInfoUtil.getMethodMiddlewares(this.clazz, this.methodName);
     const needAcl = MethodInfoUtil.hasMethodAcl(this.clazz, this.methodName);
     const aclCode = MethodInfoUtil.getMethodAcl(this.clazz, this.methodName);
-    const paramTypeMap = this.buildParamType(httpPath);
+    const realPath = parentPath
+      ? path.posix.join(parentPath, httpPath)
+      : httpPath;
+    const paramTypeMap = this.buildParamType(realPath);
     const priority = this.getPriority();
     return new HTTPMethodMeta(this.methodName, httpPath!, httpMethod!, middlewares, contextIndex, paramTypeMap, priority, needAcl, aclCode);
   }
