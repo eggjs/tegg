@@ -23,3 +23,4 @@ exclude:
   - core/*/test/**/*
   - plugin/*/test/**/*
   - integration/*/test/**/*
+  - standalone/*/test/**/*

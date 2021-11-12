@@ -2,6 +2,7 @@ timeout: "120000"
 spec:
   - core/*/test/**/*.test.ts
   - plugin/*/test/**/*.test.ts
+  - standalone/*/test/**/*.test.ts
 recursive: true
 extension:
   - ts

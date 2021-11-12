@@ -10,14 +10,14 @@
   ],
   "main": "dist/index.js",
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "*.js",
+    "*.d.ts"
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublish": "npm run tsc:pub",
+    "prepublishOnly": "npm run tsc:pub",
     "autod": "autod"
   },
   "author": "killagu <killa123@126.com>",
@@ -45,7 +45,8 @@
     "@eggjs/tegg-loader": "^0.1.10",
     "@eggjs/tegg-metadata": "^0.1.10",
     "@eggjs/tegg-orm-decorator": "^0.1.10",
-    "@eggjs/tegg-runtime": "^0.1.10"
+    "@eggjs/tegg-runtime": "^0.1.10",
+    "@eggjs/standalone-decorator": "^0.1.10"
   },
   "publishConfig": {
     "access": "public"

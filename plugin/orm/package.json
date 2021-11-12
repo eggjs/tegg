@@ -31,7 +31,7 @@
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublish": "npm run tsc:pub",
+    "prepublishOnly": "npm run tsc:pub",
     "autod": "autod",
     "prepare-test": "node ./test/fixtures/prepare.js"
   },

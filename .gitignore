@@ -26,6 +26,7 @@ core/**/dist
 core/**/node_modules
 plugin/**/dist
 plugin/**/node_modules
+standalone/**/node_modules/
 
 plugin/oneapi/test/fixtures/modules/*/oneapi
 plugin/dal/test/fixtures/modules/*/dal/

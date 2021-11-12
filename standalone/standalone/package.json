@@ -1,0 +1,56 @@
+{
+  "name": "@eggjs/tegg-standalone",
+  "description": "tegg standalone",
+  "version": "0.1.6",
+  "keywords": [
+    "egg",
+    "typescript",
+    "background",
+    "async",
+    "tegg",
+    "standalone"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "standalone/standalone"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eggjs/egg-module-common": "^0.1.5",
+    "@eggjs/tegg": "^0.1.12",
+    "@eggjs/tegg-background-task": "^0.1.6",
+    "@eggjs/tegg-common-util": "^0.1.5",
+    "@eggjs/tegg-dynamic-inject-runtime": "^0.1.10",
+    "@eggjs/tegg-loader": "^0.1.10",
+    "@eggjs/tegg-metadata": "^0.1.10",
+    "@eggjs/tegg-runtime": "^0.1.10",
+    "@eggjs/tegg-lifecycle": "^0.1.6"
+  },
+  "devDependencies": {
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
