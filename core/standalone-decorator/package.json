@@ -1,0 +1,46 @@
+{
+  "name": "@eggjs/standalone-decorator",
+  "version": "0.1.5",
+  "description": "tegg standalone decorator",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "tegg",
+    "standalone"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/standalone-decorator"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@eggjs/tegg-common-util": "^0.1.5",
+    "reflect-metadata": "^0.1.13"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

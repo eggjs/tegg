@@ -15,7 +15,8 @@
     {
       "files": [
         "core/*/test/**/*",
-        "plugin/*/test/**/*"
+        "plugin/*/test/**/*",
+        "standalone/*/test/**/*"
       ],
       "rules": {
         "import/no-relative-packages": "off"

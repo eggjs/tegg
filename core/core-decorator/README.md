@@ -1,5 +1,5 @@
-# `@eggjs/core-decorator`
+# `@eggjs/standalon-decorator`
 
 ## Usage
 
-Please read [@eggjs/tegg-plugin](../../plugin/tegg)
+Please read [@eggjs/tegg-standalone](../../standalone/standalone)
