@@ -1,5 +1,5 @@
 import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto';
-import { EggObject, EggObjectFactory, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
+import { EggObject, EggObjectFactory } from '@eggjs/tegg-runtime';
 import { IdenticalUtil, EggObjectName } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 
@@ -29,7 +29,7 @@ export class StandaloneInnerObject implements EggObject {
     return;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype, _: EggObjectLifeCycleContext): Promise<StandaloneInnerObject> {
+  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<StandaloneInnerObject> {
     return new StandaloneInnerObject(name, proto as StandaloneInnerObjectProto);
   }
 }

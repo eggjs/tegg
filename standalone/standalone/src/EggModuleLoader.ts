@@ -52,7 +52,7 @@ export class EggModuleLoader {
     const appGraph = this.buildAppGraph(loaderCache);
     appGraph.sort();
     const moduleConfigList = appGraph.moduleConfigList;
-        for (const moduleConfig of moduleConfigList) {
+    for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
       const loader = loaderCache.get(modulePath)!;
       const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
