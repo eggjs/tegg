@@ -117,8 +117,10 @@ export class HTTPMethodRegister {
     Reflect.apply(routerFunc, this.router,
       [ methodName, methodRealPath, ...methodMiddlewares, handler ]);
 
-
-    const regExp = pathToRegexp(methodRealPath);
+    // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
+    const regExp = pathToRegexp(methodRealPath, {
+      sensitive: true,
+    });
     rootProtoManager.registerRootProto(this.methodMeta.method, (ctx: EggContext) => {
       if (regExp.test(ctx.path)) {
         return this.proto;
