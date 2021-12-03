@@ -1,5 +1,6 @@
 import mm from 'egg-mock';
 import path from 'path';
+import assert from 'assert';
 
 describe('test/edgecase.test.ts', () => {
   let app;
@@ -39,5 +40,15 @@ describe('test/edgecase.test.ts', () => {
     await app.httpRequest()
       .get('/empty')
       .expect(204);
+  });
+
+  it('should case sensitive', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .get('/Middleware/Method')
+      .expect(200)
+      .expect(res => {
+        assert(res.text === 'hello, view');
+      });
   });
 });
