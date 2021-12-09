@@ -52,7 +52,8 @@
     "@eggjs/tegg-metadata": "^0.1.13",
     "@eggjs/tegg-runtime": "^0.1.13",
     "@types/koa-router": "^7.0.40",
-    "koa-compose": "^3.2.1"
+    "koa-compose": "^3.2.1",
+    "path-to-regexp": "^1.8.0"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^0.1.13",
