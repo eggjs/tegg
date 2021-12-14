@@ -25,58 +25,58 @@ export function HTTPMethod(param: HTTPMethodParams) {
   };
 }
 
-export function Get(path: string, priority?: number) {
+export function Get(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.GET,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
 
-export function Post(path: string, priority?: number) {
+export function Post(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.POST,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
 
-export function Put(path: string, priority?: number) {
+export function Put(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.PUT,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
 
-export function Delete(path: string, priority?: number) {
+export function Delete(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.DELETE,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
 
-export function Patch(path: string, priority?: number) {
+export function Patch(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.PATCH,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
 
-export function Options(path: string, priority?: number) {
+export function Options(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.OPTIONS,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
 
-export function Head(path: string, priority?: number) {
+export function Head(path?: string, priority?: number) {
   return HTTPMethod({
     method: HTTPMethodEnum.HEAD,
-    path,
+    path: path ?? '/',
     priority,
   });
 }
