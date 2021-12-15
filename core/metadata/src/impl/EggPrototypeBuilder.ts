@@ -4,15 +4,16 @@ import {
   EggProtoImplClass,
   EggPrototypeName, InitTypeQualifierAttribute,
   ObjectInitTypeLike, PrototypeUtil,
-  QualifierInfo, QualifierUtil,
+  QualifierInfo, QualifierUtil, ObjectInitType,
   DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/core-decorator';
 import { LoadUnit } from '../model/LoadUnit';
 import { EggPrototype, EggPrototypeLifecycleContext, InjectObjectProto } from '../model/EggPrototype';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { FrameworkErrorFormater } from 'egg-errors';
 import { EggPrototypeImpl } from '../impl/EggPrototypeImpl';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { MultiPrototypeFound } from '../errors';
+import { MultiPrototypeFound, IncompatibleProtoInject } from '../errors';
 
 export interface InjectObject {
   /**
@@ -82,6 +83,13 @@ export class EggPrototypeBuilder {
           throw e;
         }
       }
+
+      // throw when try to inject ContextProto into singleton
+      if (this.initType === ObjectInitType.SINGLETON && proto.initType === ObjectInitType.CONTEXT) {
+        const err = new IncompatibleProtoInject(`can not inject ContextProto(${String(proto.name)}) in SingletonProto(${String(this.name)})`);
+        throw FrameworkErrorFormater.formatError(err);
+      }
+
       injectObjectProtos.push({
         refName: injectObject.refName,
         objName: injectObject.objName,
