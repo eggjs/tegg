@@ -4,7 +4,7 @@
     "plugin/*",
     "standalone/*"
   ],
-  "version": "0.1.16",
+  "version": "0.1.17",
   "npmClientArgs": [
     "--package-lock=false"
   ],

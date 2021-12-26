@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-plugin",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "eggPlugin": {
     "name": "eventbusModule",
     "dependencies": [
