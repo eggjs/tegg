@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-standalone",
   "description": "tegg standalone",
-  "version": "0.1.16",
+  "version": "0.1.18",
   "keywords": [
     "egg",
     "typescript",
@@ -39,14 +39,14 @@
   "license": "MIT",
   "dependencies": {
     "@eggjs/egg-module-common": "^0.1.13",
-    "@eggjs/tegg": "^0.1.16",
-    "@eggjs/tegg-background-task": "^0.1.13",
-    "@eggjs/tegg-common-util": "^0.1.13",
-    "@eggjs/tegg-dynamic-inject-runtime": "^0.1.16",
+    "@eggjs/tegg": "^0.1.18",
+    "@eggjs/tegg-background-task": "^0.1.18",
+    "@eggjs/tegg-common-util": "^0.1.18",
+    "@eggjs/tegg-dynamic-inject-runtime": "^0.1.18",
     "@eggjs/tegg-lifecycle": "^0.1.13",
-    "@eggjs/tegg-loader": "^0.1.16",
-    "@eggjs/tegg-metadata": "^0.1.16",
-    "@eggjs/tegg-runtime": "^0.1.16"
+    "@eggjs/tegg-loader": "^0.1.18",
+    "@eggjs/tegg-metadata": "^0.1.18",
+    "@eggjs/tegg-runtime": "^0.1.18"
   },
   "publishConfig": {
     "access": "public"
