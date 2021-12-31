@@ -20,7 +20,7 @@ describe('test/loader/Loader.test.ts', () => {
       assert(userRepoProto);
     });
 
-    it('should not load test files', () => {
+    it('should not load test/coverage files', () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/module-with-test');
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
       const prototypes = loader.load();

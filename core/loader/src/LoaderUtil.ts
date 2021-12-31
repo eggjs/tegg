@@ -28,12 +28,15 @@ export class LoaderUtil {
     const filePattern = [
       // load file end with node module allow extensions
       `**/*.(${extensionPattern})`,
+      // not load files in .xxx/
+      '!+(.*)/**',
       // not load node module
       '!**/node_modules',
       // node load type defintions
       '!**/*.d.ts',
-      // not load test files
+      // not load test/coverage files
       '!**/test',
+      '!**/coverage',
       // extra file pattern
       ...(this.config.extraFilePattern || []),
     ];
