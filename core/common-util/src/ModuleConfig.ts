@@ -59,7 +59,7 @@ export class ModuleConfigUtil {
       // not load node_modules
       '!**/node_modules',
       // not load files in .xxx/
-      '!+(.*)/**',
+      '!**/+(.*)/**',
       // not load test/coverage
       '!**/test',
       '!**/coverage',

@@ -29,7 +29,7 @@ export class LoaderUtil {
       // load file end with node module allow extensions
       `**/*.(${extensionPattern})`,
       // not load files in .xxx/
-      '!+(.*)/**',
+      '!**/+(.*)/**',
       // not load node module
       '!**/node_modules',
       // node load type defintions
