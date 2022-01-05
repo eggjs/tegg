@@ -60,8 +60,7 @@ export class ModuleConfigUtil {
       '!**/node_modules',
       // not load files in .xxx/
       '!**/+(.*)/**',
-      // not load test/coverage
-      '!**/test',
+      // not load coverage
       '!**/coverage',
     ], {
       cwd: baseDir,
