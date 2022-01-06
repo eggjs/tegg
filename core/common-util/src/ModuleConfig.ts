@@ -56,8 +56,12 @@ export class ModuleConfigUtil {
     const realOptions: ReadModuleReferenceOptions = Object.assign({}, DEFAULT_READ_MODULE_REF_OPTS, options);
     const packagePaths = globby.sync([
       '**/package.json',
+      // not load node_modules
       '!**/node_modules',
-      '!.*/**',
+      // not load files in .xxx/
+      '!**/+(.*)/**',
+      // not load coverage
+      '!**/coverage',
     ], {
       cwd: baseDir,
       deep: realOptions.deep,

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject",
-  "version": "0.1.13",
+  "version": "0.1.19",
   "description": "tegg dyniamic inject",
   "main": "dist/index.js",
   "files": [
@@ -39,7 +39,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^0.1.13"
+    "@eggjs/core-decorator": "^0.1.19"
   },
   "devDependencies": {
     "coffee": "^5.4.0"

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-plugin",
-  "version": "0.1.13",
+  "version": "0.1.19",
   "eggPlugin": {
     "name": "eventbusModule",
     "dependencies": [
@@ -26,6 +26,7 @@
     "config/*.js",
     "config/*.d.ts"
   ],
+  "types": "typings/index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
@@ -47,15 +48,15 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^0.1.13",
-    "@eggjs/tegg": "^0.1.13",
-    "@eggjs/tegg-eventbus-runtime": "^0.1.13",
-    "@eggjs/tegg-metadata": "^0.1.13",
-    "@eggjs/tegg-runtime": "^0.1.13",
+    "@eggjs/tegg": "^0.1.19",
+    "@eggjs/tegg-eventbus-runtime": "^0.1.19",
+    "@eggjs/tegg-metadata": "^0.1.19",
+    "@eggjs/tegg-runtime": "^0.1.19",
     "egg-tracer": "^1.1.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^0.1.13",
-    "@eggjs/tegg-plugin": "^0.1.13",
+    "@eggjs/tegg-config": "^0.1.19",
+    "@eggjs/tegg-plugin": "^0.1.19",
     "await-event": "^2.1.0",
     "egg": "^2.29.4",
     "egg-mock": "^4.0.1"
