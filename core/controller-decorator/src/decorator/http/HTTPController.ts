@@ -35,3 +35,15 @@ export function HTTPController(param?: HTTPControllerParams) {
     PrototypeUtil.setFilePath(constructor, StackUtil.getCalleeFromStack(false, 5));
   };
 }
+
+// Controller have the same behavior as HTTPController
+// they are only different in the input parameters of the function
+// by this design we usually can write one less curly brace.
+// TODO: should Controller have an new Symbol?
+export function Controller(path?: string, protoName?: string, controllerName?: string) {
+  return HTTPController({
+    path,
+    protoName,
+    controllerName,
+  });
+}

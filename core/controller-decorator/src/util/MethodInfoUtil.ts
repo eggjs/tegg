@@ -58,4 +58,9 @@ export default class MethodInfoUtil {
     const methodAclMap: MethodAclMap | undefined = MetadataUtil.getMetaData(METHOD_ACL, clazz);
     return methodAclMap?.get(methodName);
   }
+
+  static getMethodName(clazz: EggProtoImplClass, methodName: string): string | undefined {
+    const methodAclMap: MethodAclMap | undefined = MetadataUtil.getMetaData(METHOD_ACL, clazz);
+    return methodAclMap?.get(methodName);
+  }
 }
