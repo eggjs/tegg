@@ -12,7 +12,10 @@ import {
   EggContainerFactory,
   LoadUnitInstanceFactory,
   LoadUnitInstanceLifecycleUtil,
-  EggContextLifecycleUtil, AbstractEggContext,
+  EggContextLifecycleUtil,
+  EggObjectLifecycleUtil,
+  AbstractEggContext,
+  EggObjectFactory,
 } from '@eggjs/tegg-runtime';
 import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
 
@@ -31,6 +34,7 @@ declare module 'egg' {
     eggPrototypeFactory: EggPrototypeFactory;
     eggContainerFactory: typeof EggContainerFactory;
     loadUnitFactory: typeof LoadUnitFactory;
+    eggObjectFactory: typeof EggObjectFactory;
     loadUnitInstanceFactory: typeof LoadUnitInstanceFactory;
     abstractEggContext: typeof AbstractEggContext;
     identicalUtil: typeof IdenticalUtil;
@@ -39,6 +43,7 @@ declare module 'egg' {
     loadUnitInstanceLifecycleUtil: typeof LoadUnitInstanceLifecycleUtil;
     eggPrototypeLifecycleUtil: typeof EggPrototypeLifecycleUtil;
     eggContextLifecycleUtil: typeof EggContextLifecycleUtil;
+    eggObjectLifecycleUtil: typeof EggObjectLifecycleUtil;
 
     moduleHandler: ModuleHandler;
 

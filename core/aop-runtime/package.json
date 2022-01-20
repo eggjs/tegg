@@ -1,23 +1,28 @@
 {
-  "name": "@eggjs/tegg",
+  "name": "@eggjs/tegg-aop-runtime",
   "version": "0.1.19",
-  "description": "tegg decorator packages",
+  "description": "tegg aop",
+  "main": "dist/index.js",
+  "eggModule": {
+    "name": "teggAopRuntime"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
   "keywords": [
     "egg",
     "typescript",
-    "metadata",
-    "tegg"
+    "runtime",
+    "tegg",
+    "aop"
   ],
-  "main": "./index.js",
-  "files": [
-    "*.js",
-    "*.d.ts"
-  ],
-  "typings": "index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc-pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc-pub",
     "autod": "autod"
   },
   "author": "killagu <killa123@126.com>",
@@ -29,27 +34,26 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/test-util"
+    "directory": "core/aop-runtime"
   },
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "dependencies": {
-    "@eggjs/aop-decorator": "^0.1.19",
-    "@eggjs/controller-decorator": "^0.1.19",
-    "@eggjs/core-decorator": "^0.1.19",
-    "@eggjs/eventbus-decorator": "^0.1.19",
-    "@eggjs/standalone-decorator": "^0.1.19",
-    "@eggjs/tegg-background-task": "^0.1.19",
-    "@eggjs/tegg-common-util": "^0.1.19",
-    "@eggjs/tegg-dynamic-inject": "^0.1.19",
-    "@eggjs/tegg-lifecycle": "^0.1.13",
-    "@eggjs/tegg-loader": "^0.1.19",
-    "@eggjs/tegg-metadata": "^0.1.19",
-    "@eggjs/tegg-orm-decorator": "^0.1.19",
-    "@eggjs/tegg-runtime": "^0.1.19"
+    "node": ">=10.0.0"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@eggjs/aop-decorator": "^0.1.19",
+    "@eggjs/core-decorator": "^0.1.19",
+    "@eggjs/tegg-common-util": "^0.1.19",
+    "@eggjs/tegg-dynamic-inject": "^0.1.19",
+    "@eggjs/tegg-lifecycle": "^0.1.13",
+    "@eggjs/tegg-metadata": "^0.1.19",
+    "@eggjs/tegg-runtime": "^0.1.19",
+    "koa-compose": "^4.1.0"
+  },
+  "devDependencies": {
+    "@eggjs/module-test-util": "^0.1.19",
+    "@eggjs/tegg-loader": "^0.1.19"
   }
 }

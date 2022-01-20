@@ -6,8 +6,11 @@ import {
 } from '@eggjs/tegg-metadata';
 import {
   AbstractEggContext,
-  EggContainerFactory, EggContextLifecycleUtil,
+  EggContainerFactory,
+  EggObjectFactory,
   LoadUnitInstanceFactory,
+  EggContextLifecycleUtil,
+  EggObjectLifecycleUtil,
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import { EggProtoImplClass, PrototypeUtil, IdenticalUtil } from '@eggjs/tegg';
@@ -32,6 +35,10 @@ export default {
     return LoadUnitFactory;
   },
 
+  get eggObjectFactory() {
+    return EggObjectFactory;
+  },
+
   get loadUnitInstanceFactory() {
     return LoadUnitInstanceFactory;
   },
@@ -50,6 +57,10 @@ export default {
 
   get eggContextLifecycleUtil() {
     return EggContextLifecycleUtil;
+  },
+
+  get eggObjectLifecycleUtil() {
+    return EggObjectLifecycleUtil;
   },
 
   get abstractEggContext() {

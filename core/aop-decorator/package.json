@@ -1,0 +1,45 @@
+{
+  "name": "@eggjs/aop-decorator",
+  "version": "0.1.19",
+  "description": "tegg aop decorator",
+  "keywords": [
+    "tegg",
+    "aop",
+    "typescript",
+    "egg"
+  ],
+  "author": "killagu <killa123@126.com>",
+  "homepage": "https://github.com/eggjs/tegg",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/aop-decorator"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "^0.1.19",
+    "@eggjs/tegg-common-util": "^0.1.19",
+    "@eggjs/tegg-metadata": "^0.1.19"
+  },
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  }
+}

@@ -4,4 +4,5 @@ export * from '@eggjs/controller-decorator';
 export * from '@eggjs/eventbus-decorator';
 export * from '@eggjs/tegg-dynamic-inject';
 export * from '@eggjs/tegg-background-task';
+export * as aop from '@eggjs/aop-decorator';
 export * as orm from '@eggjs/tegg-orm-decorator';

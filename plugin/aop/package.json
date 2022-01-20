@@ -1,20 +1,25 @@
 {
-  "name": "@eggjs/controller-decorator",
+  "name": "@eggjs/tegg-aop-plugin",
   "version": "0.1.19",
-  "description": "tegg controller decorator",
+  "eggPlugin": {
+    "name": "aopModule",
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "types": "typings/index.d.ts",
+  "description": "tegg aop plugin",
   "keywords": [
     "egg",
     "typescript",
     "decorator",
-    "controller",
+    "aop",
     "tegg"
   ],
-  "main": "dist/index.js",
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "app.js",
+    "app.d.ts"
   ],
-  "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
@@ -22,8 +27,6 @@
     "prepublishOnly": "npm run tsc:pub",
     "autod": "autod"
   },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
@@ -31,20 +34,20 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/controller-decorator"
+    "directory": "plugin/aop"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^0.1.19",
-    "@eggjs/tegg-common-util": "^0.1.19",
-    "@eggjs/tegg-metadata": "^0.1.19",
-    "path-to-regexp": "^1.8.0",
-    "reflect-metadata": "^0.1.13"
+    "@eggjs/tegg": "^0.1.19",
+    "@eggjs/tegg-aop-runtime": "^0.1.19"
   },
   "devDependencies": {
-    "egg": "^2.26.0"
+    "@eggjs/tegg-config": "^0.1.19",
+    "@eggjs/tegg-plugin": "^0.1.19",
+    "egg": "^2.29.4",
+    "egg-mock": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"
