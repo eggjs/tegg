@@ -46,7 +46,6 @@
     "@eggjs/aop-decorator": "^0.1.19",
     "@eggjs/core-decorator": "^0.1.19",
     "@eggjs/tegg-common-util": "^0.1.19",
-    "@eggjs/tegg-dynamic-inject": "^0.1.19",
     "@eggjs/tegg-lifecycle": "^0.1.13",
     "@eggjs/tegg-metadata": "^0.1.19",
     "@eggjs/tegg-runtime": "^0.1.19",
