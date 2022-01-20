@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-runtime",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "description": "tegg aop",
   "main": "dist/index.js",
   "eggModule": {
@@ -43,16 +43,16 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^0.1.19",
-    "@eggjs/core-decorator": "^0.1.19",
-    "@eggjs/tegg-common-util": "^0.1.19",
-    "@eggjs/tegg-lifecycle": "^0.1.13",
-    "@eggjs/tegg-metadata": "^0.1.19",
-    "@eggjs/tegg-runtime": "^0.1.19",
+    "@eggjs/aop-decorator": "^0.2.0",
+    "@eggjs/core-decorator": "^0.2.0",
+    "@eggjs/tegg-common-util": "^0.2.0",
+    "@eggjs/tegg-lifecycle": "^0.2.0",
+    "@eggjs/tegg-metadata": "^0.2.0",
+    "@eggjs/tegg-runtime": "^0.2.0",
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^0.1.19",
-    "@eggjs/tegg-loader": "^0.1.19"
+    "@eggjs/module-test-util": "^0.2.0",
+    "@eggjs/tegg-loader": "^0.2.0"
   }
 }

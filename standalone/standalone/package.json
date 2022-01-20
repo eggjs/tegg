@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-standalone",
   "description": "tegg standalone",
-  "version": "0.1.19",
+  "version": "0.2.0",
   "keywords": [
     "egg",
     "typescript",
@@ -38,15 +38,15 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/egg-module-common": "^0.1.13",
-    "@eggjs/tegg": "^0.1.19",
-    "@eggjs/tegg-background-task": "^0.1.19",
-    "@eggjs/tegg-common-util": "^0.1.19",
-    "@eggjs/tegg-dynamic-inject-runtime": "^0.1.19",
-    "@eggjs/tegg-lifecycle": "^0.1.13",
-    "@eggjs/tegg-loader": "^0.1.19",
-    "@eggjs/tegg-metadata": "^0.1.19",
-    "@eggjs/tegg-runtime": "^0.1.19"
+    "@eggjs/egg-module-common": "^0.2.0",
+    "@eggjs/tegg": "^0.2.0",
+    "@eggjs/tegg-background-task": "^0.2.0",
+    "@eggjs/tegg-common-util": "^0.2.0",
+    "@eggjs/tegg-dynamic-inject-runtime": "^0.2.0",
+    "@eggjs/tegg-lifecycle": "^0.2.0",
+    "@eggjs/tegg-loader": "^0.2.0",
+    "@eggjs/tegg-metadata": "^0.2.0",
+    "@eggjs/tegg-runtime": "^0.2.0"
   },
   "publishConfig": {
     "access": "public"

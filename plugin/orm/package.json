@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "0.1.19",
+  "version": "0.2.0",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -48,22 +48,22 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^0.1.13",
-    "@eggjs/tegg": "^0.1.19",
-    "@eggjs/tegg-common-util": "^0.1.19",
-    "@eggjs/tegg-loader": "^0.1.19",
-    "@eggjs/tegg-metadata": "^0.1.19",
-    "@eggjs/tegg-orm-decorator": "^0.1.19",
-    "@eggjs/tegg-runtime": "^0.1.19",
+    "@eggjs/egg-module-common": "^0.2.0",
+    "@eggjs/tegg": "^0.2.0",
+    "@eggjs/tegg-common-util": "^0.2.0",
+    "@eggjs/tegg-loader": "^0.2.0",
+    "@eggjs/tegg-metadata": "^0.2.0",
+    "@eggjs/tegg-orm-decorator": "^0.2.0",
+    "@eggjs/tegg-runtime": "^0.2.0",
     "@types/koa-router": "^7.0.40",
     "koa-compose": "^3.2.1",
     "leoric": "^1.6.7"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^0.1.19",
+    "@eggjs/module-test-util": "^0.2.0",
     "@eggjs/router": "^2.0.0",
-    "@eggjs/tegg-config": "^0.1.19",
-    "@eggjs/tegg-plugin": "^0.1.19",
+    "@eggjs/tegg-config": "^0.2.0",
+    "@eggjs/tegg-plugin": "^0.2.0",
     "egg": "^2.26.0",
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",
