@@ -17,6 +17,8 @@ export.aopModule = {
 **注意：Advice 也是一种 Prototype，可以通过 initType 来指定不同的生命周期。**
 
 ```ts
+import { Advice, IAdvice } from '@eggjs/tegg/aop';
+
 @Advice()
 export class AdviceExample implements IAdvice {
   // Advice 中可以正常的注入其他的对象
@@ -54,6 +56,9 @@ export class AdviceExample implements IAdvice {
 使用 `@Pointcut` 在某个类特定的方法上申明一个 `Advice`
 
 ```ts
+import { Pointcut } from '@eggjs/tegg/aop';
+import { ContextProto } from '@eggjs/tegg';
+
 @ContextProto()
 export class Hello {
   @Pointcut(AdviceExample)
@@ -73,6 +78,8 @@ export class Hello {
 **注意：egg 中的对象无法被 Crosscut 指定到。**
 
 ```ts
+import { Crosscut, Advice, IAdvice } from '@eggjs/tegg/aop';
+
 // 通过类型来指定
 @Crosscut({
   type: PointcutType.CLASS,
