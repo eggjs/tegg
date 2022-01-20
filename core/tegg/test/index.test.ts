@@ -9,6 +9,7 @@ import {
   QualifierImplUtil,
   BackgroundTaskHelper,
   orm,
+  aop,
 } from '..';
 
 describe('test/index.test.ts', () => {
@@ -23,5 +24,6 @@ describe('test/index.test.ts', () => {
     assert(BackgroundTaskHelper);
     assert(orm.DataSource);
     assert(orm.Attribute);
+    assert(aop.Advice);
   });
 });

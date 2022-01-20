@@ -5,7 +5,7 @@ import { PrototypeUtil } from '../util/PrototypeUtil';
 import { NameUtil, StackUtil } from '@eggjs/tegg-common-util';
 
 
-interface PrototypeParams {
+export interface PrototypeParams {
   name?: string;
   initType?: ObjectInitTypeLike;
   accessLevel?: AccessLevel;
