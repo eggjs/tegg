@@ -6,8 +6,8 @@ import { EggProtoImplClass } from '@eggjs/tegg';
 export class EggControllerLoader {
   private readonly controllerDir: string;
 
-  constructor(appBaseDir: string) {
-    this.controllerDir = path.join(appBaseDir, 'app/controller');
+  constructor(controllerDir: string) {
+    this.controllerDir = controllerDir;
   }
 
   load(): EggProtoImplClass[] {

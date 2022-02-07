@@ -1,8 +1,7 @@
 import Base from 'sdk-base';
 import path from 'path';
 import { Application } from 'egg';
-import { EggControllerLoader } from './EggControllerLoader';
-import { LoadUnit } from '@eggjs/tegg-metadata';
+import { EggLoadUnitType, LoadUnit } from '@eggjs/tegg-metadata';
 import { LoadUnitInstance } from '@eggjs/tegg-runtime';
 import { CONTROLLER_LOAD_UNIT } from './ControllerLoadUnit';
 
@@ -17,8 +16,8 @@ export class ControllerLoadUnitHandler extends Base {
   }
 
   async _init() {
-    const loader = new EggControllerLoader(this.app.config.baseDir);
     const controllerDir = path.join(this.app.config.baseDir, 'app/controller');
+    const loader = this.app.loaderFactory.createLoader(controllerDir, CONTROLLER_LOAD_UNIT as EggLoadUnitType);
     this.controllerLoadUnit = await this.app.loadUnitFactory.createLoadUnit(controllerDir, CONTROLLER_LOAD_UNIT, loader);
     this.controllerLoadUnitInstance = await this.app.loadUnitInstanceFactory.createLoadUnitInstance(this.controllerLoadUnit);
   }
