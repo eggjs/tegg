@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-runtime",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "tegg aop",
   "main": "dist/index.js",
   "eggModule": {
