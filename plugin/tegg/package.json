@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^1.0.0",
-    "@eggjs/tegg": "^1.0.1",
+    "@eggjs/tegg": "^1.0.2",
     "@eggjs/tegg-background-task": "^1.0.0",
     "@eggjs/tegg-common-util": "^1.0.0",
     "@eggjs/tegg-dynamic-inject-runtime": "^1.0.1",

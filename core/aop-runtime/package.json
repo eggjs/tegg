@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-runtime",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "tegg aop",
   "main": "dist/index.js",
   "eggModule": {
@@ -43,7 +43,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^1.0.1",
+    "@eggjs/aop-decorator": "^1.0.2",
     "@eggjs/core-decorator": "^1.0.0",
     "@eggjs/tegg-common-util": "^1.0.0",
     "@eggjs/tegg-lifecycle": "^1.0.0",
