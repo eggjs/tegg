@@ -16,6 +16,18 @@ export class PointcutAdviceAfterReturnExample implements IAdvice {
 }
 
 @ContextProto()
+export class GetterExample {
+  get badGetter() {
+    throw new Error('never access getter');
+  }
+
+  @Pointcut(PointcutAdviceBeforeCallExample)
+  foo() {
+
+  }
+}
+
+@ContextProto()
 export class PointcutExample {
   @Pointcut(PointcutAdviceBeforeCallExample)
   @Pointcut(PointcutAdviceAfterReturnExample)
