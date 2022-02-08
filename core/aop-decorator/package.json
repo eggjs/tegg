@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/aop-decorator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tegg aop decorator",
   "keywords": [
     "tegg",
@@ -18,7 +18,7 @@
   "dependencies": {
     "@eggjs/core-decorator": "^1.0.0",
     "@eggjs/tegg-common-util": "^1.0.0",
-    "@eggjs/tegg-metadata": "^1.0.0"
+    "@eggjs/tegg-metadata": "^1.0.1"
   },
   "scripts": {
     "clean": "tsc -b --clean",

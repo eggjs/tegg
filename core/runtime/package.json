@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-runtime",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tegg runtime",
   "main": "dist/index.js",
   "files": [
@@ -39,10 +39,10 @@
     "@eggjs/core-decorator": "^1.0.0",
     "@eggjs/tegg-common-util": "^1.0.0",
     "@eggjs/tegg-lifecycle": "^1.0.0",
-    "@eggjs/tegg-metadata": "^1.0.0"
+    "@eggjs/tegg-metadata": "^1.0.1"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^1.0.0"
+    "@eggjs/tegg-loader": "^1.0.1"
   },
   "publishConfig": {
     "access": "public"

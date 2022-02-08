@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/module-test-util",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "module test util",
   "keywords": [
@@ -38,8 +38,8 @@
   "dependencies": {
     "@eggjs/core-decorator": "^1.0.0",
     "@eggjs/tegg-lifecycle": "^1.0.0",
-    "@eggjs/tegg-loader": "^1.0.0",
-    "@eggjs/tegg-metadata": "^1.0.0",
-    "@eggjs/tegg-runtime": "^1.0.0"
+    "@eggjs/tegg-loader": "^1.0.1",
+    "@eggjs/tegg-metadata": "^1.0.1",
+    "@eggjs/tegg-runtime": "^1.0.1"
   }
 }
