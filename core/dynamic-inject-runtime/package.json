@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject-runtime",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "tegg dyniamic inject",
   "main": "dist/index.js",
   "eggModule": {
@@ -42,15 +42,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^0.2.0",
-    "@eggjs/tegg-common-util": "^0.2.0",
-    "@eggjs/tegg-dynamic-inject": "^0.2.0",
-    "@eggjs/tegg-lifecycle": "^0.2.0",
-    "@eggjs/tegg-metadata": "^0.2.0",
-    "@eggjs/tegg-runtime": "^0.2.0"
+    "@eggjs/core-decorator": "^1.0.0",
+    "@eggjs/tegg-common-util": "^1.0.0",
+    "@eggjs/tegg-dynamic-inject": "^1.0.0",
+    "@eggjs/tegg-lifecycle": "^1.0.0",
+    "@eggjs/tegg-metadata": "^1.0.0",
+    "@eggjs/tegg-runtime": "^1.0.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^0.2.0",
-    "@eggjs/tegg-loader": "^0.2.0"
+    "@eggjs/module-test-util": "^1.0.0",
+    "@eggjs/tegg-loader": "^1.0.0"
   }
 }
