@@ -14,7 +14,6 @@ export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext
   async postCreate(_: EggObjectLifeCycleContext, eggObject: EggObject): Promise<void> {
     const aspectList: Array<Aspect> | undefined = eggObject.proto.getMetaData(ASPECT_LIST);
     if (!aspectList || !aspectList.length) return;
-    console.log('obj: ', eggObject.id);
     const propertyDesc = eggObject.constructor && Reflect.getOwnPropertyDescriptor(eggObject.constructor.prototype, 'obj')!;
     // process the lazy getter
     if (propertyDesc?.get) {
