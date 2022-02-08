@@ -11,8 +11,9 @@ import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggContextObjectFactory, EggSingletonObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
-const DEFAULT_APP_CLAZZ = [];
 
+const APP_CLAZZ_BLACK_LIST = [ 'eggObjectFactory' ];
+const DEFAULT_APP_CLAZZ = [];
 const DEFAULT_CONTEXT_CLAZZ = [
   'user',
 ];
@@ -111,10 +112,12 @@ export class EggAppLoader implements Loader {
     const appProperties = ObjectUtils.getProperties(app);
     const contextProperties = ObjectUtils.getProperties((app as any).context);
     // custom plugin may define property conflict with default list
-    const allSingletonClazzNames = Array.from(new Set([
+    const allSingletonClazzNameSet = new Set([
       ...appProperties,
       ...DEFAULT_APP_CLAZZ,
-    ]));
+    ]);
+    APP_CLAZZ_BLACK_LIST.forEach(t => allSingletonClazzNameSet.delete(t));
+    const allSingletonClazzNames = Array.from(allSingletonClazzNameSet);
     const allContextClazzNames = Array.from(new Set([
       ...contextProperties,
       ...DEFAULT_CONTEXT_CLAZZ,

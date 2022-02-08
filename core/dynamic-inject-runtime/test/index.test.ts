@@ -6,7 +6,7 @@ import { HelloService } from './fixtures/modules/dynamic-inject-module/HelloServ
 import { CoreTestHelper } from '../../test-util/CoreTestHelper';
 import assert from 'assert';
 
-describe('test/index.test.ts', () => {
+describe('test/dynamic-inject-runtime.test.ts', () => {
   let modules: Array<LoadUnitInstance>;
   beforeEach(async () => {
     modules = await CoreTestHelper.prepareModules([
