@@ -16,6 +16,8 @@ import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { RootProtoManager } from '../../RootProtoManager';
 import pathToRegexp from 'path-to-regexp';
 import { aclMiddlewareFactory } from './Acl';
+import { RouterConflictError } from '../../errors';
+import { FrameworkErrorFormater } from 'egg-errors';
 
 export class HTTPMethodRegister {
   private readonly router: KoaRouter<any, Context>;
@@ -103,7 +105,9 @@ export class HTTPMethodRegister {
     const matched = this.router.match(methodRealPath, this.methodMeta.method);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     if (matched.route) {
-      throw new Error(`register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} has registered`);
+      const [ layer ] = matched.path;
+      const err = new RouterConflictError(`register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} is conflict with exists rule ${layer.path}`);
+      throw FrameworkErrorFormater.format(err);
     }
 
     // 2. do register

@@ -14,8 +14,8 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
   });
 
   it('should work', () => {
-    const baseDir = path.join(__dirname, '../fixtures/apps/controller-app');
-    const loader = new EggControllerLoader(baseDir);
+    const controllerDir = path.join(__dirname, '../fixtures/apps/controller-app/app/controller');
+    const loader = new EggControllerLoader(controllerDir);
     const clazzs = loader.load();
     assert(clazzs.length === 6);
     const AppController = clazzs[0];

@@ -17,6 +17,7 @@ import {
   AbstractEggContext,
   EggObjectFactory,
 } from '@eggjs/tegg-runtime';
+import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
 
 declare module 'egg' {
@@ -38,6 +39,7 @@ declare module 'egg' {
     loadUnitInstanceFactory: typeof LoadUnitInstanceFactory;
     abstractEggContext: typeof AbstractEggContext;
     identicalUtil: typeof IdenticalUtil;
+    loaderFactory: typeof LoaderFactory;
 
     loadUnitLifecycleUtil: typeof LoadUnitLifecycleUtil;
     loadUnitInstanceLifecycleUtil: typeof LoadUnitInstanceLifecycleUtil;
