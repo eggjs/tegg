@@ -25,7 +25,7 @@ describe('test/DynamicInject.test.ts', () => {
     await app.ready();
   });
 
-  it('background task should work', async () => {
+  it('dynamic inject should work', async () => {
     app.mockCsrf();
     const res = await app.httpRequest()
       .get('/dynamicInject')
@@ -35,6 +35,17 @@ describe('test/DynamicInject.test.ts', () => {
       'hello, bar(context:0)',
       'hello, foo(singleton:0)',
       'hello, bar(singleton:0)',
+    ]);
+  });
+
+  it('singleton dynamic inject should work', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest()
+      .get('/singletonDynamicInject')
+      .expect(200);
+    assert.deepStrictEqual(res.body, [
+      'hello, foo(singleton:1)',
+      'hello, bar(singleton:1)',
     ]);
   });
 });

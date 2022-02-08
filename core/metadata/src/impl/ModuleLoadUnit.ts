@@ -196,7 +196,7 @@ export class ModuleLoadUnit implements LoadUnit {
 
   async destroy() {
     for (const namedProtoMap of this.protoMap.values()) {
-      for (const proto of namedProtoMap.values()) {
+      for (const proto of namedProtoMap.slice()) {
         EggPrototypeFactory.instance.deletePrototype(proto, this);
       }
     }
