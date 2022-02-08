@@ -5,6 +5,7 @@ import {
   CrosscutNameAdviceExample,
 } from './fixtures/CrosscutExample';
 import {
+  GetterExample,
   PointcutAdviceAfterReturnExample,
   PointcutAdviceBeforeCallExample,
   PointcutExample,
@@ -123,5 +124,13 @@ describe('test/AspectMetaBuild.test.ts', () => {
         { name: 'ParentExample#noOverwriteMethod#PointcutAdviceNoOverwriteParentExample#1', clazz: PointcutAdviceNoOverwriteParentExample },
       ]);
     });
+  });
+
+  it('should not access getter', () => {
+    const builder = new AspectMetaBuilder(GetterExample, {
+      crosscutAdviceFactory,
+    });
+    const aspects = builder.build();
+    assert(aspects.length === 1);
   });
 });

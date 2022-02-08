@@ -30,9 +30,9 @@ export class AspectMetaBuilder {
     const methodSet = new Set<string>();
     function getMethods(obj) {
       if (obj) {
-        const names = Object.getOwnPropertyNames(obj);
-        for (const name of names) {
-          if (obj[name] instanceof Function) {
+        const propDescs = Object.getOwnPropertyDescriptors(obj);
+        for (const [ name, desc ] of Object.entries(propDescs)) {
+          if (desc.value instanceof Function) {
             methodSet.add(name);
           }
         }
