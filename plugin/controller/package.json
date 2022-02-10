@@ -2,6 +2,7 @@
   "name": "@eggjs/tegg-controller-plugin",
   "eggPlugin": {
     "name": "teggController",
+    "strict": false,
     "dependencies": [
       "tegg"
     ]
