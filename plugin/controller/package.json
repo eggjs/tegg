@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
