@@ -60,6 +60,9 @@ export abstract class AbstractEggContext implements EggContext {
         protoObjPromiseMap.set(name, objPromise);
         const obj = await objPromise;
         protoObjPromiseMap.delete(name);
+        if (!protoObjPromiseMap.size) {
+          this.eggObjectPromiseMap.delete(proto.id); 
+        }
         protoObjMap.set(name, obj);
       } else {
         await protoObjPromiseMap.get(name);
