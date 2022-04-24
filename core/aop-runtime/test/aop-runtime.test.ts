@@ -92,4 +92,30 @@ describe('test/aop-runtime.test.ts', () => {
       ]);
     });
   });
+
+  describe('should failed', () => {
+    let crosscutAdviceFactory: CrosscutAdviceFactory;
+    let eggObjectAopHook: EggObjectAopHook;
+    let loadUnitAopHook: LoadUnitAopHook;
+    let eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
+
+    beforeEach(async () => {
+      crosscutAdviceFactory = new CrosscutAdviceFactory();
+      eggObjectAopHook = new EggObjectAopHook();
+      loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
+      eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+      EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
+      LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
+      EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
+    });
+
+    it('should throw', async () => {
+      await assert.rejects(async () => {
+        await CoreTestHelper.prepareModules([
+          path.join(__dirname, '..'),
+          path.join(__dirname, 'fixtures/modules/should_throw'),
+        ]);
+      }, /Aop Advice\(PointcutAdvice\) not found in loadUnits/);
+    });
+  });
 });
