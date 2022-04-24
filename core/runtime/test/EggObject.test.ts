@@ -28,6 +28,22 @@ describe('test/EggObject.test.ts', () => {
           'destroy',
         ]);
       });
+
+      it('should clear eggObjectMap/eggObjectPromiseMap/contextData after destroy', async () => {
+        const instance = await TestUtil.createLoadUnitInstance('lifecycle-hook');
+        const ctx = new EggTestContext();
+        const fooProto = EggPrototypeFactory.instance.getPrototype('foo');
+        const fooObj = await EggContainerFactory.getOrCreateEggObject(fooProto, fooProto.name, ctx);
+        assert(fooObj.obj);
+        await ctx.destroy({});
+        await TestUtil.destroyLoadUnitInstance(instance);
+
+        // should clear all maps
+        const assertCtx = ctx as any;
+        assert(!assertCtx.eggObjectMap.size);
+        assert(!assertCtx.eggObjectPromiseMap.size);
+        assert(!assertCtx.contextData.size);
+      });
     });
 
     describe('singleton proto', () => {
