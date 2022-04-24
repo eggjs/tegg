@@ -91,8 +91,8 @@ describe('test/aop-runtime.test.ts', () => {
         },
       ]);
     });
-  })
-  
+  });
+
   describe('should failed', () => {
     let crosscutAdviceFactory: CrosscutAdviceFactory;
     let eggObjectAopHook: EggObjectAopHook;
@@ -108,7 +108,6 @@ describe('test/aop-runtime.test.ts', () => {
       LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
       EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
     });
-
 
     it('should throw', async () => {
       await assert.rejects(async () => {
