@@ -43,5 +43,17 @@ describe('test/ModuleConfig.test.ts', () => {
         ]);
       });
     });
+
+    describe('module.json has pkg', () => {
+      it('should work', () => {
+        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-pkg-json');
+        const ref = ModuleConfigUtil.readModuleReference(fixturesPath, {
+          cwd: fixturesPath,
+        });
+        assert.deepStrictEqual(ref, [
+          { path: path.join(fixturesPath, 'node_modules/module-a') },
+        ]);
+      });
+    });
   });
 });

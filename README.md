@@ -647,3 +647,20 @@ export class HelloService {
 }
 ```
 
+### 配置项目 module 
+
+一般情况下，无需在项目中手动声明包含了哪些 module，tegg 会自动在项目目录下进行扫描。但是会存在一些特殊的情况，tegg 无法扫描到，比如说 module 是通过 npm 包的方式来发布。因此 tegg 支持通过 `config/module.json` 的方式来声明包含了哪些 module。
+
+支持通过 `path` 引用 `app/modules/foo` 目录下的 module。
+```json
+[
+  {"path":  "../app/modules/foo"}
+]
+```
+
+支持通过 `pkg` 引用使用 npm 发布的 module。
+```json
+[
+  {"pkg": "foo"}
+]
+```
