@@ -31,6 +31,7 @@ standalone/**/node_modules/
 plugin/oneapi/test/fixtures/modules/*/oneapi
 plugin/dal/test/fixtures/modules/*/dal/
 
+!core/common-util/test/fixtures/**/node_modules
 !plugin/*/test/fixtures/ServerGenerator.js
 !**/.autod.conf.js
 !plugin/*/typings/*.d.ts

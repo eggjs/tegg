@@ -9,6 +9,26 @@ export interface ModuleReference {
   path: string;
 }
 
+export interface InlineModuleReferenceConfig {
+  path: string;
+}
+
+export interface NpmModuleReferenceConfig {
+  pkg: string;
+}
+
+export type ModuleReferenceConfig = InlineModuleReferenceConfig | NpmModuleReferenceConfig;
+
+export class ModuleReferenceConfigHelp {
+  static isInlineModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is InlineModuleReferenceConfig {
+    return !!(moduleReference as InlineModuleReferenceConfig).path;
+  }
+
+  static isNpmModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is NpmModuleReferenceConfig {
+    return !!(moduleReference as NpmModuleReferenceConfig).pkg;
+  }
+}
+
 export interface ModuleConfig {
 }
 
@@ -16,6 +36,7 @@ export interface ReadModuleReferenceOptions {
   // module dir deep for globby when use auto scan module
   // default is 10
   deep?: number,
+  cwd?: string;
 }
 
 const DEFAULT_READ_MODULE_REF_OPTS = {
@@ -37,18 +58,33 @@ export class ModuleConfigUtil {
     const configDir = path.join(baseDir, 'config');
     const moduleJsonPath = path.join(configDir, 'module.json');
     if (fs.existsSync(moduleJsonPath)) {
-      return this.readModuleReferenceFromModuleJson(configDir, moduleJsonPath);
+      return this.readModuleReferenceFromModuleJson(configDir, moduleJsonPath, options?.cwd);
     }
     return this.readModuleReferenceFromScan(baseDir, options);
   }
 
-  private static readModuleReferenceFromModuleJson(configDir: string, moduleJsonPath: string): readonly ModuleReference[] {
+  private static readModuleReferenceFromModuleJson(configDir: string, moduleJsonPath: string, cwd?: string): readonly ModuleReference[] {
     const moduleJsonContent = fs.readFileSync(moduleJsonPath, 'utf8');
-    const moduleJson: ModuleReference[] = JSON.parse(moduleJsonContent);
-    for (const moduleReference of moduleJson) {
-      moduleReference.path = path.resolve(configDir, moduleReference.path);
+    const moduleJson: ModuleReferenceConfig[] = JSON.parse(moduleJsonContent);
+    const moduleReferenceList: ModuleReference[] = [];
+    for (const moduleReferenceConfig of moduleJson) {
+      let moduleReference: ModuleReference;
+      if (ModuleReferenceConfigHelp.isNpmModuleReference(moduleReferenceConfig)) {
+        const options = cwd ? { paths: [ cwd ] } : {};
+        const file = require.resolve(moduleReferenceConfig.pkg, options);
+        moduleReference = {
+          path: path.dirname(file),
+        };
+      } else if (ModuleReferenceConfigHelp.isInlineModuleReference(moduleReferenceConfig)) {
+        moduleReference = {
+          path: path.join(configDir, moduleReferenceConfig.path),
+        };
+      } else {
+        throw new Error('unknown type of module reference config: ' + JSON.stringify(moduleReferenceConfig));
+      }
+      moduleReferenceList.push(moduleReference);
     }
-    return moduleJson;
+    return moduleReferenceList;
   }
 
   private static readModuleReferenceFromScan(baseDir: string, options?: ReadModuleReferenceOptions): readonly ModuleReference[] {
