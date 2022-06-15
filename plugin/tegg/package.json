@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -46,17 +46,17 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^1.0.0",
-    "@eggjs/tegg": "^1.0.5",
-    "@eggjs/tegg-background-task": "^1.0.0",
-    "@eggjs/tegg-common-util": "^1.0.0",
-    "@eggjs/tegg-dynamic-inject-runtime": "^1.0.5",
-    "@eggjs/tegg-loader": "^1.0.1",
-    "@eggjs/tegg-metadata": "^1.0.1",
-    "@eggjs/tegg-runtime": "^1.0.5",
+    "@eggjs/tegg": "^1.1.0",
+    "@eggjs/tegg-background-task": "^1.1.0",
+    "@eggjs/tegg-common-util": "^1.1.0",
+    "@eggjs/tegg-dynamic-inject-runtime": "^1.1.0",
+    "@eggjs/tegg-loader": "^1.1.0",
+    "@eggjs/tegg-metadata": "^1.1.0",
+    "@eggjs/tegg-runtime": "^1.1.0",
     "sdk-base": "^3.6.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^1.0.0",
+    "@eggjs/tegg-config": "^1.1.0",
     "egg": "^2.26.1",
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",
