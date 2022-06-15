@@ -14,7 +14,7 @@ export interface InlineModuleReferenceConfig {
 }
 
 export interface NpmModuleReferenceConfig {
-  pkg: string;
+  package: string;
 }
 
 export type ModuleReferenceConfig = InlineModuleReferenceConfig | NpmModuleReferenceConfig;
@@ -25,7 +25,7 @@ export class ModuleReferenceConfigHelp {
   }
 
   static isNpmModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is NpmModuleReferenceConfig {
-    return !!(moduleReference as NpmModuleReferenceConfig).pkg;
+    return !!(moduleReference as NpmModuleReferenceConfig).package;
   }
 }
 
@@ -71,7 +71,8 @@ export class ModuleConfigUtil {
       let moduleReference: ModuleReference;
       if (ModuleReferenceConfigHelp.isNpmModuleReference(moduleReferenceConfig)) {
         const options = cwd ? { paths: [ cwd ] } : {};
-        const file = require.resolve(moduleReferenceConfig.pkg, options);
+        const pkgJson = path.join(moduleReferenceConfig.package, 'package.json');
+        const file = require.resolve(pkgJson, options);
         moduleReference = {
           path: path.dirname(file),
         };
