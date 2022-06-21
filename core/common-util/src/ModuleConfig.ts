@@ -58,7 +58,7 @@ export class ModuleConfigUtil {
     const configDir = path.join(baseDir, 'config');
     const moduleJsonPath = path.join(configDir, 'module.json');
     if (fs.existsSync(moduleJsonPath)) {
-      return this.readModuleReferenceFromModuleJson(configDir, moduleJsonPath, options?.cwd);
+      return this.readModuleReferenceFromModuleJson(configDir, moduleJsonPath, options?.cwd || baseDir);
     }
     return this.readModuleReferenceFromScan(baseDir, options);
   }
