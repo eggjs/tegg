@@ -64,8 +64,7 @@ export class ModuleConfigUtil {
   }
 
   private static readModuleReferenceFromModuleJson(configDir: string, moduleJsonPath: string, cwd?: string): readonly ModuleReference[] {
-    const moduleJsonContent = fs.readFileSync(moduleJsonPath, 'utf8');
-    const moduleJson: ModuleReferenceConfig[] = JSON.parse(moduleJsonContent);
+    const moduleJson: ModuleReferenceConfig[] = this.readModuleJson(moduleJsonPath);
     const moduleReferenceList: ModuleReference[] = [];
     for (const moduleReferenceConfig of moduleJson) {
       let moduleReference: ModuleReference;
@@ -86,6 +85,11 @@ export class ModuleConfigUtil {
       moduleReferenceList.push(moduleReference);
     }
     return moduleReferenceList;
+  }
+
+  protected static readModuleJson(moduleJsonPath: string): ModuleReferenceConfig[] {
+    const moduleJsonContent = fs.readFileSync(moduleJsonPath, 'utf8');
+    return JSON.parse(moduleJsonContent);
   }
 
   private static readModuleReferenceFromScan(baseDir: string, options?: ReadModuleReferenceOptions): readonly ModuleReference[] {
