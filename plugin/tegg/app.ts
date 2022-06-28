@@ -15,13 +15,6 @@ export default class App {
   }
 
   configWillLoad() {
-    // Hack middleware order
-    // Obj may create in core middleware,
-    // so `teggCtxLifecycleMiddleware` should be last of core middlewares.
-    // Middleware config should set in configWillLoad,
-    // but tegg plugin is not the last plugin,
-    // other plugin after tegg may modify middleware order,
-    // so add teggCtxLifecycleMiddleware in configDidLoad
     this.app.config.coreMiddleware.push('teggCtxLifecycleMiddleware');
   }
 
