@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -47,7 +47,7 @@
     "@eggjs/tegg-loader": "^1.1.1",
     "@eggjs/tegg-metadata": "^1.1.1",
     "@eggjs/tegg-orm-decorator": "^1.1.1",
-    "@eggjs/tegg-runtime": "^1.1.1"
+    "@eggjs/tegg-runtime": "^1.2.0"
   },
   "publishConfig": {
     "access": "public"
