@@ -3,6 +3,7 @@ import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { ModuleHandler } from './ModuleHandler';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
+import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl';
 
 export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecycleContext, EggContext> {
   private readonly moduleHandler: ModuleHandler;
@@ -14,6 +15,11 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
       const iterator = loadUnitInstance.loadUnit.iterateEggPrototype();
       for (const proto of iterator) {
         if (proto.initType === ObjectInitType.CONTEXT) {
+          // skip the egg compatible object
+          // If the egg compatible object has beed used with inject,
+          // it will be refer by inject info. And it can not be used
+          // with ctx.module.${moduleName} so skip it is safe.
+          if (proto instanceof EggCompatibleProtoImpl) continue;
           this.requestProtoList.push(proto);
         }
       }

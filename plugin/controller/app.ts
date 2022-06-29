@@ -80,7 +80,7 @@ export default class ControllerAppBootHook {
     await this.app.moduleHandler.ready();
     this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
     await this.controllerLoadUnitHandler.ready();
-    this.controllerHook = new EggControllerHook(this.controllerLoadUnitHandler);
+    this.controllerHook = new EggControllerHook();
     this.app.eggContextLifecycleUtil.registerLifecycle(this.controllerHook);
 
     // The real register HTTP controller/method.

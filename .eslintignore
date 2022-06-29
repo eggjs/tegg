@@ -13,4 +13,5 @@ integration/**/test/fixtures
 plugin/*/test/fixtures/**/run
 plugin/*/test/fixtures/**/oneapi
 plugin/*/test/fixtures/**/logs
+benchmark
 !plugin/tegg-compatible/typings/index.d.ts
