@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14 ]
+        node-version: [ 14, 16, 18 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14 ]
+        node-version: [ 14, 16, 18 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master
@@ -86,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14 ]
+        node-version: [ 14, 16, 18 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master
