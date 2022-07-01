@@ -5,7 +5,6 @@ import { ICache } from './ICache';
 export default class CacheService {
   @Inject({
     name: 'fooCache',
-    proto: 'ICache',
   })
   @InitTypeQualifier(ObjectInitType.SINGLETON)
   @ModuleQualifier('foo')
