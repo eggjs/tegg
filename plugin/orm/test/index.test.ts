@@ -3,6 +3,9 @@ import path from 'path';
 import mm from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
 import os from 'os';
+import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService';
+import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg';
+import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App';
 
 describe('test/orm.test.ts', () => {
   // TODO win32 ci not support mysql
@@ -15,6 +18,10 @@ describe('test/orm.test.ts', () => {
 
   afterEach(async () => {
     await app.destroyModuleContext(ctx);
+    await Promise.all([
+      Pkg.truncate(),
+      App.truncate(),
+    ]);
     mm.restore();
   });
 
@@ -48,6 +55,23 @@ describe('test/orm.test.ts', () => {
     const findModel = await appService.findApp('egg');
     assert(findModel);
     assert(findModel.name === 'egg');
+    assert(findModel.desc === 'the framework');
+  });
+
+  it('hook should work', async () => {
+    ctx = await app.mockModuleContext();
+    const pkgService = await ctx.getEggObject(PkgService);
+    const pkgModel = await pkgService.createPkg({
+      name: 'egg',
+      desc: 'the framework',
+    });
+    assert(pkgModel);
+    assert(pkgModel.name === 'egg_before_create_hook');
+    assert(pkgModel.desc === 'the framework');
+
+    const findModel = await pkgService.findPkg('egg_before_create_hook');
+    assert(findModel);
+    assert(findModel.name === 'egg_before_create_hook');
     assert(findModel.desc === 'the framework');
   });
 });
