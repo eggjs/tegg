@@ -16,12 +16,12 @@ export class MetadataUtil {
     return Reflect.getOwnMetadata(metadataKey, clazz);
   }
 
-  static hasMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass): boolean {
-    return Reflect.hasMetadata(metadataKey, clazz);
+  static hasMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass, propKey?: PropertyKey): boolean {
+    return Reflect.hasMetadata(metadataKey, clazz, propKey as string);
   }
 
-  static getMetaData<T>(metadataKey: MetaDataKey, clazz: EggProtoImplClass): T | undefined {
-    return Reflect.getMetadata(metadataKey, clazz);
+  static getMetaData<T>(metadataKey: MetaDataKey, clazz: EggProtoImplClass, propKey?: PropertyKey): T | undefined {
+    return Reflect.getMetadata(metadataKey, clazz, propKey as string);
   }
 
   static getBooleanMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass): boolean {

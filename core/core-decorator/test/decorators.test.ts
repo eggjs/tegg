@@ -53,6 +53,15 @@ describe('test/decorator.test.ts', () => {
       }, {
         refName: 'testService',
         objName: 'testService',
+      }, {
+        objName: 'abcabc',
+        refName: 'testService2',
+      }, {
+        objName: 'testService3',
+        refName: 'otherService',
+      }, {
+        objName: 'testService4',
+        refName: 'testService4',
       }];
       assert.deepStrictEqual(PrototypeUtil.getInjectObjects(CacheService), expectInjectInfo);
     });

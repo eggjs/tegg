@@ -11,12 +11,12 @@ export class Base {
 }
 
 @ContextProto()
-export class Bar extends Base {
-  @Inject()
-  foo: Foo;
+export class Foo extends Base {
+
 }
 
 @ContextProto()
-export class Foo extends Base {
-
+export class Bar extends Base {
+  @Inject()
+  foo: Foo;
 }

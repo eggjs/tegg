@@ -79,4 +79,8 @@ export class PrototypeUtil {
   static setClazzProto(clazz: EggProtoImplClass, proto: object) {
     return MetadataUtil.defineMetaData(this.CLAZZ_PROTO, proto, clazz);
   }
+
+  static getDesignType(clazz: EggProtoImplClass, propKey?: PropertyKey) {
+    return MetadataUtil.getMetaData('design:type', clazz, propKey);
+  }
 }
