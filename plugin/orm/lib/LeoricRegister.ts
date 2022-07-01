@@ -1,6 +1,7 @@
 import { ModelProtoManager } from './ModelProtoManager';
 import { DataSourceManager, OrmConfig } from './DataSourceManager';
 import Realm from 'leoric';
+import { hookNames } from 'leoric/src/setup_hooks';
 import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
 
 export class LeoricRegister {
@@ -56,8 +57,16 @@ export class LeoricRegister {
       realm.models[clazz.name] = clazz;
       realm[clazz.name] = clazz;
       const attributes = this.generateLeoricAttributes(metadata);
+      const hooks = {};
+      for (const hookName of hookNames) {
+        if (clazz[hookName]) {
+          hooks[hookName] = clazz[hookName];
+        }
+      }
+
       (clazz as any).init(attributes, {
         tableName: metadata.tableName,
+        hooks,
       }, {});
     }
     await Promise.all(Array.from(this.realmMap.values())

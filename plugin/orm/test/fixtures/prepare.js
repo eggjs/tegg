@@ -40,6 +40,12 @@ async function init() {
     '  `desc` varchar(100) NOT NULL,\n' +
     '  PRIMARY KEY (`id`)\n' +
     ');');
+  await query('CREATE TABLE `pkgs` (\n' +
+    '  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n' +
+    '  `name` varchar(100) NOT NULL,\n' +
+    '  `desc` varchar(100) NOT NULL,\n' +
+    '  PRIMARY KEY (`id`)\n' +
+    ');');
 }
 
 (async () => {
