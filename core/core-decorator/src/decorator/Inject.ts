@@ -7,17 +7,10 @@ export interface InjectParams {
   name?: string;
 }
 
-export function Inject(param?: InjectParams | EggProtoImplClass | string) {
+export function Inject(param?: InjectParams | string) {
   return function(target: any, propertyKey: PropertyKey) {
-    // params allow string, protoClass, or object
-    let objName: PropertyKey | undefined;
-    if (typeof param === 'string') {
-      objName = param;
-    } else if (param) {
-      const protoInfo = PrototypeUtil.getProperty(param as EggProtoImplClass);
-      objName = protoInfo ? protoInfo.name : param.name;
-    }
-
+    // params allow string, or object
+    const objName = typeof param === 'string' ? param : param?.name;
     const injectObject: InjectObjectInfo = {
       refName: propertyKey,
       objName: objName || propertyKey,

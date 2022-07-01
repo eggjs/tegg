@@ -1,15 +1,8 @@
 import { ContextProto, Inject } from '../../..';
 import { ICache } from './ICache';
 
-@ContextProto({ name: 'abcdefg' })
-export class TestService {
-  sayHi() {
-    console.info('hi');
-  }
-}
-
 @ContextProto()
-export class TestService2 {
+export class TestService {
   sayHi() {
     console.info('hi');
   }
@@ -25,9 +18,6 @@ export default class CacheService {
   } as any)
   cache: ICache;
 
-  @Inject('testService2')
-  testService2: TestService2;
-
-  @Inject(TestService)
+  @Inject('testService')
   testService: TestService;
 }
