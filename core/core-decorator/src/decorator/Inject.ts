@@ -7,13 +7,22 @@ export interface InjectParams {
   name?: string;
 }
 
-export function Inject(param?: InjectParams) {
+export function Inject(param?: InjectParams | EggProtoImplClass | string) {
   return function(target: any, propertyKey: PropertyKey) {
-    const objName = param?.name || propertyKey;
+    // params allow string, protoClass, or object
+    let objName: PropertyKey | undefined;
+    if (typeof param === 'string') {
+      objName = param;
+    } else if (param) {
+      const protoInfo = PrototypeUtil.getProperty(param as EggProtoImplClass);
+      objName = protoInfo ? protoInfo.name : param.name;
+    }
+
     const injectObject: InjectObjectInfo = {
       refName: propertyKey,
-      objName,
+      objName: objName || propertyKey,
     };
+
     PrototypeUtil.addInjectObject(target.constructor as EggProtoImplClass, injectObject);
   };
 }

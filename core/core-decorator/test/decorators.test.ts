@@ -50,6 +50,12 @@ describe('test/decorator.test.ts', () => {
       const expectInjectInfo: InjectObjectInfo[] = [{
         refName: 'cache',
         objName: 'fooCache',
+      }, {
+        refName: 'testService2',
+        objName: 'testService2',
+      }, {
+        refName: 'testService',
+        objName: 'abcdefg',
       }];
       assert.deepStrictEqual(PrototypeUtil.getInjectObjects(CacheService), expectInjectInfo);
     });
