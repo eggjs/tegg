@@ -9,7 +9,6 @@ export class Pkg extends Bone {
   desc: string;
 
   static beforeCreate(instance: Pkg) {
-    console.log('before save!!!');
     instance.name += '_before_create_hook';
   }
 }
