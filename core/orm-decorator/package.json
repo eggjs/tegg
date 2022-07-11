@@ -43,7 +43,7 @@
     "pluralize": "^8.0.0"
   },
   "peerDependencies": {
-    "leoric": "^1.6.7"
+    "leoric": "^2.6.1"
   },
   "publishConfig": {
     "access": "public"
