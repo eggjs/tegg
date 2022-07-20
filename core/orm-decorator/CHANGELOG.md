@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/eggjs/tegg/compare/@eggjs/tegg-orm-decorator@1.4.0...@eggjs/tegg-orm-decorator@1.4.1) (2022-07-20)
+
+
+### Bug Fixes
+
+* use getMetaData for ModelMetadataUtil ([#44](https://github.com/eggjs/tegg/issues/44)) ([87a306c](https://github.com/eggjs/tegg/commit/87a306c4fba51fd519a47c0caaa79442643ea107))
+
+
+
+
+
 # [1.4.0](https://github.com/eggjs/tegg/compare/@eggjs/tegg-orm-decorator@1.3.1...@eggjs/tegg-orm-decorator@1.4.0) (2022-07-20)
 
 
