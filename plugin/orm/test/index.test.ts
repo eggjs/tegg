@@ -74,4 +74,12 @@ describe('test/orm.test.ts', () => {
     assert(findModel.name === 'egg_before_create_hook');
     assert(findModel.desc === 'the framework');
   });
+
+  it('ctx should inject with Model', async () => {
+    ctx = await app.mockModuleContext();
+    const appService = await ctx.getEggObject(AppService);
+    app.mockLog();
+    await appService.findApp('egg');
+    app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1 path: \//);
+  });
 });

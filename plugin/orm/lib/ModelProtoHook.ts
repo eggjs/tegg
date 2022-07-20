@@ -16,7 +16,7 @@ export class ModelProtoHook implements LifecycleHook<EggPrototypeLifecycleContex
     }
     const builder = new ModelMetaBuilder(ctx.clazz);
     const metadata = builder.build();
-    ModelMetadataUtil.setControllerMetadata(ctx.clazz, metadata);
+    ModelMetadataUtil.setModelMetadata(ctx.clazz, metadata);
     this.modelProtoManager.addProto(ctx.clazz, obj);
   }
 }

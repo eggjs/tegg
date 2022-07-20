@@ -1,10 +1,10 @@
-import { ContextProto } from '@eggjs/tegg';
+import { ContextProto, Inject } from '@eggjs/tegg';
 import { Pkg } from './model/Pkg';
 
 @ContextProto()
 export class PkgService {
-  // TODO impl inject Bone for context
-  Pkg: typeof Pkg = Pkg;
+  @Inject()
+  Pkg: typeof Pkg;
 
   async createPkg(data: {
     name: string;
