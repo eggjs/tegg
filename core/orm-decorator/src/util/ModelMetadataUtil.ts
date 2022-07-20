@@ -9,6 +9,6 @@ export class ModelMetadataUtil {
   }
 
   static getModelMetadata(clazz): ModelMetadata | undefined {
-    return MetadataUtil.getOwnMetaData(MODEL_METADATA, clazz);
+    return MetadataUtil.getMetaData(MODEL_METADATA, clazz);
   }
 }
