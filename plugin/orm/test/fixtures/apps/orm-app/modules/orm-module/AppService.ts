@@ -1,10 +1,10 @@
-import { ContextProto } from '@eggjs/tegg';
+import { ContextProto, Inject } from '@eggjs/tegg';
 import { App } from './model/App';
 
 @ContextProto()
 export class AppService {
-  // TODO impl inject Bone for context
-  App: typeof App = App;
+  @Inject()
+  App: typeof App;
 
   async createApp(data: {
     name: string;

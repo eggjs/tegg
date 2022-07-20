@@ -1,15 +1,17 @@
+import Base from 'sdk-base';
 import { ModelProtoManager } from './ModelProtoManager';
 import { DataSourceManager, OrmConfig } from './DataSourceManager';
 import Realm from 'leoric';
 import { hookNames } from 'leoric/src/setup_hooks';
 import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
 
-export class LeoricRegister {
+export class LeoricRegister extends Base {
   private readonly modelProtoManager: ModelProtoManager;
   private readonly dataSourceManager: DataSourceManager;
-  private readonly realmMap: Map<string, any>;
+  readonly realmMap: Map<string, any>;
 
   constructor(modelProtoManager: ModelProtoManager, dataSourceManager: DataSourceManager) {
+    super();
     this.modelProtoManager = modelProtoManager;
     this.dataSourceManager = dataSourceManager;
     this.realmMap = new Map();
@@ -51,7 +53,7 @@ export class LeoricRegister {
 
   async register() {
     for (const { proto, clazz } of this.modelProtoManager.getProtos()) {
-      const metadata = ModelMetadataUtil.getControllerMetadata(clazz);
+      const metadata = ModelMetadataUtil.getModelMetadata(clazz);
       if (!metadata) throw new Error(`not found metadata for model ${proto.id}`);
       const realm = this.getOrCreateRealm(metadata.dataSource);
       realm.models[clazz.name] = clazz;
@@ -71,5 +73,6 @@ export class LeoricRegister {
     }
     await Promise.all(Array.from(this.realmMap.values())
       .map(realm => realm.connect()));
+    this.ready(true);
   }
 }
