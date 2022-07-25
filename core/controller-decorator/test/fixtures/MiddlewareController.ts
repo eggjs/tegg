@@ -1,5 +1,5 @@
 import { EggContext, Next } from '../../src/model';
-import { Middleware } from '../../src/decorator/Middleware';
+import { Middleware,Middlewares } from '../../src/decorator/Middleware';
 
 async function middleware1(ctx: EggContext, next: Next) {
   console.log(ctx, next);
@@ -23,10 +23,10 @@ export class MiddlewareController {
   }
 }
 
-@Middleware([middleware1])
+@Middlewares([middleware1])
 export class MiddlewaresController {
 
-  @Middleware([middleware2,middleware3])
+  @Middlewares([middleware2,middleware3])
   async hello(): Promise<void> {
     return;
   }
