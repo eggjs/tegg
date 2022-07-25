@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { MiddlewareController,MiddlewaresController } from './fixtures/MiddlewareController';
+import { MiddlewareController, MiddlewaresController } from './fixtures/MiddlewareController';
 import ControllerInfoUtil from '../src/util/ControllerInfoUtil';
 import MethodInfoUtil from '../src/util/MethodInfoUtil';
 

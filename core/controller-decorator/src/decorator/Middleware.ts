@@ -6,11 +6,11 @@ import MethodInfoUtil from '../util/MethodInfoUtil';
 
 export function Middleware(middleware: MiddlewareFunc | MiddlewareFunc[]) {
   function classMiddleware(constructor: EggProtoImplClass) {
-    if(Array.isArray(middleware)){
-      middleware.forEach(mid=>{
+    if (Array.isArray(middleware)) {
+      middleware.forEach(mid => {
         ControllerInfoUtil.addControllerMiddleware(mid, constructor);
-      })
-    } else{
+      });
+    } else {
       ControllerInfoUtil.addControllerMiddleware(middleware, constructor);
     }
   }
@@ -20,11 +20,11 @@ export function Middleware(middleware: MiddlewareFunc | MiddlewareFunc[]) {
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;
-    if(Array.isArray(middleware)){
-      middleware.forEach(mid=>{
+    if (Array.isArray(middleware)) {
+      middleware.forEach(mid => {
         MethodInfoUtil.addMethodMiddleware(mid, controllerClazz, methodName);
-      })
-    } else{
+      });
+    } else {
       MethodInfoUtil.addMethodMiddleware(middleware, controllerClazz, methodName);
     }
 
