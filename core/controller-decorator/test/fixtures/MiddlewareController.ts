@@ -22,3 +22,12 @@ export class MiddlewareController {
     return;
   }
 }
+
+@Middleware([middleware1])
+export class MiddlewaresController {
+
+  @Middleware([middleware2,middleware3])
+  async hello(): Promise<void> {
+    return;
+  }
+}
