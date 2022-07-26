@@ -56,10 +56,10 @@ export default async function globalLog(ctx: Context, next: any) {
 
 // app/controller/FooController.ts
 import { Middleware } from '@eggjs/tegg';
-// @Middlewares([globalLog])
+// @Middlewares([ globalLog ])
 @Middleware(globalLog)
 export class FooController {
-   // @Middlewares([methodCount])
+   // @Middlewares([ methodCount ])
   @Middleware(methodCount)
   
   async hello() {

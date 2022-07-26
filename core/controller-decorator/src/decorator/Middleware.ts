@@ -7,7 +7,6 @@ import MethodInfoUtil from '../util/MethodInfoUtil';
 export function Middleware(middleware: MiddlewareFunc) {
   function classMiddleware(constructor: EggProtoImplClass) {
     ControllerInfoUtil.addControllerMiddleware(middleware, constructor);
-
   }
 
   function methodMiddleware(target: any, propertyKey: PropertyKey) {
@@ -16,8 +15,6 @@ export function Middleware(middleware: MiddlewareFunc) {
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;
     MethodInfoUtil.addMethodMiddleware(middleware, controllerClazz, methodName);
-
-
   }
 
   return function(target: any, propertyKey?: PropertyKey) {
@@ -34,7 +31,6 @@ export function Middlewares(middlewares: MiddlewareFunc []) {
     middlewares.forEach(mid => {
       ControllerInfoUtil.addControllerMiddleware(mid, constructor);
     });
-
   }
 
   function methodMiddleware(target: any, propertyKey: PropertyKey) {
@@ -45,8 +41,6 @@ export function Middlewares(middlewares: MiddlewareFunc []) {
     middlewares.forEach(mid => {
       MethodInfoUtil.addMethodMiddleware(mid, controllerClazz, methodName);
     });
-
-
   }
 
   return function(target: any, propertyKey?: PropertyKey) {

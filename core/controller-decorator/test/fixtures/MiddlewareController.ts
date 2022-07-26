@@ -23,10 +23,10 @@ export class MiddlewareController {
   }
 }
 
-@Middlewares([middleware1])
+@Middlewares([ middleware1 ])
 export class MiddlewaresController {
 
-  @Middlewares([middleware2,middleware3])
+  @Middlewares([ middleware2, middleware3 ])
   async hello(): Promise<void> {
     return;
   }
