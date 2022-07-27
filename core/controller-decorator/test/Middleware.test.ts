@@ -10,7 +10,7 @@ describe('test/Middleware.test.ts', () => {
     assert(controllerMws.length === 1);
     assert(methodMws.length === 2);
   });
-  it('Middlewares should work', () => {
+  it('Middleware with muti params should work', () => {
     const controllerMws = ControllerInfoUtil.getControllerMiddlewares(MiddlewaresController);
     const methodMws = MethodInfoUtil.getMethodMiddlewares(MiddlewaresController, 'hello');
     assert(controllerMws.length === 1);

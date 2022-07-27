@@ -41,8 +41,8 @@ exports.teggController = {
 
 ## Usage
 
-### Middleware/Middlewares
-两者的区别在于参数是否为数组， Middleware 可以传多个参数，Middlewares 只提供数组形式。
+### Middleware
+Middleware 支持多个入参，依次传入要生效的中间件
 中间件注解，可以添加在类/方法上。添加在类上时，对类上所有方法生效，添加在方法上时，只对当前方法生效。
 
 ```ts
@@ -61,10 +61,8 @@ export default async function globalLog2(ctx: Context, next: any) {
 
 // app/controller/FooController.ts
 import { Middleware } from '@eggjs/tegg';
-// @Middlewares([ globalLog, globalLog2 ])
 @Middleware(globalLog,globalLog2)
 export class FooController {
-   // @Middlewares([ methodCount ])
   @Middleware(methodCount)
   
   async hello() {

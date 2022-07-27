@@ -29,11 +29,3 @@ export function Middleware(...middlewares: MiddlewareFunc []) {
     }
   };
 }
-
-export function Middlewares(middlewares: MiddlewareFunc []) {
-  return function(target: any, propertyKey?: PropertyKey) {
-    middlewares.forEach(mid => {
-      Middleware(mid)(target, propertyKey);
-    });
-  };
-}
