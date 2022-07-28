@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/eggjs/tegg/compare/@eggjs/tegg-controller-plugin@1.3.3...@eggjs/tegg-controller-plugin@1.4.0) (2022-07-28)
+
+
+### Features
+
+* middleware decorator allow multi middleware function ([#46](https://github.com/eggjs/tegg/issues/46)) ([a4b55f7](https://github.com/eggjs/tegg/commit/a4b55f7065c3d78e2c98c4b05f01871f666542ef))
+
+
+
+
+
 ## [1.3.3](https://github.com/eggjs/tegg/compare/@eggjs/tegg-controller-plugin@1.3.2...@eggjs/tegg-controller-plugin@1.3.3) (2022-07-20)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
