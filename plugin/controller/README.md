@@ -42,6 +42,7 @@ exports.teggController = {
 ## Usage
 
 ### Middleware
+Middleware 支持多个入参，依次传入要生效的中间件
 中间件注解，可以添加在类/方法上。添加在类上时，对类上所有方法生效，添加在方法上时，只对当前方法生效。
 
 ```ts
@@ -53,13 +54,17 @@ export default async function globalLog(ctx: Context, next: any) {
   return next();
 }
 
+export default async function globalLog2(ctx: Context, next: any) {
+  ctx.logger.info('have a request2');
+  return next();
+}
+
 // app/controller/FooController.ts
 import { Middleware } from '@eggjs/tegg';
-
-@Middleware(globalLog)
+@Middleware(globalLog,globalLog2)
 export class FooController {
-
   @Middleware(methodCount)
+  
   async hello() {
   }
 }
