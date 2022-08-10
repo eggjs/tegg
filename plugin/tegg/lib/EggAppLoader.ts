@@ -7,7 +7,6 @@ import {
   PrototypeUtil,
   QualifierUtil,
 } from '@eggjs/tegg';
-import { FrameworkErrorFormater } from 'egg-errors';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
