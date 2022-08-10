@@ -2,6 +2,7 @@ import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { CountService } from './CountService';
 import sleep from 'mz-modules/sleep';
+import assert from 'assert';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -11,11 +12,15 @@ export default class BackgroundService {
   private readonly backgroundTaskHelper:BackgroundTaskHelper;
 
   @Inject()
+  testObj: any;
+
+  @Inject()
   private readonly countService: CountService;
 
-  async backgroundAdd() {
+  async backgroundAdd(delay = 1000) {
     this.backgroundTaskHelper.run(async () => {
-      await sleep(1000);
+      await sleep(delay);
+      assert(this.testObj.ok);
       this.countService.count += 1;
     });
   }

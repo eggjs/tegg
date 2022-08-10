@@ -8,4 +8,11 @@ export default class App extends Controller {
     this.ctx.status = 200;
     this.ctx.body = 'done';
   }
+
+  async backgroudTimeout() {
+    const backgroundService = await this.ctx.getEggObject(BackgroundService);
+    await backgroundService.backgroundAdd(6000);
+    this.ctx.status = 200;
+    this.ctx.body = 'done';
+  }
 }
