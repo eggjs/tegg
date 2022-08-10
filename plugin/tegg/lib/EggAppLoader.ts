@@ -1,5 +1,5 @@
 import { Application } from 'egg';
-import { Loader } from '@eggjs/tegg-metadata';
+import { Loader, TeggError } from '@eggjs/tegg-metadata';
 import {
   AccessLevel,
   EggProtoImplClass, InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute,
@@ -7,6 +7,7 @@ import {
   PrototypeUtil,
   QualifierUtil,
 } from '@eggjs/tegg';
+import { FrameworkErrorFormater } from 'egg-errors';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
@@ -46,6 +47,11 @@ export class EggAppLoader implements Loader {
   private buildCtxClazz(name: string): EggProtoImplClass {
     const temp = {
       [name]: function(ctx) {
+        if (!ctx) {
+          // ctx has been destroyed, throw humanize error info
+          throw TeggError.create(`Can not read property \`${name}\` because egg ctx has been destroyed`, 'read_after_ctx_destroyed');
+        }
+
         return ctx[name];
       } as any,
     };
