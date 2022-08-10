@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-plugin",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "eggPlugin": {
     "name": "eventbusModule",
     "dependencies": [
@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@eggjs/tegg-config": "^1.1.1",
-    "@eggjs/tegg-plugin": "^1.3.4",
+    "@eggjs/tegg-plugin": "^1.3.5",
     "await-event": "^2.1.0",
     "egg": "^2.29.4",
     "egg-mock": "^4.0.1"
