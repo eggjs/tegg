@@ -12,7 +12,7 @@ export default class BackgroundService {
   private readonly backgroundTaskHelper:BackgroundTaskHelper;
 
   @Inject()
-  testObj: any
+  testObj: any;
 
   @Inject()
   private readonly countService: CountService;
