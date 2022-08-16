@@ -43,8 +43,9 @@ export class HTTPControllerMetaBuilder {
     const protoName = property!.name as string;
     const needAcl = ControllerInfoUtil.hasControllerAcl(this.clazz);
     const aclCode = ControllerInfoUtil.getControllerAcl(this.clazz);
+    const host = ControllerInfoUtil.getControllerHost(this.clazz);
     const metadata = new HTTPControllerMeta(
-      clazzName, protoName, controllerName, httpPath, httpMiddlewares, methods, needAcl, aclCode);
+      clazzName, protoName, controllerName, httpPath, httpMiddlewares, methods, needAcl, aclCode, host);
     ControllerMetadataUtil.setControllerMetadata(this.clazz, metadata);
     for (const method of metadata.methods) {
       const realPath = metadata.getMethodRealPath(method);
