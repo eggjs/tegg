@@ -193,3 +193,23 @@ export class FooController {
 // 具体 name 值可以查看 path-to-regexp
 @HTTPParam({ name: '0' }) id: string
 ```
+
+### Host
+Host 注解，用于指定 HTTP 方法仅在 host 匹配时执行。
+可以添加在类/方法上。添加在类上时，对类上所有方法生效，添加在方法上时，只对当前方法生效。方法上的注解可以覆盖类上的注解
+
+```ts
+// app/controller/FooController.ts
+import { Host } from '@eggjs/tegg';
+@Host('foo.eggjs.com')
+export class FooController {
+  // 仅能通过 foo.eggjs.com 访问
+  async hello() {
+  }
+
+  // 仅能通过 bar.eggjs.com 访问
+  @Host('bar.eggjs.com')
+  async bar() {
+  }
+}
+```

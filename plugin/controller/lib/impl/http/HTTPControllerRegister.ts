@@ -18,6 +18,7 @@ export class HTTPControllerRegister implements ControllerRegister {
   static instance?: HTTPControllerRegister;
 
   private readonly router: KoaRouter<any, Context>;
+  private readonly checkRouters: Map<string, KoaRouter<any, Context>>;
   private readonly eggContainerFactory: typeof EggContainerFactory;
   private controllerProtos: EggPrototype[] = [];
 
@@ -32,6 +33,8 @@ export class HTTPControllerRegister implements ControllerRegister {
 
   constructor(router: KoaRouter<any, Context>, eggContainerFactory: typeof EggContainerFactory) {
     this.router = router;
+    this.checkRouters = new Map();
+    this.checkRouters.set('default', router);
     this.eggContainerFactory = eggContainerFactory;
   }
 
@@ -43,6 +46,7 @@ export class HTTPControllerRegister implements ControllerRegister {
   static clean() {
     if (this.instance) {
       this.instance.controllerProtos = [];
+      this.instance.checkRouters.clear();
     }
     this.instance = undefined;
   }
@@ -57,11 +61,20 @@ export class HTTPControllerRegister implements ControllerRegister {
     }
     const allMethods = Array.from(methodMap.keys())
       .sort((a, b) => b.priority - a.priority);
+
     for (const method of allMethods) {
       const controllerProto = methodMap.get(method)!;
       const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
       const methodRegister = new HTTPMethodRegister(
-        controllerProto, controllerMeta, method, this.router, this.eggContainerFactory);
+        controllerProto, controllerMeta, method, this.router, this.checkRouters, this.eggContainerFactory);
+      methodRegister.checkDuplicate();
+    }
+
+    for (const method of allMethods) {
+      const controllerProto = methodMap.get(method)!;
+      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;
+      const methodRegister = new HTTPMethodRegister(
+        controllerProto, controllerMeta, method, this.router, this.checkRouters, this.eggContainerFactory);
       methodRegister.register(rootProtoManager);
     }
   }

@@ -3,6 +3,7 @@ import { ControllerTypeLike, MiddlewareFunc } from '../model';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 const METHOD_CONTROLLER_TYPE_MAP = Symbol.for('EggPrototype#controller#mthods');
+const METHOD_CONTROLLER_HOST = Symbol.for('EggPrototype#controller#mthods#host');
 const METHOD_CONTEXT_INDEX = Symbol.for('EggPrototype#controller#method#context');
 const METHOD_MIDDLEWARES = Symbol.for('EggPrototype#method#middlewares');
 const METHOD_ACL = Symbol.for('EggPrototype#method#acl');
@@ -57,5 +58,15 @@ export default class MethodInfoUtil {
   static getMethodAcl(clazz: EggProtoImplClass, methodName: string): string | undefined {
     const methodAclMap: MethodAclMap | undefined = MetadataUtil.getMetaData(METHOD_ACL, clazz);
     return methodAclMap?.get(methodName);
+  }
+
+  static setMethodHost(host: string, clazz: EggProtoImplClass, methodName: string) {
+    const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(METHOD_CONTROLLER_HOST, clazz, new Map());
+    methodControllerMap.set(methodName, host);
+  }
+
+  static getMethodHost(clazz: EggProtoImplClass, methodName: string): string | undefined {
+    const methodControllerMap: METHOD_MAP | undefined = MetadataUtil.getMetaData(METHOD_CONTROLLER_HOST, clazz);
+    return methodControllerMap?.get(methodName);
   }
 }

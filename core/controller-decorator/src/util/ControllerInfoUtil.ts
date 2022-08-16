@@ -3,6 +3,7 @@ import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
 
 export const CONTROLLER_TYPE = Symbol.for('EggPrototype#controllerType');
 export const CONTROLLER_NAME = Symbol.for('EggPrototype#controllerName');
+export const CONTROLLER_HOST = Symbol.for('EggPrototype#controllerHost');
 export const CONTROLLER_MIDDLEWARES = Symbol.for('EggPrototype#controller#middlewares');
 export const CONTROLLER_ACL = Symbol.for('EggPrototype#controller#acl');
 
@@ -42,5 +43,13 @@ export default class ControllerInfoUtil {
 
   static getControllerAcl(clazz: EggProtoImplClass): string | undefined {
     return MetadataUtil.getMetaData(CONTROLLER_ACL, clazz);
+  }
+
+  static addControllerHost(host: string, clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(CONTROLLER_HOST, host, clazz);
+  }
+
+  static getControllerHost(clazz: EggProtoImplClass): string | undefined {
+    return MetadataUtil.getMetaData(CONTROLLER_HOST, clazz);
   }
 }
