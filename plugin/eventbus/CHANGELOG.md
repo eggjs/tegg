@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.6](https://github.com/eggjs/tegg/compare/@eggjs/tegg-eventbus-plugin@1.3.5...@eggjs/tegg-eventbus-plugin@1.3.6) (2022-08-16)
+
+**Note:** Version bump only for package @eggjs/tegg-eventbus-plugin
+
+
+
+
+
 ## [1.3.4](https://github.com/eggjs/tegg/compare/@eggjs/tegg-eventbus-plugin@1.3.3...@eggjs/tegg-eventbus-plugin@1.3.4) (2022-07-28)
 
 **Note:** Version bump only for package @eggjs/tegg-eventbus-plugin

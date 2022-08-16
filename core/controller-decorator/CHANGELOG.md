@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/eggjs/tegg/compare/@eggjs/controller-decorator@1.4.0...@eggjs/controller-decorator@1.5.0) (2022-08-16)
+
+
+### Features
+
+* impl Host decorator ([#48](https://github.com/eggjs/tegg/issues/48)) ([65dc7a8](https://github.com/eggjs/tegg/commit/65dc7a899ba72dd0851c35046562766d7f2b71b6))
+
+
+
+
+
 # 1.4.0 (2022-07-28)
 
 
