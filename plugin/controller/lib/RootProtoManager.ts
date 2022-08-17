@@ -8,7 +8,8 @@ export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
   protoMap: Map<string, GetRootProtoCallback[]> = new Map();
 
-  registerRootProto(method: string, host: string, cb: GetRootProtoCallback) {
+  registerRootProto(method: string, cb: GetRootProtoCallback, host: string) {
+    host = host || '';
     const cbList = MapUtil.getOrStore(this.protoMap, method + host, []);
     cbList.push(cb);
   }

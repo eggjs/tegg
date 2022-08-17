@@ -168,10 +168,10 @@ export class HTTPMethodRegister {
     const regExp = pathToRegexp(methodRealPath, {
       sensitive: true,
     });
-    rootProtoManager.registerRootProto(this.methodMeta.method, host || '', (ctx: EggContext) => {
+    rootProtoManager.registerRootProto(this.methodMeta.method, (ctx: EggContext) => {
       if (regExp.test(ctx.path)) {
         return this.proto;
       }
-    });
+    }, host || '');
   }
 }
