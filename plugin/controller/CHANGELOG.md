@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/eggjs/tegg/compare/@eggjs/tegg-controller-plugin@1.5.0...@eggjs/tegg-controller-plugin@1.5.1) (2022-08-17)
+
+
+### Bug Fixes
+
+* fix rootProtoManager.registerRootProto ([f416ed7](https://github.com/eggjs/tegg/commit/f416ed70af1c46d31ebf712b208205d67337d958))
+
+
+
+
+
 # [1.5.0](https://github.com/eggjs/tegg/compare/@eggjs/tegg-controller-plugin@1.4.1...@eggjs/tegg-controller-plugin@1.5.0) (2022-08-16)
 
 
