@@ -4,7 +4,7 @@ import { Aspect, ASPECT_LIST } from '@eggjs/aop-decorator';
 import { AspectExecutor } from './AspectExecutor';
 
 export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext, EggObject> {
-  private hijackMathods(obj: any, aspectList: Array<Aspect>) {
+  private hijackMethods(obj: any, aspectList: Array<Aspect>) {
     for (const aspect of aspectList) {
       const newExecutor = new AspectExecutor(obj, aspect.method, aspect.adviceList);
       obj[aspect.method] = newExecutor.execute.bind(newExecutor);
@@ -24,13 +24,13 @@ export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext
         get(): any {
           if (!obj) {
             obj = Reflect.apply(propertyDesc.get!, eggObject, []);
-            self.hijackMathods(obj, aspectList);
+            self.hijackMethods(obj, aspectList);
           }
           return obj;
         },
       });
     } else {
-      this.hijackMathods(eggObject.obj, aspectList);
+      this.hijackMethods(eggObject.obj, aspectList);
     }
   }
 }
