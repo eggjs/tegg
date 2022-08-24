@@ -77,8 +77,14 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     }
     try {
       const handlers = await this.eventHandlerFactory.getHandlers(event, ctx);
-      await Promise.all(handlers.map(handler => {
-        return Reflect.apply(handler.handle, handler, args);
+      await Promise.all(handlers.map(async handler => {
+        try {
+          await Reflect.apply(handler.handle, handler, args);
+        } catch (e) {
+          // should wait all handlers done then destroy ctx
+          e.message = `[EventBus] process event ${event} failed: ${e.message}`;
+          this.logger.error(e);
+        }
       }));
     } catch (e) {
       e.message = `[EventBus] process event ${event} failed: ${e.message}`;
