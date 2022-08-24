@@ -9,6 +9,7 @@ import { EggTestContext } from '../../test-util';
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
 import { EventInfoUtil } from '@eggjs/eventbus-decorator';
 import assert from 'assert';
+import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
 
 describe('test/EventBus.test.ts', () => {
   async function getLoadUnitInstance(moduleDir: string): Promise<LoadUnitInstance> {
@@ -96,5 +97,28 @@ describe('test/EventBus.test.ts', () => {
 
     await helloEvent;
     assert(destroyCalled === true);
+  });
+
+  it('should wait all handler done', async () => {
+    const ctx = new EggTestContext();
+    const eventContextFactory = await getObject(EventContextFactory);
+    eventContextFactory.registerContextCreator(() => {
+      return ctx;
+    });
+    const eventHandlerFactory = await getObject(EventHandlerFactory);
+    eventHandlerFactory.registerHandler(
+      EventInfoUtil.getEventName(Timeout0Handler)!,
+      PrototypeUtil.getClazzProto(Timeout0Handler) as EggPrototype);
+    eventHandlerFactory.registerHandler(
+      EventInfoUtil.getEventName(Timeout100Handler)!,
+      PrototypeUtil.getClazzProto(Timeout100Handler) as EggPrototype);
+
+    const eventBus = await getObject(SingletonEventBus);
+    const timeoutProducer = await getObject(TimeoutProducer);
+    const timeoutEvent = eventBus.await('timeout');
+    timeoutProducer.trigger();
+
+    await timeoutEvent;
+    assert(Timeout100Handler.called === true);
   });
 });
