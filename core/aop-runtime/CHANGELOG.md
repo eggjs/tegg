@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/eggjs/tegg/compare/@eggjs/tegg-aop-runtime@1.4.0...@eggjs/tegg-aop-runtime@1.4.1) (2022-09-04)
+
+
+### Bug Fixes
+
+* fix events type from any to keyof Events ([#54](https://github.com/eggjs/tegg/issues/54)) ([a2551b2](https://github.com/eggjs/tegg/commit/a2551b2d9f9eabf9ed5c87f83489615eefa3e6d1))
+
+
+
+
+
 # 1.4.0 (2022-08-24)
 
 

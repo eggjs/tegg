@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/eggjs/tegg/compare/@eggjs/tegg-orm-plugin@2.1.4...@eggjs/tegg-orm-plugin@2.2.0) (2022-09-04)
+
+
+### Features
+
+* impl Schedule decorator ([#52](https://github.com/eggjs/tegg/issues/52)) ([7f95005](https://github.com/eggjs/tegg/commit/7f950050b548ca542addbd7b466675da4e81ce3f))
+
+
+
+
+
 ## [2.1.4](https://github.com/eggjs/tegg/compare/@eggjs/tegg-orm-plugin@2.1.3...@eggjs/tegg-orm-plugin@2.1.4) (2022-08-16)
 
 **Note:** Version bump only for package @eggjs/tegg-orm-plugin
