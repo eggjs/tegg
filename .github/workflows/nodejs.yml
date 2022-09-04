@@ -32,11 +32,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+    - name: Install Npm
+      run: npm i -g npm@8
 
-    - name: Lerna bootstrap
-      run: npm run bootstrap
+    - name: Install Dependencies
+      run: npm i
 
     - name: Continuous integration
       run: npm run ci
@@ -67,11 +67,11 @@ jobs:
       - name: Start Mysql
         run: /usr/local/opt/mysql@5.7/bin/mysql.server start
 
-      - name: Install Dependencies
-        run: npm i -g npminstall && npminstall
+      - name: Install Npm
+        run: npm i -g npm@8
 
-      - name: Lerna bootstrap
-        run: npm run bootstrap
+      - name: Install Dependencies
+        run: npm i
 
       - name: Continuous integration
         run: npm run ci
@@ -96,11 +96,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install Dependencies
-        run: npm i -g npminstall && npminstall
+      - name: Install Npm
+        run: npm i -g npm@8
 
-      - name: Lerna bootstrap
-        run: npm run bootstrap
+      - name: Install Dependencies
+        run: npm i
 
       - name: Continuous integration
         run: npm run ci
