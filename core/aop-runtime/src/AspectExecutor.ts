@@ -1,5 +1,6 @@
 import { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/aop-decorator';
 import compose from 'koa-compose';
+import type { Middleware } from 'koa-compose';
 
 export class AspectExecutor {
   obj: Object;
@@ -73,7 +74,7 @@ export class AspectExecutor {
     const lastCall = () => {
       return Reflect.apply(this.originMethod, ctx.that, ctx.args);
     };
-    const functions: Array<Function> = [];
+    const functions: Array<Middleware<AdviceContext>> = [];
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       const fn = advice.around;

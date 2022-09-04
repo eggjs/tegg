@@ -49,10 +49,5 @@
     "test-exclude": "^6.0.0",
     "ts-node": "^10.1.0",
     "typescript": "^4.0.0"
-  },
-  "workspaces": [
-    "core/*",
-    "plugin/*",
-    "standalone/*"
-  ]
+  }
 }
