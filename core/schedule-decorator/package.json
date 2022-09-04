@@ -1,21 +1,22 @@
 {
-  "name": "@eggjs/tegg",
-  "version": "1.3.5",
-  "description": "tegg decorator packages",
+  "name": "@eggjs/tegg-schedule-decorator",
+  "version": "1.4.1",
+  "description": "tegg schedule decorator",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
   "keywords": [
     "egg",
     "typescript",
-    "metadata",
+    "runtime",
     "tegg"
   ],
-  "main": "./index.js",
-  "files": [
-    "*.js",
-    "*.d.ts"
-  ],
-  "typings": "index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
     "prepublishOnly": "npm run tsc:pub",
     "autod": "autod"
@@ -29,26 +30,19 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/test-util"
+    "directory": "core/schedule-decorator"
   },
   "engines": {
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^1.3.0",
-    "@eggjs/controller-decorator": "^1.5.0",
     "@eggjs/core-decorator": "^1.3.0",
-    "@eggjs/eventbus-decorator": "^1.3.0",
-    "@eggjs/standalone-decorator": "^1.1.1",
-    "@eggjs/tegg-background-task": "^1.3.0",
     "@eggjs/tegg-common-util": "^1.1.1",
-    "@eggjs/tegg-dynamic-inject": "^1.3.0",
-    "@eggjs/tegg-lifecycle": "^1.0.0",
-    "@eggjs/tegg-loader": "^1.3.0",
     "@eggjs/tegg-metadata": "^1.3.0",
-    "@eggjs/tegg-orm-decorator": "^1.4.1",
-    "@eggjs/tegg-schedule-decorator": "^1.4.1",
-    "@eggjs/tegg-runtime": "^1.3.0"
+    "cron-parser": "^2.18.0"
+  },
+  "devDependencies": {
+    "egg-schedule": "^3.6.6"
   },
   "publishConfig": {
     "access": "public"

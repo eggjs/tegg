@@ -33,7 +33,7 @@ plugin/dal/test/fixtures/modules/*/dal/
 
 !core/common-util/test/fixtures/**/node_modules
 !core/common-util/test/fixtures/**/node_modules/**/*.js
-!plugin/*/test/fixtures/ServerGenerator.js
+!plugin/*/test/fixtures/**/*.js
 !**/.autod.conf.js
 !plugin/*/typings/*.d.ts
 !plugin/*/test/fixtures/apps/*/config/*.js

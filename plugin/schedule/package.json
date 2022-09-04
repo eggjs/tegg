@@ -1,0 +1,70 @@
+{
+  "name": "@eggjs/tegg-schedule-plugin",
+  "eggPlugin": {
+    "name": "teggSchedule",
+    "dependencies": [
+      "tegg",
+      "schedule"
+    ]
+  },
+  "version": "2.1.4",
+  "description": "schedule decorator for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg",
+    "schedule"
+  ],
+  "files": [
+    "app.js",
+    "app.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "app/**/*.js",
+    "app/**/*.d.ts",
+    "typings/*.d.ts"
+  ],
+  "types": "typings/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/schedule"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "^1.0.0",
+    "@eggjs/tegg": "^1.3.5",
+    "@eggjs/tegg-common-util": "^1.1.1",
+    "@eggjs/tegg-lifecycle": "^1.0.0",
+    "@eggjs/tegg-loader": "^1.3.0",
+    "@eggjs/tegg-metadata": "^1.3.0",
+    "@eggjs/tegg-schedule-decorator": "^1.4.1",
+    "@eggjs/tegg-runtime": "^1.3.0"
+  },
+  "devDependencies": {
+    "@eggjs/module-test-util": "^1.3.0",
+    "@eggjs/tegg-config": "^1.1.1",
+    "@eggjs/tegg-plugin": "^1.3.6",
+    "egg": "^2.26.0",
+    "egg-mock": "^3.25.1",
+    "mz-modules": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,6 +1,6 @@
 # @eggjs/tegg-orm-plugin
 
-使用注解的方式来开发 egg 中的 Controller
+使用注解的方式来开发 egg 中的 orm
 
 ## Install
 
