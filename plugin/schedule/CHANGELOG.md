@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.2](https://github.com/eggjs/tegg/compare/@eggjs/tegg-schedule-plugin@2.2.1...@eggjs/tegg-schedule-plugin@2.2.2) (2022-09-05)
+
+
+### Bug Fixes
+
+* fix miss agent file ([#56](https://github.com/eggjs/tegg/issues/56)) ([cfb4dcc](https://github.com/eggjs/tegg/commit/cfb4dcc006ee1253733c7122f885a05da94f80b5))
+
+
+
+
+
 ## [2.2.1](https://github.com/eggjs/tegg/compare/@eggjs/tegg-schedule-plugin@2.2.0...@eggjs/tegg-schedule-plugin@2.2.1) (2022-09-04)
 
 
