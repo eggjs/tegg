@@ -20,6 +20,8 @@
   "files": [
     "app.js",
     "app.d.ts",
+    "agent.js",
+    "agent.d.ts",
     "lib/**/*.js",
     "lib/**/*.d.ts",
     "app/**/*.js",
