@@ -16,7 +16,9 @@
   "files": [
     "app.js",
     "app.d.ts",
-    "typings/index.d.ts"
+    "typings/index.d.ts",
+    "agent.js",
+    "agent.d.ts"
   ],
   "types": "typings/index.d.ts",
   "scripts": {
