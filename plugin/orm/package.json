@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -63,8 +63,8 @@
   "devDependencies": {
     "@eggjs/module-test-util": "^1.3.0",
     "@eggjs/router": "^2.0.0",
-    "@eggjs/tegg-config": "^1.2.0",
-    "@eggjs/tegg-plugin": "^1.3.7",
+    "@eggjs/tegg-config": "^1.2.1",
+    "@eggjs/tegg-plugin": "^1.3.8",
     "egg": "^2.26.0",
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",

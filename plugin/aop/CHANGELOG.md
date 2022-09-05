@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.9](https://github.com/eggjs/tegg/compare/@eggjs/tegg-aop-plugin@1.3.8...@eggjs/tegg-aop-plugin@1.3.9) (2022-09-05)
+
+**Note:** Version bump only for package @eggjs/tegg-aop-plugin
+
+
+
+
+
 ## [1.3.8](https://github.com/eggjs/tegg/compare/@eggjs/tegg-aop-plugin@1.3.7...@eggjs/tegg-aop-plugin@1.3.8) (2022-09-04)
 
 **Note:** Version bump only for package @eggjs/tegg-aop-plugin

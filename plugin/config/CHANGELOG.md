@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/eggjs/tegg/compare/@eggjs/tegg-config@1.2.0...@eggjs/tegg-config@1.2.1) (2022-09-05)
+
+
+### Bug Fixes
+
+* fix miss agent file ([0fa496b](https://github.com/eggjs/tegg/commit/0fa496bdbb4ffa4e911fffa3e176fa7bdf03fb12))
+
+
+
+
+
 # 1.2.0 (2022-09-04)
 
 
