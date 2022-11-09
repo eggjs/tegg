@@ -124,6 +124,15 @@ export class ModuleConfigUtil {
         path: moduleDir,
       });
     }
+    const moduleReferences = this.readModuleFromNodeModules(baseDir);
+    for (const moduleReference of moduleReferences) {
+      if (moduleDirSet.has(moduleReference.path)) {
+        throw new Error('duplicate import of module reference: ' + moduleReference.path);
+      }
+      ref.push({
+        path: moduleReference.path,
+      });
+    }
     return ref;
   }
 
