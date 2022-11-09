@@ -127,6 +127,27 @@ export class ModuleConfigUtil {
     return ref;
   }
 
+  private static readModuleFromNodeModules(baseDir: string) {
+    const ref: ModuleReference[] = [];
+    const pkgContent = fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8');
+    const pkg = JSON.parse(pkgContent);
+    for (const dependencyKey of Object.keys(pkg.dependencies)) {
+      const absolutePkgPath = path.join(baseDir, '/node_modules', dependencyKey);
+      const realPkgPath = fs.realpathSync(absolutePkgPath);
+      const moduleDir = path.dirname(realPkgPath);
+      try {
+        if (this.readModuleNameSync(moduleDir)) {
+          ref.push({
+            path: moduleDir,
+          });
+        }
+      } catch (_) {
+        continue;
+      }
+    }
+    return ref;
+  }
+
   public static resolveModuleDir(moduleDir: string, baseDir?: string): string {
     if (path.isAbsolute(moduleDir)) {
       return moduleDir;
