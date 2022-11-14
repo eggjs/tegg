@@ -140,7 +140,7 @@ export class ModuleConfigUtil {
     const ref: ModuleReference[] = [];
     const pkgContent = fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8');
     const pkg = JSON.parse(pkgContent);
-    for (const dependencyKey of Object.keys(pkg.dependencies)) {
+    for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
       const absolutePkgPath = path.join(baseDir, '/node_modules', dependencyKey);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       const moduleDir = path.dirname(realPkgPath);
