@@ -18,6 +18,7 @@ describe('test/ModuleConfig.test.ts', () => {
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a') },
           { path: path.join(fixturesPath, 'app/module-b') },
+          { path: path.join(fixturesPath, 'node_modules/module-c') },
           { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e') },
         ]);
       });
