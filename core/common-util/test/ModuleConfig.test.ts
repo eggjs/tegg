@@ -23,7 +23,7 @@ describe('test/ModuleConfig.test.ts', () => {
         ]);
       });
 
-      it('duplicated module', () => {
+      it('duplicated modules', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json-duplicated');
         try {
           ModuleConfigUtil.readModuleReference(fixturesPath);
