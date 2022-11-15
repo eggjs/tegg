@@ -143,11 +143,10 @@ export class ModuleConfigUtil {
     for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
       const absolutePkgPath = path.join(baseDir, '/node_modules', dependencyKey);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
-      const moduleDir = path.dirname(realPkgPath);
       try {
-        if (this.readModuleNameSync(moduleDir)) {
+        if (this.readModuleNameSync(realPkgPath)) {
           ref.push({
-            path: moduleDir,
+            path: realPkgPath,
           });
         }
       } catch (_) {
