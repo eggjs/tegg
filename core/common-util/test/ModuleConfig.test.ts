@@ -15,13 +15,21 @@ describe('test/ModuleConfig.test.ts', () => {
       it('should work', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
-        console.log('ttt' + JSON.stringify(ref));
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a') },
           { path: path.join(fixturesPath, 'app/module-b') },
           { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e') },
           { path: path.join(fixturesPath, 'node_modules/module-c') },
         ]);
+      });
+
+      it('duplicated module', () => {
+        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json-duplicated');
+        try {
+          ModuleConfigUtil.readModuleReference(fixturesPath);
+        } catch (e) {
+          assert(e.message.includes('duplicate import of module reference'));
+        }
       });
 
       describe('has symlink', () => {
