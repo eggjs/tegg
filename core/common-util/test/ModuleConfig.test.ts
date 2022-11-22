@@ -25,11 +25,7 @@ describe('test/ModuleConfig.test.ts', () => {
 
       it('duplicated module', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json-duplicated');
-        try {
-          ModuleConfigUtil.readModuleReference(fixturesPath);
-        } catch (e) {
-          assert(e.message.includes('duplicate import of module reference'));
-        }
+        assert.throws(() => { ModuleConfigUtil.readModuleReference(fixturesPath); }, /duplicate import of module reference/, 'did not throw with expected message');
       });
 
       describe('has symlink', () => {

@@ -126,9 +126,12 @@ export class ModuleConfigUtil {
     }
     const moduleReferences = this.readModuleFromNodeModules(baseDir);
     for (const moduleReference of moduleReferences) {
-      if (moduleDirSet.has(moduleReference.path)) {
-        throw new Error('duplicate import of module reference: ' + moduleReference.path);
-      }
+      const moduleBasePath = path.basename(moduleReference.path);
+      moduleDirSet.forEach(modulePath => {
+        if (path.basename(modulePath) === moduleBasePath) {
+          throw new Error('duplicate import of module reference: ' + moduleBasePath);
+        }
+      });
       ref.push({
         path: moduleReference.path,
       });
