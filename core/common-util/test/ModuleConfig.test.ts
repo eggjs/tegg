@@ -19,7 +19,13 @@ describe('test/ModuleConfig.test.ts', () => {
           { path: path.join(fixturesPath, 'app/module-a') },
           { path: path.join(fixturesPath, 'app/module-b') },
           { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e') },
+          { path: path.join(fixturesPath, 'node_modules/module-c') },
         ]);
+      });
+
+      it('duplicated module', () => {
+        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json-duplicated');
+        assert.throws(() => { ModuleConfigUtil.readModuleReference(fixturesPath); }, /duplicate import of module reference/, 'did not throw with expected message');
       });
 
       describe('has symlink', () => {

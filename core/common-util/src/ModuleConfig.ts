@@ -124,6 +124,38 @@ export class ModuleConfigUtil {
         path: moduleDir,
       });
     }
+    const moduleReferences = this.readModuleFromNodeModules(baseDir);
+    for (const moduleReference of moduleReferences) {
+      const moduleBasePath = path.basename(moduleReference.path);
+      moduleDirSet.forEach(modulePath => {
+        if (path.basename(modulePath) === moduleBasePath) {
+          throw new Error('duplicate import of module reference: ' + moduleBasePath);
+        }
+      });
+      ref.push({
+        path: moduleReference.path,
+      });
+    }
+    return ref;
+  }
+
+  private static readModuleFromNodeModules(baseDir: string) {
+    const ref: ModuleReference[] = [];
+    const pkgContent = fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8');
+    const pkg = JSON.parse(pkgContent);
+    for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
+      const absolutePkgPath = path.join(baseDir, '/node_modules', dependencyKey);
+      const realPkgPath = fs.realpathSync(absolutePkgPath);
+      try {
+        if (this.readModuleNameSync(realPkgPath)) {
+          ref.push({
+            path: realPkgPath,
+          });
+        }
+      } catch (_) {
+        continue;
+      }
+    }
     return ref;
   }
 
