@@ -7,7 +7,7 @@
       "schedule"
     ]
   },
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "schedule decorator for egg",
   "keywords": [
     "egg",
@@ -50,18 +50,18 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^1.0.0",
-    "@eggjs/tegg": "^1.5.0",
-    "@eggjs/tegg-common-util": "^1.2.0",
+    "@eggjs/tegg": "^1.5.1",
+    "@eggjs/tegg-common-util": "^1.2.1",
     "@eggjs/tegg-lifecycle": "^1.0.0",
-    "@eggjs/tegg-loader": "^1.4.0",
-    "@eggjs/tegg-metadata": "^1.4.0",
-    "@eggjs/tegg-runtime": "^1.4.0",
-    "@eggjs/tegg-schedule-decorator": "^1.6.0"
+    "@eggjs/tegg-loader": "^1.4.1",
+    "@eggjs/tegg-metadata": "^1.4.1",
+    "@eggjs/tegg-runtime": "^1.4.1",
+    "@eggjs/tegg-schedule-decorator": "^1.6.1"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^1.4.0",
-    "@eggjs/tegg-config": "^1.3.0",
-    "@eggjs/tegg-plugin": "^1.4.0",
+    "@eggjs/module-test-util": "^1.4.1",
+    "@eggjs/tegg-config": "^1.3.1",
+    "@eggjs/tegg-plugin": "^1.4.1",
     "egg": "^2.26.0",
     "egg-mock": "^3.25.1",
     "mz-modules": "^2.1.0"
