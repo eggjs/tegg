@@ -7,9 +7,10 @@ import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { LoaderFactory } from '../../loader';
 import { EggTestContext } from '../../test-util';
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
-import { EventInfoUtil } from '@eggjs/eventbus-decorator';
+import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
 import assert from 'assert';
 import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
+import sleep from 'mz-modules/sleep';
 
 describe('test/EventBus.test.ts', () => {
   async function getLoadUnitInstance(moduleDir: string): Promise<LoadUnitInstance> {
@@ -120,5 +121,71 @@ describe('test/EventBus.test.ts', () => {
 
     await timeoutEvent;
     assert(Timeout100Handler.called === true);
+  });
+
+  it('cork should work', async () => {
+    const ctx = new EggTestContext();
+    const eventContextFactory = await getObject(EventContextFactory);
+    eventContextFactory.registerContextCreator(() => {
+      return ctx;
+    });
+    const eventHandlerFactory = await getObject(EventHandlerFactory);
+    eventHandlerFactory.registerHandler(
+      EventInfoUtil.getEventName(HelloHandler)!,
+      PrototypeUtil.getClazzProto(HelloHandler) as EggPrototype);
+
+    const eventBus = await getObject(SingletonEventBus);
+    const corkId = eventBus.generateCorkId();
+    ctx.set(CORK_ID, corkId);
+    eventBus.cork(corkId);
+
+    const helloHandler = await getObject(HelloHandler, ctx);
+    const helloEvent = eventBus.await('hello');
+    let eventTime: number;
+    mm(helloHandler, 'handle', async () => {
+      eventTime = Date.now();
+    });
+    eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
+    const triggerTime = Date.now();
+
+    await sleep(100);
+    eventBus.uncork(corkId);
+    await helloEvent;
+    assert(eventTime >= triggerTime + 100);
+  });
+
+  it('multi cork should work', async () => {
+    const ctx = new EggTestContext();
+    const eventContextFactory = await getObject(EventContextFactory);
+    eventContextFactory.registerContextCreator(() => {
+      return ctx;
+    });
+    const eventHandlerFactory = await getObject(EventHandlerFactory);
+    eventHandlerFactory.registerHandler(
+      EventInfoUtil.getEventName(HelloHandler)!,
+      PrototypeUtil.getClazzProto(HelloHandler) as EggPrototype);
+
+    const eventBus = await getObject(SingletonEventBus);
+    const corkId = eventBus.generateCorkId();
+    ctx.set(CORK_ID, corkId);
+    eventBus.cork(corkId);
+    eventBus.cork(corkId);
+
+    const helloHandler = await getObject(HelloHandler, ctx);
+    const helloEvent = eventBus.await('hello');
+    let eventTime: number;
+    mm(helloHandler, 'handle', async () => {
+      eventTime = Date.now();
+    });
+    eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
+    const triggerTime = Date.now();
+
+    await sleep(100);
+    eventBus.uncork(corkId);
+    await sleep(100);
+    eventBus.uncork(corkId);
+
+    await helloEvent;
+    assert(eventTime >= triggerTime + 200);
   });
 });

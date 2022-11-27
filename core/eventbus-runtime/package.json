@@ -54,7 +54,8 @@
     "@eggjs/tegg-runtime": "^1.4.1",
     "coffee": "^5.4.0",
     "egg": "^2.29.3",
-    "mm": "^3.2.0"
+    "mm": "^3.2.0",
+    "mz-modules": "^2.1.0"
   },
   "publishConfig": {
     "access": "public"

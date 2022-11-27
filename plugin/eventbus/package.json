@@ -59,7 +59,8 @@
     "@eggjs/tegg-plugin": "^1.4.1",
     "await-event": "^2.1.0",
     "egg": "^2.29.4",
-    "egg-mock": "^4.0.1"
+    "egg-mock": "^4.0.1",
+    "mz-modules": "^2.1.0"
   },
   "publishConfig": {
     "access": "public"
