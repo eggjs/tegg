@@ -24,6 +24,27 @@ class Foo {
 }
 ```
 
+### cork events
+
+Cache events in memory until uncork. 
+
+```ts
+class Foo {
+  @Inject()
+  private readonly eventBus: ContextEventBus;
+
+  bar() {
+    this.eventBus.cork();
+    // ...do something
+    this.eventBus.emit('hello', '01');
+    // ...do other things
+    
+    // emit all cached events
+    this.eventBus.uncork();
+  }
+}
+```
+
 ### handle event
 
 ```ts

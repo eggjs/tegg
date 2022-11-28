@@ -1,6 +1,5 @@
 import { Application, EggLogger } from 'egg';
-import { PrototypeUtil } from '@eggjs/tegg';
-import { EggProtoImplClass } from '@eggjs/tegg';
+import { PrototypeUtil, EggProtoImplClass } from '@eggjs/tegg';
 import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor';
 
