@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -38,7 +38,7 @@
     "@eggjs/aop-decorator": "^1.4.1",
     "@eggjs/controller-decorator": "^1.6.1",
     "@eggjs/core-decorator": "^1.4.1",
-    "@eggjs/eventbus-decorator": "^1.4.1",
+    "@eggjs/eventbus-decorator": "^1.5.0",
     "@eggjs/standalone-decorator": "^1.2.1",
     "@eggjs/tegg-background-task": "^1.4.1",
     "@eggjs/tegg-common-util": "^1.2.1",
