@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-background-task",
   "description": "background util for tegg",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "keywords": [
     "egg",
     "typescript",
@@ -37,7 +37,7 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/core-decorator": "^1.4.1",
+    "@eggjs/core-decorator": "^1.4.2",
     "@eggjs/tegg-lifecycle": "^1.0.0"
   },
   "devDependencies": {
