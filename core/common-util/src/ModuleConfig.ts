@@ -106,7 +106,13 @@ export class ModuleConfigUtil {
     const moduleDirSet = new Set<string>();
     for (const packagePath of packagePaths) {
       const absolutePkgPath = path.join(baseDir, packagePath);
-      const realPkgPath = fs.realpathSync(absolutePkgPath);
+      let realPkgPath;
+      try {
+        realPkgPath = fs.realpathSync(absolutePkgPath);
+      } catch (_) {
+        continue;
+      }
+
       const moduleDir = path.dirname(realPkgPath);
 
       // skip the symbolic link
@@ -141,7 +147,12 @@ export class ModuleConfigUtil {
 
   private static readModuleFromNodeModules(baseDir: string) {
     const ref: ModuleReference[] = [];
-    const pkgContent = fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8');
+    let pkgContent: string;
+    try {
+      pkgContent = fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8');
+    } catch (_) {
+      return [];
+    }
     const pkg = JSON.parse(pkgContent);
     if (!fs.existsSync(path.join(baseDir, '/node_modules'))) {
       return ref;
