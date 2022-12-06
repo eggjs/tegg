@@ -145,7 +145,7 @@ export class ModuleConfigUtil {
     return ref;
   }
 
-  private static readModuleFromNodeModules(baseDir: string) {
+  public static readModuleFromNodeModules(baseDir: string, paths?: string[]) {
     const ref: ModuleReference[] = [];
     let pkgContent: string;
     try {
@@ -154,11 +154,8 @@ export class ModuleConfigUtil {
       return [];
     }
     const pkg = JSON.parse(pkgContent);
-    if (!fs.existsSync(path.join(baseDir, '/node_modules'))) {
-      return ref;
-    }
     for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
-      const packageJsonPath = require.resolve(`${dependencyKey}/package.json`);
+      const packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths });
       const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {

@@ -62,4 +62,29 @@ describe('test/ModuleConfig.test.ts', () => {
       });
     });
   });
+
+  describe.only('read package dependencies', () => {
+
+    it('should success if package.json not exist', async () => {
+      const dir = path.resolve(__dirname, './fixtures/monorepo/foo');
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
+      assert.deepStrictEqual(ret, []);
+    });
+
+    it('should read dependencies from self node_modules', async () => {
+      const dir = path.resolve(__dirname, './fixtures/monorepo/packages/a');
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
+      assert.deepStrictEqual(ret, [{
+        path: path.resolve(__dirname, './fixtures/monorepo/packages/a/node_modules/c'),
+      }]);
+    });
+
+    it('should read dependencies from parent node_modules', async () => {
+      const dir = path.resolve(__dirname, './fixtures/monorepo/packages/b');
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
+      assert.deepStrictEqual(ret, [{
+        path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
+      }]);
+    });
+  });
 });

@@ -1,0 +1,11 @@
+{
+  "eggModule": {
+    "name": "b"
+  },
+  "dependencies": {
+    "a": "*"
+  },
+  "name": "b",
+  "main": "index.js",
+  "author": ""
+}
