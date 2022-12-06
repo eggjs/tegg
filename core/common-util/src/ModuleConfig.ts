@@ -158,7 +158,8 @@ export class ModuleConfigUtil {
       return ref;
     }
     for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
-      const absolutePkgPath = path.join(baseDir, '/node_modules', dependencyKey);
+      const packageJsonPath = require.resolve(`${dependencyKey}/package.json`);
+      const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {
         if (this.readModuleNameSync(realPkgPath)) {
