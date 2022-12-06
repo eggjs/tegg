@@ -63,7 +63,7 @@ describe('test/ModuleConfig.test.ts', () => {
     });
   });
 
-  describe.only('read package dependencies', () => {
+  describe('read package dependencies', () => {
 
     it('should success if package.json not exist', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/foo');
