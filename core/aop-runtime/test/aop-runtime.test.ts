@@ -1,4 +1,5 @@
 import path from 'path';
+import mm from 'mm';
 import assert from 'assert';
 import { EggObjectLifecycleUtil, LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
@@ -90,6 +91,17 @@ describe('test/aop-runtime.test.ts', () => {
           name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
         },
       ]);
+    });
+
+    it('mock should work', async () => {
+      const ctx = new EggTestContext();
+      const hello = await CoreTestHelper.getObject(Hello, ctx);
+      let helloMocked = false;
+      mm(Hello.prototype, 'hello', async () => {
+        helloMocked = true;
+      });
+      await hello.hello('aop');
+      assert(helloMocked === true);
     });
   });
 
