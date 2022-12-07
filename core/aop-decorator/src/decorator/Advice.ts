@@ -3,9 +3,10 @@ import {
   EggProtoImplClass,
   ObjectInitType,
   Prototype,
-  PrototypeParams,
+  PrototypeParams, PrototypeUtil,
 } from '@eggjs/core-decorator';
 import { AdviceInfoUtil } from '../util/AdviceInfoUtil';
+import { StackUtil } from '@eggjs/tegg-common-util';
 
 export interface AdviceContext<T = object> {
   that: T;
@@ -62,5 +63,6 @@ export function Advice(param?: PrototypeParams) {
       ...param,
     });
     func(constructor);
+    PrototypeUtil.setFilePath(constructor, StackUtil.getCalleeFromStack(false, 5));
   };
 }
