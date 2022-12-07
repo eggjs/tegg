@@ -6,13 +6,11 @@ export class AspectExecutor {
   obj: Object;
   method: PropertyKey;
   aspectAdviceList: readonly AspectAdvice[];
-  originMethod: Function;
 
   constructor(obj: object, method: PropertyKey, aspectAdviceList: readonly AspectAdvice[]) {
     this.obj = obj;
     this.method = method;
     this.aspectAdviceList = aspectAdviceList;
-    this.originMethod = obj[method];
   }
 
   async execute(...args: any[]) {
@@ -72,7 +70,8 @@ export class AspectExecutor {
 
   async doExecute(ctx: AdviceContext) {
     const lastCall = () => {
-      return Reflect.apply(this.originMethod, ctx.that, ctx.args);
+      const originMethod = Object.getPrototypeOf(this.obj)[this.method];
+      return Reflect.apply(originMethod, ctx.that, ctx.args);
     };
     const functions: Array<Middleware<AdviceContext>> = [];
     for (const aspectAdvice of this.aspectAdviceList) {
