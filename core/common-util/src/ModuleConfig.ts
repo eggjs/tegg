@@ -155,7 +155,14 @@ export class ModuleConfigUtil {
     }
     const pkg = JSON.parse(pkgContent);
     for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
-      const packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths });
+      let packageJsonPath: string;
+      try {
+        // https://nodejs.org/api/packages.html#package-entry-points
+        // ignore cases where the package entry is exports but package.json is not exported
+        packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths });
+      } catch (_) {
+        continue;
+      }
       const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {

@@ -71,6 +71,14 @@ describe('test/ModuleConfig.test.ts', () => {
       assert.deepStrictEqual(ret, []);
     });
 
+    it('should success whether dependencies entry has exported package.json', async () => {
+      const dir = path.resolve(__dirname, './fixtures/monorepo/packages/d');
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
+      assert.deepStrictEqual(ret, [{
+        path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/e'),
+      }]);
+    });
+
     it('should read dependencies from self node_modules', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/a');
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
