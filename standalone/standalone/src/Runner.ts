@@ -5,6 +5,7 @@ import { EggModuleLoader } from './EggModuleLoader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
 import { StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
+import { StandaloneContext } from './StandaloneContext';
 
 export interface ModuleConfigHolder {
   name: string;
@@ -80,7 +81,11 @@ export class Runner {
     if (!proto) {
       throw new Error(`can not get proto for clazz ${runnerClass.name}`);
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype);
+    const lifecycle = {};
+    const ctx = new StandaloneContext();
+    await ctx.init(lifecycle);
+    const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype, undefined, ctx);
+    await ctx.destroy(lifecycle);
     const runner = eggObject.obj as MainRunner<T>;
     return await runner.main();
   }
