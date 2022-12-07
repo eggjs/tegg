@@ -6,7 +6,7 @@ describe('test/index.test.ts', () => {
   describe('simple runner', () => {
     it('should work', async () => {
       const msg: string = await main(path.join(__dirname, './fixtures/simple'));
-      assert(msg === 'hello');
+      assert(msg === 'hello!hello from ctx');
     });
   });
 
