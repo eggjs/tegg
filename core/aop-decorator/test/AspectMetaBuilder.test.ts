@@ -21,6 +21,7 @@ import {
   PointcutAdviceOverwriteChildExample,
   PointcutAdviceOverwriteParentExample,
 } from './fixtures/InheritExample';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 
 describe('test/AspectMetaBuild.test.ts', () => {
   const crosscutAdviceFactory = new CrosscutAdviceFactory();
@@ -132,5 +133,10 @@ describe('test/AspectMetaBuild.test.ts', () => {
     });
     const aspects = builder.build();
     assert(aspects.length === 1);
+  });
+
+  it('should has right file path', () => {
+    const filePath = PrototypeUtil.getFilePath(CrosscutClassAdviceExample);
+    assert(filePath === require.resolve('./fixtures/CrosscutExample'));
   });
 });
