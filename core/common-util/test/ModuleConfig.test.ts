@@ -15,6 +15,7 @@ describe('test/ModuleConfig.test.ts', () => {
       it('should work', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
+        console.log(333, ref);
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a') },
           { path: path.join(fixturesPath, 'app/module-b') },
@@ -73,7 +74,7 @@ describe('test/ModuleConfig.test.ts', () => {
 
     it('should success whether dependencies entry has exported package.json', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/d');
-      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/e'),
       }]);
@@ -81,7 +82,7 @@ describe('test/ModuleConfig.test.ts', () => {
 
     it('should read dependencies from self node_modules', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/a');
-      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/a/node_modules/c'),
       }]);
@@ -89,7 +90,7 @@ describe('test/ModuleConfig.test.ts', () => {
 
     it('should read dependencies from parent node_modules', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/packages/b');
-      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir, [ dir ]);
+      const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
       }]);

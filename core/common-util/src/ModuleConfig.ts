@@ -145,7 +145,7 @@ export class ModuleConfigUtil {
     return ref;
   }
 
-  public static readModuleFromNodeModules(baseDir: string, paths?: string[]) {
+  public static readModuleFromNodeModules(baseDir: string) {
     const ref: ModuleReference[] = [];
     let pkgContent: string;
     try {
@@ -159,7 +159,7 @@ export class ModuleConfigUtil {
       try {
         // https://nodejs.org/api/packages.html#package-entry-points
         // ignore cases where the package entry is exports but package.json is not exported
-        packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths });
+        packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths: [ baseDir ] });
       } catch (_) {
         continue;
       }
