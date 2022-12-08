@@ -15,7 +15,6 @@ describe('test/ModuleConfig.test.ts', () => {
       it('should work', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
-        console.log(333, ref);
         assert.deepStrictEqual(ref, [
           { path: path.join(fixturesPath, 'app/module-a') },
           { path: path.join(fixturesPath, 'app/module-b') },
