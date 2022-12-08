@@ -145,7 +145,7 @@ export class ModuleConfigUtil {
     return ref;
   }
 
-  private static readModuleFromNodeModules(baseDir: string) {
+  public static readModuleFromNodeModules(baseDir: string) {
     const ref: ModuleReference[] = [];
     let pkgContent: string;
     try {
@@ -154,11 +154,16 @@ export class ModuleConfigUtil {
       return [];
     }
     const pkg = JSON.parse(pkgContent);
-    if (!fs.existsSync(path.join(baseDir, '/node_modules'))) {
-      return ref;
-    }
     for (const dependencyKey of Object.keys(pkg.dependencies || {})) {
-      const absolutePkgPath = path.join(baseDir, '/node_modules', dependencyKey);
+      let packageJsonPath: string;
+      try {
+        // https://nodejs.org/api/packages.html#package-entry-points
+        // ignore cases where the package entry is exports but package.json is not exported
+        packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths: [ baseDir ] });
+      } catch (_) {
+        continue;
+      }
+      const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {
         if (this.readModuleNameSync(realPkgPath)) {
