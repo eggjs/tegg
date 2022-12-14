@@ -1,4 +1,4 @@
-import { ControllerTypeLike, HostType, MiddlewareFunc } from '../model';
+import { ControllerTypeLike, MiddlewareFunc } from '../model';
 import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
 
 export const CONTROLLER_TYPE = Symbol.for('EggPrototype#controllerType');
@@ -45,11 +45,11 @@ export default class ControllerInfoUtil {
     return MetadataUtil.getMetaData(CONTROLLER_ACL, clazz);
   }
 
-  static addControllerHost(host: HostType, clazz: EggProtoImplClass) {
-    MetadataUtil.defineMetaData(CONTROLLER_HOST, host, clazz);
+  static addControllerHosts(hosts: string[], clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(CONTROLLER_HOST, hosts, clazz);
   }
 
-  static getControllerHost(clazz: EggProtoImplClass): string | undefined {
+  static getControllerHosts(clazz: EggProtoImplClass): string[] | undefined {
     return MetadataUtil.getMetaData(CONTROLLER_HOST, clazz);
   }
 }

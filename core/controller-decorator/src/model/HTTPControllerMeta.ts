@@ -1,6 +1,6 @@
 import path from 'path';
 import { ControllerMetadata } from './ControllerMetadata';
-import { ControllerType, HostType, MiddlewareFunc } from './types';
+import { ControllerType, MiddlewareFunc } from './types';
 import { HTTPMethodMeta } from './HTTPMethodMeta';
 import { EggPrototypeName } from '@eggjs/core-decorator';
 
@@ -14,7 +14,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
   public readonly methods: readonly HTTPMethodMeta[];
   public readonly needAcl: boolean;
   public readonly aclCode?: string;
-  public readonly host?: HostType;
+  public readonly hosts?: string[];
 
   constructor(
     className: string,
@@ -25,7 +25,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     methods: HTTPMethodMeta[],
     needAcl: boolean,
     aclCode: string | undefined,
-    host: HostType | undefined,
+    hosts: string[] | undefined,
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;
@@ -35,7 +35,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     this.methods = methods;
     this.needAcl = needAcl;
     this.aclCode = aclCode;
-    this.host = host;
+    this.hosts = hosts;
   }
 
   getMethodRealPath(method: HTTPMethodMeta) {
@@ -45,11 +45,11 @@ export class HTTPControllerMeta implements ControllerMetadata {
     return method.path;
   }
 
-  getMethodHost(method: HTTPMethodMeta): HostType | undefined {
-    if (this.host) {
-      return this.host;
+  getMethodHosts(method: HTTPMethodMeta): string[] | undefined {
+    if (this.hosts) {
+      return this.hosts;
     }
-    return method.host;
+    return method.hosts;
   }
 
   getMethodName(method: HTTPMethodMeta) {

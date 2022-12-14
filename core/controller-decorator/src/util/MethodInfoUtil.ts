@@ -1,5 +1,5 @@
 import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { ControllerTypeLike, HostType, MiddlewareFunc } from '../model';
+import { ControllerTypeLike, MiddlewareFunc } from '../model';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 const METHOD_CONTROLLER_TYPE_MAP = Symbol.for('EggPrototype#controller#mthods');
@@ -8,7 +8,7 @@ const METHOD_CONTEXT_INDEX = Symbol.for('EggPrototype#controller#method#context'
 const METHOD_MIDDLEWARES = Symbol.for('EggPrototype#method#middlewares');
 const METHOD_ACL = Symbol.for('EggPrototype#method#acl');
 
-type METHOD_MAP = Map<string, ControllerTypeLike | HostType>;
+type METHOD_MAP = Map<string, ControllerTypeLike | string[]>;
 type MethodContextIndexMap = Map<string, number>;
 type MethodMiddlewareMap = Map<string, MiddlewareFunc[]>;
 type MethodAclMap = Map<string, string | undefined>;
@@ -60,13 +60,13 @@ export default class MethodInfoUtil {
     return methodAclMap?.get(methodName);
   }
 
-  static setMethodHost(host: HostType, clazz: EggProtoImplClass, methodName: string) {
+  static setMethodHosts(hosts: string[], clazz: EggProtoImplClass, methodName: string) {
     const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(METHOD_CONTROLLER_HOST, clazz, new Map());
-    methodControllerMap.set(methodName, host);
+    methodControllerMap.set(methodName, hosts);
   }
 
-  static getMethodHost(clazz: EggProtoImplClass, methodName: string): HostType | undefined {
+  static getMethodHosts(clazz: EggProtoImplClass, methodName: string): string[] | undefined {
     const methodControllerMap: METHOD_MAP | undefined = MetadataUtil.getMetaData(METHOD_CONTROLLER_HOST, clazz);
-    return methodControllerMap?.get(methodName) as HostType | undefined;
+    return methodControllerMap?.get(methodName) as string[] | undefined;
   }
 }

@@ -3,7 +3,6 @@ import KoaRouter from 'koa-router';
 import { Context } from 'egg';
 import {
   EggContext,
-  HostType,
   HTTPControllerMeta,
   HTTPMethodMeta,
   HTTPParamType,
@@ -50,14 +49,7 @@ export class HTTPMethodRegister {
     this.eggContainerFactory = eggContainerFactory;
   }
 
-  private hostMatch(host: HostType | undefined, target: string) {
-    if (Array.isArray(host)) {
-      return host.includes(target);
-    }
-    return host === target;
-  }
-
-  private createHandler(methodMeta: HTTPMethodMeta, host: HostType | undefined) {
+  private createHandler(methodMeta: HTTPMethodMeta, host: string | undefined) {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
@@ -65,7 +57,7 @@ export class HTTPMethodRegister {
     const self = this;
     return async function(ctx: Context, next: Next) {
       // if hosts is not empty and host is not matched, not execute
-      if (host && !self.hostMatch(host, ctx.host)) {
+      if (host && host !== ctx.host) {
         return await next();
       }
       // HTTP decorator core implement
@@ -126,9 +118,8 @@ export class HTTPMethodRegister {
 
     // 2. check duplicate with host tegg controller
     let hostRouter;
-    const host = this.controllerMeta.getMethodHost(this.methodMeta);
-    const hostList = Array.isArray(host) ? host : [ host ];
-    hostList.forEach(h => {
+    const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [];
+    hosts.forEach(h => {
       if (h) {
         hostRouter = this.checkRouters.get(h);
         if (!hostRouter) {
@@ -170,9 +161,8 @@ export class HTTPMethodRegister {
     if (aclMiddleware) {
       methodMiddlewares.push(aclMiddleware);
     }
-    const host = this.controllerMeta.getMethodHost(this.methodMeta);
-    const hostList = Array.isArray(host) ? host : [ host ];
-    hostList.forEach(h => {
+    const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [ undefined ];
+    hosts.forEach(h => {
       const handler = this.createHandler(this.methodMeta, h);
       Reflect.apply(routerFunc, this.router,
         [ methodName, methodRealPath, ...methodMiddlewares, handler ]);
