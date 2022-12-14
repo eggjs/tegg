@@ -1,7 +1,7 @@
 import assert from 'assert';
 import pathToRegexp from 'path-to-regexp';
 import { MethodMeta } from './MethodMeta';
-import { HTTPMethodEnum, HTTPParamType, MiddlewareFunc } from './types';
+import { HostType, HTTPMethodEnum, HTTPParamType, MiddlewareFunc } from './types';
 
 export abstract class ParamMeta {
   type: HTTPParamType;
@@ -73,7 +73,7 @@ export class HTTPMethodMeta implements MethodMeta {
   public readonly priority: number;
   public readonly needAcL: boolean;
   public readonly aclCode: string | undefined;
-  public readonly host: string | undefined;
+  public readonly host: HostType | undefined;
 
   constructor(
     name: string,
@@ -85,7 +85,7 @@ export class HTTPMethodMeta implements MethodMeta {
     priority: number,
     needAcl: boolean,
     aclCode: string | undefined,
-    host: string | undefined,
+    host: HostType | undefined,
   ) {
     this.name = name;
     this.path = path;

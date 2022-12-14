@@ -2,13 +2,14 @@ import ControllerInfoUtil from '../../util/ControllerInfoUtil';
 import { EggProtoImplClass } from '@eggjs/core-decorator';
 import MethodInfoUtil from '../../util/MethodInfoUtil';
 import assert from 'assert';
+import { HostType } from '../../model';
 
-export function Host(host: string) {
+export function Host(host: HostType) {
   function classHost(constructor: EggProtoImplClass) {
     ControllerInfoUtil.addControllerHost(host, constructor);
   }
 
-  function methodHOst(target: any, propertyKey: PropertyKey) {
+  function methodHost(target: any, propertyKey: PropertyKey) {
     assert(typeof propertyKey === 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -21,7 +22,7 @@ export function Host(host: string) {
     if (propertyKey === undefined) {
       classHost(target);
     } else {
-      methodHOst(target, propertyKey);
+      methodHost(target, propertyKey);
     }
   };
 }

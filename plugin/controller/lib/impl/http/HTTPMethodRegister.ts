@@ -3,6 +3,7 @@ import KoaRouter from 'koa-router';
 import { Context } from 'egg';
 import {
   EggContext,
+  HostType,
   HTTPControllerMeta,
   HTTPMethodMeta,
   HTTPParamType,
@@ -49,7 +50,14 @@ export class HTTPMethodRegister {
     this.eggContainerFactory = eggContainerFactory;
   }
 
-  private createHandler(methodMeta: HTTPMethodMeta, host: string | undefined) {
+  private hostMatch(host: HostType | undefined, target: string) {
+    if (Array.isArray(host)) {
+      return host.includes(target);
+    }
+    return host === target;
+  }
+
+  private createHandler(methodMeta: HTTPMethodMeta, host: HostType | undefined) {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
@@ -57,7 +65,7 @@ export class HTTPMethodRegister {
     const self = this;
     return async function(ctx: Context, next: Next) {
       // if hosts is not empty and host is not matched, not execute
-      if (host && host !== ctx.host) {
+      if (host && !self.hostMatch(host, ctx.host)) {
         return await next();
       }
       // HTTP decorator core implement
@@ -119,17 +127,20 @@ export class HTTPMethodRegister {
     // 2. check duplicate with host tegg controller
     let hostRouter;
     const host = this.controllerMeta.getMethodHost(this.methodMeta);
-    if (host) {
-      hostRouter = this.checkRouters.get(host);
-      if (!hostRouter) {
-        hostRouter = new EggRouter({ sensitive: true }, {});
-        this.checkRouters.set(host, hostRouter!);
+    const hostList = Array.isArray(host) ? host : [ host ];
+    hostList.forEach(h => {
+      if (h) {
+        hostRouter = this.checkRouters.get(h);
+        if (!hostRouter) {
+          hostRouter = new EggRouter({ sensitive: true }, {});
+          this.checkRouters.set(h, hostRouter!);
+        }
       }
-    }
-    if (hostRouter) {
-      this.checkDuplicateInRouter(hostRouter);
-      this.registerToRouter(hostRouter);
-    }
+      if (hostRouter) {
+        this.checkDuplicateInRouter(hostRouter);
+        this.registerToRouter(hostRouter);
+      }
+    });
   }
 
   private registerToRouter(router: KoaRouter<any, Context>) {
@@ -160,18 +171,20 @@ export class HTTPMethodRegister {
       methodMiddlewares.push(aclMiddleware);
     }
     const host = this.controllerMeta.getMethodHost(this.methodMeta);
-    const handler = this.createHandler(this.methodMeta, host);
-    Reflect.apply(routerFunc, this.router,
-      [ methodName, methodRealPath, ...methodMiddlewares, handler ]);
-
-    // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
-    const regExp = pathToRegexp(methodRealPath, {
-      sensitive: true,
+    const hostList = Array.isArray(host) ? host : [ host ];
+    hostList.forEach(h => {
+      const handler = this.createHandler(this.methodMeta, h);
+      Reflect.apply(routerFunc, this.router,
+        [ methodName, methodRealPath, ...methodMiddlewares, handler ]);
+      // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
+      const regExp = pathToRegexp(methodRealPath, {
+        sensitive: true,
+      });
+      rootProtoManager.registerRootProto(this.methodMeta.method, (ctx: EggContext) => {
+        if (regExp.test(ctx.path)) {
+          return this.proto;
+        }
+      }, h || '');
     });
-    rootProtoManager.registerRootProto(this.methodMeta.method, (ctx: EggContext) => {
-      if (regExp.test(ctx.path)) {
-        return this.proto;
-      }
-    }, host || '');
   }
 }

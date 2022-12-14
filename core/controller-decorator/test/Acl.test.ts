@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { AclController } from './fixtures/AclController';
 import { ControllerMetaBuilderFactory } from '../src/builder/ControllerMetaBuilderFactory';
-import { ControllerType } from '../src/model';
+import { ControllerType, HTTPControllerMeta } from '../src/model';
 
 describe('test/Context.test.ts', () => {
   it('should work', () => {

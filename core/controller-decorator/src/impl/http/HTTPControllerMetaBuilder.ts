@@ -63,4 +63,3 @@ export class HTTPControllerMetaBuilder {
 }
 
 ControllerMetaBuilderFactory.registerControllerMetaBuilder(ControllerType.HTTP, HTTPControllerMetaBuilder.create);
-
