@@ -51,4 +51,60 @@ describe('test/host.test.ts', () => {
         assert(res.text === 'bar');
       });
   });
+
+  it('multi class host should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .get('/apps/apple')
+      .set('host', 'orange.eggjs.com')
+      .expect(404);
+
+    await app.httpRequest()
+      .get('/apps/apple')
+      .set('host', 'apple.eggjs.com')
+      .expect(200)
+      .expect(res => {
+        assert(res.text === 'apple');
+      });
+
+    await app.httpRequest()
+      .get('/apps/a')
+      .set('host', 'a.eggjs.com')
+      .expect(200)
+      .expect(res => {
+        assert(res.text === 'a');
+      });
+  });
+
+  it('method class host should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .get('/apps/orange')
+      .set('host', 'o.eggjs.com')
+      .expect(200)
+      .expect(res => {
+        assert(res.text === 'orange');
+      });
+
+    await app.httpRequest()
+      .get('/apps/orange')
+      .set('host', 'orange.eggjs.com')
+      .expect(200)
+      .expect(res => {
+        assert(res.text === 'orange');
+      });
+
+    await app.httpRequest()
+      .get('/apps/juice')
+      .set('host', 'juice.eggjs.com')
+      .expect(200)
+      .expect(res => {
+        assert(res.text === 'juice');
+      });
+
+    await app.httpRequest()
+      .get('/apps/juice')
+      .set('host', 'o.eggjs.com')
+      .expect(404);
+  });
 });

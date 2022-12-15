@@ -8,7 +8,7 @@ const METHOD_CONTEXT_INDEX = Symbol.for('EggPrototype#controller#method#context'
 const METHOD_MIDDLEWARES = Symbol.for('EggPrototype#method#middlewares');
 const METHOD_ACL = Symbol.for('EggPrototype#method#acl');
 
-type METHOD_MAP = Map<string, ControllerTypeLike>;
+type METHOD_MAP = Map<string, ControllerTypeLike | string[]>;
 type MethodContextIndexMap = Map<string, number>;
 type MethodMiddlewareMap = Map<string, MiddlewareFunc[]>;
 type MethodAclMap = Map<string, string | undefined>;
@@ -21,7 +21,7 @@ export default class MethodInfoUtil {
 
   static getMethodControllerType(clazz: EggProtoImplClass, methodName: string): ControllerTypeLike | undefined {
     const methodControllerMap: METHOD_MAP | undefined = MetadataUtil.getMetaData(METHOD_CONTROLLER_TYPE_MAP, clazz);
-    return methodControllerMap?.get(methodName);
+    return methodControllerMap?.get(methodName) as ControllerTypeLike | undefined;
   }
 
   static setMethodContextIndexInArgs(index: number, clazz: EggProtoImplClass, methodName: string) {
@@ -60,13 +60,13 @@ export default class MethodInfoUtil {
     return methodAclMap?.get(methodName);
   }
 
-  static setMethodHost(host: string, clazz: EggProtoImplClass, methodName: string) {
+  static setMethodHosts(hosts: string[], clazz: EggProtoImplClass, methodName: string) {
     const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(METHOD_CONTROLLER_HOST, clazz, new Map());
-    methodControllerMap.set(methodName, host);
+    methodControllerMap.set(methodName, hosts);
   }
 
-  static getMethodHost(clazz: EggProtoImplClass, methodName: string): string | undefined {
+  static getMethodHosts(clazz: EggProtoImplClass, methodName: string): string[] | undefined {
     const methodControllerMap: METHOD_MAP | undefined = MetadataUtil.getMetaData(METHOD_CONTROLLER_HOST, clazz);
-    return methodControllerMap?.get(methodName);
+    return methodControllerMap?.get(methodName) as string[] | undefined;
   }
 }
