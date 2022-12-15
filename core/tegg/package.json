@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@eggjs/aop-decorator": "^1.4.4",
-    "@eggjs/controller-decorator": "^1.6.3",
+    "@eggjs/controller-decorator": "^1.7.0",
     "@eggjs/core-decorator": "^1.4.3",
     "@eggjs/eventbus-decorator": "^1.5.2",
     "@eggjs/standalone-decorator": "^1.2.3",

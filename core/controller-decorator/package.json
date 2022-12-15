@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-decorator",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "tegg controller decorator",
   "keywords": [
     "egg",
