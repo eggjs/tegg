@@ -1,4 +1,5 @@
-import { AbstractEggContext } from '@eggjs/tegg-runtime';
+import mm from 'mm';
+import { AbstractEggContext, ContextHandler } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 
 const EGG_CTX = Symbol('TEgg#context');
@@ -20,5 +21,15 @@ export class EggTestContext extends AbstractEggContext {
     };
     this.id = IdenticalUtil.createContextId();
     this.set(EGG_CTX, mockCtx);
+    mm(ContextHandler, 'getContext', () => {
+      return this;
+    });
+  }
+
+  static async mockContext<R>(cb: (ctx: EggTestContext) => Promise<R>): Promise<R> {
+    const ctx = new EggTestContext();
+    return await ContextHandler.run(ctx, () => {
+      return cb(ctx);
+    });
   }
 }

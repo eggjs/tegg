@@ -55,7 +55,7 @@ export class CompatibleUtil {
     if (!holder[cacheKey]) {
       const getter = function(_, p: PropertyKey) {
         const proto = CompatibleUtil.getRequestProto(p);
-        const eggObj = EggContainerFactory.getEggObject(proto, p, ctx.teggContext);
+        const eggObj = EggContainerFactory.getEggObject(proto, p);
         if (deprecate) {
           ctx.app.deprecate(
             `[egg/module] Please use ctx.module.${loadUnitInstance.name}.${String(p)} instead of ctx.${loadUnitInstance.name}.${String(p)}`);

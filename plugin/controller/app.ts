@@ -1,6 +1,5 @@
 import { Application } from 'egg';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit';
-import { ControllerLoadUnitInstance } from './lib/ControllerLoadUnitInstance';
 import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook';
 import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
@@ -8,7 +7,7 @@ import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister';
 import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler';
 import { EggControllerHook } from './lib/EggControllerHook';
-import { LoadUnitInstanceLifecycleContext } from '@eggjs/tegg-runtime';
+import { LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
@@ -57,8 +56,8 @@ export default class ControllerAppBootHook {
       });
     this.app.loadUnitInstanceFactory.registerLoadUnitInstanceClass(
       CONTROLLER_LOAD_UNIT,
-      (ctx: LoadUnitInstanceLifecycleContext): ControllerLoadUnitInstance => {
-        return new ControllerLoadUnitInstance(ctx.loadUnit, this.app.loadUnitInstanceLifecycleUtil);
+      (ctx: LoadUnitInstanceLifecycleContext): ModuleLoadUnitInstance => {
+        return new ModuleLoadUnitInstance(ctx.loadUnit);
       },
     );
 

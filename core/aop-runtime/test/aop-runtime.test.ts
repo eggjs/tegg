@@ -45,63 +45,65 @@ describe('test/aop-runtime.test.ts', () => {
     });
 
     it('should work', async () => {
-      const ctx = new EggTestContext();
-      const hello = await CoreTestHelper.getObject(Hello, ctx);
-      const callTrace = await CoreTestHelper.getObject(CallTrace);
-      const msg = await hello.hello('aop');
-      const traceMsg = callTrace.msgs;
-      assert(msg === 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))');
-      assert.deepStrictEqual(traceMsg, [
-        {
-          className: 'CrosscutAdvice',
-          methodName: 'beforeCall',
-          id: 233,
-          name: 'aop',
-        },
-        {
-          className: 'PointcutAdvice',
-          methodName: 'beforeCall',
-          id: 233,
-          name: 'aop',
-        },
-        {
-          className: 'CrosscutAdvice',
-          methodName: 'afterReturn',
-          id: 233,
-          name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
-          result: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))',
-        },
-        {
-          className: 'PointcutAdvice',
-          methodName: 'afterReturn',
-          id: 233,
-          name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
-          result: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))',
-        },
-        {
-          className: 'CrosscutAdvice',
-          methodName: 'afterFinally',
-          id: 233,
-          name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
-        },
-        {
-          className: 'PointcutAdvice',
-          methodName: 'afterFinally',
-          id: 233,
-          name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
-        },
-      ]);
+      await EggTestContext.mockContext(async () => {
+        const hello = await CoreTestHelper.getObject(Hello);
+        const callTrace = await CoreTestHelper.getObject(CallTrace);
+        const msg = await hello.hello('aop');
+        const traceMsg = callTrace.msgs;
+        assert(msg === 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))');
+        assert.deepStrictEqual(traceMsg, [
+          {
+            className: 'CrosscutAdvice',
+            methodName: 'beforeCall',
+            id: 233,
+            name: 'aop',
+          },
+          {
+            className: 'PointcutAdvice',
+            methodName: 'beforeCall',
+            id: 233,
+            name: 'aop',
+          },
+          {
+            className: 'CrosscutAdvice',
+            methodName: 'afterReturn',
+            id: 233,
+            name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
+            result: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))',
+          },
+          {
+            className: 'PointcutAdvice',
+            methodName: 'afterReturn',
+            id: 233,
+            name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
+            result: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))',
+          },
+          {
+            className: 'CrosscutAdvice',
+            methodName: 'afterFinally',
+            id: 233,
+            name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
+          },
+          {
+            className: 'PointcutAdvice',
+            methodName: 'afterFinally',
+            id: 233,
+            name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
+          },
+        ]);
+      });
     });
 
     it('mock should work', async () => {
-      const ctx = new EggTestContext();
-      const hello = await CoreTestHelper.getObject(Hello, ctx);
-      let helloMocked = false;
-      mm(Hello.prototype, 'hello', async () => {
-        helloMocked = true;
+      await EggTestContext.mockContext(async () => {
+        const hello = await CoreTestHelper.getObject(Hello);
+        let helloMocked = false;
+        mm(Hello.prototype, 'hello', async () => {
+          helloMocked = true;
+        });
+        await hello.hello('aop');
+        assert(helloMocked === true);
       });
-      await hello.hello('aop');
-      assert(helloMocked === true);
     });
   });
 

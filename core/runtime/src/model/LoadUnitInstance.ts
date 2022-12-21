@@ -2,7 +2,6 @@ import { EggContainer } from './EggContainer';
 import { LoadUnit } from '@eggjs/tegg-metadata';
 import { LifecycleUtil } from '@eggjs/tegg-lifecycle';
 
-
 export interface LoadUnitInstanceLifecycleContext {
   loadUnit: LoadUnit;
 }

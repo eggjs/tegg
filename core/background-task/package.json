@@ -41,7 +41,7 @@
     "@eggjs/tegg-lifecycle": "^1.0.0"
   },
   "devDependencies": {
-    "egg": "^2.26.0",
+    "egg": "^3.9.1",
     "mz-modules": "^2.1.0"
   },
   "publishConfig": {

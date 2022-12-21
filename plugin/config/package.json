@@ -44,7 +44,7 @@
     "@eggjs/tegg-common-util": "^1.2.3"
   },
   "devDependencies": {
-    "egg": "^2.26.1"
+    "egg": "^3.9.1"
   },
   "publishConfig": {
     "access": "public"

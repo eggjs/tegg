@@ -4,7 +4,6 @@ import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggContainerFactory } from './EggContainerFactory';
 import { ObjectInitType } from '@eggjs/core-decorator';
 
-
 type LoadUnitInstanceCreator = (ctx: LoadUnitInstanceLifecycleContext) => LoadUnitInstance;
 interface LoadUnitInstancePair {
   instance: LoadUnitInstance;

@@ -1,5 +1,9 @@
 import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl';
-import { EggContext, EggObject, EggObjectFactory, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
+import {
+  ContextHandler,
+  EggObject,
+  EggObjectFactory,
+} from '@eggjs/tegg-runtime';
 import { IdenticalUtil, EggObjectName } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 
@@ -10,14 +14,13 @@ export class EggCompatibleObject implements EggObject {
   private [OBJ]: object;
   readonly proto: EggCompatibleProtoImpl;
   readonly name: EggObjectName;
-  readonly ctx?: EggContext;
   readonly id: string;
 
-  constructor(name: EggObjectName, proto: EggCompatibleProtoImpl, ctx?: EggContext) {
+  constructor(name: EggObjectName, proto: EggCompatibleProtoImpl) {
     this.proto = proto;
     this.name = name;
-    this.ctx = ctx;
-    this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx?.id);
+    const ctx = ContextHandler.getContext();
+    this.id = IdenticalUtil.createObjectId(this.proto.id, ctx?.id);
   }
 
   // If the egg object is a getter,
@@ -25,7 +28,7 @@ export class EggCompatibleObject implements EggObject {
   // So access egg object lazy.
   get obj() {
     if (!this[OBJ]) {
-      this[OBJ] = this.proto.constructorEggCompatibleObject(this.ctx);
+      this[OBJ] = this.proto.constructorEggCompatibleObject();
     }
     return this[OBJ];
   }
@@ -34,8 +37,8 @@ export class EggCompatibleObject implements EggObject {
     return;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype, _: EggObjectLifeCycleContext, ctx?: EggContext): Promise<EggCompatibleObject> {
-    return new EggCompatibleObject(name, proto as EggCompatibleProtoImpl, ctx);
+  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<EggCompatibleObject> {
+    return new EggCompatibleObject(name, proto as EggCompatibleProtoImpl);
   }
 }
 

@@ -11,7 +11,7 @@ export function eggScheduleAdapterFactory(proto: EggPrototype, metaData: Schedul
     (ctx as any)[ROOT_PROTO] = proto;
     await ctx.beginModuleScope(async () => {
       if (metaData.disable) return;
-      const eggObject = await EggContainerFactory.getOrCreateEggObject(proto, proto.name, ctx.teggContext);
+      const eggObject = await EggContainerFactory.getOrCreateEggObject(proto, proto.name);
       const subscriber = eggObject.obj as ScheduleSubscriber;
       await subscriber.subscribe(data);
     });

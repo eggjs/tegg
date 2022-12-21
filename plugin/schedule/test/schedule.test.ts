@@ -32,7 +32,7 @@ describe('test/schedule.test.ts', () => {
     return app.close();
   });
 
-  it('msg should work', async () => {
+  it('schedule should work', async () => {
     await sleep(1000);
     const scheduleLog = await getScheduleLogContent('schedule-app');
     assert(/schedule called/.test(scheduleLog));
