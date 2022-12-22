@@ -1,25 +1,24 @@
 import { EggObject, EggObjectLifeCycleContext, EggObjectLifecycleUtil, EggObjectStatus } from '../model/EggObject';
 import { EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggContext } from '../model/EggContext';
-import { EggObjectName } from '@eggjs/core-decorator';
+import { EggObjectName, ObjectInitType } from '@eggjs/core-decorator';
 import { EggObjectLifecycle, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 import { EggObjectUtil } from './EggObjectUtil';
+import { ContextHandler } from '../model/ContextHandler';
 
 export default class EggObjectImpl implements EggObject {
   private _obj: object;
   private status: EggObjectStatus = EggObjectStatus.PENDING;
 
   readonly proto: EggPrototype;
-  readonly ctx?: EggContext;
   readonly name: EggObjectName;
   readonly id: string;
 
-  constructor(name: EggObjectName, proto: EggPrototype, ctx?: EggContext) {
+  constructor(name: EggObjectName, proto: EggPrototype) {
     this.name = name;
     this.proto = proto;
-    this.ctx = ctx;
-    this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx?.id);
+    const ctx = ContextHandler.getContext();
+    this.id = IdenticalUtil.createObjectId(this.proto.id, ctx?.id);
   }
 
   async init(ctx: EggObjectLifeCycleContext) {
@@ -48,8 +47,12 @@ export default class EggObjectImpl implements EggObject {
         if (!loadUnit) {
           throw new Error(`can not find load unit: ${proto.loadUnitId}`);
         }
-        const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName, this.ctx);
-        this.injectProperty(injectObject.refName, EggObjectUtil.eggObjectGetProperty(injectObj));
+        if (this.proto.initType !== ObjectInitType.CONTEXT && injectObject.proto.initType === ObjectInitType.CONTEXT) {
+          this.injectProperty(injectObject.refName, EggObjectUtil.contextEggObjectGetProperty(proto, injectObject.objName));
+        } else {
+          const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
+          this.injectProperty(injectObject.refName, EggObjectUtil.eggObjectGetProperty(injectObj));
+        }
       }));
 
       // global hook
@@ -103,8 +106,8 @@ export default class EggObjectImpl implements EggObject {
     return this.status === EggObjectStatus.READY;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype, lifecycleContext: EggObjectLifeCycleContext, ctx?: EggContext): Promise<EggObjectImpl> {
-    const obj = new EggObjectImpl(name, proto, ctx);
+  static async createObject(name: EggObjectName, proto: EggPrototype, lifecycleContext: EggObjectLifeCycleContext): Promise<EggObjectImpl> {
+    const obj = new EggObjectImpl(name, proto);
     await obj.init(lifecycleContext);
     return obj;
   }

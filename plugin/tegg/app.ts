@@ -5,10 +5,12 @@ import { Application } from 'egg';
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook';
 import { CompatibleUtil } from './lib/CompatibleUtil';
 import { ModuleHandler } from './lib/ModuleHandler';
+import { EggContextHandler } from './lib/EggContextHandler';
 
 export default class App {
   private readonly app: Application;
   private compatibleHook?: EggContextCompatibleHook;
+  private eggContextHandler: EggContextHandler;
 
   constructor(app: Application) {
     this.app = app;
@@ -19,6 +21,8 @@ export default class App {
   }
 
   configDidLoad() {
+    this.eggContextHandler = new EggContextHandler(this.app);
+    this.eggContextHandler.register();
     this.app.moduleHandler = new ModuleHandler(this.app);
   }
 

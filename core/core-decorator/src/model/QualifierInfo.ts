@@ -14,22 +14,22 @@ export type QualifierValue = string | number;
  *   hello(name: string): Promise<void>;
  * }
  *
- * @ContextProto({ name: 'helloService' })
- * @HelloService(HelloServiceType.Email)
+ * \@ContextProto({ name: 'helloService' })
+ * \@HelloService(HelloServiceType.Email)
  * class EmailHelloService implement HelloService {
  *   ...
  * }
  *
- * @ContextProto({ name: 'helloService' })
- * @HelloService(HelloServiceType.Message)
+ * \@ContextProto({ name: 'helloService' })
+ * \@HelloService(HelloServiceType.Message)
  * class MessageHelloService implement HelloService {
  *   ...
  * }
  *
- * @ContextProto()
+ * \@ContextProto()
  * class HelloFacade {
- *   @Inject
- *   @HelloService(HelloServiceType.Message)
+ *   \@Inject
+ *   \@HelloService(HelloServiceType.Message)
  *   helloService: HelloService;
  * }
  */

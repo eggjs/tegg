@@ -1,7 +1,6 @@
 import { Context, Application } from 'egg';
 import { AbstractEggContext, EggContext } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg';
-import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { ContextCreator } from '@eggjs/tegg-eventbus-runtime';
 
 // AbstractEggContext use lots of static method
@@ -13,8 +12,6 @@ export function eggEventContextFactory(AbstractEggContextClazz: typeof AbstractE
 
     constructor(context: Context) {
       super();
-      this.set(EGG_CONTEXT, context);
-      (context as any)[TEGG_CONTEXT] = this;
       // In chair application mode,
       // Plugin event may install in app dir,
       // Plugin tegg may install in layer dir,

@@ -17,7 +17,7 @@
   "scripts": {
     "lint:fix": "eslint . --ext .ts --fix",
     "lint": "eslint . --ext .ts",
-    "test": "cross-env NODE_ENV=test TS_NODE_TRANSPILE_ONLY=true mocha",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' TS_NODE_TRANSPILE_ONLY=true mocha",
     "cov": "npm run clean && nyc npm run test",
     "pub": "lerna publish",
     "pub-canary": "lerna publish --canary",

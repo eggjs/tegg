@@ -10,7 +10,6 @@ describe('test/eventbus.test.ts', () => {
   let ctx;
 
   afterEach(async () => {
-    await app.destroyModuleContext(ctx);
     mm.restore();
   });
 

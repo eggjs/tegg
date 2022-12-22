@@ -16,9 +16,11 @@ import {
   EggObjectLifecycleUtil,
   AbstractEggContext,
   EggObjectFactory,
+  EggContext,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
+import { AsyncLocalStorage } from 'async_hooks';
 
 declare module 'egg' {
   export interface EggModule {
@@ -46,6 +48,7 @@ declare module 'egg' {
     eggPrototypeLifecycleUtil: typeof EggPrototypeLifecycleUtil;
     eggContextLifecycleUtil: typeof EggContextLifecycleUtil;
     eggObjectLifecycleUtil: typeof EggObjectLifecycleUtil;
+    teggContextStorage(): AsyncLocalStorage<EggContext>
 
     moduleHandler: ModuleHandler;
 

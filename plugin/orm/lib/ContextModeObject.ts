@@ -1,8 +1,7 @@
-import assert from 'assert';
 import {
+  ContextHandler,
   EggContext,
   EggObject,
-  EggObjectLifeCycleContext,
   EggObjectStatus,
 } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
@@ -18,13 +17,13 @@ export class ContextModeObject implements EggObject {
   readonly name: EggPrototypeName;
   private _obj: typeof Bone;
   readonly proto: ContextModelProto;
-  readonly ctx: EggContext;
+  readonly ctx?: EggContext;
 
-  constructor(name: EggObjectName, proto: ContextModelProto, ctx: EggContext) {
+  constructor(name: EggObjectName, proto: ContextModelProto) {
     this.name = name;
     this.proto = proto;
-    this.ctx = ctx;
-    this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx.id);
+    this.ctx = ContextHandler.getContext();
+    this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx?.id);
   }
 
   async init() {
@@ -37,12 +36,12 @@ export class ContextModeObject implements EggObject {
       }
 
       static get ctx() {
-        return ctx.get(EGG_CONTEXT);
+        return ctx?.get(EGG_CONTEXT);
       }
 
       // custom setter always execute before define [CTX] when new Instance(super(opts) calling), if custom setter requires ctx, it should not be undefined
       get ctx() {
-        return ctx.get(EGG_CONTEXT);
+        return ctx?.get(EGG_CONTEXT);
       }
     };
     this._obj = clazz;
@@ -61,9 +60,8 @@ export class ContextModeObject implements EggObject {
     return this._obj;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype, _: EggObjectLifeCycleContext, ctx?: EggContext): Promise<ContextModeObject> {
-    assert(ctx, 'ctx must be defined for ContextModelObject');
-    const modelObject = new ContextModeObject(name, proto as ContextModelProto, ctx);
+  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<ContextModeObject> {
+    const modelObject = new ContextModeObject(name, proto as ContextModelProto);
     await modelObject.init();
     return modelObject;
   }

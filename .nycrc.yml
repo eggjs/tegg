@@ -24,3 +24,5 @@ exclude:
   - plugin/*/test/**/*
   - integration/*/test/**/*
   - standalone/*/test/**/*
+  - benchmark/**/*
+  - test-util/*/dist

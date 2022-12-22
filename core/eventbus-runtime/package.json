@@ -53,7 +53,7 @@
     "@eggjs/tegg-metadata": "^1.4.3",
     "@eggjs/tegg-runtime": "^1.4.3",
     "coffee": "^5.4.0",
-    "egg": "^2.29.3",
+    "egg": "^3.9.1",
     "mm": "^3.2.0",
     "mz-modules": "^2.1.0"
   },

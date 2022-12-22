@@ -57,18 +57,6 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
         assert(e.message.includes('faq/TEGG_MULTI_PROTO_FOUND'));
       }
     });
-
-    it('should init failed with incompatilble proto injection', async () => {
-      const invalidateModulePath = path.join(__dirname, './fixtures/modules/incompatible-proto-inject');
-      const loader = new TestLoader(invalidateModulePath);
-      try {
-        await LoadUnitFactory.createLoadUnit(invalidateModulePath, EggLoadUnitType.MODULE, loader);
-        throw new Error('should throw error');
-      } catch (e) {
-        assert(e.message.includes('can not inject ContextProto(logger) in SingletonProto(base)'));
-        assert(e.message.includes('faq/TEGG_INCOMPATIBLE_PROTO_INJECT'));
-      }
-    });
   });
 
   describe('try use obj init type as property init type qualifier', () => {

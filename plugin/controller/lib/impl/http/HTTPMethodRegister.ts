@@ -13,7 +13,6 @@ import {
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { RootProtoManager } from '../../RootProtoManager';
 import pathToRegexp from 'path-to-regexp';
 import { aclMiddlewareFactory } from './Acl';
@@ -62,7 +61,7 @@ export class HTTPMethodRegister {
       }
       // HTTP decorator core implement
       // use controller metadata map http request to function arguments
-      const eggObj = self.eggContainerFactory.getEggObject(self.proto, self.proto.name, (ctx as any)[TEGG_CONTEXT]);
+      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(self.proto, self.proto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[methodMeta.name];
       const args: Array<object | string | string[]> = new Array(methodArgsLength);

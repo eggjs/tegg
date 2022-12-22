@@ -37,6 +37,7 @@ export class EggObjectFactoryPrototype implements EggPrototype {
     this.accessLevel = property.accessLevel;
     this.loadUnitId = loadUnit.id;
     this.name = property.name || NameUtil.getClassName(this.clazz);
+    this.injectObjects = [];
   }
 
   constructEggObject(): EggObjectFactory {

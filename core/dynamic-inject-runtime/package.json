@@ -20,8 +20,8 @@
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc-pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc-pub",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub",
     "autod": "autod"
   },
   "author": "killagu <killa123@126.com>",

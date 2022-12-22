@@ -27,7 +27,7 @@ export default {
       throw new Error(`can not get proto for clazz ${clazz.name}`);
     }
     const proto = protoObj as EggPrototype;
-    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, proto.name, this.teggContext);
+    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, proto.name);
     return eggObject.obj;
   },
 };

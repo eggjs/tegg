@@ -22,7 +22,7 @@ export class EggContextObjectFactory extends AbstractEggObjectFactory {
     if (!protoObj) {
       throw new Error(`can not get proto for clazz ${implClazz.name}`);
     }
-    const eggObject = await this.eggContainerFactory.getOrCreateEggObject(protoObj, protoObj.name, this.eggContext);
+    const eggObject = await this.eggContainerFactory.getOrCreateEggObject(protoObj, protoObj.name);
     return eggObject.obj as T;
   }
 }
