@@ -1,12 +1,8 @@
 {
-  "packages": [
-    "core/*",
-    "plugin/*",
-    "standalone/*"
-  ],
-  "version": "independent",
+  "useWorkspaces": true,
+  "version": "2.4.5",
   "npmClientArgs": [
     "--package-lock=false"
   ],
-  "lerna": "3.22.1"
+  "lerna": "1.6.4"
 }
