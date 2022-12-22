@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-plugin",
-  "version": "1.5.5",
+  "version": "3.0.0-alpha.0",
   "eggPlugin": {
     "name": "aopModule",
     "dependencies": [
@@ -40,12 +40,12 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg": "^1.6.4",
-    "@eggjs/tegg-aop-runtime": "^1.5.4"
+    "@eggjs/tegg": "^3.0.0-alpha.0",
+    "@eggjs/tegg-aop-runtime": "^3.0.0-alpha.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^1.3.3",
-    "@eggjs/tegg-plugin": "^1.5.5",
+    "@eggjs/tegg-config": "^3.0.0-alpha.0",
+    "@eggjs/tegg-plugin": "^3.0.0-alpha.0",
     "egg": "^3.9.1",
     "egg-mock": "^4.0.1"
   },

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0-alpha.0](https://github.com/eggjs/tegg/compare/v1.3.0...v3.0.0-alpha.0) (2022-12-22)
+
+
+### Bug Fixes
+
+* fix events type from any to keyof Events ([#54](https://github.com/eggjs/tegg/issues/54)) ([a2551b2](https://github.com/eggjs/tegg/commit/a2551b2d9f9eabf9ed5c87f83489615eefa3e6d1))
+* fix mock prototype in aop not work ([#66](https://github.com/eggjs/tegg/issues/66)) ([16640eb](https://github.com/eggjs/tegg/commit/16640eb751405532b2a1241b17624ce3ac2d1c7a))
+
+
+### Features
+
+* **break:** use async local storage ([#69](https://github.com/eggjs/tegg/issues/69)) ([772aeb9](https://github.com/eggjs/tegg/commit/772aeb9412c6d7cd23560230b441161ba28ffa0e))
+
+
+
+
+
 ## [1.4.1](https://github.com/eggjs/tegg/compare/@eggjs/tegg-aop-runtime@1.4.0...@eggjs/tegg-aop-runtime@1.4.1) (2022-09-04)
 
 
