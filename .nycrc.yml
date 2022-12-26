@@ -25,4 +25,4 @@ exclude:
   - integration/*/test/**/*
   - standalone/*/test/**/*
   - benchmark/**/*
-  - test-util/*/dist
+  - core/test-util/**/*

@@ -6,7 +6,6 @@ import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister';
 import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler';
-import { EggControllerHook } from './lib/EggControllerHook';
 import { LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
@@ -21,7 +20,6 @@ import { EggControllerLoader } from './lib/EggControllerLoader';
 export default class ControllerAppBootHook {
   private readonly app: Application;
   private readonly loadUnitHook: AppLoadUnitControllerHook;
-  private controllerHook: EggControllerHook;
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
   private controllerLoadUnitHandler: ControllerLoadUnitHandler;
   private readonly controllerPrototypeHook: EggControllerPrototypeHook;
@@ -79,8 +77,6 @@ export default class ControllerAppBootHook {
     await this.app.moduleHandler.ready();
     this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
     await this.controllerLoadUnitHandler.ready();
-    this.controllerHook = new EggControllerHook();
-    this.app.eggContextLifecycleUtil.registerLifecycle(this.controllerHook);
 
     // The real register HTTP controller/method.
     // HTTP method should sort by priority
@@ -96,9 +92,6 @@ export default class ControllerAppBootHook {
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitHook);
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
-    if (this.controllerHook) {
-      this.app.eggContextLifecycleUtil.deleteLifecycle(this.controllerHook);
-    }
     HTTPControllerRegister.clean();
   }
 }

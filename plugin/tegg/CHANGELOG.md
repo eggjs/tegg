@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/eggjs/tegg/compare/v3.0.0-alpha.0...v3.0.0) (2022-12-26)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.0.0-alpha.0](https://github.com/eggjs/tegg/compare/v1.3.0...v3.0.0-alpha.0) (2022-12-22)
+
+
+### Bug Fixes
+
+* optimize backgroud output ([#47](https://github.com/eggjs/tegg/issues/47)) ([6d978c5](https://github.com/eggjs/tegg/commit/6d978c5d7c339c78a90b00d2c2622f0be85ab3ce))
+
+
+### Features
+
+* **break:** use async local storage ([#69](https://github.com/eggjs/tegg/issues/69)) ([772aeb9](https://github.com/eggjs/tegg/commit/772aeb9412c6d7cd23560230b441161ba28ffa0e))
+
+
+
+
+
 ## [1.3.8](https://github.com/eggjs/tegg/compare/@eggjs/tegg-plugin@1.3.7...@eggjs/tegg-plugin@1.3.8) (2022-09-05)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin

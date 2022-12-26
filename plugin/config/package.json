@@ -3,7 +3,7 @@
   "eggPlugin": {
     "name": "teggConfig"
   },
-  "version": "1.3.3",
+  "version": "3.0.0",
   "description": "module config plugin for egg",
   "keywords": [
     "egg",
