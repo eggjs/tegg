@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -47,11 +47,11 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^1.0.0",
-    "@eggjs/tegg": "^3.0.0-alpha.0",
+    "@eggjs/tegg": "^3.0.0",
     "@eggjs/tegg-common-util": "^1.2.3",
-    "@eggjs/tegg-loader": "^3.0.0-alpha.0",
-    "@eggjs/tegg-metadata": "^3.0.0-alpha.0",
-    "@eggjs/tegg-runtime": "^3.0.0-alpha.0",
+    "@eggjs/tegg-loader": "^3.0.0",
+    "@eggjs/tegg-metadata": "^3.0.0",
+    "@eggjs/tegg-runtime": "^3.0.0",
     "@types/koa-router": "^7.0.40",
     "egg-errors": "^2.3.0",
     "koa-compose": "^3.2.1",
@@ -59,10 +59,10 @@
     "sdk-base": "^4.2.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.0.0-alpha.0",
+    "@eggjs/module-test-util": "^3.0.0",
     "@eggjs/router": "^2.0.0",
-    "@eggjs/tegg-config": "^3.0.0-alpha.0",
-    "@eggjs/tegg-plugin": "^3.0.0-alpha.0",
+    "@eggjs/tegg-config": "^3.0.0",
+    "@eggjs/tegg-plugin": "^3.0.0",
     "egg": "^3.9.1",
     "egg-mock": "^3.25.1",
     "egg-tracer": "^1.1.0",

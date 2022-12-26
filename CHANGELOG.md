@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.0.0](https://github.com/eggjs/tegg/compare/v3.0.0-alpha.0...v3.0.0) (2022-12-26)
+
+
+### Features
+
+* delete controller root hook ([bbb68f4](https://github.com/eggjs/tegg/commit/bbb68f43a1a9fcfd86c05581b10c56eeb77d4053))
+
+
+
+
+
 # [3.0.0-alpha.0](https://github.com/eggjs/tegg/compare/v1.3.0...v3.0.0-alpha.0) (2022-12-22)
 
 
