@@ -56,7 +56,8 @@
     "egg-errors": "^2.3.0",
     "koa-compose": "^3.2.1",
     "path-to-regexp": "^1.8.0",
-    "sdk-base": "^4.2.0"
+    "sdk-base": "^4.2.0",
+    "globby": "^10.0.2"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.0.0",
