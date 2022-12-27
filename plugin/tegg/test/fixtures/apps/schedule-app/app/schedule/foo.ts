@@ -10,7 +10,7 @@ export default class Foo extends Subscription {
 
   async subscribe() {
     await this.ctx.beginModuleScope(async () => {
-      await this.ctx.module.multiModuleService.appService.findApp();
+      await this.ctx.app.module.multiModuleService.appService.findApp();
     });
   }
 }

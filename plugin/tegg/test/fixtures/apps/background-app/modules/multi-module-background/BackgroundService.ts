@@ -1,10 +1,10 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { CountService } from './CountService';
 import sleep from 'mz-modules/sleep';
 import assert from 'assert';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export default class BackgroundService {

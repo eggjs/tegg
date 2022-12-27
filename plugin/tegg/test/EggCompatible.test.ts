@@ -77,7 +77,7 @@ describe('test/EggCompatible.test.ts', () => {
 
   it('inject config should work', async () => {
     const ctx = await app.mockModuleContext();
-    const baseDir = ctx.module.multiModuleService.configService.getBaseDir();
+    const baseDir = app.module.multiModuleService.configService.getBaseDir();
     assert(baseDir);
     await app.destroyModuleContext(ctx);
   });
@@ -85,14 +85,14 @@ describe('test/EggCompatible.test.ts', () => {
   it('inject user should work', async () => {
     app.mockUser();
     const ctx = await app.mockModuleContext();
-    const userName = ctx.module.multiModuleService.configService.getCurrentUserName();
+    const userName = app.module.multiModuleService.configService.getCurrentUserName();
     assert(userName);
     await app.destroyModuleContext(ctx);
   });
 
   it('custom logger should work', async () => {
     const ctx = await app.mockModuleContext();
-    await ctx.module.multiModuleService.customLoggerService.printLog();
+    await app.module.multiModuleService.customLoggerService.printLog();
     await app.destroyModuleContext(ctx);
   });
 
@@ -109,9 +109,9 @@ describe('test/EggCompatible.test.ts', () => {
   });
 
   it('module proxy cache should work', async () => {
-    const ctx = await app.mockModuleContext();
-    const moduleMultiModuleService1 = ctx.module.multiModuleService;
-    const moduleMultiModuleService2 = ctx.module.multiModuleService;
+    await app.mockModuleContext();
+    const moduleMultiModuleService1 = app.module.multiModuleService;
+    const moduleMultiModuleService2 = app.module.multiModuleService;
     assert(moduleMultiModuleService1 === moduleMultiModuleService2);
   });
 

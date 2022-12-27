@@ -1,7 +1,7 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import AppService from '../multi-module-service/AppService';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export default class AppRepo {

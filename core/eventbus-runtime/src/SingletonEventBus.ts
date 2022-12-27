@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
+import { AccessLevel, InitTypeQualifier, Inject, ObjectInitType, SingletonProto } from '@eggjs/core-decorator';
 import { EventBus, Events, EventWaiter, EventName, CORK_ID } from '@eggjs/eventbus-decorator';
 import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
 import type { EggLogger } from 'egg';
@@ -39,12 +39,29 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   @Inject()
   private readonly eventHandlerFactory: EventHandlerFactory;
 
-  @Inject()
-  private readonly logger: EggLogger;
+  @Inject({
+    name: 'logger',
+  })
+  @InitTypeQualifier(ObjectInitType.CONTEXT)
+  private readonly ctxLogger: EggLogger;
+
+  @Inject({
+    name: 'logger',
+  })
+  @InitTypeQualifier(ObjectInitType.SINGLETON)
+  private readonly singletonLogger: EggLogger;
 
   private corkIdSequence = 0;
 
   private readonly corkedEvents = new Map<string /* corkId */, CorkEvents>();
+
+  get logger() {
+    try {
+      return this.ctxLogger;
+    } catch (_) {
+      return this.singletonLogger;
+    }
+  }
 
   /**
    * only use for ensure event will happen

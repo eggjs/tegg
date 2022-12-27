@@ -38,7 +38,8 @@
   "license": "MIT",
   "dependencies": {
     "@eggjs/core-decorator": "^3.0.0",
-    "@eggjs/tegg-lifecycle": "^1.0.0"
+    "@eggjs/tegg-lifecycle": "^1.0.0",
+    "@eggjs/tegg-runtime": "^3.0.0"
   },
   "devDependencies": {
     "egg": "^3.9.1",

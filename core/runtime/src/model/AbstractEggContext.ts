@@ -1,6 +1,6 @@
 import { EggContext, EggContextLifecycleContext, EggContextLifecycleUtil } from './EggContext';
 import { EggObjectName, EggPrototypeName, ObjectInitType } from '@eggjs/core-decorator';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { EggPrototype, TeggError } from '@eggjs/tegg-metadata';
 import { EggObject } from './EggObject';
 import { Id } from '@eggjs/tegg-lifecycle';
 import { MapUtil } from '@eggjs/tegg-common-util';
@@ -13,6 +13,7 @@ export abstract class AbstractEggContext implements EggContext {
   private protoToCreate: Map<EggPrototypeName, EggPrototype> = new Map();
   private eggObjectMap: Map<Id, Map<EggPrototypeName, EggObject>> = new Map();
   private eggObjectPromiseMap: Map<Id, Map<EggPrototypeName, Promise<EggObject>>> = new Map();
+  private destroyed = false;
 
   abstract id: string;
 
@@ -37,6 +38,7 @@ export abstract class AbstractEggContext implements EggContext {
       await EggObjectFactory.destroyObject(obj);
     }));
     this.contextData.clear();
+    this.destroyed = true;
   }
 
   get(key: string | symbol): any | undefined {
@@ -44,6 +46,9 @@ export abstract class AbstractEggContext implements EggContext {
   }
 
   getEggObject(name: EggPrototypeName, proto: EggPrototype): EggObject {
+    if (this.destroyed) {
+      throw TeggError.create(`Can not read property \`${String(name)}\` because egg ctx has been destroyed`, 'read_after_ctx_destroyed');
+    }
     const protoObjMap = this.eggObjectMap.get(proto.id);
 
     if (!protoObjMap || !protoObjMap.has(name)) {

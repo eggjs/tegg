@@ -5,7 +5,7 @@ import { Application } from 'egg';
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';
 import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService';
 
-describe('test/app/extend/context.test.ts', () => {
+describe('test/app/extend/application.test.ts', () => {
   let app: Application;
 
   after(async () => {

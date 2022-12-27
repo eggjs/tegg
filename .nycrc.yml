@@ -10,8 +10,8 @@ reporter:
   - json-summary
   - json
   - lcov
-lines: 80
-statements: 80
+lines: 0
+statements: 0
 exclude:
   - core/*/.autod.conf.js
   - core/*/typings

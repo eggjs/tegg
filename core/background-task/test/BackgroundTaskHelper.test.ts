@@ -18,7 +18,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
         run = true;
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
       assert(run);
     });
   });
@@ -32,7 +32,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
         run = true;
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
       assert(run === false);
     });
   });
@@ -44,7 +44,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
         throw new Error('mock error');
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
     });
   });
 
@@ -54,7 +54,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
         throw new Error('mock error');
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
     });
   });
 });
