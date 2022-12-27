@@ -1,6 +1,8 @@
+import assert from 'assert';
 import { AccessLevel, ContextProto, Inject } from '@eggjs/core-decorator';
 import type { EggLogger } from 'egg';
 import { EggObjectLifecycle } from '@eggjs/tegg-lifecycle';
+import { ContextHandler, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -13,6 +15,16 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
   timeout = 5000;
 
   private backgroundTasks: Array<Promise<void>> = [];
+
+  async init() {
+    const ctx = ContextHandler.getContext();
+    assert(ctx, 'background task helper must be init in context');
+    EggContextLifecycleUtil.registerObjectLifecycle(ctx, {
+      preDestroy: async () => {
+        await this.doPreDestroy();
+      },
+    });
+  }
 
   run(fn: () => Promise<void>) {
     const backgroundTask = new Promise<void>(resolve => {
@@ -37,7 +49,7 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
     this.backgroundTasks.push(backgroundTask);
   }
 
-  async preDestroy(): Promise<void> {
+  async doPreDestroy(): Promise<void> {
     // quick quit
     if (!this.backgroundTasks.length) return;
 

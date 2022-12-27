@@ -1,11 +1,11 @@
 import {
   AccessLevel,
   Inject,
-  ContextProto,
+  SingletonProto,
 } from '@eggjs/tegg';
 import { EggLogger } from 'egg-logger';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export default class CustomLoggerService {

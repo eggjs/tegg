@@ -64,8 +64,19 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const sameObjectModulePath = path.join(__dirname, './fixtures/modules/same-name-object');
       const loader = new TestLoader(sameObjectModulePath);
       const loadUnit = await LoadUnitFactory.createLoadUnit(sameObjectModulePath, EggLoadUnitType.MODULE, loader);
-      const countServiceProto = loadUnit.getEggPrototype('countService', []);
+      const countServiceProto = loadUnit.getEggPrototype('countService', [])[0];
       assert(countServiceProto);
+    });
+
+    it('should use context proto first', async () => {
+      const sameObjectModulePath = path.join(__dirname, './fixtures/modules/same-name-object');
+      const loader = new TestLoader(sameObjectModulePath);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(sameObjectModulePath, EggLoadUnitType.MODULE, loader);
+      const singletonProto = loadUnit.getEggPrototype('singletonCountService', [])[0];
+      assert(singletonProto);
+      const injectProto = singletonProto.injectObjects.find(t => t.objName === 'appCache');
+      assert(injectProto);
+      assert(injectProto.proto.initType === ObjectInitType.CONTEXT);
     });
   });
 });

@@ -6,7 +6,6 @@ import { EggObject } from '../model/EggObject';
 import { ContextHandler } from '../model/ContextHandler';
 import { ContextInitiator } from '../impl/ContextInitiator';
 
-
 export type ContainerGetMethod = (proto: EggPrototype) => EggContainer<LifecycleContext>;
 
 export class EggContainerFactory {

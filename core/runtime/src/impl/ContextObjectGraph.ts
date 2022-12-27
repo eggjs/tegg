@@ -1,5 +1,5 @@
 import { EggPrototype, InjectObjectProto } from '@eggjs/tegg-metadata';
-import { ObjectInitType } from '@eggjs/tegg';
+import { ObjectInitType } from '@eggjs/core-decorator';
 
 class InjectProtoHolder {
   private idSet: Set<string> = new Set();
