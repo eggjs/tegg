@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/eggjs/tegg/compare/v3.2.0...v3.2.1) (2022-12-28)
+
+
+### Bug Fixes
+
+* fix nest inject ctx obj to singleton obj ([#74](https://github.com/eggjs/tegg/issues/74)) ([e4b6252](https://github.com/eggjs/tegg/commit/e4b6252aa79925e16185e568bf7b220f367253ab))
+
+
+
+
+
 # [3.1.0](https://github.com/eggjs/tegg/compare/v1.3.0...v3.1.0) (2022-12-27)
 
 
