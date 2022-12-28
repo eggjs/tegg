@@ -331,13 +331,9 @@ export class HelloService {
 ```typescript
 export interface Application {
   /**
-   * 创建 module 上下文
+   * 创建 module 上下文 scope
    */
-  mockModuleContext(data?: any): Promise <Context> ;
-  /**
-   * 销毁 module 上下文
-   */
-  destroyModuleContext(context: Context): Promise <void> ;
+  mockModuleContextScope<R=any>(this: MockApplication, fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
 }
 ```
 

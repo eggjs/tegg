@@ -1,4 +1,4 @@
-import { Application, Context } from 'egg';
+import { Context } from 'egg';
 import '@eggjs/tegg-config';
 import { ModuleHandler } from '../lib/ModuleHandler';
 import { EggPrototypeCreatorFactory } from '@eggjs/tegg-metadata';
@@ -48,11 +48,11 @@ declare module 'egg' {
     eggPrototypeLifecycleUtil: typeof EggPrototypeLifecycleUtil;
     eggContextLifecycleUtil: typeof EggContextLifecycleUtil;
     eggObjectLifecycleUtil: typeof EggObjectLifecycleUtil;
-    teggContextStorage(): AsyncLocalStorage<EggContext>
-
+    teggContext: EggContext;
     moduleHandler: ModuleHandler;
 
     mockModuleContext(data?: any): Promise<Context>;
+    mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
     destroyModuleContext(context: Context): Promise<void>;
     // 兼容现有 module 的定义
     module: EggModule & EggApplicationModule;

@@ -63,7 +63,7 @@
     "@eggjs/tegg-config": "^3.1.0",
     "@eggjs/tegg-plugin": "^3.1.0",
     "egg": "^3.9.1",
-    "egg-mock": "^3.25.1",
+    "egg-mock": "^5.5.0",
     "egg-schedule": "^4.0.0",
     "mz-modules": "^2.1.0"
   },

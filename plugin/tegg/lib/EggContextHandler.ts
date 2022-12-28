@@ -1,6 +1,6 @@
 import { Application } from 'egg';
 import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
-import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
 export class EggContextHandler {
   private readonly app: Application;
@@ -10,9 +10,8 @@ export class EggContextHandler {
   }
 
   getContextCallback(): EggContext {
-    // TODO
-    const ctx = (this.app as any).currentContext;
-    return ctx && ctx[TEGG_CONTEXT];
+    const ctx = this.app.currentContext;
+    return ctx && ctx.teggContext;
   }
 
   async run<R>(eggContext: EggContext, fn: () => Promise<R>): Promise<R> {
