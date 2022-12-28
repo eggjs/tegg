@@ -37,8 +37,8 @@ export class ContextObjectGraph {
     for (const injectObject of proto.injectObjects) {
       if (injectObject.proto.initType === ObjectInitType.CONTEXT && proto.initType !== ObjectInitType.CONTEXT) {
         holder.addInjectProto(injectObject);
-        ContextObjectGraph.doGetContextProto(injectObject.proto, holder);
       }
+      ContextObjectGraph.doGetContextProto(injectObject.proto, holder);
     }
   }
 }

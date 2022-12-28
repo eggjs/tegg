@@ -13,9 +13,6 @@ describe('test/EggObject.test.ts', () => {
 
   beforeEach(() => {
     ctx = new EggTestContext();
-    mm(ContextHandler, 'getContext', () => {
-      return ctx;
-    });
   });
 
   afterEach(() => {
@@ -23,6 +20,12 @@ describe('test/EggObject.test.ts', () => {
   });
 
   describe('lifecycle', () => {
+    beforeEach(() => {
+      mm(ContextHandler, 'getContext', () => {
+        return ctx;
+      });
+    });
+
     describe('context proto', () => {
       it('should work', async () => {
         const instance = await TestUtil.createLoadUnitInstance('lifecycle-hook');
@@ -82,8 +85,14 @@ describe('test/EggObject.test.ts', () => {
 
   describe('inject context to singleton', () => {
     it('should work', async () => {
+      mm(ContextHandler, 'getContext', () => {
+        return;
+      });
       const instance = await TestUtil.createLoadUnitInstance('inject-context-to-singleton');
       const barProto = EggPrototypeFactory.instance.getPrototype('singletonBar');
+      mm(ContextHandler, 'getContext', () => {
+        return ctx;
+      });
       const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
       const bar = barObj.obj as SingletonBar;
       const msg = await bar.hello();
