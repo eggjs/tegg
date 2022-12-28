@@ -26,9 +26,9 @@ describe('test/app/extend/application.unittest.test.ts', () => {
   });
 
   it('should work', async function() {
-    const ctx = await app.mockModuleContext();
-    const traceId = await app.module.multiModuleService.traceService.getTraceId();
-    assert(traceId);
-    await app.destroyModuleContext(ctx);
+    await app.mockModuleContextScope(async () => {
+      const traceId = await app.module.multiModuleService.traceService.getTraceId();
+      assert(traceId);
+    });
   });
 });

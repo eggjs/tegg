@@ -30,14 +30,13 @@ describe('test/app/extend/context.test.ts', () => {
 
   describe('getEggObject', () => {
     it('should work', async () => {
-      const ctx = await app.mockModuleContext();
-      const appService = await ctx.getEggObject(AppService);
-      assert(appService instanceof AppService);
+      await app.mockModuleContextScope(async ctx => {
+        const appService = await ctx.getEggObject(AppService);
+        assert(appService instanceof AppService);
 
-      const persistenceService = await ctx.getEggObject(PersistenceService);
-      assert(persistenceService instanceof PersistenceService);
-
-      await app.destroyModuleContext(ctx);
+        const persistenceService = await ctx.getEggObject(PersistenceService);
+        assert(persistenceService instanceof PersistenceService);
+      });
     });
   });
 });

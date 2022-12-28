@@ -1,9 +1,7 @@
-import mm, { MockApplication } from 'egg-mock';
+import { MockApplication } from 'egg-mock';
 import { Context } from 'egg';
 import { EggContextImpl } from '../../lib/EggContextImpl';
-import { ContextHandler, EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
-import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import { TEggPluginContext } from './context';
+import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 const TEGG_LIFECYCLE_CACHE: Map<EggContext, EggContextLifecycleContext> = new Map();
 
@@ -14,11 +12,8 @@ export default {
     if (hasMockModuleContext) {
       throw new Error('should not call mockModuleContext twice, should use mockModuleContextScope.');
     }
-    const ctx = this.mockContext(data) as TEggPluginContext;
+    const ctx = this.mockContext(data);
     const teggCtx = new EggContextImpl(ctx);
-    mm(ContextHandler, 'getContext', () => {
-      return teggCtx;
-    });
     const lifecycle = {};
     TEGG_LIFECYCLE_CACHE.set(teggCtx, lifecycle);
     if (teggCtx.init) {
@@ -30,8 +25,7 @@ export default {
   async destroyModuleContext(ctx: Context) {
     hasMockModuleContext = false;
 
-    const teggPluginCtx = ctx as TEggPluginContext;
-    const teggCtx = teggPluginCtx[TEGG_CONTEXT];
+    const teggCtx = ctx.teggContext;
     if (!teggCtx) {
       return;
     }
@@ -41,13 +35,12 @@ export default {
     }
   },
 
-  async moduleModuleContextScope<R=any>(this: MockApplication, fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
+  async mockModuleContextScope<R=any>(this: MockApplication, fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
     if (hasMockModuleContext) {
       throw new Error('mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.');
     }
-    const ctx = this.mockContext(data);
-    const teggCtx = new EggContextImpl(ctx);
-    return await ContextHandler.run<R>(teggCtx, async () => {
+    return this.mockContextScope(async ctx => {
+      const teggCtx = new EggContextImpl(ctx);
       const lifecycle = {};
       if (teggCtx.init) {
         await teggCtx.init(lifecycle);
@@ -57,6 +50,6 @@ export default {
       } finally {
         await teggCtx.destroy(lifecycle);
       }
-    });
+    }, data);
   },
 };

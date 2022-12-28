@@ -76,24 +76,28 @@ describe('test/EggCompatible.test.ts', () => {
   });
 
   it('inject config should work', async () => {
-    const ctx = await app.mockModuleContext();
-    const baseDir = app.module.multiModuleService.configService.getBaseDir();
-    assert(baseDir);
-    await app.destroyModuleContext(ctx);
+    await app.mockModuleContextScope(async () => {
+      const baseDir = app.module.multiModuleService.configService.getBaseDir();
+      assert(baseDir);
+    });
   });
 
   it('inject user should work', async () => {
-    app.mockUser();
-    const ctx = await app.mockModuleContext();
-    const userName = app.module.multiModuleService.configService.getCurrentUserName();
-    assert(userName);
-    await app.destroyModuleContext(ctx);
+    await app.mockModuleContextScope(async () => {
+      const userName = app.module.multiModuleService.configService.getCurrentUserName();
+      assert(userName);
+    }, {
+      user: {
+        userName: 'mock_user',
+      },
+    });
   });
 
   it('custom logger should work', async () => {
-    const ctx = await app.mockModuleContext();
-    await app.module.multiModuleService.customLoggerService.printLog();
-    await app.destroyModuleContext(ctx);
+    await app.mockModuleContextScope(async ctx => {
+      await app.module.multiModuleService.customLoggerService.printLog();
+      await app.destroyModuleContext(ctx);
+    });
   });
 
   it('use singleton proto should work', async () => {
@@ -109,15 +113,17 @@ describe('test/EggCompatible.test.ts', () => {
   });
 
   it('module proxy cache should work', async () => {
-    await app.mockModuleContext();
-    const moduleMultiModuleService1 = app.module.multiModuleService;
-    const moduleMultiModuleService2 = app.module.multiModuleService;
-    assert(moduleMultiModuleService1 === moduleMultiModuleService2);
+    await app.mockModuleContextScope(async () => {
+      const moduleMultiModuleService1 = app.module.multiModuleService;
+      const moduleMultiModuleService2 = app.module.multiModuleService;
+      assert(moduleMultiModuleService1 === moduleMultiModuleService2);
+    });
   });
 
   it('should load egg object with no side effect', async () => {
-    const ctx = await app.mockModuleContext();
-    assert(ctx.counter === 0);
-    assert(ctx.counter === 1);
+    await app.mockModuleContextScope(async ctx => {
+      assert(ctx.counter === 0);
+      assert(ctx.counter === 1);
+    });
   });
 });
