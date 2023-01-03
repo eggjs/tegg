@@ -40,8 +40,9 @@ jobs:
 
     - name: Continuous integration
       run: |
-        npm run test-workspaces
-        npm run ci
+        npm run cov-workspaces
+        npm run ci-workspaces
+        npm run tsc:pub
 
     - name: Code Coverage
       uses: codecov/codecov-action@v1

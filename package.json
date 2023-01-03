@@ -19,6 +19,7 @@
     "lint": "eslint . --ext .ts",
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "test-workspaces": "npm run test --workspaces --if-present",
+    "cov-workspaces": "c8 npm run test-workspaces",
     "cov": "c8 npm run test",
     "pub": "lerna publish",
     "pub-canary": "lerna publish --canary",
@@ -29,7 +30,8 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
-    "ci": "npm run prepare-test && npm run lint && npm run tsc:pub && npm run clean && npm run cov"
+    "ci": "npm run prepare-test && npm run lint && npm run cov",
+    "ci-workspaces": "npm run prepare-test && npm run lint && npm run cov-workspaces"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
