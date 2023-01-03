@@ -23,8 +23,11 @@
     "pub": "lerna publish",
     "pub-canary": "lerna publish --canary",
     "clean": "lerna run --parallel clean",
+    "clean-workspaces": "npm run clean --workspaces --if-present",
     "prepare-test": "lerna run --parallel prepare-test",
     "tsc": "lerna run tsc",
+    "tsc-workspaces": "npm run tsc --workspaces --if-present",
+    "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "ci": "npm run prepare-test && npm run lint && npm run tsc:pub && npm run clean && npm run cov"
   },

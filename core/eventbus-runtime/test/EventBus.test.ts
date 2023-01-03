@@ -44,7 +44,7 @@ describe('test/EventBus.test.ts', () => {
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
       let msg: string | undefined;
-      mm(helloHandler, 'handle', async m => {
+      mm(helloHandler, 'handle', async (m: string) => {
         msg = m;
       });
       helloProducer.trigger();
