@@ -20,7 +20,6 @@ exclude:
   - coverage
   - core/*/test/**/*
   - plugin/*/test/**/*
-  - integration/*/test/**/*
   - standalone/*/test/**/*
   - benchmark/**/*
   - core/test-util/**/*
