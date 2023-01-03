@@ -40,8 +40,7 @@ jobs:
 
     - name: Continuous integration
       run: |
-        npm run cov-workspaces
-        npm run ci-workspaces
+        npm run ci
         npm run tsc:pub
 
     - name: Code Coverage
