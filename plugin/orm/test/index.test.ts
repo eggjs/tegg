@@ -1,6 +1,6 @@
 import assert from 'assert';
 import path from 'path';
-import mm from 'egg-mock';
+import mm, { MockApplication } from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
 import os from 'os';
 import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService';
@@ -13,7 +13,7 @@ describe('test/orm.test.ts', () => {
     return;
   }
 
-  let app;
+  let app: MockApplication;
   let ctx;
 
   afterEach(async () => {

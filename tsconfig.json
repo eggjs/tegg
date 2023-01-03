@@ -24,5 +24,8 @@
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
+  },
+  "ts-node": {
+    "files": true
   }
 }

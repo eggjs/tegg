@@ -28,7 +28,7 @@
   ],
   "types": "typings/index.d.ts",
   "scripts": {
-    "test": "npm run prepare-test && mocha",
+    "test": "npm run prepare-test && cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
