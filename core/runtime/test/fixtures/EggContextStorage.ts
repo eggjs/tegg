@@ -9,7 +9,7 @@ export class EggContextStorage {
     ContextHandler.getContextCallback = () => {
       return EggContextStorage.storage.getStore();
     };
-    ContextHandler.runInContextCallback = (context: EggContext, fn: () => Promise<R>) => {
+    ContextHandler.runInContextCallback = (context: EggContext, fn: () => Promise<any>) => {
       return EggContextStorage.storage.run(context, fn);
     };
   }

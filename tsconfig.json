@@ -1,8 +1,8 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es2019",
-    "module": "commonjs",
+    "target": "ES2019",
+    "module": "CommonJS",
     "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,

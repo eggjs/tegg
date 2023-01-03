@@ -21,11 +21,11 @@
     "@eggjs/tegg-metadata": "^3.1.0"
   },
   "scripts": {
+    "test": "mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "publishConfig": {
     "access": "public"

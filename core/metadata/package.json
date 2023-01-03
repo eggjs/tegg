@@ -15,10 +15,10 @@
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
+    "test": "mocha",
     "clean": "tsc -b --clean",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -41,6 +41,7 @@
     "egg-errors": "^2.2.3"
   },
   "devDependencies": {
+    "globby": "^11.1.0",
     "is-type-of": "^1.2.1"
   },
   "publishConfig": {

@@ -67,6 +67,7 @@
     "egg": "^3.9.1",
     "egg-mock": "^5.5.0",
     "egg-tracer": "^1.1.0",
+    "globby": "^11.1.0",
     "koa-router": "^8.0.8"
   },
   "publishConfig": {
