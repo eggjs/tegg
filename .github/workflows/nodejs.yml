@@ -39,7 +39,9 @@ jobs:
       run: npm i
 
     - name: Continuous integration
-      run: npm run ci
+      run: |
+        npm run test-workspaces
+        npm run ci
 
     - name: Code Coverage
       uses: codecov/codecov-action@v1
