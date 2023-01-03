@@ -41,6 +41,7 @@
     "@eggjs/tegg-loader": "^3.1.0",
     "@eggjs/tegg-metadata": "^3.1.0",
     "@eggjs/tegg-runtime": "^3.2.1",
-    "globby": "^11.1.0"
+    "globby": "^11.1.0",
+    "mm": "^3.2.1"
   }
 }

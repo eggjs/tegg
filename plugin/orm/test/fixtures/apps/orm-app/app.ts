@@ -1,5 +1,4 @@
 import { Application } from 'egg';
-import { Logger } from 'leoric';
 
 export default class OrmAppHook {
   private readonly app: Application;
@@ -12,12 +11,12 @@ export default class OrmAppHook {
     await this.app.leoricRegister.ready();
     const app = this.app;
     for (const realm of this.app.leoricRegister.realmMap.values()) {
-      realm.driver.logger = new Logger({
+      realm.driver.logger = {
         logQuery(sql, _, options) {
           const path = options.Model?.ctx?.path;
           app.logger.info('sql: %s path: %s', sql, path);
         },
-      });
+      };
     }
   }
 }

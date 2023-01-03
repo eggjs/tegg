@@ -48,7 +48,7 @@ describe('test/eventbus.test.ts', () => {
     ctx = await app.mockModuleContext();
 
     const helloService = await ctx.getEggObject(HelloService);
-    let helloTime: number;
+    let helloTime = 0;
     // helloLogger is in child context
     mm(HelloLogger.prototype, 'handle', () => {
       helloTime = Date.now();
