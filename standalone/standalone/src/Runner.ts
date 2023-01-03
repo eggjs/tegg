@@ -7,9 +7,9 @@ import {
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
-import { EggModuleLoader } from './EggModuleLoader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
+import { EggModuleLoader } from './EggModuleLoader';
 import { StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
