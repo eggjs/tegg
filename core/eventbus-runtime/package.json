@@ -39,6 +39,8 @@
   "dependencies": {
     "@eggjs/core-decorator": "^3.1.0",
     "@eggjs/eventbus-decorator": "^3.1.0",
+    "@eggjs/tegg-common-util": "^1.2.3",
+    "@eggjs/tegg-runtime": "^3.2.1",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0"
   },
@@ -46,10 +48,8 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-common-util": "^1.2.3",
     "@eggjs/tegg-loader": "^3.1.0",
     "@eggjs/tegg-metadata": "^3.1.0",
-    "@eggjs/tegg-runtime": "^3.2.1",
     "coffee": "^5.4.0",
     "egg": "^3.9.1",
     "mm": "^3.2.0",

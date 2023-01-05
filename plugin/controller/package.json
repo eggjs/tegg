@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^1.0.0",
+    "@eggjs/router": "^2.0.1",
     "@eggjs/tegg": "^3.2.1",
     "@eggjs/tegg-common-util": "^1.2.3",
     "@eggjs/tegg-loader": "^3.1.0",
@@ -61,7 +62,6 @@
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.2.1",
-    "@eggjs/router": "^2.0.0",
     "@eggjs/tegg-config": "^3.1.0",
     "@eggjs/tegg-plugin": "^3.2.1",
     "egg": "^3.9.1",
