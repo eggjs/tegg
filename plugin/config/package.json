@@ -3,7 +3,7 @@
   "eggPlugin": {
     "name": "teggConfig"
   },
-  "version": "3.1.0",
+  "version": "3.2.2",
   "description": "module config plugin for egg",
   "keywords": [
     "egg",
@@ -40,7 +40,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^1.2.3"
+    "@eggjs/tegg-common-util": "^3.2.2"
   },
   "devDependencies": {
     "egg": "^3.9.1"

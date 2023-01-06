@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.2](https://github.com/eggjs/tegg/compare/v3.2.1...v3.2.2) (2023-01-06)
+
+**Note:** Version bump only for package @eggjs/tegg-loader
+
+
+
+
+
 # [3.1.0](https://github.com/eggjs/tegg/compare/v1.3.0...v3.1.0) (2022-12-27)
 
 **Note:** Version bump only for package @eggjs/tegg-loader
