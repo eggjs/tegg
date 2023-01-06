@@ -1,4 +1,5 @@
 import { Application } from 'egg';
+// @ts-expect-error: the library definition is wrong
 import { Logger } from 'leoric';
 
 export default class OrmAppHook {

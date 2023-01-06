@@ -33,13 +33,15 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install Npm
-      run: npm i -g npm@8
+      run: npm i -g npm@9
 
     - name: Install Dependencies
       run: npm i
 
     - name: Continuous integration
-      run: npm run ci
+      run: |
+        npm run ci
+        npm run tsc:pub
 
     - name: Code Coverage
       uses: codecov/codecov-action@v1
@@ -68,7 +70,7 @@ jobs:
         run: /usr/local/opt/mysql@5.7/bin/mysql.server start
 
       - name: Install Npm
-        run: npm i -g npm@8
+        run: npm i -g npm@9
 
       - name: Install Dependencies
         run: npm i

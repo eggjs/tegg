@@ -102,7 +102,7 @@ describe('test/aop-runtime.test.ts', () => {
           helloMocked = true;
         });
         await hello.hello('aop');
-        assert(helloMocked === true);
+        assert(helloMocked);
       });
     });
   });

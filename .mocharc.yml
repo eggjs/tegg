@@ -1,14 +1,11 @@
 timeout: "120000"
 spec:
-  - core/*/test/**/*.test.ts
-  - plugin/*/test/**/*.test.ts
-  - standalone/*/test/**/*.test.ts
+  - test/**/*.test.ts
 recursive: true
 extension:
   - ts
 require:
-  - intelli-espower-loader
+  - ts-node/register
   - source-map-support/register
-  - espower-typescript/guess
 full-trace: true
 exit: true

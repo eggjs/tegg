@@ -55,7 +55,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
 
   private readonly corkedEvents = new Map<string /* corkId */, CorkEvents>();
 
-  get logger() {
+  get logger(): EggLogger {
     try {
       return this.ctxLogger;
     } catch (_) {

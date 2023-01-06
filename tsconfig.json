@@ -1,8 +1,8 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es2019",
-    "module": "commonjs",
+    "target": "ES2019",
+    "module": "CommonJS",
     "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
@@ -24,5 +24,8 @@
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
+  },
+  "ts-node": {
+    "files": true
   }
 }

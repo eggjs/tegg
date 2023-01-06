@@ -7,9 +7,9 @@ import {
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
-import { EggModuleLoader } from './EggModuleLoader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
+import { EggModuleLoader } from './EggModuleLoader';
 import { StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
@@ -55,6 +55,7 @@ export class Runner {
   }
 
   async init() {
+    StandaloneContextHandler.register();
     this.loadUnits = [];
     if (this.innerObjects) {
       LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
@@ -90,7 +91,6 @@ export class Runner {
     }
     const lifecycle = {};
     const ctx = new StandaloneContext();
-    StandaloneContextHandler.register();
     return await ContextHandler.run(ctx, async () => {
       await ctx.init(lifecycle);
       const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype);

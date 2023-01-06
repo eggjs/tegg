@@ -15,11 +15,11 @@
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -39,7 +39,7 @@
     "@eggjs/core-decorator": "^3.1.0",
     "@eggjs/tegg-common-util": "^1.2.3",
     "@eggjs/tegg-metadata": "^3.1.0",
-    "globby": "^10.0.2",
+    "globby": "^11.1.0",
     "is-type-of": "^1.2.1"
   },
   "publishConfig": {

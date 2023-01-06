@@ -44,7 +44,7 @@ describe('test/EventBus.test.ts', () => {
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
       let msg: string | undefined;
-      mm(helloHandler, 'handle', async m => {
+      mm(helloHandler, 'handle', async (m: string) => {
         msg = m;
       });
       helloProducer.trigger();
@@ -76,7 +76,7 @@ describe('test/EventBus.test.ts', () => {
       helloProducer.trigger();
 
       await helloEvent;
-      assert(destroyCalled === true);
+      assert(destroyCalled);
     });
   });
 
@@ -100,7 +100,7 @@ describe('test/EventBus.test.ts', () => {
       timeoutProducer.trigger();
 
       await timeoutEvent;
-      assert(Timeout100Handler.called === true);
+      assert(Timeout100Handler.called);
     });
   });
 
@@ -122,7 +122,7 @@ describe('test/EventBus.test.ts', () => {
 
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
-      let eventTime: number;
+      let eventTime = 0;
       mm(helloHandler, 'handle', async () => {
         eventTime = Date.now();
       });
@@ -155,7 +155,7 @@ describe('test/EventBus.test.ts', () => {
 
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
-      let eventTime: number;
+      let eventTime = 0;
       mm(helloHandler, 'handle', async () => {
         eventTime = Date.now();
       });

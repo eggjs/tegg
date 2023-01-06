@@ -1,4 +1,4 @@
-import { AbstractEggContext, ContextHandler } from '../..';
+import { AbstractEggContext } from '../..';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 
 const EGG_CTX = Symbol('TEgg#context');

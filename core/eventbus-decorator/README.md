@@ -3,6 +3,7 @@
 ## Usage
 
 ### emit event
+
 ```ts
 import { EventBus } from '@eggjs/eventbus-decorator'
 
@@ -26,7 +27,7 @@ class Foo {
 
 ### cork events
 
-Cache events in memory until uncork. 
+Cache events in memory until uncork.
 
 ```ts
 class Foo {

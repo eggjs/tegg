@@ -28,11 +28,11 @@
   ],
   "types": "typings/index.d.ts",
   "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
@@ -51,8 +51,7 @@
     "@eggjs/tegg": "^3.2.1",
     "@eggjs/tegg-eventbus-runtime": "^3.2.1",
     "@eggjs/tegg-metadata": "^3.1.0",
-    "@eggjs/tegg-runtime": "^3.2.1",
-    "egg-tracer": "^1.1.0"
+    "@eggjs/tegg-runtime": "^3.2.1"
   },
   "devDependencies": {
     "@eggjs/tegg-config": "^3.1.0",
@@ -60,6 +59,7 @@
     "await-event": "^2.1.0",
     "egg": "^3.9.1",
     "egg-mock": "^5.5.0",
+    "egg-tracer": "^1.1.0",
     "mz-modules": "^2.1.0"
   },
   "publishConfig": {

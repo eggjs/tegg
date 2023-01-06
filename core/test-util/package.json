@@ -18,8 +18,7 @@
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -40,9 +39,8 @@
     "@eggjs/tegg-lifecycle": "^1.0.0",
     "@eggjs/tegg-loader": "^3.1.0",
     "@eggjs/tegg-metadata": "^3.1.0",
-    "@eggjs/tegg-runtime": "^3.2.1"
-  },
-  "devDependencies": {
+    "@eggjs/tegg-runtime": "^3.2.1",
+    "globby": "^11.1.0",
     "mm": "^3.2.1"
   }
 }

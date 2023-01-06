@@ -9,7 +9,7 @@ export class ContextHandler {
 
   static getContext(): EggContext | undefined {
     assert(this.getContextCallback, 'getContextCallback not set');
-    return this.getContextCallback();
+    return this.getContextCallback ? this.getContextCallback() : undefined;
   }
 
   static run<R = any>(context: EggContext, fn: () => Promise<R>): Promise<R> {
