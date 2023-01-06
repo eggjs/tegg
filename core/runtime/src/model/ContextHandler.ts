@@ -8,6 +8,7 @@ export class ContextHandler {
   static runInContextCallback: runInContextCallback;
 
   static getContext(): EggContext | undefined {
+    assert(this.getContextCallback, 'getContextCallback not set');
     return this.getContextCallback ? this.getContextCallback() : undefined;
   }
 
