@@ -62,10 +62,16 @@
     "@eggjs/module-test-util": "^3.2.2",
     "@eggjs/tegg-config": "^3.2.2",
     "@eggjs/tegg-plugin": "^3.2.2",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.11.18",
+    "cross-env": "^7.0.3",
     "egg": "^3.9.1",
     "egg-mock": "^5.5.0",
     "egg-schedule": "^4.0.0",
-    "mz-modules": "^2.1.0"
+    "mocha": "^10.2.0",
+    "mz-modules": "^2.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   },
   "publishConfig": {
     "access": "public"
