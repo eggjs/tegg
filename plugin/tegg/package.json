@@ -61,7 +61,7 @@
     "egg-logger": "^3.0.1",
     "egg-mock": "^5.5.0",
     "egg-schedule": "^4.0.0",
-    "egg-tracer": "^1.1.0",
+    "egg-tracer": "^2.0.0",
     "mz-modules": "^2.1.0"
   },
   "publishConfig": {
