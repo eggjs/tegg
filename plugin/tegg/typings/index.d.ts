@@ -1,6 +1,6 @@
+import { AsyncLocalStorage } from 'async_hooks';
 import { Context } from 'egg';
 import '@eggjs/tegg-config';
-import { ModuleHandler } from '../lib/ModuleHandler';
 import { EggPrototypeCreatorFactory } from '@eggjs/tegg-metadata';
 import {
   EggPrototypeFactory,
@@ -20,7 +20,7 @@ import {
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
-import { AsyncLocalStorage } from 'async_hooks';
+import { ModuleHandler } from '../lib/ModuleHandler';
 
 declare module 'egg' {
   export interface EggModule {
