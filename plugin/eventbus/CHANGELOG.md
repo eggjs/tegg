@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.3](https://github.com/eggjs/tegg/compare/v3.2.2...v3.2.3) (2023-01-16)
+
+
+### Bug Fixes
+
+* cork/uncork should can be called multi times in same ctx ([#78](https://github.com/eggjs/tegg/issues/78)) ([269cda6](https://github.com/eggjs/tegg/commit/269cda6327122111c230e6f69abb525ce4ab5be1))
+
+
+
+
+
 ## [3.2.2](https://github.com/eggjs/tegg/compare/v3.2.1...v3.2.2) (2023-01-06)
 
 **Note:** Version bump only for package @eggjs/tegg-eventbus-plugin
