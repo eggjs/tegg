@@ -65,4 +65,28 @@ describe('test/eventbus.test.ts', () => {
     await helloEvent;
     assert(helloTime >= triggerTime + 100);
   });
+
+  it('can call cork/uncork multi times', async () => {
+    ctx = await app.mockModuleContext();
+
+    const helloService = await ctx.getEggObject(HelloService);
+    const eventWaiter = await app.getEventWaiter();
+
+    let helloCalled = 0;
+    // helloLogger is in child context
+    mm(HelloLogger.prototype, 'handle', () => {
+      helloCalled++;
+    });
+    helloService.cork();
+    helloService.hello();
+    helloService.uncork();
+    await eventWaiter.await('helloEgg');
+
+    helloService.cork();
+    helloService.hello();
+    helloService.uncork();
+    await eventWaiter.await('helloEgg');
+
+    assert(helloCalled === 2);
+  });
 });
