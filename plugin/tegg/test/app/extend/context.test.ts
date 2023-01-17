@@ -39,4 +39,16 @@ describe('test/app/extend/context.test.ts', () => {
       });
     });
   });
+
+  describe('beginModuleScope', () => {
+    it('should work', async () => {
+      const ctx = app.createAnonymousContext();
+      await assert.doesNotThrow(async () => {
+        await ctx.beginModuleScope(async () => {
+          const appService = await ctx.getEggObject(AppService);
+          assert(appService instanceof AppService);
+        });
+      });
+    });
+  });
 });
