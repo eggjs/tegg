@@ -12,8 +12,9 @@ export interface TEggPluginContext extends Context {
 export default {
   async beginModuleScope(this: TEggPluginContext, func: () => Promise<void>) {
     // Calling by specific ctx should set ctxStorage before teggCtx init
-    this.app.ctxStorage.enterWith(this);
-    await ctxLifecycleMiddleware(this, func);
+    await this.app.ctxStorage.run(this, async () => {
+      return await ctxLifecycleMiddleware(this, func);
+    });
   },
 
   get teggContext(): EggContext {

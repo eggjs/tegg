@@ -3,7 +3,6 @@ import assert from 'assert';
 import path from 'path';
 import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService';
 import sleep from 'mz-modules/sleep';
-import fs from 'fs';
 
 describe('test/BackgroundTask.test.ts', () => {
   const appDir = path.join(__dirname, 'fixtures/apps/background-app');
@@ -42,13 +41,13 @@ describe('test/BackgroundTask.test.ts', () => {
   });
 
   it('background timeout with humanize error info', async () => {
+    app.mockLog();
     app.mockCsrf();
     await app.httpRequest()
       .get('/backgroudTimeout')
       .expect(200);
 
     await sleep(7000);
-    const errorLog = fs.readFileSync(path.resolve(appDir, 'logs/egg-app/common-error.log'), 'utf-8');
-    assert(errorLog.includes('Can not read property `testObj` because egg ctx has been destroyed ['));
+    app.expectLog('Can not read property `testObj` because egg ctx has been destroyed [');
   });
 });
