@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "1.7.5",
+  "version": "1.7.6",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -54,10 +54,10 @@
     "@eggjs/tegg-runtime": "^1.4.3",
     "@types/koa-router": "^7.0.40",
     "egg-errors": "^2.3.0",
+    "globby": "^10.0.2",
     "koa-compose": "^3.2.1",
     "path-to-regexp": "^1.8.0",
-    "sdk-base": "^4.2.0",
-    "globby": "^10.0.2"
+    "sdk-base": "^4.2.0"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^1.4.3",
