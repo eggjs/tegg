@@ -39,6 +39,7 @@ export abstract class AbstractEggContext implements EggContext {
     }));
     this.contextData.clear();
     this.destroyed = true;
+    await EggContextLifecycleUtil.clearObjectLifecycle(this);
   }
 
   get(key: string | symbol): any | undefined {

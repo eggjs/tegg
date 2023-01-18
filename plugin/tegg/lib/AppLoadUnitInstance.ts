@@ -47,8 +47,7 @@ export class AppLoadUnitInstance implements LoadUnitInstance {
     }
   }
 
-  async destroy(ctx: LoadUnitInstanceLifecycleContext): Promise<void> {
-    await LoadUnitInstanceLifecycleUtil.objectPreDestroy(ctx, this);
+  async destroy(): Promise<void> {
     const objs: EggObject[] = [];
     for (const protoObjMap of this.eggObjectMap.values()) {
       for (const protoObj of protoObjMap.values()) {

@@ -51,14 +51,13 @@ export class ModuleLoadUnitInstance implements LoadUnitInstance {
     await LoadUnitInstanceLifecycleUtil.objectPostCreate(ctx, this);
   }
 
-  async destroy(ctx: LoadUnitInstanceLifecycleContext): Promise<void> {
-    await LoadUnitInstanceLifecycleUtil.objectPreDestroy(ctx, this);
-    const objs: EggObject[] = Array.from(this.eggObjectMap.values())
-      .map(protoObjMap => Array.from(protoObjMap.values()))
-      .reduce((p, c) => {
-        p = p.concat(c);
-        return p;
-      }, []);
+  async destroy(): Promise<void> {
+    const objs: EggObject[] = [];
+    for (const protoObjMap of this.eggObjectMap.values()) {
+      for (const obj of protoObjMap.values()) {
+        objs.push(obj);
+      }
+    }
     this.eggObjectMap.clear();
     await Promise.all(objs.map(async obj => {
       await EggObjectFactory.destroyObject(obj);

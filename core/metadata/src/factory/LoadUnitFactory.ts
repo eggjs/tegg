@@ -48,6 +48,7 @@ export class LoadUnitFactory {
     } finally {
       this.loadUnitMap.delete(loadUnit.unitPath);
       this.loadUnitIdMap.delete(loadUnit.id);
+      LoadUnitLifecycleUtil.clearObjectLifecycle(loadUnit);
     }
   }
 
