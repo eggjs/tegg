@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-schedule-decorator",
-  "version": "3.2.3",
+  "version": "3.2.4",
   "description": "tegg schedule decorator",
   "main": "dist/index.js",
   "files": [
@@ -37,7 +37,7 @@
   "dependencies": {
     "@eggjs/core-decorator": "^3.2.3",
     "@eggjs/tegg-common-util": "^3.2.3",
-    "@eggjs/tegg-metadata": "^3.2.3",
+    "@eggjs/tegg-metadata": "^3.2.4",
     "cron-parser": "^2.18.0"
   },
   "devDependencies": {
