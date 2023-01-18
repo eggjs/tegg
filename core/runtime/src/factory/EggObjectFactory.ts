@@ -1,4 +1,4 @@
-import { EggObject, EggObjectLifeCycleContext } from '../model/EggObject';
+import { EggObject, EggObjectLifeCycleContext, EggObjectLifecycleUtil } from '../model/EggObject';
 import { EggObjectName } from '@eggjs/core-decorator';
 import { EggPrototype, EggPrototypeClass, LoadUnitFactory } from '@eggjs/tegg-metadata';
 import EggObjectImpl from '../impl/EggObjectImpl';
@@ -51,6 +51,7 @@ export class EggObjectFactory {
       }
     } finally {
       this.eggObjectMap.delete(obj.id);
+      EggObjectLifecycleUtil.clearObjectLifecycle(obj);
     }
   }
 }

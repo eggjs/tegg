@@ -28,6 +28,10 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     this.objLifecycleSet.get(obj.id)?.delete(lifecycle);
   }
 
+  clearObjectLifecycle(obj: R) {
+    this.objLifecycleSet.delete(obj.id);
+  }
+
   getObjectLifecycleList(obj: R): LifecycleHook<T, R>[] {
     if (this.objLifecycleSet.has(obj.id)) {
       return Array.from(this.objLifecycleSet.get(obj.id)!);
