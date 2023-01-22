@@ -1,0 +1,6 @@
+{
+  "name": "multi-db-app",
+  "eggModule": {
+    "name": "MultiDBApp"
+  }
+}

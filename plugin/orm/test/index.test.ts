@@ -14,6 +14,7 @@ describe('test/orm.test.ts', () => {
   }
 
   let app: MockApplication;
+  let appService: AppService;
   let ctx;
 
   afterEach(async () => {
@@ -81,5 +82,35 @@ describe('test/orm.test.ts', () => {
     app.mockLog();
     await appService.findApp('egg');
     app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1 path: \//);
+  });
+
+  it('singleton ORM client', async () => {
+    ctx = await app.mockModuleContext();
+    appService = await ctx.getEggObject(AppService);
+
+    describe('raw query', () => {
+      before(async () => {
+        const appModel = await appService.createApp({
+          name: 'egg',
+          desc: 'the framework',
+        });
+        assert(appModel);
+        assert(appModel.name === 'egg');
+        assert(appModel.desc === 'the framework');
+      });
+
+      it('query success', async () => {
+        const res = await appService.rawQuery('select * from apps where name = "egg"');
+        assert(res.rows.length === 1);
+        assert(res.rows[0].name === 'egg');
+      });
+
+      it('query success for args', async () => {
+        const res = await appService.rawQuery('select * from apps where name = ?', [ 'egg' ]);
+        assert(res.rows.length === 1);
+        assert(res.rows[0].name === 'egg');
+      });
+    });
+
   });
 });

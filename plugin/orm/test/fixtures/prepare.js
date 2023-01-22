@@ -33,6 +33,10 @@ async function query(sql) {
 async function init() {
   await query('DROP DATABASE IF EXISTS `test`;');
   await query('CREATE DATABASE test;');
+  await query('DROP DATABASE IF EXISTS `apple`;');
+  await query('CREATE DATABASE apple;');
+  await query('DROP DATABASE IF EXISTS `banana`;');
+  await query('CREATE DATABASE banana;');
   await query('use test;');
   await query('CREATE TABLE `apps` (\n' +
     '  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n' +
