@@ -1,6 +1,5 @@
 import assert from 'assert';
-import KoaRouter from 'koa-router';
-import { Context } from 'egg';
+import { Context, Router } from 'egg';
 import {
   EggContext,
   HTTPControllerMeta,
@@ -25,8 +24,8 @@ const noop = () => {
 };
 
 export class HTTPMethodRegister {
-  private readonly router: KoaRouter<any, Context>;
-  private readonly checkRouters: Map<string, KoaRouter<any, Context>>;
+  private readonly router: Router;
+  private readonly checkRouters: Map<string, Router>;
   private readonly controllerMeta: HTTPControllerMeta;
   private readonly methodMeta: HTTPMethodMeta;
   private readonly proto: EggPrototype;
@@ -36,8 +35,8 @@ export class HTTPMethodRegister {
     proto: EggPrototype,
     controllerMeta: HTTPControllerMeta,
     methodMeta: HTTPMethodMeta,
-    router: KoaRouter<any, Context>,
-    checkRouters: Map<string, KoaRouter<any, Context>>,
+    router: Router,
+    checkRouters: Map<string, Router>,
     eggContainerFactory: typeof EggContainerFactory,
   ) {
     this.proto = proto;
@@ -133,14 +132,14 @@ export class HTTPMethodRegister {
     });
   }
 
-  private registerToRouter(router: KoaRouter<any, Context>) {
+  private registerToRouter(router: Router) {
     const routerFunc = router[this.methodMeta.method.toLowerCase()];
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     Reflect.apply(routerFunc, router, [ methodName, methodRealPath, noop ]);
   }
 
-  private checkDuplicateInRouter(router: KoaRouter<any, Context>) {
+  private checkDuplicateInRouter(router: Router) {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const matched = router.match(methodRealPath, this.methodMeta.method);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);

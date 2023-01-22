@@ -1,6 +1,5 @@
 import assert from 'assert';
-import KoaRouter from 'koa-router';
-import { Application, Context } from 'egg';
+import { Application, Router } from 'egg';
 import {
   CONTROLLER_META_DATA,
   ControllerMetadata,
@@ -17,8 +16,8 @@ import { RootProtoManager } from '../../RootProtoManager';
 export class HTTPControllerRegister implements ControllerRegister {
   static instance?: HTTPControllerRegister;
 
-  private readonly router: KoaRouter<any, Context>;
-  private readonly checkRouters: Map<string, KoaRouter<any, Context>>;
+  private readonly router: Router;
+  private readonly checkRouters: Map<string, Router>;
   private readonly eggContainerFactory: typeof EggContainerFactory;
   private controllerProtos: EggPrototype[] = [];
 
@@ -31,7 +30,7 @@ export class HTTPControllerRegister implements ControllerRegister {
     return HTTPControllerRegister.instance;
   }
 
-  constructor(router: KoaRouter<any, Context>, eggContainerFactory: typeof EggContainerFactory) {
+  constructor(router: Router, eggContainerFactory: typeof EggContainerFactory) {
     this.router = router;
     this.checkRouters = new Map();
     this.checkRouters.set('default', router);
