@@ -100,15 +100,38 @@ describe('test/orm.test.ts', () => {
       });
 
       it('query success', async () => {
-        const res = await appService.rawQuery('select * from apps where name = "egg"');
+        const res = await appService.rawQuery('test', 'select * from apps where name = "egg"');
         assert(res.rows.length === 1);
         assert(res.rows[0].name === 'egg');
       });
 
       it('query success for args', async () => {
-        const res = await appService.rawQuery('select * from apps where name = ?', [ 'egg' ]);
+        const res = await appService.rawQuery('test', 'select * from apps where name = ?', [ 'egg' ]);
         assert(res.rows.length === 1);
         assert(res.rows[0].name === 'egg');
+      });
+    });
+
+    describe('multi db', () => {
+
+      it('should work for multi database', async () => {
+        const appleClient = await appService.getClient('apple');
+        const bananaClient = await appService.getClient('banana');
+        assert(appleClient.options.database === 'apple');
+        assert(appleClient.options.database === 'apple');
+        assert(bananaClient.options.database === 'banana');
+        assert(bananaClient.options.database === 'banana');
+      });
+
+      it('should throw when invalid database', async () => {
+        await assert.rejects(async () => {
+          await appService.getClient('orange');
+        }, /not found orange datasource/);
+      });
+
+      it('should return undefined when get default client', async () => {
+        const defaultClient = await appService.getDefaultClient();
+        assert(defaultClient === undefined);
       });
     });
 

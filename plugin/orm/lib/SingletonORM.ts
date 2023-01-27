@@ -15,11 +15,16 @@ export class Orm {
 
   // default dataSource
   get client(): Realm {
-    return this.getClient(undefined);
+    const defaultConfig = this.leoricRegister.getConfig();
+    return this.leoricRegister.getRealm(defaultConfig)!;
   }
 
-  getClient(dataSource: string | undefined): Realm {
-    return this.leoricRegister.getOrCreateRealm(dataSource);
+  getClient(datasource: string): Realm {
+    const config = this.leoricRegister.getConfig(datasource);
+    if (!config) {
+      throw new Error(`not found ${datasource} datasource`);
+    }
+    return this.leoricRegister.getOrCreateRealm(config.database)!;
   }
 
 }

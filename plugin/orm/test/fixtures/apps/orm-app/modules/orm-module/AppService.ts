@@ -1,5 +1,5 @@
 import { ContextProto, Inject } from '@eggjs/tegg';
-import { Orm } from '../../../../../../lib/SingletonORM';
+import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
 import { App } from './model/App';
 
 @ContextProto()
@@ -23,7 +23,16 @@ export class AppService {
     return app as App;
   }
 
-  async rawQuery(sql: string, values?: any[]) {
-    return await this.orm.client.query(sql, values);
+  async rawQuery(dataSource: string, sql: string, values?: any[]) {
+    return await this.orm.getClient(dataSource).query(sql, values);
   }
+
+  async getClient(name: string) {
+    return this.orm.getClient(name);
+  }
+
+  async getDefaultClient() {
+    return this.orm.client;
+  }
+
 }
