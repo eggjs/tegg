@@ -10,7 +10,7 @@ export class EggObjectUtil {
       get(): any {
         return eggObject.obj;
       },
-      configurable: false,
+      configurable: true,
       enumerable: true,
     };
   }
@@ -22,7 +22,7 @@ export class EggObjectUtil {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           return eggObject.obj;
         },
-        configurable: false,
+        configurable: true,
         enumerable: true,
       };
     }

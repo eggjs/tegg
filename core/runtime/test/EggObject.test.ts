@@ -4,6 +4,7 @@ import { EggTestContext } from './fixtures/EggTestContext';
 import TestUtil from './util';
 import { EggContainerFactory } from '..';
 import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object';
+import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base';
 import mm from 'mm';
 import { ContextHandler } from '../src/model/ContextHandler';
 import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object';
@@ -97,6 +98,27 @@ describe('test/EggObject.test.ts', () => {
       const bar = barObj.obj as SingletonBar;
       const msg = await bar.hello();
       assert(msg === 'hello from depth2');
+      await TestUtil.destroyLoadUnitInstance(instance);
+      await ctx.destroy({});
+    });
+  });
+
+  describe('property mock', () => {
+    beforeEach(() => {
+      mm(ContextHandler, 'getContext', () => {
+        return ctx;
+      });
+    });
+
+    it('should work', async () => {
+      const instance = await TestUtil.createLoadUnitInstance('extends-module');
+      const barProto = EggPrototypeFactory.instance.getPrototype('bar', instance.loadUnit);
+      const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
+      const bar = barObj.obj as ExtendsBar;
+      const foo = {};
+      mm(bar, 'foo', foo);
+      assert(bar.foo === foo);
+
       await TestUtil.destroyLoadUnitInstance(instance);
       await ctx.destroy({});
     });
