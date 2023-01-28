@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/eggjs/tegg/compare/v3.2.4...v3.3.0) (2023-01-28)
+
+**Note:** Version bump only for package @eggjs/tegg-aop-plugin
+
+
+
+
+
 ## [3.2.3](https://github.com/eggjs/tegg/compare/v3.2.2...v3.2.3) (2023-01-16)
 
 **Note:** Version bump only for package @eggjs/tegg-aop-plugin

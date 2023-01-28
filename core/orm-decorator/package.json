@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-orm-decorator",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "tegg orm decorator",
   "main": "dist/index.js",
   "files": [

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/eggjs/tegg/compare/v3.2.4...v3.3.0) (2023-01-28)
+
+
+### Features
+
+* add app.eggContextHandler ([#84](https://github.com/eggjs/tegg/issues/84)) ([2772624](https://github.com/eggjs/tegg/commit/277262418143956b2e75bd1db5f2e7dd9b75eb8b))
+
+
+
+
+
 ## [3.2.3](https://github.com/eggjs/tegg/compare/v3.2.2...v3.2.3) (2023-01-16)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin

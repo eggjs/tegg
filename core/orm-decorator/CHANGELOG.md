@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/eggjs/tegg/compare/v3.2.4...v3.3.0) (2023-01-28)
+
+
+### Features
+
+* export singleton orm client ([#82](https://github.com/eggjs/tegg/issues/82)) ([5320af7](https://github.com/eggjs/tegg/commit/5320af77d7e7c5c73b80560a576f2ce01fc21fff))
+
+
+
+
+
 ## [3.2.3](https://github.com/eggjs/tegg/compare/v3.2.2...v3.2.3) (2023-01-16)
 
 **Note:** Version bump only for package @eggjs/tegg-orm-decorator

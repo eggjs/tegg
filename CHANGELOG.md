@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/eggjs/tegg/compare/v3.2.4...v3.3.0) (2023-01-28)
+
+
+### Bug Fixes
+
+* router type ([#83](https://github.com/eggjs/tegg/issues/83)) ([b32d9b8](https://github.com/eggjs/tegg/commit/b32d9b8e94552d27dc0249c9f38e7223b24beff0))
+
+
+### Features
+
+* add app.eggContextHandler ([#84](https://github.com/eggjs/tegg/issues/84)) ([2772624](https://github.com/eggjs/tegg/commit/277262418143956b2e75bd1db5f2e7dd9b75eb8b))
+* export singleton orm client ([#82](https://github.com/eggjs/tegg/issues/82)) ([5320af7](https://github.com/eggjs/tegg/commit/5320af77d7e7c5c73b80560a576f2ce01fc21fff))
+
+
+
+
+
 ## [3.2.3](https://github.com/eggjs/tegg/compare/v3.2.2...v3.2.3) (2023-01-16)
 
 
