@@ -3,6 +3,7 @@ import { ModelInfoUtil } from '../util/ModelInfoUtil';
 
 export interface ModelParams {
   tableName?: string;
+  dataSource?: string;
 }
 
 export const MODEL_PROTO_IMPL_TYPE = 'MODEL_PROTO';
@@ -17,6 +18,9 @@ export function Model(param?: ModelParams) {
     });
     if (param?.tableName) {
       ModelInfoUtil.setTableName(param.tableName, clazz);
+    }
+    if (param?.dataSource) {
+      ModelInfoUtil.setDataSource(param.dataSource, clazz);
     }
     func(clazz);
   };

@@ -6,6 +6,7 @@ import { ModelProtoHook } from './lib/ModelProtoHook';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
 import ContextModelProto from './lib/ContextModelProto';
 import { ContextModeObject } from './lib/ContextModeObject';
+import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook';
 
 export default class OrmAppBootHook {
   private readonly app: Application;
@@ -13,6 +14,7 @@ export default class OrmAppBootHook {
   private readonly leoricRegister: LeoricRegister;
   private readonly modelProtoManager: ModelProtoManager;
   private readonly modelProtoHook: ModelProtoHook;
+  private readonly ormLoadUnitHook: ORMLoadUnitHook;
 
   constructor(app) {
     this.app = app;
@@ -22,11 +24,13 @@ export default class OrmAppBootHook {
     this.modelProtoHook = new ModelProtoHook(this.modelProtoManager);
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(MODEL_PROTO_IMPL_TYPE, ContextModelProto.createProto);
     this.app.leoricRegister = this.leoricRegister;
+    this.ormLoadUnitHook = new ORMLoadUnitHook();
   }
 
   configWillLoad() {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.modelProtoHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(ContextModelProto, ContextModeObject.createObject);
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.ormLoadUnitHook);
   }
 
   configDidLoad() {
