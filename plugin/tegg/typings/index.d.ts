@@ -21,6 +21,7 @@ import {
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
 import { ModuleHandler } from '../lib/ModuleHandler';
+import { EggContextHandler } from '../lib/EggContextHandler';
 
 declare module 'egg' {
   export interface EggModule {
@@ -50,6 +51,7 @@ declare module 'egg' {
     eggObjectLifecycleUtil: typeof EggObjectLifecycleUtil;
     teggContext: EggContext;
     moduleHandler: ModuleHandler;
+    eggContextHandler: EggContextHandler;
 
     mockModuleContext(data?: any): Promise<Context>;
     mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
