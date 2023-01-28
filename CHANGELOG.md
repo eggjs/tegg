@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1](https://github.com/eggjs/tegg/compare/v3.3.0...v3.3.1) (2023-01-28)
+
+
+### Bug Fixes
+
+* inject property should be configurable ([#85](https://github.com/eggjs/tegg/issues/85)) ([c13ab55](https://github.com/eggjs/tegg/commit/c13ab55d7b483a5c4a6e4293a6095aa98d070a8b))
+
+
+
+
+
 # [3.3.0](https://github.com/eggjs/tegg/compare/v3.2.4...v3.3.0) (2023-01-28)
 
 
