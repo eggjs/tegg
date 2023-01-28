@@ -22,6 +22,7 @@ export default class App {
 
   configDidLoad() {
     this.eggContextHandler = new EggContextHandler(this.app);
+    this.app.eggContextHandler = this.eggContextHandler;
     this.eggContextHandler.register();
     this.app.moduleHandler = new ModuleHandler(this.app);
   }
