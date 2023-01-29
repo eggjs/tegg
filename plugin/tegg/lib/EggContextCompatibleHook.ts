@@ -1,4 +1,4 @@
-import { LifecycleHook, ObjectInitType } from '@eggjs/tegg';
+import { BackgroundTaskHelper, LifecycleHook, ObjectInitType, PrototypeUtil } from '@eggjs/tegg';
 import { EggContainerFactory, EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { ModuleHandler } from './ModuleHandler';
@@ -38,6 +38,13 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
       await Promise.all(this.initProtoList.map(async proto => {
         await EggContainerFactory.getOrCreateEggObject(proto);
       }));
+    } else {
+      // Use for ctx.runInBackground.
+      // BackgroundTaskHelper should get by sync,
+      // or tegg context may be destroyed before background task run.
+      // So create it in preCreate.
+      const protoObj = PrototypeUtil.getClazzProto(BackgroundTaskHelper);
+      await EggContainerFactory.getOrCreateEggObject(protoObj as EggPrototype);
     }
   }
 }
