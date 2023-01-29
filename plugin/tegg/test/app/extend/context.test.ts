@@ -2,6 +2,7 @@ import assert from 'assert';
 import path from 'path';
 import mm from 'egg-mock';
 import { Application } from 'egg';
+import sleep from 'mz-modules/sleep';
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';
 import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService';
 
@@ -48,6 +49,19 @@ describe('test/app/extend/context.test.ts', () => {
         });
         assert(ctx.teggContext.destroyed === false);
       });
+    });
+  });
+
+  describe('runInBackground', () => {
+    it('should notify background task helper', async () => {
+      let backgroundIsDone = false;
+      await app.mockModuleContextScope(async ctx => {
+        ctx.runInBackground(async () => {
+          await sleep(100);
+          backgroundIsDone = true;
+        });
+      });
+      assert(backgroundIsDone);
     });
   });
 });
