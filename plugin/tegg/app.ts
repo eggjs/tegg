@@ -8,6 +8,8 @@ import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook';
 import { CompatibleUtil } from './lib/CompatibleUtil';
 import { ModuleHandler } from './lib/ModuleHandler';
 import { EggContextHandler } from './lib/EggContextHandler';
+import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import { TEggPluginContext } from './app/extend/context';
 
 export default class App {
   private readonly app: Application;
@@ -31,7 +33,10 @@ export default class App {
 
   async didLoad() {
     const eggRunInBackground = this.app.context.runInBackground;
-    this.app.context.runInBackground = function runInBackground(this: Context, scope: (ctx: Context) => Promise<any>) {
+    this.app.context.runInBackground = function runInBackground(this: TEggPluginContext, scope: (ctx: Context) => Promise<any>) {
+      if (!this[TEGG_CONTEXT]) {
+        return Reflect.apply(eggRunInBackground, this, [ scope ]);
+      }
       let resolveBackgroundTask;
       const backgroundTaskPromise = new Promise(resolve => {
         resolveBackgroundTask = resolve;
