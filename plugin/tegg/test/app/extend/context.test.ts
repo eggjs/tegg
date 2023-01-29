@@ -39,4 +39,15 @@ describe('test/app/extend/context.test.ts', () => {
       });
     });
   });
+
+  describe('beginModuleScope', () => {
+    it('should be reentrant', async () => {
+      await app.mockModuleContextScope(async ctx => {
+        await ctx.beginModuleScope(async () => {
+          // ...do nothing
+        });
+        assert(ctx.teggContext.destroyed === false);
+      });
+    });
+  });
 });
