@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.4](https://github.com/eggjs/tegg/compare/v3.3.3...v3.3.4) (2023-01-29)
+
+
+### Bug Fixes
+
+* should not notify backgroundTaskHelper if teggContext not exists ([#88](https://github.com/eggjs/tegg/issues/88)) ([4cab68b](https://github.com/eggjs/tegg/commit/4cab68bfc08a3786bde9a67cd8687f152829d9a0))
+
+
+
+
+
 ## [3.3.3](https://github.com/eggjs/tegg/compare/v3.3.2...v3.3.3) (2023-01-29)
 
 

@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "3.3.3",
+  "version": "3.3.4",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -65,7 +65,7 @@
     "@eggjs/module-test-util": "^3.3.1",
     "@eggjs/router": "^2.0.0",
     "@eggjs/tegg-config": "^3.2.3",
-    "@eggjs/tegg-plugin": "^3.3.3",
+    "@eggjs/tegg-plugin": "^3.3.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.18",
     "cross-env": "^7.0.3",
