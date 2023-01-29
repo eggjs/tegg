@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.3](https://github.com/eggjs/tegg/compare/v3.3.2...v3.3.3) (2023-01-29)
+
+
+### Bug Fixes
+
+* wait egg background task done before destroy tegg ctx ([#87](https://github.com/eggjs/tegg/issues/87)) ([deea4d8](https://github.com/eggjs/tegg/commit/deea4d8d75c43347c6ee09e0e97f5fa80dd68dd9))
+
+
+
+
+
 ## [3.3.2](https://github.com/eggjs/tegg/compare/v3.3.1...v3.3.2) (2023-01-29)
 
 
