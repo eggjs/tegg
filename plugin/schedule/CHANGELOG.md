@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.2](https://github.com/eggjs/tegg/compare/v3.3.1...v3.3.2) (2023-01-29)
+
+**Note:** Version bump only for package @eggjs/tegg-schedule-plugin
+
+
+
+
+
 ## [3.3.1](https://github.com/eggjs/tegg/compare/v3.3.0...v3.3.1) (2023-01-28)
 
 **Note:** Version bump only for package @eggjs/tegg-schedule-plugin

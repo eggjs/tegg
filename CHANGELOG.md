@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.2](https://github.com/eggjs/tegg/compare/v3.3.1...v3.3.2) (2023-01-29)
+
+
+### Bug Fixes
+
+* beginModuleScope should be reentrant ([#86](https://github.com/eggjs/tegg/issues/86)) ([648aeaf](https://github.com/eggjs/tegg/commit/648aeaf1f20ff5bc217bf6f16fac9d9181eb8447))
+
+
+
+
+
 ## [3.3.1](https://github.com/eggjs/tegg/compare/v3.3.0...v3.3.1) (2023-01-28)
 
 
