@@ -24,10 +24,10 @@ export class App extends Bone {
 ## Use Model
 
 ```ts
-import { ContextProto, Inject } from '@eggjs/tegg';
+import { Singleton, Inject } from '@eggjs/tegg';
 import { App } from './model/App';
 
-@ContextProto()
+@Singleton()
 export class AppService {
   @Inject()
   App: typeof App;
