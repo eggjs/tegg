@@ -1,8 +1,8 @@
-import { ContextProto, Inject } from '@eggjs/tegg';
+import { Inject, SingletonProto } from '@eggjs/tegg';
 import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
 import { App } from './model/App';
 
-@ContextProto()
+@SingletonProto()
 export class AppService {
   @Inject()
   App: typeof App;

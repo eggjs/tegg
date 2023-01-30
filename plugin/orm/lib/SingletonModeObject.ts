@@ -1,6 +1,4 @@
 import {
-  ContextHandler,
-  EggContext,
   EggObject,
   EggObjectStatus,
 } from '@eggjs/tegg-runtime';
@@ -8,40 +6,27 @@ import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggPrototypeName, EggObjectName } from '@eggjs/tegg';
 import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { Bone } from 'leoric';
-import ContextModelProto from './ContextModelProto';
-import { EGG_CONTEXT } from '@eggjs/egg-module-common';
+import SingletonModelProto from './SingletonModelProto';
 
-export class ContextModeObject implements EggObject {
+export class SingletonModeObject implements EggObject {
   private status: EggObjectStatus = EggObjectStatus.PENDING;
   id: Id;
   readonly name: EggPrototypeName;
   private _obj: typeof Bone;
-  readonly proto: ContextModelProto;
-  readonly ctx?: EggContext;
+  readonly proto: SingletonModelProto;
 
-  constructor(name: EggObjectName, proto: ContextModelProto) {
+  constructor(name: EggObjectName, proto: SingletonModelProto) {
     this.name = name;
     this.proto = proto;
-    this.ctx = ContextHandler.getContext();
-    this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx?.id);
+    this.id = IdenticalUtil.createObjectId(this.proto.id);
   }
 
   async init() {
-    const ctx = this.ctx;
     const clazz = class ContextModelClass extends this.proto.model {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       static get name() {
         return super.name;
-      }
-
-      static get ctx() {
-        return ctx?.get(EGG_CONTEXT);
-      }
-
-      // custom setter always execute before define [CTX] when new Instance(super(opts) calling), if custom setter requires ctx, it should not be undefined
-      get ctx() {
-        return ctx?.get(EGG_CONTEXT);
       }
     };
     this._obj = clazz;
@@ -60,8 +45,8 @@ export class ContextModeObject implements EggObject {
     return this._obj;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<ContextModeObject> {
-    const modelObject = new ContextModeObject(name, proto as ContextModelProto);
+  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<SingletonModeObject> {
+    const modelObject = new SingletonModeObject(name, proto as SingletonModelProto);
     await modelObject.init();
     return modelObject;
   }

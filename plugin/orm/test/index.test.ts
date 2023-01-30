@@ -15,10 +15,8 @@ describe('test/orm.test.ts', () => {
 
   let app: MockApplication;
   let appService: AppService;
-  let ctx;
 
   afterEach(async () => {
-    await app.destroyModuleContext(ctx);
     await Promise.all([
       Pkg.truncate(),
       App.truncate(),
@@ -43,8 +41,7 @@ describe('test/orm.test.ts', () => {
   });
 
   it('bone should work', async () => {
-    ctx = await app.mockModuleContext();
-    const appService = await ctx.getEggObject(AppService);
+    const appService = await app.getEggObject(AppService);
     const appModel = await appService.createApp({
       name: 'egg',
       desc: 'the framework',
@@ -60,8 +57,7 @@ describe('test/orm.test.ts', () => {
   });
 
   it('hook should work', async () => {
-    ctx = await app.mockModuleContext();
-    const pkgService = await ctx.getEggObject(PkgService);
+    const pkgService = await app.getEggObject(PkgService);
     const pkgModel = await pkgService.createPkg({
       name: 'egg',
       desc: 'the framework',
@@ -77,16 +73,14 @@ describe('test/orm.test.ts', () => {
   });
 
   it('ctx should inject with Model', async () => {
-    ctx = await app.mockModuleContext();
-    const appService = await ctx.getEggObject(AppService);
+    const appService = await app.getEggObject(AppService);
     app.mockLog();
     await appService.findApp('egg');
-    app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1 path: \//);
+    app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1/);
   });
 
   it('singleton ORM client', async () => {
-    ctx = await app.mockModuleContext();
-    appService = await ctx.getEggObject(AppService);
+    appService = await app.getEggObject(AppService);
 
     describe('raw query', () => {
       before(async () => {
