@@ -6,6 +6,8 @@ import os from 'os';
 import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService';
 import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg';
 import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App';
+import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService';
+import { EggContext } from '@eggjs/tegg';
 
 describe('test/orm.test.ts', () => {
   // TODO win32 ci not support mysql
@@ -129,5 +131,34 @@ describe('test/orm.test.ts', () => {
       });
     });
 
+  });
+
+  describe('context proto', () => {
+    let ctx: EggContext;
+    let ctxService: CtxService;
+    beforeEach(async () => {
+      ctx = await app.mockModuleContext();
+      ctxService = await ctx.getEggObject(CtxService);
+    });
+    afterEach(async () => {
+      await app.destroyModuleContext(ctx);
+    });
+    it('should work for ContextProto service', async () => {
+      const ctxPkg = await ctxService.createCtxPkg({
+        name: 'egg',
+        desc: 'the framework',
+      });
+      assert(ctxPkg.name === 'egg_before_create_hook');
+    });
+
+    it('should query work', async () => {
+      await ctxService.createCtxPkg({
+        name: 'egg',
+        desc: 'the framework',
+      });
+      const ctxPkg = await ctxService.findCtxPkg('egg_before_create_hook');
+      assert(ctxPkg);
+      assert(ctxPkg.name === 'egg_before_create_hook');
+    });
   });
 });
