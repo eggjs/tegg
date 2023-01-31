@@ -5,7 +5,7 @@ import { ModelProtoManager } from './lib/ModelProtoManager';
 import { ModelProtoHook } from './lib/ModelProtoHook';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
 import SingletonModelProto from './lib/SingletonModelProto';
-import { SingletonModeObject } from './lib/SingletonModeObject';
+import { SingletonModelObject } from './lib/SingletonModelObject';
 import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook';
 
 export default class OrmAppBootHook {
@@ -29,7 +29,7 @@ export default class OrmAppBootHook {
 
   configWillLoad() {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.modelProtoHook);
-    this.app.eggObjectFactory.registerEggObjectCreateMethod(SingletonModelProto, SingletonModeObject.createObject);
+    this.app.eggObjectFactory.registerEggObjectCreateMethod(SingletonModelProto, SingletonModelObject.createObject);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.ormLoadUnitHook);
   }
 

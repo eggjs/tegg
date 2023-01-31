@@ -1,5 +1,7 @@
 import assert from 'assert';
 import path from 'path';
+// @ts-expect-error: the library definition is wrong
+import { Logger } from 'leoric';
 import mm, { MockApplication } from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
 import os from 'os';
@@ -79,6 +81,8 @@ describe('test/orm.test.ts', () => {
     app.mockLog();
     await appService.findApp('egg');
     app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1/);
+    // Model.ctx should be undefined in Singleton Service
+    app.expectLog(/path: undefined/);
   });
 
   it('singleton ORM client', async () => {
@@ -143,6 +147,7 @@ describe('test/orm.test.ts', () => {
     afterEach(async () => {
       await app.destroyModuleContext(ctx);
     });
+
     it('should work for ContextProto service', async () => {
       const ctxPkg = await ctxService.createCtxPkg({
         name: 'egg',
@@ -152,6 +157,7 @@ describe('test/orm.test.ts', () => {
     });
 
     it('should query work', async () => {
+      app.mockLog();
       await ctxService.createCtxPkg({
         name: 'egg',
         desc: 'the framework',
@@ -159,6 +165,32 @@ describe('test/orm.test.ts', () => {
       const ctxPkg = await ctxService.findCtxPkg('egg_before_create_hook');
       assert(ctxPkg);
       assert(ctxPkg.name === 'egg_before_create_hook');
+      app.expectLog(/sql: SELECT \* FROM `pkgs` WHERE `name` = 'egg_before_create_hook' LIMIT 1 path: \//);
+
     });
+
+    it('should tracer ctx set', async () => {
+      let ctx;
+      await (app as any).leoricRegister.ready();
+      for (const realm of app.leoricRegister.realmMap.values()) {
+        realm.driver.logger = new Logger({
+          logQuery(_, __, options) {
+            if (options.Model) {
+              ctx = options.Model.ctx;
+            }
+          },
+        });
+      }
+
+      await ctxService.createCtxPkg({
+        name: 'egg',
+        desc: 'the framework',
+      });
+
+      assert(ctx.originalUrl === '/');
+      assert(ctx.tracer.traceId);
+
+    });
+
   });
 });
