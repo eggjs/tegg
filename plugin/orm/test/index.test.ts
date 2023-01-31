@@ -174,14 +174,14 @@ describe('test/orm.test.ts', () => {
       await (app as any).leoricRegister.ready();
       for (const realm of app.leoricRegister.realmMap.values()) {
         realm.driver.logger = new Logger({
-          logQuery(_, __, options) {
+          // eslint-disable-next-line no-loop-func
+          logQuery(_: any, __: any, options: { Model: { ctx: any; }; }) {
             if (options.Model) {
               ctx = options.Model.ctx;
             }
           },
         });
       }
-
       await ctxService.createCtxPkg({
         name: 'egg',
         desc: 'the framework',

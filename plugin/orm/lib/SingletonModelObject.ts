@@ -23,15 +23,7 @@ export class SingletonModelObject implements EggObject {
     this.id = IdenticalUtil.createObjectId(this.proto.id);
   }
 
-  private getContext() {
-    const ctx = ContextHandler.getContext();
-    if (ctx) {
-      return ctx.get(EGG_CONTEXT);
-    }
-  }
-
   async init() {
-    const self = this;
     const clazz = class ContextModelClass extends this.proto.model {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -40,11 +32,14 @@ export class SingletonModelObject implements EggObject {
       }
 
       static get ctx() {
-        return self.getContext();
+        const ctx = ContextHandler.getContext();
+        if (ctx) {
+          return ctx.get(EGG_CONTEXT);
+        }
       }
 
       get ctx() {
-        return self.getContext();
+        return ContextModelClass.ctx;
       }
 
     };

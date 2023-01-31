@@ -24,10 +24,10 @@ export class App extends Bone {
 ## Use Model
 
 ```ts
-import { Singleton, Inject } from '@eggjs/tegg';
+import { SingletonProto, Inject } from '@eggjs/tegg';
 import { App } from './model/App';
 
-@Singleton()
+@SingletonProto()
 export class AppService {
   @Inject()
   App: typeof App;
