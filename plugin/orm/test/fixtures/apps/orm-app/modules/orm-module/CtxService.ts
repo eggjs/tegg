@@ -1,12 +1,12 @@
-import { Inject, SingletonProto } from '@eggjs/tegg';
+import { ContextProto, Inject } from '@eggjs/tegg';
 import { Pkg } from './model/Pkg';
 
-@SingletonProto()
-export class PkgService {
+@ContextProto()
+export class CtxService {
   @Inject()
   Pkg: typeof Pkg;
 
-  async createPkg(data: {
+  async createCtxPkg(data: {
     name: string;
     desc: string;
   }): Promise<Pkg> {
@@ -14,7 +14,7 @@ export class PkgService {
     return bone as Pkg;
   }
 
-  async findPkg(name: string): Promise<Pkg | null> {
+  async findCtxPkg(name: string): Promise<Pkg | null> {
     const app = await this.Pkg.findOne({ name });
     return app as Pkg;
   }

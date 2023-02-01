@@ -11,11 +11,11 @@ import {
 import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { Bone } from 'leoric';
 
-export default class ContextModelProto implements EggPrototype {
+export default class SingletonModelProto implements EggPrototype {
   private readonly qualifiers: QualifierInfo[];
   readonly accessLevel = AccessLevel.PUBLIC;
   id: Id;
-  readonly initType = ObjectInitType.CONTEXT;
+  readonly initType = ObjectInitType.SINGLETON;
   readonly injectObjects = [];
   readonly loadUnitId: string;
   readonly moduleName: string;
@@ -53,7 +53,7 @@ export default class ContextModelProto implements EggPrototype {
     return true;
   }
 
-  static createProto(ctx: EggPrototypeLifecycleContext): ContextModelProto {
-    return new ContextModelProto(ctx.loadUnit, ctx.clazz as typeof Bone);
+  static createProto(ctx: EggPrototypeLifecycleContext): SingletonModelProto {
+    return new SingletonModelProto(ctx.loadUnit, ctx.clazz as typeof Bone);
   }
 }
