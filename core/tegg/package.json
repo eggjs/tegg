@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -46,7 +46,7 @@
     "@eggjs/tegg-lifecycle": "^3.2.4",
     "@eggjs/tegg-loader": "^3.2.4",
     "@eggjs/tegg-metadata": "^3.2.4",
-    "@eggjs/tegg-orm-decorator": "^3.3.0",
+    "@eggjs/tegg-orm-decorator": "^3.4.0",
     "@eggjs/tegg-runtime": "^3.3.1",
     "@eggjs/tegg-schedule-decorator": "^3.2.4"
   },

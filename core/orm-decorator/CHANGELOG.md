@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/eggjs/tegg/compare/v3.3.4...v3.4.0) (2023-02-01)
+
+
+### Features
+
+* use singleton model insteadof context ([#89](https://github.com/eggjs/tegg/issues/89)) ([cfdfc05](https://github.com/eggjs/tegg/commit/cfdfc05f13048806274de1a35b1207c073a8519d))
+
+
+
+
+
 # [3.3.0](https://github.com/eggjs/tegg/compare/v3.2.4...v3.3.0) (2023-01-28)
 
 
