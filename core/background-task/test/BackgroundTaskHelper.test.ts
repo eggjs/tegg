@@ -57,4 +57,21 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
       await helper.doPreDestroy();
     });
   });
+
+  describe('recursive fn', () => {
+    it('should done', async () => {
+      let runDone = 0;
+      helper.run(async () => {
+        await sleep(10);
+        runDone++;
+        helper.run(async () => {
+          await sleep(10);
+          runDone++;
+        });
+      });
+
+      await helper.doPreDestroy();
+      assert(runDone === 2);
+    });
+  });
 });
