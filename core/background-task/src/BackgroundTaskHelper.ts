@@ -54,16 +54,20 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
     if (!this.backgroundTasks.length) return;
 
     const { promise: timeout, resolve } = this.sleep();
+    const backgroundTasks = this.backgroundTasks.slice();
 
     await Promise.race([
       // not block the pre destroy process too long
       timeout,
       // ensure all background task are done before destroy the context
-      Promise.all(this.backgroundTasks),
+      Promise.all(backgroundTasks),
     ]);
-
     // always resolve the sleep promise
     resolve();
+    if (this.backgroundTasks.length !== backgroundTasks.length) {
+      this.backgroundTasks = this.backgroundTasks.slice(backgroundTasks.length);
+      return this.doPreDestroy();
+    }
   }
 
   private sleep() {

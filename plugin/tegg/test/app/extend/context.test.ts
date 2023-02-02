@@ -63,5 +63,19 @@ describe('test/app/extend/context.test.ts', () => {
       });
       assert(backgroundIsDone);
     });
+
+    it('recursive runInBackground should work', async () => {
+      let backgroundIsDone = false;
+      await app.mockModuleContextScope(async ctx => {
+        ctx.runInBackground(async () => {
+          await sleep(100);
+          ctx.runInBackground(async () => {
+            await sleep(100);
+            backgroundIsDone = true;
+          });
+        });
+      });
+      assert(backgroundIsDone);
+    });
   });
 });
