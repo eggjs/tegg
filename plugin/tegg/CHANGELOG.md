@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/eggjs/tegg/compare/v3.4.0...v3.4.1) (2023-02-02)
+
+
+### Bug Fixes
+
+* BackgroundTaskHelper should support recursively call ([#90](https://github.com/eggjs/tegg/issues/90)) ([368ac03](https://github.com/eggjs/tegg/commit/368ac0343d0d4e96b3768e7fd169b721551d0e4b))
+
+
+
+
+
 # [3.4.0](https://github.com/eggjs/tegg/compare/v3.3.4...v3.4.0) (2023-02-01)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin
