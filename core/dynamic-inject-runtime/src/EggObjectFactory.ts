@@ -1,16 +1,14 @@
-import type { EggContainerFactory, EggContext } from '@eggjs/tegg-runtime';
-import { EggAbstractClazz, QualifierImplUtil } from '@eggjs/tegg-dynamic-inject';
-import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from '../EggObjectFactoryPrototype';
-import { AccessLevel, ContextProto, PrototypeUtil, QualifierValue } from '@eggjs/core-decorator';
-import { AbstractEggObjectFactory } from '../AbstractEggObjectFactory';
+import type { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { EggAbstractClazz, EggObjectFactory as IEggObjectFactory, QualifierImplUtil } from '@eggjs/tegg-dynamic-inject';
+import { AccessLevel, PrototypeUtil, QualifierValue, SingletonProto } from '@eggjs/core-decorator';
+import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype';
 
-@ContextProto({
+@SingletonProto({
   protoImplType: EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE,
   name: 'eggObjectFactory',
   accessLevel: AccessLevel.PUBLIC,
 })
-export class EggContextObjectFactory extends AbstractEggObjectFactory {
-  eggContext?: EggContext;
+export class EggObjectFactory implements IEggObjectFactory {
   eggContainerFactory: typeof EggContainerFactory;
 
   async getEggObject<T extends object>(abstractClazz: EggAbstractClazz<T>, qualifierValue: QualifierValue) {
