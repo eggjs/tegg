@@ -5,6 +5,7 @@ import { Application } from 'egg';
 import sleep from 'mz-modules/sleep';
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';
 import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService';
+import { LONG_STACK_DELIMITER } from '../../../lib/run_in_background';
 
 describe('test/app/extend/context.test.ts', () => {
   let app: Application;
@@ -76,6 +77,32 @@ describe('test/app/extend/context.test.ts', () => {
         });
       });
       assert(backgroundIsDone);
+    });
+
+    it('stack should be continuous', async () => {
+      let backgroundError;
+      app.on('error', e => {
+        backgroundError = e;
+      });
+      await app.mockModuleContextScope(async ctx => {
+        ctx.runInBackground(async () => {
+          throw new Error('background');
+        });
+        await sleep(1000);
+      });
+      const stack: string = backgroundError.stack;
+      // background
+      // at ~/plugin/tegg/test/app/extend/context.test.ts:88:17
+      // at ~/plugin/tegg/test/app/extend/context.test.ts:82:21 (~/plugin/tegg/lib/run_in_background.ts:34:15)
+      // at ~/node_modules/egg/app/extend/context.js:232:49
+      // --------------------
+      //   at Object.runInBackground (~/plugin/tegg/lib/run_in_background.ts:27:23)
+      // at ~/plugin/tegg/test/app/extend/context.test.ts:87:13
+      // at ~/plugin/tegg/app/extend/application.unittest.ts:49:22
+      // at async Proxy.mockContextScope (~/node_modules/egg-mock/app/extend/application.js:81:12)
+      // at async Context.<anonymous> (~/plugin/tegg/test/app/extend/context.test.ts:86:7)
+      assert(stack.includes(__filename));
+      assert(stack.includes(LONG_STACK_DELIMITER));
     });
   });
 });
