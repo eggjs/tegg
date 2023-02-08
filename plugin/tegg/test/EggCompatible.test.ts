@@ -1,6 +1,7 @@
 import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
+import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService';
 
 describe('test/EggCompatible.test.ts', () => {
   let app;
@@ -124,6 +125,14 @@ describe('test/EggCompatible.test.ts', () => {
     await app.mockModuleContextScope(async ctx => {
       assert(ctx.counter === 0);
       assert(ctx.counter === 1);
+    });
+  });
+
+  it('should support EggQualifier', async () => {
+    await app.mockModuleContextScope(async () => {
+      const eggTypeService = await app.getEggObject(EggTypeService);
+      const result = eggTypeService.testInject();
+      assert.deepStrictEqual(result, { app: { from: 'app' }, ctx: { from: 'ctx' } });
     });
   });
 });

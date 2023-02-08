@@ -7,11 +7,13 @@ import { CompatibleUtil } from './lib/CompatibleUtil';
 import { ModuleHandler } from './lib/ModuleHandler';
 import { EggContextHandler } from './lib/EggContextHandler';
 import { hijackRunInBackground } from './lib/run_in_background';
+import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook';
 
 export default class App {
   private readonly app: Application;
   private compatibleHook?: EggContextCompatibleHook;
   private eggContextHandler: EggContextHandler;
+  private eggQualifierProtoHook: EggQualifierProtoHook;
 
   constructor(app: Application) {
     this.app = app;
@@ -24,7 +26,9 @@ export default class App {
   configDidLoad() {
     this.eggContextHandler = new EggContextHandler(this.app);
     this.app.eggContextHandler = this.eggContextHandler;
+    this.eggQualifierProtoHook = new EggQualifierProtoHook(this.app);
     this.eggContextHandler.register();
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.eggQualifierProtoHook);
     this.app.moduleHandler = new ModuleHandler(this.app);
   }
 
@@ -40,6 +44,9 @@ export default class App {
     await this.app.moduleHandler.destroy();
     if (this.compatibleHook) {
       this.app.eggContextLifecycleUtil.deleteLifecycle(this.compatibleHook);
+    }
+    if (this.eggQualifierProtoHook) {
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eggQualifierProtoHook);
     }
   }
 }

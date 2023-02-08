@@ -2,7 +2,11 @@ import { Application } from 'egg';
 import { Loader, TeggError } from '@eggjs/tegg-metadata';
 import {
   AccessLevel,
-  EggProtoImplClass, InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute,
+  EggProtoImplClass,
+  EggQualifierAttribute,
+  EggType,
+  InitTypeQualifierAttribute,
+  LoadUnitNameQualifierAttribute,
   ObjectInitType,
   PrototypeUtil,
   QualifierUtil,
@@ -12,9 +16,9 @@ import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggContextObjectFactory, EggSingletonObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
 
-const APP_CLAZZ_BLACK_LIST = [ 'eggObjectFactory' ];
-const DEFAULT_APP_CLAZZ = [];
-const DEFAULT_CONTEXT_CLAZZ = [
+export const APP_CLAZZ_BLACK_LIST = [ 'eggObjectFactory' ];
+export const DEFAULT_APP_CLAZZ: string[] = [];
+export const DEFAULT_CONTEXT_CLAZZ = [
   'user',
 ];
 
@@ -25,11 +29,30 @@ export class EggAppLoader implements Loader {
     this.app = app;
   }
 
-  private buildAppClazz(name: string): EggProtoImplClass {
+  private buildClazz(name: string, eggType: EggType): EggProtoImplClass {
     const app = this.app;
-    const func: EggProtoImplClass = function() {
-      return app[name];
-    } as any;
+    let func: EggProtoImplClass;
+    if (eggType === EggType.APP) {
+      func = function() {
+        return app[name];
+      } as any;
+    } else {
+      func = function() {
+        const ctx = app.currentContext;
+        if (!ctx) {
+          // ctx has been destroyed, throw humanize error info
+          throw TeggError.create(`Can not read property \`${name}\` because egg ctx has been destroyed`, 'read_after_ctx_destroyed');
+        }
+
+        return ctx[name];
+      } as any;
+    }
+    Object.defineProperty(func, 'name', {
+      value: name,
+      writable: false,
+      enumerable: false,
+      configurable: true,
+    });
     PrototypeUtil.setIsEggPrototype(func);
     PrototypeUtil.setFilePath(func, 'mock_file_path');
     PrototypeUtil.setProperty(func, {
@@ -40,31 +63,7 @@ export class EggAppLoader implements Loader {
     });
     QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
     QualifierUtil.addProtoQualifier(func, InitTypeQualifierAttribute, ObjectInitType.SINGLETON);
-    return func;
-  }
-
-  private buildCtxClazz(name: string): EggProtoImplClass {
-    const temp = {
-      [name]: function(ctx) {
-        if (!ctx) {
-          // ctx has been destroyed, throw humanize error info
-          throw TeggError.create(`Can not read property \`${name}\` because egg ctx has been destroyed`, 'read_after_ctx_destroyed');
-        }
-
-        return ctx[name];
-      } as any,
-    };
-    const func = temp[name];
-    PrototypeUtil.setIsEggPrototype(func);
-    PrototypeUtil.setFilePath(func, 'mock_file_path');
-    PrototypeUtil.setProperty(func, {
-      name,
-      initType: ObjectInitType.CONTEXT,
-      accessLevel: AccessLevel.PUBLIC,
-      protoImplType: COMPATIBLE_PROTO_IMPLE_TYPE,
-    });
-    QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
-    QualifierUtil.addProtoQualifier(func, InitTypeQualifierAttribute, ObjectInitType.CONTEXT);
+    QualifierUtil.addProtoQualifier(func, EggQualifierAttribute, eggType);
     return func;
   }
 
@@ -73,6 +72,12 @@ export class EggAppLoader implements Loader {
     const func: EggProtoImplClass = function() {
       return app.getLogger(name);
     } as any;
+    Object.defineProperty(func, 'name', {
+      value: name,
+      writable: false,
+      enumerable: false,
+      configurable: true,
+    });
     PrototypeUtil.setIsEggPrototype(func);
     PrototypeUtil.setFilePath(func, 'mock_file_path');
     PrototypeUtil.setProperty(func, {
@@ -83,26 +88,7 @@ export class EggAppLoader implements Loader {
     });
     QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
     QualifierUtil.addProtoQualifier(func, InitTypeQualifierAttribute, ObjectInitType.SINGLETON);
-    return func;
-  }
-
-  private buildCtxLoggerClazz(name: string): EggProtoImplClass {
-    const temp = {
-      [name]: function(ctx) {
-        return ctx.getLogger(name);
-      } as any,
-    };
-    const func = temp[name];
-    PrototypeUtil.setIsEggPrototype(func);
-    PrototypeUtil.setFilePath(func, 'mock_file_path');
-    PrototypeUtil.setProperty(func, {
-      name,
-      initType: ObjectInitType.CONTEXT,
-      accessLevel: AccessLevel.PUBLIC,
-      protoImplType: COMPATIBLE_PROTO_IMPLE_TYPE,
-    });
-    QualifierUtil.addProtoQualifier(func, LoadUnitNameQualifierAttribute, 'app');
-    QualifierUtil.addProtoQualifier(func, InitTypeQualifierAttribute, ObjectInitType.CONTEXT);
+    QualifierUtil.addProtoQualifier(func, EggQualifierAttribute, EggType.APP);
     return func;
   }
 
@@ -128,16 +114,14 @@ export class EggAppLoader implements Loader {
       ...DEFAULT_CONTEXT_CLAZZ,
     ]));
     const loggerNames = this.getLoggerNames(allContextClazzNames);
-    const allSingletonClazzs = allSingletonClazzNames.map(name => this.buildAppClazz(name));
-    const allContextClazzs = allContextClazzNames.map(name => this.buildCtxClazz(name));
+    const allSingletonClazzs = allSingletonClazzNames.map(name => this.buildClazz(name, EggType.APP));
+    const allContextClazzs = allContextClazzNames.map(name => this.buildClazz(name, EggType.CONTEXT));
     const appLoggerClazzs = loggerNames.map(name => this.buildAppLoggerClazz(name));
-    const ctxLoggerClazzs = loggerNames.map(name => this.buildCtxLoggerClazz(name));
 
     return [
       ...allSingletonClazzs,
       ...allContextClazzs,
       ...appLoggerClazzs,
-      ...ctxLoggerClazzs,
 
       // inner helper class list
       // TODO: should auto the inner class
