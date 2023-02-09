@@ -38,7 +38,6 @@
   "dependencies": {
     "@eggjs/core-decorator": "^3.2.3",
     "@eggjs/tegg-common-util": "^3.2.3",
-    "@eggjs/tegg-metadata": "^3.2.4",
     "globby": "^11.1.0",
     "is-type-of": "^1.2.1"
   },
@@ -46,6 +45,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@eggjs/tegg-metadata": "^3.2.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.18",
     "cross-env": "^7.0.3",
