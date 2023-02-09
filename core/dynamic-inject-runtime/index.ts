@@ -1,5 +1,4 @@
-export * from './src/impl/EggContextObjectFactory';
-export * from './src/impl/EggSingletonObjectFactory';
+export * from './src/EggObjectFactory';
 
 import './src/EggObjectFactoryPrototype';
 import './src/EggObjectFactoryObject';
