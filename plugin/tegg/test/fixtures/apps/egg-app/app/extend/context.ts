@@ -11,4 +11,10 @@ export default {
   get user() {
     return {};
   },
+
+  get appDefineObject() {
+    return {
+      from: 'ctx',
+    };
+  },
 };

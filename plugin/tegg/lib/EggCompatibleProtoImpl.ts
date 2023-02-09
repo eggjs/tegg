@@ -10,13 +10,11 @@ import {
   Id,
   IdenticalUtil,
 } from '@eggjs/tegg';
-import { ContextHandler } from '@eggjs/tegg-runtime';
 import {
   EggPrototype,
   InjectObjectProto,
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-metadata';
-import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
 
 export const COMPATIBLE_PROTO_IMPLE_TYPE = 'EGG_COMPATIBLE';
@@ -65,13 +63,7 @@ export class EggCompatibleProtoImpl implements EggPrototype {
   }
 
   constructEggObject(): object {
-    return {};
-  }
-
-  constructorEggCompatibleObject() {
-    const teggContext = ContextHandler.getContext();
-    const ctx = teggContext?.get(EGG_CONTEXT);
-    return Reflect.apply(this.clazz, null, [ ctx ]);
+    return Reflect.apply(this.clazz, null, []);
   }
 
   getMetaData<T>(metadataKey: MetaDataKey): T | undefined {

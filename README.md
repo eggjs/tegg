@@ -350,6 +350,31 @@ export class HelloService {
 }
 ```
 
+### egg 内 ctx/app 命名冲突
+
+egg 内可能出现 ctx 和 app 上有同名对象的存在，我们可以通过使用 `EggQualifier` 来明确指定注入的对象来自 ctx 还是 app。不指定时，默认注入 app 上的对象。
+
+###### 定义
+
+```typescript
+@EggQualifier(eggType: EggType)
+```
+
+###### 示例
+
+```typescript
+import { EggLogger } from 'egg';
+import { Inject, EggQualifier, EggType } from '@eggjs/tegg';
+
+@ContextProto()
+export class HelloService {
+  @Inject()
+  // 明确指定注入 ctx 上的 foo 而不是 app 上的 foo
+  @EggQualifier(EggType.CONTEXT)
+  foo: Foo;
+}
+```
+
 ### 单测
 
 #### 单测 Context
