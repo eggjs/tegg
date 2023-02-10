@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.1](https://github.com/eggjs/tegg/compare/v3.5.0...v3.5.1) (2023-02-10)
+
+
+### Bug Fixes
+
+* remove useless init singleton proto ([#96](https://github.com/eggjs/tegg/issues/96)) ([097ac58](https://github.com/eggjs/tegg/commit/097ac58c675d43088c8785a12cf224b5d6adea17))
+
+
+
+
+
 # [3.5.0](https://github.com/eggjs/tegg/compare/v3.4.1...v3.5.0) (2023-02-10)
 
 
