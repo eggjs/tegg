@@ -17,6 +17,11 @@ import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
 
 export const APP_CLAZZ_BLACK_LIST = [ 'eggObjectFactory' ];
+
+export const CONTEXT_CLAZZ_BLACK_LIST = [
+  // just use the app.logger, ctx logger is deprecated.
+  'logger',
+];
 export const DEFAULT_APP_CLAZZ: string[] = [];
 export const DEFAULT_CONTEXT_CLAZZ = [
   'user',
@@ -92,10 +97,10 @@ export class EggAppLoader implements Loader {
     return func;
   }
 
-  private getLoggerNames(ctxClazzNames: string[]): string[] {
+  private getLoggerNames(ctxClazzNames: string[], singletonClazzNames: string[]): string[] {
     const loggerNames = Array.from(this.app.loggers.keys());
     // filter logger/coreLogger
-    return loggerNames.filter(t => !ctxClazzNames.includes(t));
+    return loggerNames.filter(t => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
   }
 
   load(): EggProtoImplClass[] {
@@ -109,11 +114,13 @@ export class EggAppLoader implements Loader {
     ]);
     APP_CLAZZ_BLACK_LIST.forEach(t => allSingletonClazzNameSet.delete(t));
     const allSingletonClazzNames = Array.from(allSingletonClazzNameSet);
-    const allContextClazzNames = Array.from(new Set([
+    const allContextClazzNamesSet = new Set([
       ...contextProperties,
       ...DEFAULT_CONTEXT_CLAZZ,
-    ]));
-    const loggerNames = this.getLoggerNames(allContextClazzNames);
+    ]);
+    CONTEXT_CLAZZ_BLACK_LIST.forEach(t => allContextClazzNamesSet.delete(t));
+    const allContextClazzNames = Array.from(allContextClazzNamesSet);
+    const loggerNames = this.getLoggerNames(allContextClazzNames, allSingletonClazzNames);
     const allSingletonClazzs = allSingletonClazzNames.map(name => this.buildClazz(name, EggType.APP));
     const allContextClazzs = allContextClazzNames.map(name => this.buildClazz(name, EggType.CONTEXT));
     const appLoggerClazzs = loggerNames.map(name => this.buildAppLoggerClazz(name));
