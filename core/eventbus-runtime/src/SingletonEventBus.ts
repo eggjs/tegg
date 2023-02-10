@@ -93,7 +93,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
       throw new Error(`eventbus corkId ${corkId} not found`);
     }
     if (--corkEvents.times !== 0) {
-      return;
+      return false;
     }
     this.corkedEvents.delete(corkId);
     for (const event of corkEvents.events) {
@@ -101,6 +101,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
         this.doEmitWithContext(event.context, event.name, event.args);
       }
     }
+    return true;
   }
 
   queueEvent(corkId: string, event: Event) {

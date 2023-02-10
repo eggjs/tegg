@@ -27,9 +27,10 @@ export class EggContextEventBus implements ContextEventBus {
 
   uncork() {
     assert(this.corkId, 'eventbus uncork without cork');
-    this.eventBus.uncork(this.corkId);
-    this.context.set(CORK_ID, null);
-    this.corkId = undefined;
+    if (this.eventBus.uncork(this.corkId)) {
+      this.context.set(CORK_ID, null);
+      this.corkId = undefined;
+    }
   }
 
   emit<E extends keyof Events>(event: E, ...args: any): boolean {
