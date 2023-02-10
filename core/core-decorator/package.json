@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/core-decorator",
-  "version": "3.2.3",
+  "version": "3.5.0",
   "description": "tegg core decorator",
   "keywords": [
     "egg",

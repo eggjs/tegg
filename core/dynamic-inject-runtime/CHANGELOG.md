@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/eggjs/tegg/compare/v3.4.1...v3.5.0) (2023-02-10)
+
+
+### Features
+
+* remove context egg object factory ([#93](https://github.com/eggjs/tegg/issues/93)) ([e14bdb2](https://github.com/eggjs/tegg/commit/e14bdb257eaebc0b0a4c37c6073a5c3237718718))
+
+
+
+
+
 ## [3.3.1](https://github.com/eggjs/tegg/compare/v3.3.0...v3.3.1) (2023-01-28)
 
 **Note:** Version bump only for package @eggjs/tegg-dynamic-inject-runtime

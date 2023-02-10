@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/eventbus-decorator",
-  "version": "3.2.3",
+  "version": "3.5.0",
   "description": "tegg eventbus decorator",
   "keywords": [
     "egg",
@@ -34,7 +34,7 @@
     "directory": "core/eventbus-decorator"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.2.3",
+    "@eggjs/core-decorator": "^3.5.0",
     "@eggjs/tegg-common-util": "^3.2.3",
     "typed-emitter": "^1.3.1"
   },

@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -48,11 +48,11 @@
   "dependencies": {
     "@eggjs/egg-module-common": "^3.2.3",
     "@eggjs/router": "^2.0.1",
-    "@eggjs/tegg": "^3.4.1",
+    "@eggjs/tegg": "^3.5.0",
     "@eggjs/tegg-common-util": "^3.2.3",
-    "@eggjs/tegg-loader": "^3.2.4",
-    "@eggjs/tegg-metadata": "^3.2.4",
-    "@eggjs/tegg-runtime": "^3.3.1",
+    "@eggjs/tegg-loader": "^3.5.0",
+    "@eggjs/tegg-metadata": "^3.5.0",
+    "@eggjs/tegg-runtime": "^3.5.0",
     "egg-errors": "^2.3.0",
     "globby": "^10.0.2",
     "koa-compose": "^3.2.1",
@@ -60,9 +60,9 @@
     "sdk-base": "^4.2.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.3.1",
+    "@eggjs/module-test-util": "^3.5.0",
     "@eggjs/tegg-config": "^3.2.3",
-    "@eggjs/tegg-plugin": "^3.4.1",
+    "@eggjs/tegg-plugin": "^3.5.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.18",
     "cross-env": "^7.0.3",

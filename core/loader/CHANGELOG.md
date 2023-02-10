@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/eggjs/tegg/compare/v3.4.1...v3.5.0) (2023-02-10)
+
+
+### Bug Fixes
+
+* loader should not deps metadata ([#94](https://github.com/eggjs/tegg/issues/94)) ([ff57de4](https://github.com/eggjs/tegg/commit/ff57de4f3e0d0dc33d77d05a887242fcb4c32024))
+
+
+
+
+
 ## [3.2.3](https://github.com/eggjs/tegg/compare/v3.2.2...v3.2.3) (2023-01-16)
 
 **Note:** Version bump only for package @eggjs/tegg-loader

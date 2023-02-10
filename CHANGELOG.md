@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/eggjs/tegg/compare/v3.4.1...v3.5.0) (2023-02-10)
+
+
+### Bug Fixes
+
+* loader should not deps metadata ([#94](https://github.com/eggjs/tegg/issues/94)) ([ff57de4](https://github.com/eggjs/tegg/commit/ff57de4f3e0d0dc33d77d05a887242fcb4c32024))
+
+
+### Features
+
+* append call stack for runInBackground ([#91](https://github.com/eggjs/tegg/issues/91)) ([ec7bc2c](https://github.com/eggjs/tegg/commit/ec7bc2c60ffb49b4a51feec82e391b1f6a88549a))
+* remove context egg object factory ([#93](https://github.com/eggjs/tegg/issues/93)) ([e14bdb2](https://github.com/eggjs/tegg/commit/e14bdb257eaebc0b0a4c37c6073a5c3237718718))
+* use SingletonProto for egg ctx object ([#92](https://github.com/eggjs/tegg/issues/92)) ([3385d57](https://github.com/eggjs/tegg/commit/3385d571b076d3148978f252188f29d9cf2c6781))
+
+
+
+
+
 ## [3.4.1](https://github.com/eggjs/tegg/compare/v3.4.0...v3.4.1) (2023-02-02)
 
 
