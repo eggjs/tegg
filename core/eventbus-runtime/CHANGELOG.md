@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.2](https://github.com/eggjs/tegg/compare/v3.5.1...v3.5.2) (2023-02-10)
+
+
+### Bug Fixes
+
+* eventbus cork should support reentry ([#98](https://github.com/eggjs/tegg/issues/98)) ([077044c](https://github.com/eggjs/tegg/commit/077044c040f8423572605eb2980e3cc6da8c038e))
+
+
+
+
+
 # [3.5.0](https://github.com/eggjs/tegg/compare/v3.4.1...v3.5.0) (2023-02-10)
 
 

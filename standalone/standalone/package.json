@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-standalone",
   "description": "tegg standalone",
-  "version": "3.5.0",
+  "version": "3.5.2",
   "keywords": [
     "egg",
     "typescript",
@@ -39,7 +39,7 @@
   "license": "MIT",
   "dependencies": {
     "@eggjs/egg-module-common": "^3.2.3",
-    "@eggjs/tegg": "^3.5.0",
+    "@eggjs/tegg": "^3.5.2",
     "@eggjs/tegg-background-task": "^3.5.0",
     "@eggjs/tegg-common-util": "^3.2.3",
     "@eggjs/tegg-dynamic-inject-runtime": "^3.5.0",
