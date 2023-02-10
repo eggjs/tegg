@@ -7,7 +7,6 @@ import { ROOT_PROTO } from '@eggjs/egg-module-common';
 export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecycleContext, EggContext> {
   private readonly moduleHandler: ModuleHandler;
   private requestProtoList: Array<EggPrototype> = [];
-  private initProtoList: Array<EggPrototype> = [];
 
   constructor(moduleHandler: ModuleHandler) {
     this.moduleHandler = moduleHandler;
@@ -16,8 +15,6 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
       for (const proto of iterator) {
         if (proto.initType === ObjectInitType.CONTEXT) {
           this.requestProtoList.push(proto);
-        } else if (proto.initType === ObjectInitType.SINGLETON) {
-          this.initProtoList.push(proto);
         }
       }
     }
@@ -29,9 +26,6 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
       for (const proto of this.requestProtoList) {
         ctx.addProtoToCreate(proto.name, proto);
       }
-      await Promise.all(this.initProtoList.map(async proto => {
-        await EggContainerFactory.getOrCreateEggObject(proto);
-      }));
     } else {
       // Use for ctx.runInBackground.
       // BackgroundTaskHelper should get by sync,
