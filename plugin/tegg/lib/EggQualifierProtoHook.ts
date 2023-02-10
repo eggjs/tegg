@@ -7,13 +7,23 @@ import {
   EggType,
 } from '@eggjs/tegg';
 import { Application } from 'egg';
-import { APP_CLAZZ_BLACK_LIST, DEFAULT_APP_CLAZZ, DEFAULT_CONTEXT_CLAZZ } from './EggAppLoader';
+import {
+  APP_CLAZZ_BLACK_LIST,
+  CONTEXT_CLAZZ_BLACK_LIST,
+  DEFAULT_APP_CLAZZ,
+  DEFAULT_CONTEXT_CLAZZ,
+} from './EggAppLoader';
+import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly app: Application;
+  private readonly appProperties: string[];
+  private readonly ctxProperties: string[];
 
   constructor(app: Application) {
     this.app = app;
+    this.appProperties = ObjectUtils.getProperties(this.app);
+    this.ctxProperties = ObjectUtils.getProperties(this.app.context);
   }
 
   async preCreate(ctx: LoadUnitLifecycleContext): Promise<void> {
@@ -35,19 +45,24 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
   }
 
   private isAppObject(name: PropertyKey) {
-    if (APP_CLAZZ_BLACK_LIST.includes(String(name))) {
+    name = String(name);
+    if (APP_CLAZZ_BLACK_LIST.includes(name)) {
       return false;
     }
-    if (DEFAULT_APP_CLAZZ.includes(String(name))) {
+    if (DEFAULT_APP_CLAZZ.includes(name)) {
       return true;
     }
-    return this.app.hasOwnProperty(name);
+    return this.appProperties.includes(name);
   }
 
   private isCtxObject(name: PropertyKey) {
-    if (DEFAULT_CONTEXT_CLAZZ.includes(String(name))) {
+    name = String(name);
+    if (CONTEXT_CLAZZ_BLACK_LIST.includes(name)) {
+      return false;
+    }
+    if (DEFAULT_CONTEXT_CLAZZ.includes(name)) {
       return true;
     }
-    return this.app.context.hasOwnProperty(name);
+    return this.ctxProperties.includes(name);
   }
 }
