@@ -319,7 +319,7 @@ import { Inject, InitTypeQualifier, ObjectInitType } from '@eggjs/tegg';
 @ContextProto()
 export class HelloService {
   @Inject()
-  // 明确指定示例化方式为 CONTEXT 的 logger
+  // 明确指定实例化方式为 CONTEXT 的 logger
   @InitTypeQualifier(ObjectInitType.CONTEXT)
   logger: EggLogger;
 }
