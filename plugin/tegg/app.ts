@@ -26,15 +26,17 @@ export default class App {
   configDidLoad() {
     this.eggContextHandler = new EggContextHandler(this.app);
     this.app.eggContextHandler = this.eggContextHandler;
-    this.eggQualifierProtoHook = new EggQualifierProtoHook(this.app);
     this.eggContextHandler.register();
-    this.app.loadUnitLifecycleUtil.registerLifecycle(this.eggQualifierProtoHook);
     this.app.moduleHandler = new ModuleHandler(this.app);
   }
 
   async didLoad() {
     hijackRunInBackground(this.app);
-    await this.app.moduleHandler.ready();
+    // wait all file loaded, so app/ctx has all properties
+    this.eggQualifierProtoHook = new EggQualifierProtoHook(this.app);
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.eggQualifierProtoHook);
+    // start load tegg objects
+    await this.app.moduleHandler.init();
     this.compatibleHook = new EggContextCompatibleHook(this.app.moduleHandler);
     this.app.eggContextLifecycleUtil.registerLifecycle(this.compatibleHook);
   }
