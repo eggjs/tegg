@@ -632,6 +632,8 @@ export default class BackgroundService {
 
 - **推荐方式：将异步任务转发给单例对象（SingletonProto）来执行，单例对象永远不会释放**
 - 调整超时时间，对 `backgroundTaskHelper.timeout` 进行赋值即可
+- 如果将超时时间设置为 `Infinity`，框架将不会超时
+- 可以在 config 文件中指定 `backgroundTask.timeout` 来全局覆盖默认的超时时间
 
 ### 动态注入
 
