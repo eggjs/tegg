@@ -67,4 +67,11 @@ describe('test/BackgroundTask.test.ts', () => {
     const lifecycleList = EggContextLifecycleUtil.getObjectLifecycleList(teggCtx!);
     assert(lifecycleList.length === 0);
   });
+
+  it('config should work', async () => {
+    await app.mockModuleContextScope(async ctx => {
+      const backgroundTaskHelper = await ctx.getEggObject(BackgroundTaskHelper);
+      assert(backgroundTaskHelper.timeout === Infinity);
+    });
+  });
 });

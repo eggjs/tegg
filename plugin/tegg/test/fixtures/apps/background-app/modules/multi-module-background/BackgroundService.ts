@@ -23,6 +23,7 @@ export default class BackgroundService {
   private readonly countService: CountService;
 
   async backgroundAdd(delay = 1000) {
+    this.backgroundTaskHelper.timeout = 5000;
     this.backgroundTaskHelper.run(async () => {
       await sleep(delay);
       assert(this.testObj.ok);
