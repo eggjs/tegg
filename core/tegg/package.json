@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.5.2",
+  "version": "3.6.0",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -40,7 +40,7 @@
     "@eggjs/core-decorator": "^3.5.0",
     "@eggjs/eventbus-decorator": "^3.5.2",
     "@eggjs/standalone-decorator": "^3.2.3",
-    "@eggjs/tegg-background-task": "^3.5.0",
+    "@eggjs/tegg-background-task": "^3.6.0",
     "@eggjs/tegg-common-util": "^3.2.3",
     "@eggjs/tegg-dynamic-inject": "^3.5.0",
     "@eggjs/tegg-lifecycle": "^3.2.4",

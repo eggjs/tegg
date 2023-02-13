@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/eggjs/tegg/compare/v3.5.2...v3.6.0) (2023-02-13)
+
+
+### Bug Fixes
+
+* egg qualifier should register after all file loaded ([#100](https://github.com/eggjs/tegg/issues/100)) ([5033b51](https://github.com/eggjs/tegg/commit/5033b51796b8a3329bd79884a8d8f18226193a1b))
+
+
+### Features
+
+* add backgroundTask.timeout config ([#101](https://github.com/eggjs/tegg/issues/101)) ([0b1eee0](https://github.com/eggjs/tegg/commit/0b1eee00d6feb9c6d4509023dffe85c0ada749c2))
+
+
+
+
+
 ## [3.5.2](https://github.com/eggjs/tegg/compare/v3.5.1...v3.5.2) (2023-02-10)
 
 
