@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1](https://github.com/eggjs/tegg/compare/v3.6.0...v3.6.1) (2023-02-14)
+
+
+### Bug Fixes
+
+* get app/ctx properties when load unit beforeCreate ([#102](https://github.com/eggjs/tegg/issues/102)) ([76ef679](https://github.com/eggjs/tegg/commit/76ef679d745deb235db9dcc3fa34984b511bd5c6))
+
+
+
+
+
 # [3.6.0](https://github.com/eggjs/tegg/compare/v3.5.2...v3.6.0) (2023-02-13)
 
 
