@@ -3,7 +3,7 @@ import {
   EggObject,
   EggObjectFactory,
 } from '@eggjs/tegg-runtime';
-import { IdenticalUtil, EggObjectName } from '@eggjs/tegg';
+import { IdenticalUtil, EggObjectName, EggType, EggQualifierAttribute } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 
 const OBJ = Symbol('EggCompatibleObject#obj');
@@ -14,17 +14,25 @@ export class EggCompatibleObject implements EggObject {
   readonly proto: EggCompatibleProtoImpl;
   readonly name: EggObjectName;
   readonly id: string;
+  readonly isContext: boolean;
 
   constructor(name: EggObjectName, proto: EggCompatibleProtoImpl) {
     this.proto = proto;
     this.name = name;
     this.id = IdenticalUtil.createObjectId(this.proto.id);
+    this.isContext = this.proto.verifyQualifier({
+      value: EggType.CONTEXT,
+      attribute: EggQualifierAttribute,
+    });
   }
 
   // If the egg object is a getter,
   // access may have side effect.
   // So access egg object lazy.
   get obj() {
+    if (this.isContext) {
+      return this.proto.constructEggObject();
+    }
     if (!this[OBJ]) {
       this[OBJ] = this.proto.constructEggObject();
     }
