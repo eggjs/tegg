@@ -7,7 +7,7 @@
       "schedule"
     ]
   },
-  "version": "3.6.1",
+  "version": "3.6.2",
   "description": "schedule decorator for egg",
   "keywords": [
     "egg",
@@ -61,7 +61,7 @@
   "devDependencies": {
     "@eggjs/module-test-util": "^3.5.0",
     "@eggjs/tegg-config": "^3.2.3",
-    "@eggjs/tegg-plugin": "^3.6.1",
+    "@eggjs/tegg-plugin": "^3.6.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.18",
     "cross-env": "^7.0.3",

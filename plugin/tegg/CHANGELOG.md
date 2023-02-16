@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.2](https://github.com/eggjs/tegg/compare/v3.6.1...v3.6.2) (2023-02-16)
+
+
+### Bug Fixes
+
+* should not cache ctx object ([#103](https://github.com/eggjs/tegg/issues/103)) ([be54083](https://github.com/eggjs/tegg/commit/be5408375261d98b60fbc97e18de9232581a9547))
+
+
+
+
+
 ## [3.6.1](https://github.com/eggjs/tegg/compare/v3.6.0...v3.6.1) (2023-02-14)
 
 
