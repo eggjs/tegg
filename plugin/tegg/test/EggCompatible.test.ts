@@ -2,6 +2,7 @@ import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
 import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService';
+import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService';
 
 describe('test/EggCompatible.test.ts', () => {
   let app;
@@ -133,6 +134,24 @@ describe('test/EggCompatible.test.ts', () => {
       const eggTypeService = await app.getEggObject(EggTypeService);
       const result = eggTypeService.testInject();
       assert.deepStrictEqual(result, { app: { from: 'app' }, ctx: { from: 'ctx' } });
+    });
+  });
+
+  it('should support context property', async () => {
+    mm(app.context, 'tracer', {
+      traceId: 'mockTraceId',
+    });
+    await app.mockModuleContextScope(async () => {
+      const traceService: TraceService = await app.getEggObject(TraceService);
+      assert(traceService.getTraceId() === 'mockTraceId');
+    });
+    mm(app.context, 'tracer', {
+      traceId: 'mockTraceId2',
+    });
+    await app.mockModuleContextScope(async () => {
+      const traceService: TraceService = await app.getEggObject(TraceService);
+      console.log('id: ', traceService.getTraceId());
+      assert(traceService.getTraceId() === 'mockTraceId2');
     });
   });
 });
