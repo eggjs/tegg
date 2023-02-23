@@ -48,13 +48,14 @@ Middleware 支持多个入参，依次传入要生效的中间件
 ```ts
 // app/middleware/global_log.ts
 import { Context } from 'egg';
+import type { Next } from '@eggjs/controller-decorator';
 
-export default async function globalLog(ctx: Context, next: any) {
+export default async function globalLog(ctx: Context, next: Next) {
   ctx.logger.info('have a request');
   return next();
 }
 
-export default async function globalLog2(ctx: Context, next: any) {
+export default async function globalLog2(ctx: Context, next: Next) {
   ctx.logger.info('have a request2');
   return next();
 }
