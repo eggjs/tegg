@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.3](https://github.com/eggjs/tegg/compare/v3.6.2...v3.6.3) (2023-03-02)
+
+
+### Bug Fixes
+
+* fix contextEggObjectGetProperty conflict ([#105](https://github.com/eggjs/tegg/issues/105)) ([c570315](https://github.com/eggjs/tegg/commit/c570315ece6ef7443ecf3df2b45aa8c934a5aa38))
+
+
+
+
+
 # [3.5.0](https://github.com/eggjs/tegg/compare/v3.4.1...v3.5.0) (2023-02-10)
 
 **Note:** Version bump only for package @eggjs/tegg-runtime

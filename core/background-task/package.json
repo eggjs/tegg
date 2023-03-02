@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-background-task",
   "description": "background util for tegg",
-  "version": "3.6.0",
+  "version": "3.6.3",
   "keywords": [
     "egg",
     "typescript",
@@ -39,7 +39,7 @@
   "dependencies": {
     "@eggjs/core-decorator": "^3.5.0",
     "@eggjs/tegg-lifecycle": "^3.2.4",
-    "@eggjs/tegg-runtime": "^3.5.0"
+    "@eggjs/tegg-runtime": "^3.6.3"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",

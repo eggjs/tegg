@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-runtime",
-  "version": "3.5.2",
+  "version": "3.6.3",
   "description": "tegg eventbus runtime",
   "keywords": [
     "egg",
@@ -40,7 +40,7 @@
     "@eggjs/core-decorator": "^3.5.0",
     "@eggjs/eventbus-decorator": "^3.5.2",
     "@eggjs/tegg-common-util": "^3.2.3",
-    "@eggjs/tegg-runtime": "^3.5.0",
+    "@eggjs/tegg-runtime": "^3.6.3",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0"
   },

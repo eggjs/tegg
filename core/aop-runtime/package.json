@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-runtime",
-  "version": "3.5.0",
+  "version": "3.6.3",
   "description": "tegg aop",
   "main": "dist/index.js",
   "eggModule": {
@@ -48,11 +48,11 @@
     "@eggjs/tegg-common-util": "^3.2.3",
     "@eggjs/tegg-lifecycle": "^3.2.4",
     "@eggjs/tegg-metadata": "^3.5.0",
-    "@eggjs/tegg-runtime": "^3.5.0",
+    "@eggjs/tegg-runtime": "^3.6.3",
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.5.0",
+    "@eggjs/module-test-util": "^3.6.3",
     "@eggjs/tegg-loader": "^3.5.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.11.18",

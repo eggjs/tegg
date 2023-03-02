@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-runtime",
-  "version": "3.5.0",
+  "version": "3.6.3",
   "description": "tegg runtime",
   "main": "dist/index.js",
   "files": [
