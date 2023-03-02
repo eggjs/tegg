@@ -2,8 +2,6 @@ import { EggObject } from '../model/EggObject';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 
-const PROTO_OBJ_GETTER = Symbol('EggPrototype#objGetter');
-
 export class EggObjectUtil {
   static eggObjectGetProperty(eggObject: EggObject): PropertyDescriptor {
     return {
@@ -16,6 +14,7 @@ export class EggObjectUtil {
   }
 
   static contextEggObjectGetProperty(proto: EggPrototype, objName: PropertyKey): PropertyDescriptor {
+    const PROTO_OBJ_GETTER = Symbol(`EggPrototype#objGetter#${String(objName)}`);
     if (!proto[PROTO_OBJ_GETTER]) {
       proto[PROTO_OBJ_GETTER] = {
         get(): any {
