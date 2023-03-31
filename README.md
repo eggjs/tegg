@@ -19,6 +19,18 @@ exports.tegg = {
 };
 ```
 
+```js
+// config/config.default.js
+{
+  tegg: {
+    // 读取模块支持自定义配置，可用于扩展或过滤不需要的模块文件
+    readModuleOptions: {
+      extraFilePattern: ['!**/dist', '!**/release'],
+    },
+  };
+}
+```
+
 ## Usage
 
 ### 原型

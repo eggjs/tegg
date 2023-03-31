@@ -35,8 +35,9 @@ export interface ModuleConfig {
 export interface ReadModuleReferenceOptions {
   // module dir deep for globby when use auto scan module
   // default is 10
-  deep?: number,
+  deep?: number;
   cwd?: string;
+  extraFilePattern?: string[];
 }
 
 const DEFAULT_READ_MODULE_REF_OPTS = {
@@ -99,6 +100,7 @@ export class ModuleConfigUtil {
       '!**/+(.*)/**',
       // not load coverage
       '!**/coverage',
+      ...(realOptions.extraFilePattern || []),
     ], {
       cwd: baseDir,
       deep: realOptions.deep,
