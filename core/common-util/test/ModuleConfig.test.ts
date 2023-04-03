@@ -61,6 +61,20 @@ describe('test/ModuleConfig.test.ts', () => {
         ]);
       });
     });
+
+    describe('filter module', () => {
+      it('should work', () => {
+        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-modules');
+        const readModuleOptions = {
+          cwd: fixturesPath,
+          extraFilePattern: [ '!**/dist' ],
+        };
+        const ref = ModuleConfigUtil.readModuleReference(fixturesPath, readModuleOptions);
+        assert.deepStrictEqual(ref, [
+          { path: path.join(fixturesPath, 'app/module-a') },
+        ]);
+      });
+    });
   });
 
   describe('read package dependencies', () => {
