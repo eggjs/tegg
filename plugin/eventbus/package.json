@@ -3,6 +3,7 @@
   "version": "3.6.3",
   "eggPlugin": {
     "name": "eventbusModule",
+    "strict": false,
     "dependencies": [
       "tegg"
     ]
