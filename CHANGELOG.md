@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/eggjs/tegg/compare/v3.6.3...v3.7.0) (2023-04-03)
+
+
+### Bug Fixes
+
+* don't check eventbus plugin name ([#113](https://github.com/eggjs/tegg/issues/113)) ([2a94a57](https://github.com/eggjs/tegg/commit/2a94a57c58e4fd971400966c15597aace4bb1ecc))
+
+
+### Features
+
+* The exposed module reads the options. ([#112](https://github.com/eggjs/tegg/issues/112)) ([a52b44b](https://github.com/eggjs/tegg/commit/a52b44b753463bfdef6fbbc39f920be8eccf1567))
+
+
+
+
+
 ## [3.6.3](https://github.com/eggjs/tegg/compare/v3.6.2...v3.6.3) (2023-03-02)
 
 
