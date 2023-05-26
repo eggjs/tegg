@@ -1,5 +1,5 @@
 import { AccessLevel, ContextProto, SingletonProto } from '@eggjs/core-decorator';
-import { EggObjectLifecycle } from '@eggjs/tegg-lifecycle';
+import { EggObjectLifecycle, LifecyclePostConstruct } from '@eggjs/tegg-lifecycle';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -54,27 +54,28 @@ export class Bar implements EggObjectLifecycle {
     this.called.push('construct');
   }
 
-  async postConstruct(): Promise<void> {
+  @LifecyclePostConstruct()
+  protected async _postConstruct() {
     this.called.push('postConstruct');
   }
 
-  async preInject(): Promise<void> {
+  async preInject() {
     this.called.push('preInject');
   }
 
-  async postInject(): Promise<void> {
+  async postInject() {
     this.called.push('postInject');
   }
 
-  async init(): Promise<void> {
+  async init() {
     this.called.push('init');
   }
 
-  async preDestroy(): Promise<void> {
+  async preDestroy() {
     this.called.push('preDestroy');
   }
 
-  async destroy(): Promise<void> {
+  async destroy() {
     this.called.push('destroy');
   }
 }

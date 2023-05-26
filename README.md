@@ -242,12 +242,12 @@ export class Foo implements EggObjectLifecycle {
 
 ```ts
 import {
-  EggObjectLifecyclePostConstruct,
-  EggObjectLifecyclePreInject,
-  EggObjectLifecyclePostInject,
-  EggObjectLifecycleInit,
-  EggObjectLifecyclePreDestroy,
-  EggObjectLifecycleDestroy,
+  LifecyclePostConstruct,
+  LifecyclePreInject,
+  LifecyclePostInject,
+  LifecycleInit,
+  LifecyclePreDestroy,
+  LifecycleDestroy,
 } from '@eggjs/tegg';
 
 @SingletonProto({
@@ -255,33 +255,33 @@ import {
   name: 'helloInterface',
 })
 export class HelloService {
-  @EggObjectLifecyclePostConstruct()
-  private async _postConstruct() {
+  @LifecyclePostConstruct()
+  protected async _postConstruct() {
     console.log('对象构造完成');
   }
 
-  @EggObjectLifecyclePreInject()
-  private async _preInject() {
+  @LifecyclePreInject()
+  protected async _preInject() {
     console.log('依赖将要注入');
   }
 
-  @EggObjectLifecyclePostInject()
-  private async _postInject() {
+  @LifecyclePostInject()
+  protected async _postInject() {
     console.log('依赖注入完成');
   }
 
-  @EggObjectLifecycleInit()
-  private async _init() {
+  @LifecycleInit()
+  protected async _init() {
     console.log('执行一些异步的初始化过程');
   }
 
-  @EggObjectLifecyclePreDestroy()
-  private async _preDestroy() {
+  @LifecyclePreDestroy()
+  protected async _preDestroy() {
     console.log('对象将要释放了');
   }
 
-  @EggObjectLifecycleDestroy()
-  private async _destroy() {
+  @LifecycleDestroy()
+  protected async _destroy() {
     console.log('执行一些释放资源的操作');
   }
 

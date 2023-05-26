@@ -36,6 +36,9 @@ export default class EggObjectImpl implements EggObject {
       // self hook
       if (objLifecycleHook.postConstruct) {
         await objLifecycleHook.postConstruct();
+      } else {
+        // use decorator style
+        await EggObjectLifecycleUtil.callLifecycleHook('postConstruct', objLifecycleHook);
       }
 
       if (objLifecycleHook.preInject) {
