@@ -69,7 +69,6 @@
     "egg-mock": "^5.5.0",
     "egg-schedule": "^4.0.0",
     "mocha": "^10.2.0",
-    "mz-modules": "^2.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },

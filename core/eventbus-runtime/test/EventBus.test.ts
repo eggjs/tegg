@@ -1,15 +1,15 @@
 import path from 'path';
 import mm from 'mm';
+import assert from 'assert';
 import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { HelloHandler, HelloProducer } from './fixtures/modules/event/HelloEvent';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
-import assert from 'assert';
-import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
-import sleep from 'mz-modules/sleep';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
+import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
 
 describe('test/EventBus.test.ts', () => {
   let modules: Array<LoadUnitInstance>;
@@ -129,7 +129,7 @@ describe('test/EventBus.test.ts', () => {
       eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
       const triggerTime = Date.now();
 
-      await sleep(100);
+      await TimerUtil.sleep(100);
       eventBus.uncork(corkId);
       await helloEvent;
       assert(eventTime >= triggerTime + 100);
@@ -162,9 +162,9 @@ describe('test/EventBus.test.ts', () => {
       eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
       const triggerTime = Date.now();
 
-      await sleep(100);
+      await TimerUtil.sleep(100);
       eventBus.uncork(corkId);
-      await sleep(100);
+      await TimerUtil.sleep(100);
       eventBus.uncork(corkId);
 
       await helloEvent;

@@ -42,12 +42,12 @@
     "@eggjs/tegg-runtime": "^3.7.0"
   },
   "devDependencies": {
+    "@eggjs/tegg-common-util": "^3.7.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
     "egg": "^3.9.1",
     "mocha": "^10.2.0",
-    "mz-modules": "^2.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },

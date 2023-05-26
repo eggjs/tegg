@@ -1,8 +1,8 @@
 import path from 'path';
-import mm from 'egg-mock';
 import fs from 'fs/promises';
 import assert from 'assert';
-import sleep from 'mz-modules/sleep';
+import mm from 'egg-mock';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 
 describe('test/schedule.test.ts', () => {
   let app;
@@ -33,7 +33,7 @@ describe('test/schedule.test.ts', () => {
   });
 
   it('schedule should work', async () => {
-    await sleep(1000);
+    await TimerUtil.sleep(1000);
     const scheduleLog = await getScheduleLogContent('schedule-app');
     assert(/schedule called/.test(scheduleLog));
   });
