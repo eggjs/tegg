@@ -3,3 +3,8 @@ export * from './src/EggObjectLifecycle';
 export * from './src/LifycycleUtil';
 export * from './src/IdenticalObject';
 export * from './src/decorator/LifecyclePostConstruct';
+export * from './src/decorator/LifecyclePreInject';
+export * from './src/decorator/LifecyclePostInject';
+export * from './src/decorator/LifecycleInit';
+export * from './src/decorator/LifecyclePreDestroy';
+export * from './src/decorator/LifecycleDestroy';

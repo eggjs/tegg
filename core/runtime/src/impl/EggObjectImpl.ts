@@ -43,6 +43,8 @@ export default class EggObjectImpl implements EggObject {
 
       if (objLifecycleHook.preInject) {
         await objLifecycleHook.preInject();
+      } else {
+        await EggObjectLifecycleUtil.callLifecycleHook('preInject', objLifecycleHook);
       }
       await Promise.all(this.proto.injectObjects.map(async injectObject => {
         const proto = injectObject.proto;
@@ -64,10 +66,14 @@ export default class EggObjectImpl implements EggObject {
       // self hook
       if (objLifecycleHook.postInject) {
         await objLifecycleHook.postInject();
+      } else {
+        await EggObjectLifecycleUtil.callLifecycleHook('postInject', objLifecycleHook);
       }
 
       if (objLifecycleHook.init) {
         await objLifecycleHook.init();
+      } else {
+        await EggObjectLifecycleUtil.callLifecycleHook('init', objLifecycleHook);
       }
 
       this.status = EggObjectStatus.READY;
@@ -87,10 +93,14 @@ export default class EggObjectImpl implements EggObject {
       const objLifecycleHook = this._obj as EggObjectLifecycle;
       if (objLifecycleHook.preDestroy) {
         await objLifecycleHook.preDestroy();
+      } else {
+        await EggObjectLifecycleUtil.callLifecycleHook('preDestroy', objLifecycleHook);
       }
 
       if (objLifecycleHook.destroy) {
         await objLifecycleHook.destroy();
+      } else {
+        await EggObjectLifecycleUtil.callLifecycleHook('destroy', objLifecycleHook);
       }
 
       this.status = EggObjectStatus.DESTROYED;
