@@ -2,7 +2,7 @@ import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
 import { LifecycleContext, LifecycleHook, LifecycleObject } from './LifecycleHook';
 import { EggObjectLifecycle } from './EggObjectLifecycle';
 
-type LifecycleHookName = keyof EggObjectLifecycle;
+export type LifecycleHookName = keyof EggObjectLifecycle;
 
 export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject<T>> {
 
