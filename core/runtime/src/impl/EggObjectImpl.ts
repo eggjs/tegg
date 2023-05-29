@@ -34,23 +34,14 @@ export default class EggObjectImpl implements EggObject {
       // global hook
       await EggObjectLifecycleUtil.objectPreCreate(ctx, this);
       // self hook
-      if (objLifecycleHook.postConstruct) {
-        await objLifecycleHook.postConstruct();
-      } else {
-        // use decorator style
-        const postConstructMethod = EggObjectLifecycleUtil.getLifecycleHook('postConstruct', this.proto);
-        if (typeof postConstructMethod === 'string') {
-          await objLifecycleHook[postConstructMethod]();
-        }
+      const postConstructMethod = EggObjectLifecycleUtil.getLifecycleHook('postConstruct', this.proto) ?? 'postConstruct';
+      if (objLifecycleHook[postConstructMethod]) {
+        await objLifecycleHook[postConstructMethod]();
       }
 
-      if (objLifecycleHook.preInject) {
-        await objLifecycleHook.preInject();
-      } else {
-        const preInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('preInject', this.proto);
-        if (typeof preInjectMethod === 'string') {
-          await objLifecycleHook[preInjectMethod]();
-        }
+      const preInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('preInject', this.proto) ?? 'preInject';
+      if (objLifecycleHook[preInjectMethod]) {
+        await objLifecycleHook[preInjectMethod]();
       }
       await Promise.all(this.proto.injectObjects.map(async injectObject => {
         const proto = injectObject.proto;
@@ -70,22 +61,14 @@ export default class EggObjectImpl implements EggObject {
       await EggObjectLifecycleUtil.objectPostCreate(ctx, this);
 
       // self hook
-      if (objLifecycleHook.postInject) {
-        await objLifecycleHook.postInject();
-      } else {
-        const postInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('postInject', this.proto);
-        if (typeof postInjectMethod === 'string') {
-          await objLifecycleHook[postInjectMethod]();
-        }
+      const postInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('postInject', this.proto) ?? 'postInject';
+      if (objLifecycleHook[postInjectMethod]) {
+        await objLifecycleHook[postInjectMethod]();
       }
 
-      if (objLifecycleHook.init) {
-        await objLifecycleHook.init();
-      } else {
-        const initMethod = EggObjectLifecycleUtil.getLifecycleHook('init', this.proto);
-        if (typeof initMethod === 'string') {
-          await objLifecycleHook[initMethod]();
-        }
+      const initMethod = EggObjectLifecycleUtil.getLifecycleHook('init', this.proto) ?? 'init';
+      if (objLifecycleHook[initMethod]) {
+        await objLifecycleHook[initMethod]();
       }
 
       this.status = EggObjectStatus.READY;
@@ -103,22 +86,14 @@ export default class EggObjectImpl implements EggObject {
 
       // self hook
       const objLifecycleHook = this._obj as EggObjectLifecycle;
-      if (objLifecycleHook.preDestroy) {
-        await objLifecycleHook.preDestroy();
-      } else {
-        const preDestroyMethod = EggObjectLifecycleUtil.getLifecycleHook('preDestroy', this.proto);
-        if (typeof preDestroyMethod === 'string') {
-          await objLifecycleHook[preDestroyMethod]();
-        }
+      const preDestroyMethod = EggObjectLifecycleUtil.getLifecycleHook('preDestroy', this.proto) ?? 'preDestroy';
+      if (objLifecycleHook[preDestroyMethod]) {
+        await objLifecycleHook[preDestroyMethod]();
       }
 
-      if (objLifecycleHook.destroy) {
-        await objLifecycleHook.destroy();
-      } else {
-        const destroyMethod = EggObjectLifecycleUtil.getLifecycleHook('destroy', this.proto);
-        if (typeof destroyMethod === 'string') {
-          await objLifecycleHook[destroyMethod]();
-        }
+      const destroyMethod = EggObjectLifecycleUtil.getLifecycleHook('destroy', this.proto) ?? 'destroy';
+      if (objLifecycleHook[destroyMethod]) {
+        await objLifecycleHook[destroyMethod]();
       }
 
       this.status = EggObjectStatus.DESTROYED;

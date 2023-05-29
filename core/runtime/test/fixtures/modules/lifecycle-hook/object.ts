@@ -77,6 +77,10 @@ export class Bar {
     this.called.push('postInject');
   }
 
+  protected async init() {
+    this.called.push('init should not called');
+  }
+
   @LifecycleInit()
   protected async _init() {
     this.called.push('init');
