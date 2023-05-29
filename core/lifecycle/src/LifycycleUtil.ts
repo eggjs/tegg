@@ -1,4 +1,5 @@
 import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
+import { EggPrototype } from '@eggjs/tegg-metadata';
 import { LifecycleContext, LifecycleHook, LifecycleObject } from './LifecycleHook';
 import { EggObjectLifecycle } from './EggObjectLifecycle';
 
@@ -90,10 +91,8 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     MetadataUtil.defineMetaData(LIFECYCLE_HOOK, method, clazz);
   }
 
-  async callLifecycleHook(hookName: LifecycleHookName, obj: object) {
+  getLifecycleHook(hookName: LifecycleHookName, proto: EggPrototype) {
     const LIFECYCLE_HOOK = Symbol.for(`EggPrototype#Lifecycle${hookName}`);
-    const method = MetadataUtil.getOwnMetaData<string>(LIFECYCLE_HOOK, obj.constructor as EggProtoImplClass);
-    if (!method) return;
-    await obj[method]();
+    return proto.getMetaData(LIFECYCLE_HOOK);
   }
 }

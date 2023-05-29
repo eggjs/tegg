@@ -39,7 +39,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.7.0"
+    "@eggjs/core-decorator": "^3.7.0",
+    "@eggjs/tegg-metadata": "^3.7.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
