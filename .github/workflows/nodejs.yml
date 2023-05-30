@@ -4,8 +4,6 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  schedule:
-    - cron: '0 2 * * *'
 jobs:
   Runner-ubuntu:
     runs-on: ubuntu-latest
@@ -22,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14, 16, 18 ]
+        node-version: [ 14, 16, 18, 20 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
@@ -53,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14, 16, 18 ]
+        node-version: [ 14, 16, 18, 20 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master
@@ -88,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14, 16, 18 ]
+        node-version: [ 14, 16, 18, 20 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master

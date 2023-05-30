@@ -34,12 +34,14 @@ export default class EggObjectImpl implements EggObject {
       // global hook
       await EggObjectLifecycleUtil.objectPreCreate(ctx, this);
       // self hook
-      if (objLifecycleHook.postConstruct) {
-        await objLifecycleHook.postConstruct();
+      const postConstructMethod = EggObjectLifecycleUtil.getLifecycleHook('postConstruct', this.proto) ?? 'postConstruct';
+      if (objLifecycleHook[postConstructMethod]) {
+        await objLifecycleHook[postConstructMethod]();
       }
 
-      if (objLifecycleHook.preInject) {
-        await objLifecycleHook.preInject();
+      const preInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('preInject', this.proto) ?? 'preInject';
+      if (objLifecycleHook[preInjectMethod]) {
+        await objLifecycleHook[preInjectMethod]();
       }
       await Promise.all(this.proto.injectObjects.map(async injectObject => {
         const proto = injectObject.proto;
@@ -59,12 +61,14 @@ export default class EggObjectImpl implements EggObject {
       await EggObjectLifecycleUtil.objectPostCreate(ctx, this);
 
       // self hook
-      if (objLifecycleHook.postInject) {
-        await objLifecycleHook.postInject();
+      const postInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('postInject', this.proto) ?? 'postInject';
+      if (objLifecycleHook[postInjectMethod]) {
+        await objLifecycleHook[postInjectMethod]();
       }
 
-      if (objLifecycleHook.init) {
-        await objLifecycleHook.init();
+      const initMethod = EggObjectLifecycleUtil.getLifecycleHook('init', this.proto) ?? 'init';
+      if (objLifecycleHook[initMethod]) {
+        await objLifecycleHook[initMethod]();
       }
 
       this.status = EggObjectStatus.READY;
@@ -82,12 +86,14 @@ export default class EggObjectImpl implements EggObject {
 
       // self hook
       const objLifecycleHook = this._obj as EggObjectLifecycle;
-      if (objLifecycleHook.preDestroy) {
-        await objLifecycleHook.preDestroy();
+      const preDestroyMethod = EggObjectLifecycleUtil.getLifecycleHook('preDestroy', this.proto) ?? 'preDestroy';
+      if (objLifecycleHook[preDestroyMethod]) {
+        await objLifecycleHook[preDestroyMethod]();
       }
 
-      if (objLifecycleHook.destroy) {
-        await objLifecycleHook.destroy();
+      const destroyMethod = EggObjectLifecycleUtil.getLifecycleHook('destroy', this.proto) ?? 'destroy';
+      if (objLifecycleHook[destroyMethod]) {
+        await objLifecycleHook[destroyMethod]();
       }
 
       this.status = EggObjectStatus.DESTROYED;

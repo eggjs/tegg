@@ -1,8 +1,8 @@
+import assert from 'assert';
 import { AccessLevel, SingletonProto, Inject, ContextProto } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { CountService } from './CountService';
-import sleep from 'mz-modules/sleep';
-import assert from 'assert';
 
 @ContextProto()
 export class TestObj {
@@ -25,7 +25,7 @@ export default class BackgroundService {
   async backgroundAdd(delay = 1000) {
     this.backgroundTaskHelper.timeout = 5000;
     this.backgroundTaskHelper.run(async () => {
-      await sleep(delay);
+      await TimerUtil.sleep(delay);
       assert(this.testObj.ok);
       this.countService.count += 1;
     });

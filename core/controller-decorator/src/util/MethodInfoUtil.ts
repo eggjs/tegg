@@ -1,6 +1,6 @@
 import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { ControllerTypeLike, MiddlewareFunc } from '../model';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import { ControllerTypeLike, MiddlewareFunc } from '../model';
 
 const METHOD_CONTROLLER_TYPE_MAP = Symbol.for('EggPrototype#controller#mthods');
 const METHOD_CONTROLLER_HOST = Symbol.for('EggPrototype#controller#mthods#host');

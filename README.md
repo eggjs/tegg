@@ -236,6 +236,62 @@ export class Foo implements EggObjectLifecycle {
 }
 ```
 
+##### 生命周期方法装饰器
+
+上面展示的 hook 是通过方法命名约定来实现生命周期 hook，我们还提供了更加可读性更强的装饰器模式。
+
+```ts
+import {
+  LifecyclePostConstruct,
+  LifecyclePreInject,
+  LifecyclePostInject,
+  LifecycleInit,
+  LifecyclePreDestroy,
+  LifecycleDestroy,
+} from '@eggjs/tegg';
+
+@SingletonProto({
+  accessLevel: AccessLevel.PUBLIC,
+  name: 'helloInterface',
+})
+export class HelloService {
+  @LifecyclePostConstruct()
+  protected async _postConstruct() {
+    console.log('对象构造完成');
+  }
+
+  @LifecyclePreInject()
+  protected async _preInject() {
+    console.log('依赖将要注入');
+  }
+
+  @LifecyclePostInject()
+  protected async _postInject() {
+    console.log('依赖注入完成');
+  }
+
+  @LifecycleInit()
+  protected async _init() {
+    console.log('执行一些异步的初始化过程');
+  }
+
+  @LifecyclePreDestroy()
+  protected async _preDestroy() {
+    console.log('对象将要释放了');
+  }
+
+  @LifecycleDestroy()
+  protected async _destroy() {
+    console.log('执行一些释放资源的操作');
+  }
+
+  async hello(user: User) {
+    const echoResponse = await this.echoAdapter.echo({ name: user.name });
+    return `hello, ${echoResponse.name}`;
+  }
+}
+```
+
 ### 注入
 
 Proto 中可以依赖其他的 Proto，或者 egg 中的对象。

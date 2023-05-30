@@ -1,7 +1,7 @@
 import assert from 'assert';
 import path from 'path';
 import mm from 'egg-mock';
-import sleep from 'mz-modules/sleep';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService';
 import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger';
 
@@ -57,7 +57,7 @@ describe('test/eventbus.test.ts', () => {
     const triggerTime = Date.now();
     helloService.hello();
 
-    await sleep(100);
+    await TimerUtil.sleep(100);
     helloService.uncork();
 
     const eventWaiter = await app.getEventWaiter();
@@ -123,7 +123,7 @@ describe('test/eventbus.test.ts', () => {
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
         helloService.hello();
-        await sleep(100);
+        await TimerUtil.sleep(100);
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),
@@ -132,7 +132,7 @@ describe('test/eventbus.test.ts', () => {
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
         helloService.hello();
-        await sleep(100);
+        await TimerUtil.sleep(100);
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),

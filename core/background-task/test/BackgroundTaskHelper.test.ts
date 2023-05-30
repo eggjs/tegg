@@ -1,5 +1,5 @@
 import { BackgroundTaskHelper } from '../src/BackgroundTaskHelper';
-import sleep from 'mz-modules/sleep';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import assert from 'assert';
 
 describe('test/BackgroundTaskHelper.test.ts', () => {
@@ -14,7 +14,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
     it('should done', async () => {
       let run = false;
       helper.run(async () => {
-        await sleep(10);
+        await TimerUtil.sleep(10);
         run = true;
       });
 
@@ -28,7 +28,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
       let run = false;
       helper.timeout = 10;
       helper.run(async () => {
-        await sleep(100);
+        await TimerUtil.sleep(100);
         run = true;
       });
 
@@ -40,7 +40,7 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
   describe('fn reject', () => {
     it('should done', async () => {
       helper.run(async () => {
-        await sleep(10);
+        await TimerUtil.sleep(10);
         throw new Error('mock error');
       });
 
@@ -62,10 +62,10 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
     it('should done', async () => {
       let runDone = 0;
       helper.run(async () => {
-        await sleep(10);
+        await TimerUtil.sleep(10);
         runDone++;
         helper.run(async () => {
-          await sleep(10);
+          await TimerUtil.sleep(10);
           runDone++;
         });
       });
