@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0](https://github.com/eggjs/tegg/compare/v3.7.0...v3.8.0) (2023-05-30)
+
+
+### Features
+
+* impl EggObjectLifecycle hook in decorator ([#119](https://github.com/eggjs/tegg/issues/119)) ([cced8a2](https://github.com/eggjs/tegg/commit/cced8a2e009c33d5040fa21d00409fddef471b0e))
+
+
+
+
+
 # [3.7.0](https://github.com/eggjs/tegg/compare/v3.6.3...v3.7.0) (2023-04-03)
 
 **Note:** Version bump only for package @eggjs/tegg
