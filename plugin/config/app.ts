@@ -9,7 +9,8 @@ export default class App {
   }
 
   configWillLoad() {
-    this.app.moduleReferences = ModuleConfigUtil.readModuleReference(this.app.baseDir);
+    const { readModuleOptions } = this.app.config.tegg || {};
+    this.app.moduleReferences = ModuleConfigUtil.readModuleReference(this.app.baseDir, readModuleOptions || {});
     this.app.moduleConfigs = {};
     for (const reference of this.app.moduleReferences) {
       const absoluteRef = {

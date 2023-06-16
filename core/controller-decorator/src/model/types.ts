@@ -10,6 +10,8 @@ export enum ControllerType {
   MGW_RPC = 'MGW_RPC',
 }
 
+export type HostType = string | string [];
+
 export type ControllerTypeLike = ControllerType | string;
 
 export enum MethodType {

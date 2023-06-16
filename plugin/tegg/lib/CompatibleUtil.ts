@@ -30,35 +30,39 @@ export class CompatibleUtil {
     return this.requestProtoCache.get(name)!;
   }
 
-  private static singletonModuleProxyFactory(app: Application, loadUnitInstance: LoadUnitInstance, deprecate: boolean) {
+  private static singletonModuleProxyFactory(app: Application, loadUnitInstance: LoadUnitInstance) {
+    let deprecated = false;
     return function(_, p: PropertyKey) {
       const proto = CompatibleUtil.getSingletonProto(p);
       const eggObj = EggContainerFactory.getEggObject(proto);
-      if (deprecate) {
+      if (!deprecated) {
+        deprecated = true;
         app.deprecate(
-          `[egg/module] Please use app.module.${loadUnitInstance.name}.${String(p)} instead of app.${loadUnitInstance.name}.${String(p)}`);
+          `[egg/module] Please use await app.getEggObject(clazzName) instead of app.${loadUnitInstance.name}.${String(p)}`);
       }
       return eggObj.obj;
     };
   }
 
   static appCompatible(app: Application, loadUnitInstance: LoadUnitInstance) {
-    const moduleLoadUnitProxy = ProxyUtil.safeProxy(loadUnitInstance, CompatibleUtil.singletonModuleProxyFactory(app, loadUnitInstance, false));
+    const moduleLoadUnitProxy = ProxyUtil.safeProxy(loadUnitInstance, CompatibleUtil.singletonModuleProxyFactory(app, loadUnitInstance));
     Reflect.defineProperty(app.module, loadUnitInstance.name, {
       configurable: true,
       value: moduleLoadUnitProxy,
     });
   }
 
-  static contextModuleProxyFactory(holder: object, ctx: Context, loadUnitInstance: LoadUnitInstance, deprecate: boolean) {
+  static contextModuleProxyFactory(holder: object, ctx: Context, loadUnitInstance: LoadUnitInstance) {
     const cacheKey = `_${loadUnitInstance.name}Proxy`;
     if (!holder[cacheKey]) {
+      let deprecated = false;
       const getter = function(_, p: PropertyKey) {
         const proto = CompatibleUtil.getRequestProto(p);
-        const eggObj = EggContainerFactory.getEggObject(proto, p, ctx.teggContext);
-        if (deprecate) {
+        const eggObj = EggContainerFactory.getEggObject(proto, p);
+        if (!deprecated) {
+          deprecated = true;
           ctx.app.deprecate(
-            `[egg/module] Please use ctx.module.${loadUnitInstance.name}.${String(p)} instead of ctx.${loadUnitInstance.name}.${String(p)}`);
+            `[egg/module] Please use await ctx.getEggObject(clazzName) instead of ctx.${loadUnitInstance.name}.${String(p)}`);
         }
         return eggObj.obj;
       };
@@ -86,7 +90,7 @@ export class CompatibleUtil {
             if (!loadUnitInstance) {
               return;
             }
-            return CompatibleUtil.contextModuleProxyFactory(ctxModule, ctx, loadUnitInstance, false);
+            return CompatibleUtil.contextModuleProxyFactory(ctxModule, ctx, loadUnitInstance);
           });
         }
         return this._moduleProxy;

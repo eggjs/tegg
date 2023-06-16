@@ -5,12 +5,12 @@ import MethodInfoUtil from '../../src/util/MethodInfoUtil';
 
 describe('test/Host.test.ts', () => {
   it('controller Host work', () => {
-    const controllerHost = ControllerInfoUtil.getControllerHost(HostController);
-    assert(controllerHost === 'foo.eggjs.com');
+    const controllerHost = ControllerInfoUtil.getControllerHosts(HostController);
+    assert(controllerHost![0] === 'foo.eggjs.com');
   });
 
   it('method Host work', () => {
-    const methodHost = MethodInfoUtil.getMethodHost(HostController, 'bar');
-    assert(methodHost === 'bar.eggjs.com');
+    const methodHost = MethodInfoUtil.getMethodHosts(HostController, 'bar');
+    assert(methodHost![0] === 'bar.eggjs.com');
   });
 });

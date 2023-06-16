@@ -1,6 +1,6 @@
-import { AccessLevel, ContextProto } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto } from '@eggjs/tegg';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class FooService {

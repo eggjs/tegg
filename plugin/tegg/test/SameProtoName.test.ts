@@ -28,9 +28,10 @@ describe('test/SameProtoName.test.ts', () => {
   });
 
   it('should work', async () => {
-    const ctx = await app.mockModuleContext();
-    const barService = await ctx.getEggObject(BarService);
-    assert(barService);
-    assert(barService.fooService);
+    await app.mockModuleContextScope(async ctx => {
+      const barService = await ctx.getEggObject(BarService);
+      assert(barService);
+      assert(barService.fooService);
+    });
   });
 });

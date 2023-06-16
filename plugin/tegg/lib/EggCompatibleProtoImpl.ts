@@ -15,8 +15,6 @@ import {
   InjectObjectProto,
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-metadata';
-import { EggContext } from '@eggjs/tegg-runtime';
-import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
 
 export const COMPATIBLE_PROTO_IMPLE_TYPE = 'EGG_COMPATIBLE';
@@ -65,11 +63,7 @@ export class EggCompatibleProtoImpl implements EggPrototype {
   }
 
   constructEggObject(): object {
-    return {};
-  }
-
-  constructorEggCompatibleObject(ctx?: EggContext) {
-    return Reflect.apply(this.clazz, null, [ ctx?.get(EGG_CONTEXT) ]);
+    return Reflect.apply(this.clazz, null, []);
   }
 
   getMetaData<T>(metadataKey: MetaDataKey): T | undefined {

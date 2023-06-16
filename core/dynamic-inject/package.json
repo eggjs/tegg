@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject",
-  "version": "1.4.2",
+  "version": "3.8.0",
   "description": "tegg dyniamic inject",
   "main": "dist/index.js",
   "files": [
@@ -15,11 +15,11 @@
     "tegg"
   ],
   "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc-pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc-pub",
-    "autod": "autod"
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -39,9 +39,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^1.4.2"
+    "@eggjs/core-decorator": "^3.8.0"
   },
   "devDependencies": {
-    "coffee": "^5.4.0"
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "coffee": "^5.4.0",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   }
 }

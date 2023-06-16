@@ -10,7 +10,11 @@ export type EventName = string | symbol;
  */
 export interface EventBus extends Pick<TypedEventEmitter<Events>, 'emit'> {
   cork(corkId: string);
-  uncork(corkId: string);
+
+  /**
+   * @return true if uncorked
+   */
+  uncork(corkId: string): boolean;
 }
 
 export const CORK_ID = Symbol.for('eventBus#corkId');

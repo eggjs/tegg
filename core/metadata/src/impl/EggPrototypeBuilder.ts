@@ -4,16 +4,16 @@ import {
   EggProtoImplClass,
   EggPrototypeName, InitTypeQualifierAttribute,
   ObjectInitTypeLike, PrototypeUtil,
-  QualifierInfo, QualifierUtil, ObjectInitType,
-  DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/core-decorator';
+  QualifierInfo, QualifierUtil,
+  DEFAULT_PROTO_IMPL_TYPE, ObjectInitType,
+} from '@eggjs/core-decorator';
 import { LoadUnit } from '../model/LoadUnit';
 import { EggPrototype, EggPrototypeLifecycleContext, InjectObjectProto } from '../model/EggPrototype';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { FrameworkErrorFormater } from 'egg-errors';
 import { EggPrototypeImpl } from '../impl/EggPrototypeImpl';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { MultiPrototypeFound, IncompatibleProtoInject } from '../errors';
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors';
 
 export interface InjectObject {
   /**
@@ -60,36 +60,59 @@ export class EggPrototypeBuilder {
     return builder.build();
   }
 
+  private tryFindDefaultPrototype(injectObject: InjectObject): EggPrototype {
+    const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+  }
+
+  private tryFindContextPrototype(injectObject: InjectObject): EggPrototype {
+    let propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    propertyQualifiers = [
+      ...propertyQualifiers,
+      {
+        attribute: InitTypeQualifierAttribute,
+        value: ObjectInitType.CONTEXT,
+      },
+    ];
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+  }
+
+  private tryFindSelfInitTypePrototype(injectObject: InjectObject): EggPrototype {
+    let propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    propertyQualifiers = [
+      ...propertyQualifiers,
+      {
+        attribute: InitTypeQualifierAttribute,
+        value: this.initType,
+      },
+    ];
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+  }
+
+  private findInjectObjectPrototype(injectObject: InjectObject): EggPrototype {
+    const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    try {
+      return this.tryFindDefaultPrototype(injectObject);
+    } catch (e) {
+      if (!(e instanceof MultiPrototypeFound && !propertyQualifiers.find(t => t.attribute === InitTypeQualifierAttribute))) {
+        throw e;
+      }
+    }
+    try {
+      return this.tryFindContextPrototype(injectObject);
+    } catch (e) {
+      if (!(e instanceof EggPrototypeNotFound)) {
+        throw e;
+      }
+    }
+    return this.tryFindSelfInitTypePrototype(injectObject);
+  }
+
   public build(): EggPrototype {
     const injectObjectProtos: InjectObjectProto[] = [];
     for (const injectObject of this.injectObjects) {
       const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
-      let proto: EggPrototype;
-      try {
-        proto = EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
-      } catch (e) {
-        // If multi proto found and property has no init type qualifier
-        // try use self init type as init type qualifier
-        if (
-          e instanceof MultiPrototypeFound
-          && !propertyQualifiers.find(t => t.attribute === InitTypeQualifierAttribute)
-        ) {
-          propertyQualifiers.push({
-            attribute: InitTypeQualifierAttribute,
-            value: this.initType,
-          });
-          proto = EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
-        } else {
-          throw e;
-        }
-      }
-
-      // throw when try to inject ContextProto into singleton
-      if (this.initType === ObjectInitType.SINGLETON && proto.initType === ObjectInitType.CONTEXT) {
-        const err = new IncompatibleProtoInject(`can not inject ContextProto(${String(proto.name)}) in SingletonProto(${String(this.name)})`);
-        throw FrameworkErrorFormater.formatError(err);
-      }
-
+      const proto = this.findInjectObjectPrototype(injectObject);
       injectObjectProtos.push({
         refName: injectObject.refName,
         objName: injectObject.objName,

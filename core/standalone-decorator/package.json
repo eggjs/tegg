@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/standalone-decorator",
-  "version": "1.2.2",
+  "version": "3.8.0",
   "description": "tegg standalone decorator",
   "keywords": [
     "egg",
@@ -19,8 +19,7 @@
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -37,10 +36,18 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^1.2.2",
+    "@eggjs/tegg-common-util": "^3.8.0",
     "reflect-metadata": "^0.1.13"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   }
 }

@@ -1,4 +1,4 @@
-import { LifecycleHook } from '@eggjs/tegg';
+import { EggQualifierAttribute, EggType, LifecycleHook, QualifierUtil } from '@eggjs/tegg';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,
@@ -13,6 +13,9 @@ const REGISTER_CLAZZ = [
   EventContextFactory,
   SingletonEventBus,
 ];
+
+// EggQualifier only for egg plugin
+QualifierUtil.addProperQualifier(SingletonEventBus, 'logger', EggQualifierAttribute, EggType.APP);
 
 export class EventbusLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   async postCreate(_ctx: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {

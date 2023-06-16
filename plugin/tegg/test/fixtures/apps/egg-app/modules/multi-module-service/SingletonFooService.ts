@@ -1,10 +1,4 @@
-import {
-  AccessLevel,
-  InitTypeQualifier,
-  Inject,
-  ObjectInitType,
-  SingletonProto,
-} from '@eggjs/tegg';
+import { AccessLevel, EggQualifier, EggType, Inject, SingletonProto } from '@eggjs/tegg';
 import { EggLogger } from 'egg-logger';
 
 @SingletonProto({
@@ -12,7 +6,7 @@ import { EggLogger } from 'egg-logger';
 })
 export default class SingletonFooService {
   @Inject()
-  @InitTypeQualifier(ObjectInitType.SINGLETON)
+  @EggQualifier(EggType.APP)
   logger: EggLogger;
 
   async printLog(): Promise<void> {

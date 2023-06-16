@@ -1,6 +1,6 @@
 import { Event, EventBus } from '@eggjs/eventbus-decorator';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
-import sleep from 'mz-modules/sleep';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import type { EggLogger } from 'egg';
 
 declare module '@eggjs/eventbus-decorator' {
@@ -36,7 +36,7 @@ export class Timeout100Handler {
   private readonly logger: EggLogger;
 
   async handle() {
-    await sleep(100);
+    await TimerUtil.sleep(100);
     // access logger, ensure context still alive
     this.logger.info('timeout 100');
     Timeout100Handler.called = true;

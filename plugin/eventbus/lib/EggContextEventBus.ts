@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { Events, PrototypeUtil, CORK_ID, ContextEventBus } from '@eggjs/tegg';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { EggContext } from '@eggjs/tegg-runtime';
+import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
 
 export class EggContextEventBus implements ContextEventBus {
   private readonly eventBus: SingletonEventBus;
@@ -11,9 +11,9 @@ export class EggContextEventBus implements ContextEventBus {
   private corkId?: string;
 
   constructor(ctx: Context) {
-    this.context = ctx.teggContext;
     const proto = PrototypeUtil.getClazzProto(SingletonEventBus) as EggPrototype;
-    const eggObject = ctx.app.eggContainerFactory.getEggObject(proto, proto.name, this.context);
+    const eggObject = ctx.app.eggContainerFactory.getEggObject(proto, proto.name);
+    this.context = ContextHandler.getContext()!;
     this.eventBus = eggObject.obj as SingletonEventBus;
   }
 
@@ -27,7 +27,10 @@ export class EggContextEventBus implements ContextEventBus {
 
   uncork() {
     assert(this.corkId, 'eventbus uncork without cork');
-    this.eventBus.uncork(this.corkId);
+    if (this.eventBus.uncork(this.corkId)) {
+      this.context.set(CORK_ID, null);
+      this.corkId = undefined;
+    }
   }
 
   emit<E extends keyof Events>(event: E, ...args: any): boolean {

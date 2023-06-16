@@ -1,6 +1,6 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
 import { EventBus, Events, EventWaiter, EventName, CORK_ID } from '@eggjs/eventbus-decorator';
-import { EggContext } from '@eggjs/tegg-runtime';
+import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
 import type { EggLogger } from 'egg';
 import { EventContextFactory } from './EventContextFactory';
 import { EventHandlerFactory } from './EventHandlerFactory';
@@ -39,7 +39,9 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   @Inject()
   private readonly eventHandlerFactory: EventHandlerFactory;
 
-  @Inject()
+  @Inject({
+    name: 'logger',
+  })
   private readonly logger: EggLogger;
 
   private corkIdSequence = 0;
@@ -91,7 +93,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
       throw new Error(`eventbus corkId ${corkId} not found`);
     }
     if (--corkEvents.times !== 0) {
-      return;
+      return false;
     }
     this.corkedEvents.delete(corkId);
     for (const event of corkEvents.events) {
@@ -99,6 +101,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
         this.doEmitWithContext(event.context, event.name, event.args);
       }
     }
+    return true;
   }
 
   queueEvent(corkId: string, event: Event) {
@@ -136,32 +139,34 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   }
 
   private async doEmit(ctx: EggContext, event: EventName, args: Array<any>) {
-    const lifecycle = {};
-    if (ctx.init) {
-      await ctx.init(lifecycle);
-    }
-    try {
-      const handlers = await this.eventHandlerFactory.getHandlers(event, ctx);
-      await Promise.all(handlers.map(async handler => {
-        try {
-          await Reflect.apply(handler.handle, handler, args);
-        } catch (e) {
-          // should wait all handlers done then destroy ctx
-          e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
-          this.logger.error(e);
-        }
-      }));
-    } catch (e) {
-      e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
-      this.logger.error(e);
-    } finally {
-      if (ctx.destroy) {
-        ctx.destroy(lifecycle).catch(e => {
-          e.message = '[tegg/SingletonEventBus] destroy tegg ctx failed:' + e.message;
-          this.logger.error(e);
-        });
+    await ContextHandler.run(ctx, async () => {
+      const lifecycle = {};
+      if (ctx.init) {
+        await ctx.init(lifecycle);
       }
-    }
-    this.doOnceEmit(event, args);
+      try {
+        const handlers = await this.eventHandlerFactory.getHandlers(event);
+        await Promise.all(handlers.map(async handler => {
+          try {
+            await Reflect.apply(handler.handle, handler, args);
+          } catch (e) {
+            // should wait all handlers done then destroy ctx
+            e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
+            this.logger.error(e);
+          }
+        }));
+      } catch (e) {
+        e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
+        this.logger.error(e);
+      } finally {
+        if (ctx.destroy) {
+          ctx.destroy(lifecycle).catch(e => {
+            e.message = '[tegg/SingletonEventBus] destroy tegg ctx failed:' + e.message;
+            this.logger.error(e);
+          });
+        }
+      }
+      this.doOnceEmit(event, args);
+    });
   }
 }

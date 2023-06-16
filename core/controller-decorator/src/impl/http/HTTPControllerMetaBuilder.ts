@@ -43,9 +43,9 @@ export class HTTPControllerMetaBuilder {
     const protoName = property!.name as string;
     const needAcl = ControllerInfoUtil.hasControllerAcl(this.clazz);
     const aclCode = ControllerInfoUtil.getControllerAcl(this.clazz);
-    const host = ControllerInfoUtil.getControllerHost(this.clazz);
+    const hosts = ControllerInfoUtil.getControllerHosts(this.clazz);
     const metadata = new HTTPControllerMeta(
-      clazzName, protoName, controllerName, httpPath, httpMiddlewares, methods, needAcl, aclCode, host);
+      clazzName, protoName, controllerName, httpPath, httpMiddlewares, methods, needAcl, aclCode, hosts);
     ControllerMetadataUtil.setControllerMetadata(this.clazz, metadata);
     for (const method of metadata.methods) {
       const realPath = metadata.getMethodRealPath(method);
@@ -63,4 +63,3 @@ export class HTTPControllerMetaBuilder {
 }
 
 ControllerMetaBuilderFactory.registerControllerMetaBuilder(ControllerType.HTTP, HTTPControllerMetaBuilder.create);
-

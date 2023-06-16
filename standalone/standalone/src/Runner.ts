@@ -1,11 +1,18 @@
 import { ModuleConfig, ModuleConfigUtil, ModuleReference } from '@eggjs/tegg-common-util';
 import { EggPrototype, LoadUnit, LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggContainerFactory, LoadUnitInstance, LoadUnitInstanceFactory, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
-import { EggModuleLoader } from './EggModuleLoader';
+import {
+  ContextHandler,
+  EggContainerFactory,
+  LoadUnitInstance,
+  LoadUnitInstanceFactory,
+  ModuleLoadUnitInstance,
+} from '@eggjs/tegg-runtime';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
+import { EggModuleLoader } from './EggModuleLoader';
 import { StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
 import { StandaloneContext } from './StandaloneContext';
+import { StandaloneContextHandler } from './StandaloneContextHandler';
 
 export interface ModuleConfigHolder {
   name: string;
@@ -48,6 +55,7 @@ export class Runner {
   }
 
   async init() {
+    StandaloneContextHandler.register();
     this.loadUnits = [];
     if (this.innerObjects) {
       LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
@@ -83,11 +91,13 @@ export class Runner {
     }
     const lifecycle = {};
     const ctx = new StandaloneContext();
-    await ctx.init(lifecycle);
-    const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype, undefined, ctx);
-    await ctx.destroy(lifecycle);
-    const runner = eggObject.obj as MainRunner<T>;
-    return await runner.main();
+    return await ContextHandler.run(ctx, async () => {
+      await ctx.init(lifecycle);
+      const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype);
+      await ctx.destroy(lifecycle);
+      const runner = eggObject.obj as MainRunner<T>;
+      return await runner.main();
+    });
   }
 
   async destroy() {

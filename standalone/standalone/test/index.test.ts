@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { main } from '../';
+import { main } from '..';
 import path from 'path';
 
 describe('test/index.test.ts', () => {
