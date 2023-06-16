@@ -8,10 +8,11 @@ import {
 import { AdviceInfoUtil } from '../util/AdviceInfoUtil';
 import { StackUtil } from '@eggjs/tegg-common-util';
 
-export interface AdviceContext<T = object> {
+export interface AdviceContext<T = object, K = any> {
   that: T;
   method: PropertyKey;
   args: any[];
+  adviceParams?: K;
 }
 
 /**
