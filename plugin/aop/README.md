@@ -115,10 +115,3 @@ export class CrosscutNameAdviceExample implements IAdvice {
 @Advice()
 ****export class CrosscutCustomAdviceExample implements IAdvice {
 }
-
-```
-## 参数
-可以通过 `Pointcut` 和 `Crosscut` 注解的 `adviceParams` 将参数传递给 `IAdvice`
-```ts
-
-```

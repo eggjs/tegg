@@ -116,11 +116,11 @@ export const crosscutAdviceParams = {
   methodName: 'hello',
 }, { adviceParams: crosscutAdviceParams })
 @Advice()
-export class CrosscutAdvice implements IAdvice<Hello> {
+export class CrosscutAdvice implements IAdvice<Hello, String> {
   @Inject()
   callTrace: CallTrace;
 
-  async beforeCall(ctx: AdviceContext<Hello>): Promise<void> {
+  async beforeCall(ctx: AdviceContext<Hello, {}>): Promise<void> {
     assert.ok(ctx.adviceParams);
     assert.deepStrictEqual(ctx.adviceParams, crosscutAdviceParams);
     this.callTrace.addMsg({
