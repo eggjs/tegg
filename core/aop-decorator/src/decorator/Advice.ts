@@ -22,33 +22,33 @@ export interface AdviceContext<T = object, K = any> {
  * 1. afterReturn/afterThrow
  * 1. afterFinally
  */
-export interface IAdvice<T = object> {
+export interface IAdvice<T = object, K = any> {
   /**
    * call before function
    * @param ctx
    */
-  beforeCall?(ctx: AdviceContext<T>): Promise<void>;
+  beforeCall?(ctx: AdviceContext<T, K>): Promise<void>;
 
   /**
    * call after function succeed
    */
-  afterReturn?(ctx: AdviceContext<T>, result: any): Promise<void>;
+  afterReturn?(ctx: AdviceContext<T, K>, result: any): Promise<void>;
 
   /**
    * call after function throw error
    */
-  afterThrow?(ctx: AdviceContext<T>, error: Error): Promise<void>;
+  afterThrow?(ctx: AdviceContext<T, K>, error: Error): Promise<void>;
 
   /**
    * always call after function done
    */
-  afterFinally?(ctx: AdviceContext<T>): Promise<void>;
+  afterFinally?(ctx: AdviceContext<T, K>): Promise<void>;
 
   /**
    * execute the function
    * the only one can modify the function return value
    */
-  around?(ctx: AdviceContext<T>, next: () => Promise<any>): Promise<any>;
+  around?(ctx: AdviceContext<T, K>, next: () => Promise<any>): Promise<any>;
 }
 
 const defaultAdviceParam = {

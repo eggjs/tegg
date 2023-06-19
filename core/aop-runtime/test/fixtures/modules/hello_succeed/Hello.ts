@@ -55,6 +55,19 @@ export class PointcutAdvice implements IAdvice<Hello> {
     });
   }
 
+  async afterThrow(ctx: AdviceContext<Hello, any>, error: Error): Promise<void> {
+    assert.ok(ctx.adviceParams);
+    assert.deepStrictEqual(ctx.adviceParams, pointcutAdviceParams);
+    this.callTrace.addMsg({
+      className: PointcutAdvice.name,
+      methodName: 'afterThrow',
+      id: ctx.that.id,
+      name: ctx.args[0],
+      result: error.message,
+      adviceParams: ctx.adviceParams,
+    }); 
+  }
+
   async afterFinally(ctx: AdviceContext<Hello>): Promise<void> {
     assert.ok(ctx.adviceParams);
     assert.deepStrictEqual(ctx.adviceParams, pointcutAdviceParams);
@@ -84,6 +97,12 @@ export class Hello {
   async hello(name: string) {
     return `hello ${name}`;
   }
+
+  @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
+  async helloWithException(name: string) {
+    throw new Error(`ops, exception for ${name}`);
+  }
+
 }
 
 export const crosscutAdviceParams = {

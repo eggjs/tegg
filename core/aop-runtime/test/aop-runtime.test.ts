@@ -97,6 +97,18 @@ describe('test/aop-runtime.test.ts', () => {
             adviceParams: pointcutAdviceParams,
           },
         ]);
+
+        await assert.rejects(async () => {
+          await hello.helloWithException('foo');
+        }, new Error('ops, exception for withPointAroundParam(foo)'));
+        assert.deepStrictEqual(callTrace.msgs[callTrace.msgs.length - 2], {
+          className: 'PointcutAdvice',
+          methodName: 'afterThrow',
+          id: 233,
+          name: 'withPointAroundParam(foo)',
+          result: 'ops, exception for withPointAroundParam(foo)',
+          adviceParams: pointcutAdviceParams,
+        });
       });
     });
 
