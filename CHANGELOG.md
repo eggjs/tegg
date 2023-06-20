@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/eggjs/tegg/compare/v3.8.0...v3.9.0) (2023-06-20)
+
+
+### Features
+
+* implement advice params ([76ec8ad](https://github.com/eggjs/tegg/commit/76ec8ad7b7170a637e59d74d49c1f00d8a201321))
+
+
+
+
+
 # [3.8.0](https://github.com/eggjs/tegg/compare/v3.7.0...v3.8.0) (2023-05-30)
 
 
