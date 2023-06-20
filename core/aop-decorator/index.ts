@@ -1,6 +1,6 @@
 export * from './src/decorator/Advice';
 export * from './src/decorator/Pointcut';
-export * from './src/decorator/Cosscut';
+export * from './src/decorator/Crosscut';
 export * from './src/model/Aspect';
 export * from './src/model/PointcutInfo';
 export * from './src/util/AdviceInfoUtil';

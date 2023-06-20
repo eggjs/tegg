@@ -5,7 +5,7 @@ import { EggObjectLifecycleUtil, LoadUnitInstance, LoadUnitInstanceFactory } fro
 import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { EggTestContext } from '../../test-util';
-import { CallTrace, Hello } from './fixtures/modules/hello_succeed/Hello';
+import { CallTrace, Hello, crosscutAdviceParams, pointcutAdviceParams } from './fixtures/modules/hello_succeed/Hello';
 import { CoreTestHelper } from '../../test-util/CoreTestHelper';
 import { EggObjectAopHook } from '../src/EggObjectAopHook';
 import { LoadUnitAopHook } from '../src/LoadUnitAopHook';
@@ -50,47 +50,65 @@ describe('test/aop-runtime.test.ts', () => {
         const callTrace = await CoreTestHelper.getObject(CallTrace);
         const msg = await hello.hello('aop');
         const traceMsg = callTrace.msgs;
-        assert(msg === 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))');
+        assert.deepStrictEqual(msg, `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`);
         assert.deepStrictEqual(traceMsg, [
           {
             className: 'CrosscutAdvice',
             methodName: 'beforeCall',
             id: 233,
             name: 'aop',
+            adviceParams: crosscutAdviceParams,
           },
           {
             className: 'PointcutAdvice',
             methodName: 'beforeCall',
             id: 233,
             name: 'aop',
+            adviceParams: pointcutAdviceParams,
           },
           {
             className: 'CrosscutAdvice',
             methodName: 'afterReturn',
             id: 233,
             name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
-            result: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))',
+            result: `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`,
+            adviceParams: crosscutAdviceParams,
           },
           {
             className: 'PointcutAdvice',
             methodName: 'afterReturn',
             id: 233,
             name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
-            result: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))))',
+            result: `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`,
+            adviceParams: pointcutAdviceParams,
           },
           {
             className: 'CrosscutAdvice',
             methodName: 'afterFinally',
             id: 233,
             name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
+            adviceParams: crosscutAdviceParams,
           },
           {
             className: 'PointcutAdvice',
             methodName: 'afterFinally',
             id: 233,
             name: 'withPointAroundParam(withCrosscutAroundParam(aop))',
+            adviceParams: pointcutAdviceParams,
           },
         ]);
+
+        await assert.rejects(async () => {
+          await hello.helloWithException('foo');
+        }, new Error('ops, exception for withPointAroundParam(foo)'));
+        assert.deepStrictEqual(callTrace.msgs[callTrace.msgs.length - 2], {
+          className: 'PointcutAdvice',
+          methodName: 'afterThrow',
+          id: 233,
+          name: 'withPointAroundParam(foo)',
+          result: 'ops, exception for withPointAroundParam(foo)',
+          adviceParams: pointcutAdviceParams,
+        });
       });
     });
 
