@@ -1,0 +1,46 @@
+{
+  "name": "@eggjs/tegg-transaction-decorator",
+  "version": "1.0.0",
+  "description": "tegg transaction decorator",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "transaction",
+    "tegg"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublish": "npm run tsc:pub",
+    "autod": "autod"
+  },
+  "author": "qile222 <chhxxc@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/transaction-decorator"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eggjs/tegg-common-util": "^3.0.0",
+    "@eggjs/tegg": "^3.0.0"
+  }
+}
