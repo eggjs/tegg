@@ -782,10 +782,10 @@ export class HelloService {
 ]
 ```
 
-支持通过 `pkg` 引用使用 npm 发布的 module。
+支持通过 `package` 引用使用 npm 发布的 module。
 
 ```json
 [
-  {"pkg": "foo"}
+  {"package": "foo"}
 ]
 ```
