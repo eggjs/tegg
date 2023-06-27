@@ -2,7 +2,7 @@ import { ModuleConfig, ModuleConfigUtil, ModuleReference } from '@eggjs/tegg-com
 import { EggPrototype, LoadUnit, LoadUnitFactory } from '@eggjs/tegg-metadata';
 import {
   ContextHandler,
-  EggContainerFactory,
+  EggContainerFactory, EggContext,
   LoadUnitInstance,
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
@@ -29,6 +29,7 @@ export class Runner {
   readonly moduleReferences: readonly ModuleReference[];
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   private loadUnitLoader: EggModuleLoader;
+  private runnerProto: EggPrototype;
 
   loadUnits: LoadUnit[] = [];
   loadUnitInstances: LoadUnitInstance[] = [];
@@ -78,9 +79,6 @@ export class Runner {
       instances.push(instance);
     }
     this.loadUnitInstances = instances;
-  }
-
-  async run<T>() {
     const runnerClass = StandaloneUtil.getMainRunner();
     if (!runnerClass) {
       throw new Error('not found runner class. Do you add @Runner decorator?');
@@ -89,14 +87,28 @@ export class Runner {
     if (!proto) {
       throw new Error(`can not get proto for clazz ${runnerClass.name}`);
     }
+    this.runnerProto = proto as EggPrototype;
+  }
+
+  async run<T>(aCtx?: EggContext) {
     const lifecycle = {};
-    const ctx = new StandaloneContext();
+    const ctx = aCtx || new StandaloneContext();
     return await ContextHandler.run(ctx, async () => {
-      await ctx.init(lifecycle);
-      const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype);
-      await ctx.destroy(lifecycle);
+      if (ctx.init) {
+        await ctx.init(lifecycle);
+      }
+      const eggObject = await EggContainerFactory.getOrCreateEggObject(this.runnerProto);
       const runner = eggObject.obj as MainRunner<T>;
-      return await runner.main();
+      try {
+        return await runner.main();
+      } finally {
+        if (ctx.destroy) {
+          ctx.destroy(lifecycle).catch(e => {
+            e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
+            console.warn(e);
+          });
+        }
+      }
     });
   }
 
