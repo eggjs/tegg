@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { main } from '..';
+import { main, StandaloneContext, Runner } from '..';
 import path from 'path';
 
 describe('test/index.test.ts', () => {
@@ -22,6 +22,18 @@ describe('test/index.test.ts', () => {
         },
       });
       assert(msg === 'hello, inner');
+    });
+  });
+
+  describe('runner with custom context', () => {
+    it('should work', async () => {
+      const runner = new Runner(path.join(__dirname, './fixtures/custom-context'));
+      await runner.init();
+      const ctx = new StandaloneContext();
+      ctx.set('foo', 'foo');
+      const msg = await runner.run(ctx);
+      await runner.destroy();
+      assert(msg === 'foo');
     });
   });
 });
