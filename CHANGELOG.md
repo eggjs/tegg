@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.10.0](https://github.com/eggjs/tegg/compare/v3.9.0...v3.10.0) (2023-06-28)
+
+
+### Bug Fixes
+
+* use posix join for package path ([#127](https://github.com/eggjs/tegg/issues/127)) ([53672f4](https://github.com/eggjs/tegg/commit/53672f404edb72c7330e125f72dd356cde0607ad))
+
+
+### Features
+
+* standalone Runner run support ctx ([#126](https://github.com/eggjs/tegg/issues/126)) ([0788c7d](https://github.com/eggjs/tegg/commit/0788c7dfb57f96c55e94cc6692c0b6e9ac1ee03c))
+
+
+
+
+
 # [3.9.0](https://github.com/eggjs/tegg/compare/v3.8.0...v3.9.0) (2023-06-20)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.10.0](https://github.com/eggjs/tegg/compare/v3.9.0...v3.10.0) (2023-06-28)
+
+
+### Features
+
+* standalone Runner run support ctx ([#126](https://github.com/eggjs/tegg/issues/126)) ([0788c7d](https://github.com/eggjs/tegg/commit/0788c7dfb57f96c55e94cc6692c0b6e9ac1ee03c))
+
+
+
+
+
 # [3.9.0](https://github.com/eggjs/tegg/compare/v3.8.0...v3.9.0) (2023-06-20)
 
 **Note:** Version bump only for package @eggjs/tegg-standalone
