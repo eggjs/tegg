@@ -9,6 +9,7 @@ describe('test/builder/TransactionMetaBuilder.test.ts', () => {
 
   it('should build meta data success', () => {
     assert.ok(TransactionMetadataUtil.isTransactionClazz(Foo));
+
     const fooBuilder = new TransactionMetaBuilder(Foo);
     assert.deepStrictEqual(fooBuilder.build(), [{
       propagation: PropagationType.REQUIRED,
