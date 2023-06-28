@@ -72,7 +72,8 @@ export class ModuleConfigUtil {
       let moduleReference: ModuleReference;
       if (ModuleReferenceConfigHelp.isNpmModuleReference(moduleReferenceConfig)) {
         const options = cwd ? { paths: [ cwd ] } : {};
-        const pkgJson = path.join(moduleReferenceConfig.package, 'package.json');
+        // path.posix for windows keep path as foo/package.json
+        const pkgJson = path.posix.join(moduleReferenceConfig.package, 'package.json');
         const file = require.resolve(pkgJson, options);
         moduleReference = {
           path: path.dirname(file),
