@@ -1,5 +1,4 @@
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
-import { StackUtil } from '@eggjs/tegg-common-util';
+import { EggProtoImplClass } from '@eggjs/tegg';
 import { TransactionalParams, PropagationType } from '../Common';
 import { TransactionMetadataUtil } from '../util/TransactionMetadataUtil';
 
@@ -16,6 +15,5 @@ export function Transactional(params?: TransactionalParams) {
       propagation,
       method: propertyKey,
     });
-    PrototypeUtil.setFilePath(constructor, StackUtil.getCalleeFromStack(false, 5));
   };
 }
