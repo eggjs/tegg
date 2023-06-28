@@ -3,6 +3,7 @@ import { TransactionMetadataUtil } from '../../src/util/TransactionMetadataUtil'
 import { TransactionMetaBuilder } from '../../src/builder/TransactionMetaBuilder';
 import { PropagationType } from '../../src/Common';
 import { Foo, Bar, FooBar, BarFoo } from '../fixtures/transaction';
+import { Transactional } from '../../src/decorator/Transactional';
 
 describe('test/builder/TransactionMetaBuilder.test.ts', () => {
 
@@ -40,6 +41,10 @@ describe('test/builder/TransactionMetaBuilder.test.ts', () => {
     const barFooBuilder = new TransactionMetaBuilder(BarFoo);
     assert.ok(!TransactionMetadataUtil.isTransactionClazz(BarFoo));
     assert.deepStrictEqual(barFooBuilder.build(), []);
+
+    assert.throws(() => {
+      Transactional({ propagation: 'xx' as PropagationType });
+    }, new Error('unknown propagation type xx'));
   });
 
 });
