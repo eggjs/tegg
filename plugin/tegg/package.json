@@ -39,7 +39,7 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/eventbus"
+    "directory": "plugin/tegg"
   },
   "engines": {
     "node": ">=14.0.0"
