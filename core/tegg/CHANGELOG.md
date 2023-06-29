@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.11.0](https://github.com/eggjs/tegg/compare/v3.10.0...v3.11.0) (2023-06-29)
+
+
+### Features
+
+* export transaction decorator from tegg ([8be0521](https://github.com/eggjs/tegg/commit/8be05212b62fe7f111688efaec935be64d623918))
+
+
+
+
+
 # [3.10.0](https://github.com/eggjs/tegg/compare/v3.9.0...v3.10.0) (2023-06-28)
 
 **Note:** Version bump only for package @eggjs/tegg
