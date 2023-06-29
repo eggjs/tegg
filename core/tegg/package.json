@@ -48,7 +48,8 @@
     "@eggjs/tegg-metadata": "^3.10.0",
     "@eggjs/tegg-orm-decorator": "^3.10.0",
     "@eggjs/tegg-runtime": "^3.10.0",
-    "@eggjs/tegg-schedule-decorator": "^3.10.0"
+    "@eggjs/tegg-schedule-decorator": "^3.10.0",
+    "@eggjs/tegg-transaction-decorator": "^3.9.0"
   },
   "publishConfig": {
     "access": "public"
