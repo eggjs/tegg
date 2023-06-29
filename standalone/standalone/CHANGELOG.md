@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.11.1](https://github.com/eggjs/tegg/compare/v3.11.0...v3.11.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* export StandaloneInnerObject ([#131](https://github.com/eggjs/tegg/issues/131)) ([e4b87e0](https://github.com/eggjs/tegg/commit/e4b87e0a48e3232adaf43bad75f44d0ae775c984))
+
+
+
+
+
 # [3.11.0](https://github.com/eggjs/tegg/compare/v3.10.0...v3.11.0) (2023-06-29)
 
 **Note:** Version bump only for package @eggjs/tegg-standalone
