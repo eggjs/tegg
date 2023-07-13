@@ -9,8 +9,9 @@ let hasMockModuleContext = false;
 
 export default {
   async mockModuleContext(this: MockApplication, data?: any): Promise<Context> {
+    this.deprecate('app.mockModuleContext is deprecated, use mockModuleContextScope.');
     if (hasMockModuleContext) {
-      throw new Error('should not call mockModuleContext twice, should use mockModuleContextScope.');
+      throw new Error('should not call mockModuleContext twice.');
     }
     const ctx = this.mockContext(data);
     const teggCtx = new EggContextImpl(ctx);
@@ -19,6 +20,7 @@ export default {
     if (teggCtx.init) {
       await teggCtx.init(lifecycle);
     }
+    hasMockModuleContext = true;
     return ctx;
   },
 
