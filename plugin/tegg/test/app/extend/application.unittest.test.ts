@@ -31,4 +31,16 @@ describe('test/app/extend/application.unittest.test.ts', () => {
       assert(traceId);
     });
   });
+
+  it('should not call mockModuleContext twice', async () => {
+    const ctx = await app.mockModuleContext();
+    try {
+      await assert.rejects(
+        app.mockModuleContext(),
+        /should not call mockModuleContext twice./,
+      );
+    } finally {
+      await app.destroyModuleContext(ctx);
+    }
+  });
 });
