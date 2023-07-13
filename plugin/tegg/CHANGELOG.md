@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.12.0](https://github.com/eggjs/tegg/compare/v3.11.1...v3.12.0) (2023-07-13)
+
+
+### Bug Fixes
+
+* after call mockModuleContext, hasMockModuleContext should be true ([#134](https://github.com/eggjs/tegg/issues/134)) ([88b3caa](https://github.com/eggjs/tegg/commit/88b3caadd24f08221b8098c42733e26376338cae))
+
+
+
+
+
 ## [3.11.1](https://github.com/eggjs/tegg/compare/v3.11.0...v3.11.1) (2023-06-29)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin
