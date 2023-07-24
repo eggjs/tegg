@@ -14,12 +14,15 @@ describe('test/builder/TransactionMetaBuilder.test.ts', () => {
     assert.deepStrictEqual(fooBuilder.build(), [{
       propagation: PropagationType.REQUIRED,
       method: 'defaultPropagation',
+      datasourceName: undefined,
     }, {
       propagation: PropagationType.REQUIRED,
       method: 'requiredPropagation',
+      datasourceName: 'testDatasourceName1',
     }, {
       propagation: PropagationType.ALWAYS_NEW,
       method: 'alwaysNewPropagation',
+      datasourceName: undefined,
     }]);
 
     assert.ok(TransactionMetadataUtil.isTransactionClazz(Bar));
@@ -27,9 +30,11 @@ describe('test/builder/TransactionMetaBuilder.test.ts', () => {
     assert.deepStrictEqual(barBuilder.build(), [{
       propagation: PropagationType.REQUIRED,
       method: 'foo',
+      datasourceName: 'datasourceName2',
     }, {
       propagation: PropagationType.ALWAYS_NEW,
       method: 'bar',
+      datasourceName: undefined,
     }]);
 
     assert.ok(TransactionMetadataUtil.isTransactionClazz(FooBar));
@@ -37,6 +42,7 @@ describe('test/builder/TransactionMetaBuilder.test.ts', () => {
     assert.deepStrictEqual(fooBarBuilder.build(), [{
       propagation: PropagationType.ALWAYS_NEW,
       method: 'foo',
+      datasourceName: undefined,
     }]);
 
     const barFooBuilder = new TransactionMetaBuilder(BarFoo);
