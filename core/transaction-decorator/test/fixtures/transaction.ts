@@ -8,7 +8,9 @@ export class Foo {
     console.log('msg: ', msg);
   }
 
-  @Transactional({})
+  @Transactional({
+    datasourceName: 'testDatasourceName1',
+  })
   async requiredPropagation(msg) {
     console.log('msg: ', msg);
   }
@@ -22,7 +24,7 @@ export class Foo {
 
 export class Bar {
 
-  @Transactional()
+  @Transactional({ datasourceName: 'datasourceName2' })
   async foo(msg) {
     console.log('msg: ', msg);
   }

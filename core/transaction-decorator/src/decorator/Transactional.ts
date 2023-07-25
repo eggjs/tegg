@@ -7,6 +7,7 @@ export function Transactional(params?: TransactionalParams) {
   if (!Object.values(PropagationType).includes(propagation)) {
     throw new Error(`unknown propagation type ${propagation}`);
   }
+  const datasourceName = params?.datasourceName;
 
   return function(target: any, propertyKey: PropertyKey) {
     const constructor: EggProtoImplClass = target.constructor;
@@ -14,6 +15,7 @@ export function Transactional(params?: TransactionalParams) {
     TransactionMetadataUtil.addTransactionMetadata(constructor, {
       propagation,
       method: propertyKey,
+      datasourceName,
     });
   };
 }

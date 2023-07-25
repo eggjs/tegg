@@ -3,6 +3,7 @@
 事务注解
 
 ## Usage
+### 传播机制
 ```ts
 export class Foo {
 
@@ -14,6 +15,18 @@ export class Foo {
   @Transactional({ propagation: PropagationType.REQUIRED })
   async foo(msg) {
     console.log('has msg: ', msg);
+  }
+
+}
+```
+
+### 数据源
+```ts
+export class Bar {
+
+  @Transactional({ dataSourceName: 'xx' })
+  async bar() {
+    await this.foo();
   }
 
 }
