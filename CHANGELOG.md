@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.14.0](https://github.com/eggjs/tegg/compare/v3.13.0...v3.14.0) (2023-07-31)
+
+
+### Features
+
+* impl ModuleConfigs for standalone ([#136](https://github.com/eggjs/tegg/issues/136)) ([7227492](https://github.com/eggjs/tegg/commit/7227492295b9c84e3660bfc006ca96e7a9652a25))
+
+
+
+
+
 # [3.13.0](https://github.com/eggjs/tegg/compare/v3.12.0...v3.13.0) (2023-07-25)
 
 
