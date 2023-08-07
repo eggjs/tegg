@@ -30,6 +30,7 @@ export interface RunnerOptions {
   innerObjects?: Record<string, object>;
 
   innerObjectHandlers?: Record<string, InnerObject[]>;
+  ModuleConfigUtil?: typeof ModuleConfigUtil;
 }
 
 export class Runner {
@@ -46,27 +47,42 @@ export class Runner {
 
   constructor(cwd: string, options?: RunnerOptions) {
     this.cwd = cwd;
-    this.moduleReferences = ModuleConfigUtil.readModuleReference(this.cwd);
-    this.moduleConfigs = {};
+    this.moduleReferences = this.#loadModuleReferences(options?.ModuleConfigUtil || ModuleConfigUtil);
+    this.moduleConfigs = this.#loadConfig(options?.ModuleConfigUtil || ModuleConfigUtil);
+    this.#prepareInnerObjects(options);
+    this.loadUnitLoader = new EggModuleLoader(this.moduleReferences);
+    const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
+    LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
+  }
+
+  #loadModuleReferences(moduleConfigUtil: typeof ModuleConfigUtil) {
+    return moduleConfigUtil.readModuleReference(this.cwd);
+  }
+
+  #loadConfig(moduleConfigUtil: typeof ModuleConfigUtil) {
+    const moduleConfigs = {};
+    for (const reference of this.moduleReferences) {
+      const absoluteRef = {
+        path: moduleConfigUtil.resolveModuleDir(reference.path, this.cwd),
+      };
+
+      const moduleName = moduleConfigUtil.readModuleNameSync(absoluteRef.path);
+      moduleConfigs[moduleName] = {
+        name: moduleName,
+        reference: absoluteRef,
+        config: moduleConfigUtil.loadModuleConfigSync(absoluteRef.path) || {},
+      };
+    }
+    return moduleConfigs;
+  }
+
+  #prepareInnerObjects(options?: RunnerOptions) {
     this.innerObjects = {
       moduleConfigs: [{
         obj: new ModuleConfigs(this.moduleConfigs),
       }],
       moduleConfig: [],
     };
-
-    for (const reference of this.moduleReferences) {
-      const absoluteRef = {
-        path: ModuleConfigUtil.resolveModuleDir(reference.path, this.cwd),
-      };
-
-      const moduleName = ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
-      this.moduleConfigs[moduleName] = {
-        name: moduleName,
-        reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path) || {},
-      };
-    }
     for (const moduleConfig of Object.values(this.moduleConfigs)) {
       this.innerObjects.moduleConfig.push({
         obj: moduleConfig.config,
@@ -76,6 +92,7 @@ export class Runner {
         }],
       });
     }
+
     if (options?.innerObjects) {
       for (const [ name, obj ] of Object.entries(options.innerObjects)) {
         this.innerObjects[name] = [{
@@ -85,9 +102,6 @@ export class Runner {
     } else if (options?.innerObjectHandlers) {
       Object.assign(this.innerObjects, options.innerObjectHandlers);
     }
-    this.loadUnitLoader = new EggModuleLoader(this.moduleReferences);
-    const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
-    LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
   }
 
   async init() {
