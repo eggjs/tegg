@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.14.1](https://github.com/eggjs/tegg/compare/v3.14.0...v3.14.1) (2023-08-11)
+
+
+### Bug Fixes
+
+* ensure ContextInitiator be called after ctx ready ([#138](https://github.com/eggjs/tegg/issues/138)) ([79e16da](https://github.com/eggjs/tegg/commit/79e16dae913b6114ac8d13bde8de60164d57dab3))
+
+
+
+
+
 # [3.14.0](https://github.com/eggjs/tegg/compare/v3.13.0...v3.14.0) (2023-07-31)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin
