@@ -8,6 +8,7 @@ import {
 import AppService from '../../modules/multi-module-service/AppService';
 import { countMw } from '../middleware/count_mw';
 import { logMwFactory } from '../middleware/log_mw';
+import { callModuleCtx } from '../middleware/call_module';
 
 @HTTPController({
   path: '/middleware',
@@ -31,6 +32,15 @@ export class MiddlewareController {
   })
   @Middleware(logMwFactory('use middleware'))
   async middleware() {
+    return {};
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/methodCallModule',
+  })
+  @Middleware(callModuleCtx)
+  async middlewareCallModule() {
     return {};
   }
 }
