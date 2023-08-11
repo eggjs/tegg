@@ -35,4 +35,12 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
       await EggContainerFactory.getOrCreateEggObject(protoObj as EggPrototype);
     }
   }
+
+  async postCreate(_, ctx: EggContext): Promise<void> {
+    const rootProto = ctx.get(ROOT_PROTO);
+    if (rootProto) {
+      // Ensure ContextInitiator be called.
+      await EggContainerFactory.getOrCreateEggObject(rootProto as EggPrototype);
+    }
+  }
 }
