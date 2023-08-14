@@ -24,8 +24,8 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
         crosscutAdviceFactory: this.crosscutAdviceFactory,
       });
       const aspectList = builder.build();
+      AspectInfoUtil.setAspectList(aspectList, clazz);
       for (const aspect of aspectList) {
-        AspectInfoUtil.setAspectList(aspectList, clazz);
         for (const advice of aspect.adviceList) {
           const adviceProto = PrototypeUtil.getClazzProto(advice.clazz);
           if (!adviceProto) {
