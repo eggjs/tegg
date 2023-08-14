@@ -18,7 +18,9 @@
   ],
   "files": [
     "app.js",
-    "app.d.ts"
+    "app.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
   ],
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
