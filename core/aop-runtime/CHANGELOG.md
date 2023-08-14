@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.14.2](https://github.com/eggjs/tegg/compare/v3.14.1...v3.14.2) (2023-08-14)
+
+
+### Bug Fixes
+
+* init all context advice if root proto miss ([#139](https://github.com/eggjs/tegg/issues/139)) ([0602ea8](https://github.com/eggjs/tegg/commit/0602ea81578bf717ee4b4c490ace8c1c133478c5))
+
+
+
+
+
 ## [3.14.1](https://github.com/eggjs/tegg/compare/v3.14.0...v3.14.1) (2023-08-11)
 
 **Note:** Version bump only for package @eggjs/tegg-aop-runtime
