@@ -43,7 +43,10 @@
   },
   "dependencies": {
     "@eggjs/tegg": "^3.14.3",
-    "@eggjs/tegg-aop-runtime": "^3.14.3"
+    "@eggjs/tegg-aop-runtime": "^3.14.3",
+    "@eggjs/aop-decorator": "^3.14.3",
+    "@eggjs/tegg-metadata": "^3.14.3",
+    "@eggjs/egg-module-common": "^3.14.3"
   },
   "devDependencies": {
     "@eggjs/tegg-config": "^3.14.3",
