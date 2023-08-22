@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "3.14.4",
+  "version": "3.15.0",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -46,13 +46,13 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.14.4",
+    "@eggjs/egg-module-common": "^3.15.0",
     "@eggjs/router": "^2.0.1",
-    "@eggjs/tegg": "^3.14.4",
-    "@eggjs/tegg-common-util": "^3.14.4",
-    "@eggjs/tegg-loader": "^3.14.4",
-    "@eggjs/tegg-metadata": "^3.14.4",
-    "@eggjs/tegg-runtime": "^3.14.4",
+    "@eggjs/tegg": "^3.15.0",
+    "@eggjs/tegg-common-util": "^3.15.0",
+    "@eggjs/tegg-loader": "^3.15.0",
+    "@eggjs/tegg-metadata": "^3.15.0",
+    "@eggjs/tegg-runtime": "^3.15.0",
     "egg-errors": "^2.3.0",
     "globby": "^10.0.2",
     "koa-compose": "^3.2.1",
@@ -60,9 +60,9 @@
     "sdk-base": "^4.2.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.14.4",
-    "@eggjs/tegg-config": "^3.14.4",
-    "@eggjs/tegg-plugin": "^3.14.4",
+    "@eggjs/module-test-util": "^3.15.0",
+    "@eggjs/tegg-config": "^3.15.0",
+    "@eggjs/tegg-plugin": "^3.15.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
