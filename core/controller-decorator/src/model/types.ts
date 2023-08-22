@@ -8,6 +8,7 @@ export enum ControllerType {
   HTTP = 'HTTP',
   SOFA_RPC = 'SOFA_RPC',
   MGW_RPC = 'MGW_RPC',
+  MESSAGE = 'MESSAGE',
 }
 
 export type HostType = string | string [];
@@ -18,6 +19,7 @@ export enum MethodType {
   HTTP = 'HTTP',
   SOFA_RPC = 'SOFA_RPC',
   MGW_RPC = 'MGW_RPC',
+  MESSAGE = 'MESSAGE',
 }
 
 export type MethodTypeLike = ControllerType | string;
