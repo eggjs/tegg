@@ -762,7 +762,7 @@ import { EggObjectFactory } from '@eggjs/tegg';
 export class HelloService {
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
-  
+
   async hello(): Promise<string> {
     const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, HelloType.BAR);
     return helloImpl.hello();
