@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "globby": "^11.1.0",
-    "is-type-of": "^2.0.1",
     "js-yaml": "^3.14.0"
   },
   "publishConfig": {

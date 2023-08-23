@@ -1,6 +1,6 @@
 {
-  "name": "innerobject",
+  "name": "runtime-config",
   "eggModule": {
-    "name": "innerobject"
+    "name": "runtime-config"
   }
 }
