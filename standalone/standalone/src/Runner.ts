@@ -1,4 +1,4 @@
-import { ModuleConfigUtil, ModuleReference, RuntimeConfigUtil } from '@eggjs/tegg-common-util';
+import { ModuleConfigUtil, ModuleReference, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
   EggPrototype,
   LoadUnit,
@@ -54,9 +54,14 @@ export class Runner {
       }],
       moduleConfig: [],
     };
-    RuntimeConfigUtil.setRuntimeConfig({
-      baseDir: cwd,
-    });
+
+    const runtimeConfig: Partial<RuntimeConfig> = {
+      baseDir: this.cwd,
+    };
+    // Inject runtimeConfig
+    this.innerObjects.runtimeConfig = [{
+      obj: runtimeConfig,
+    }];
 
     for (const reference of this.moduleReferences) {
       const absoluteRef = {

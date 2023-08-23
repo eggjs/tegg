@@ -65,4 +65,12 @@ describe('test/index.test.ts', () => {
       assert.deepStrictEqual(configs.get('bar'), bar);
     });
   });
+
+  describe('runner with runtimeConfig', () => {
+    it('should work', async () => {
+      const msg = await main(path.join(__dirname, './fixtures/runtime-config'));
+      assert.deepEqual(msg, { baseDir: path.join(__dirname, './fixtures/runtime-config') });
+    });
+  });
+
 });

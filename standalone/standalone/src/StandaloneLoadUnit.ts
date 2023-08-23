@@ -40,7 +40,6 @@ export class StandaloneLoadUnit implements LoadUnit {
     }
   }
 
-
   containPrototype(proto: EggPrototype): boolean {
     return !!(this.protoMap.get(proto.name)?.find(t => t === proto));
   }
