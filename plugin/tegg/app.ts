@@ -2,6 +2,7 @@ import './lib/AppLoadUnit';
 import './lib/AppLoadUnitInstance';
 import './lib/EggCompatibleObject';
 import { Application } from 'egg';
+import { RuntimeConfigUtil } from '@eggjs/tegg-common-util';
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook';
 import { CompatibleUtil } from './lib/CompatibleUtil';
 import { ModuleHandler } from './lib/ModuleHandler';
@@ -20,6 +21,11 @@ export default class App {
   }
 
   configWillLoad() {
+    RuntimeConfigUtil.setRuntimeConfig({
+      baseDir: this.app.baseDir,
+      env: this.app.config.env,
+      name: this.app.config.name,
+    });
     this.app.config.coreMiddleware.push('teggCtxLifecycleMiddleware');
   }
 

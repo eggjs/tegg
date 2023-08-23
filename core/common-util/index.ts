@@ -7,3 +7,4 @@ export * from './src/StackUtil';
 export * from './src/ProxyUtil';
 export * from './src/ModuleConfig';
 export * from './src/TimerUtil';
+export * from './src/RuntimeConfigUtil';
