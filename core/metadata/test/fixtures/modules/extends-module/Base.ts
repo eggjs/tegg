@@ -14,9 +14,3 @@ export class Base {
 export class Foo extends Base {
 
 }
-
-@ContextProto()
-export class Bar extends Base {
-  @Inject()
-  foo: Foo;
-}

@@ -35,10 +35,11 @@ export class EggModuleLoader {
       for (const clazz of clazzList) {
         // TODO copy from ModuleLoadUnit, duplicate code
         const moduleName = ModuleConfigUtil.readModuleNameSync(modulePath);
-        const property = PrototypeUtil.getProperty(clazz)!;
         const defaultQualifier = [{
           attribute: InitTypeQualifierAttribute,
-          value: property.initType,
+          value: PrototypeUtil.getInitType(clazz, {
+            unitPath: modulePath,
+          })!,
         }, {
           attribute: LoadUnitNameQualifierAttribute,
           value: moduleName,

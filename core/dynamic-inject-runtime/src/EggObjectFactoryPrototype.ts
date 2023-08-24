@@ -5,12 +5,12 @@ import {
   InjectObjectProto, LoadUnit,
 } from '@eggjs/tegg-metadata';
 import {
-  AccessLevel, EggProtoImplClass, EggPrototypeName,
+  AccessLevel, EggProtoImplClass, EggPrototypeInfo, EggPrototypeName,
   MetaDataKey,
   MetadataUtil,
-  ObjectInitTypeLike, PrototypeUtil,
+  ObjectInitTypeLike,
   QualifierInfo,
-  QualifierUtil,
+  QualifierUtil, QualifierValue,
 } from '@eggjs/core-decorator';
 import { NameUtil } from '@eggjs/tegg-common-util';
 import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
@@ -28,15 +28,17 @@ export class EggObjectFactoryPrototype implements EggPrototype {
   readonly name: EggPrototypeName;
   readonly qualifiers: QualifierInfo[];
 
-  constructor(clazz: EggProtoImplClass<EggObjectFactory>, loadUnit: LoadUnit) {
+  constructor(clazz: EggProtoImplClass<EggObjectFactory>, loadUnit: LoadUnit, prototypeInfo: EggPrototypeInfo) {
     this.clazz = clazz;
-    this.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
+    this.qualifiers = [
+      ...QualifierUtil.getProtoQualifiers(clazz),
+      ...(prototypeInfo.qualifiers ?? []),
+    ];
     this.id = IdenticalUtil.createProtoId(loadUnit.id, NameUtil.getClassName(this.clazz));
-    const property = PrototypeUtil.getProperty(clazz)!;
-    this.initType = property.initType;
-    this.accessLevel = property.accessLevel;
+    this.initType = prototypeInfo.initType;
+    this.accessLevel = prototypeInfo.accessLevel;
     this.loadUnitId = loadUnit.id;
-    this.name = property.name || NameUtil.getClassName(this.clazz);
+    this.name = prototypeInfo.name || NameUtil.getClassName(this.clazz);
     this.injectObjects = [];
   }
 
@@ -53,6 +55,10 @@ export class EggObjectFactoryPrototype implements EggPrototype {
     return selfQualifiers?.value === qualifier.value;
   }
 
+  getQualifier(attribute: string): QualifierValue | undefined {
+    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+  }
+
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
     for (const qualifier of qualifiers) {
       if (!this.verifyQualifier(qualifier)) {
@@ -63,7 +69,7 @@ export class EggObjectFactoryPrototype implements EggPrototype {
   }
 
   static create(ctx: EggPrototypeLifecycleContext) {
-    return new EggObjectFactoryPrototype(ctx.clazz as EggProtoImplClass<EggObjectFactory>, ctx.loadUnit);
+    return new EggObjectFactoryPrototype(ctx.clazz as EggProtoImplClass<EggObjectFactory>, ctx.loadUnit, ctx.prototypeInfo);
   }
 }
 
