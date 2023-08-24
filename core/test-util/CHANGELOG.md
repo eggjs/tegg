@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/eggjs/tegg/compare/v3.15.0...v3.16.0) (2023-08-24)
+
+**Note:** Version bump only for package @eggjs/module-test-util
+
+
+
+
+
 ## [3.14.3](https://github.com/eggjs/tegg/compare/v3.14.2...v3.14.3) (2023-08-14)
 
 **Note:** Version bump only for package @eggjs/module-test-util

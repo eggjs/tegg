@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/eggjs/tegg/compare/v3.15.0...v3.16.0) (2023-08-24)
+
+
+### Features
+
+* export EggModuleLoader in standalone ([#146](https://github.com/eggjs/tegg/issues/146)) ([9d1da9a](https://github.com/eggjs/tegg/commit/9d1da9a87dbd486930adc50cd43020c2fb478230))
+* implement RuntimeConfig ([#144](https://github.com/eggjs/tegg/issues/144)) ([0862655](https://github.com/eggjs/tegg/commit/0862655846f6765349d406ee697c036cec2a37bd))
+
+
+
+
+
 ## [3.14.3](https://github.com/eggjs/tegg/compare/v3.14.2...v3.14.3) (2023-08-14)
 
 
