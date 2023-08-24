@@ -81,6 +81,13 @@ describe('test/EggCompatible.test.ts', () => {
     await app.mockModuleContextScope(async () => {
       const baseDir = app.module.multiModuleService.configService.getBaseDir();
       assert(baseDir);
+
+      const runtimeConfig = app.module.multiModuleService.configService.getRuntimeConfig();
+      assert.deepEqual(runtimeConfig, {
+        baseDir: path.join(__dirname, 'fixtures/apps/egg-app'),
+        env: 'unittest',
+        name: 'egg-app',
+      });
     });
   });
 

@@ -14,4 +14,5 @@ export class Foo implements MainRunner<string> {
   async main(): Promise<string> {
     return this.hello.hello();
   }
+
 }
