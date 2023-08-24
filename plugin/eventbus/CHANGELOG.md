@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.17.0](https://github.com/eggjs/tegg/compare/v3.16.0...v3.17.0) (2023-08-24)
+
+
+### Features
+
+* impl MultiInstanceProto ([#145](https://github.com/eggjs/tegg/issues/145)) ([12fd5cf](https://github.com/eggjs/tegg/commit/12fd5cff4004578bcc737dcdf4f7e9d1159f5633))
+
+
+
+
+
 # [3.16.0](https://github.com/eggjs/tegg/compare/v3.15.0...v3.16.0) (2023-08-24)
 
 **Note:** Version bump only for package @eggjs/tegg-eventbus-plugin
