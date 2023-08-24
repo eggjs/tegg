@@ -45,18 +45,18 @@ export class EggPrototypeBuilder {
     const { clazz, loadUnit } = ctx;
     const filepath = PrototypeUtil.getFilePath(clazz);
     assert(filepath, 'not find filepath');
-    let property = PrototypeUtil.getProperty(clazz);
-    assert(property, 'not find property');
-    property = property!;
     const builder = new EggPrototypeBuilder();
     builder.clazz = clazz;
-    builder.name = property.name;
-    builder.initType = property.initType;
-    builder.accessLevel = property.accessLevel;
+    builder.name = ctx.prototypeInfo.name;
+    builder.initType = ctx.prototypeInfo.initType;
+    builder.accessLevel = ctx.prototypeInfo.accessLevel;
     builder.filepath = filepath!;
     builder.injectObjects = PrototypeUtil.getInjectObjects(clazz) || [];
     builder.loadUnit = loadUnit;
-    builder.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
+    builder.qualifiers = [
+      ...QualifierUtil.getProtoQualifiers(clazz),
+      ...(ctx.prototypeInfo.qualifiers ?? []),
+    ];
     return builder.build();
   }
 

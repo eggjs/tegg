@@ -56,7 +56,8 @@ export class LoaderUtil {
     const exportNames = Object.keys(exports);
     for (const exportName of exportNames) {
       const clazz = exports[exportName];
-      if (!is.class(clazz) || !PrototypeUtil.isEggPrototype(clazz)) {
+      const isEggProto = is.class(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
+      if (!isEggProto) {
         continue;
       }
       clazzList.push(clazz);

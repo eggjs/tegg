@@ -6,7 +6,7 @@ import {
   QualifierInfo,
   QualifierUtil,
   MetadataUtil,
-  MetaDataKey,
+  MetaDataKey, QualifierAttribute, QualifierValue,
 } from '@eggjs/tegg';
 import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { Bone } from 'leoric';
@@ -51,6 +51,10 @@ export default class SingletonModelProto implements EggPrototype {
       }
     }
     return true;
+  }
+
+  getQualifier(attribute: QualifierAttribute): QualifierValue | undefined {
+    return this.qualifiers.find(t => t.attribute === attribute)?.value;
   }
 
   static createProto(ctx: EggPrototypeLifecycleContext): SingletonModelProto {

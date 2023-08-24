@@ -1,5 +1,6 @@
 import { ObjectInitTypeLike } from '../enum/ObjectInitType';
 import { AccessLevel } from '../enum/AccessLevel';
+import { QualifierInfo } from './QualifierInfo';
 
 export type EggProtoImplClass<T = object> = new(...args: any[]) => T;
 export type EggPrototypeName = PropertyKey;
@@ -21,4 +22,8 @@ export interface EggPrototypeInfo {
    * EggPrototype implement type
    */
   protoImplType: string;
+  /**
+   * EggPrototype qualifiers
+   */
+  qualifiers?: QualifierInfo[];
 }

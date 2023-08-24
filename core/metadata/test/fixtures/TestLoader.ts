@@ -14,7 +14,7 @@ export class TestLoader implements Loader {
 
   load(): EggProtoImplClass[] {
     const protoClassList: EggProtoImplClass[] = [];
-    const files = globby.sync([ '**/*' ], { cwd: this.moduleDir });
+    const files = globby.sync([ '**/*.(js|ts)' ], { cwd: this.moduleDir });
     for (const file of files) {
       const realPath = path.join(this.moduleDir, file);
       const protoClazz = LoaderUtil.loadFile(realPath);

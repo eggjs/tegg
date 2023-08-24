@@ -1,6 +1,7 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 import { main, StandaloneContext, Runner } from '..';
-import path from 'path';
 import { ModuleConfigs } from '../src/ModuleConfigs';
 import { ModuleConfig } from 'egg';
 
@@ -73,4 +74,19 @@ describe('test/index.test.ts', () => {
     });
   });
 
+  describe('multi instance prototype runner', () => {
+    const fixturePath = path.join(__dirname, './fixtures/multi-callback-instance-module');
+    afterEach(async () => {
+      await fs.unlink(path.join(fixturePath, 'foo.log'));
+      await fs.unlink(path.join(fixturePath, 'bar.log'));
+    });
+
+    it('should work', async () => {
+      await main(fixturePath);
+      const fooContent = await fs.readFile(path.join(fixturePath, 'foo.log'), 'utf8');
+      const barContent = await fs.readFile(path.join(fixturePath, 'bar.log'), 'utf8');
+      assert(fooContent.includes('hello, foo'));
+      assert(barContent.includes('hello, bar'));
+    });
+  });
 });

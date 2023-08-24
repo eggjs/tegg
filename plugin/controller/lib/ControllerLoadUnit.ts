@@ -44,8 +44,10 @@ export class ControllerLoadUnit implements LoadUnit {
   async init() {
     const clazzList = this.loader.load();
     for (const clazz of clazzList) {
-      const proto = await this.eggPrototypeCreatorFactory.createProto(clazz, this);
-      this.eggPrototypeFactory.registerPrototype(proto, this);
+      const protos = await this.eggPrototypeCreatorFactory.createProto(clazz, this);
+      for (const proto of protos) {
+        this.eggPrototypeFactory.registerPrototype(proto, this);
+      }
     }
   }
 

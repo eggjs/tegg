@@ -1,3 +1,5 @@
+import type { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
+
 /**
  * lifecycle hook interface for egg object
  */
@@ -5,30 +7,30 @@ export interface EggObjectLifecycle {
   /**
    * call after construct
    */
-  postConstruct?(): Promise<void>;
+  postConstruct?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
 
   /**
    * call before inject deps
    */
-  preInject?(): Promise<void>;
+  preInject?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
 
   /**
    * call after inject deps
    */
-  postInject?(): Promise<void>;
+  postInject?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
 
   /**
    * before object is ready
    */
-  init?(): Promise<void>;
+  init?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
 
   /**
    * call before destroy
    */
-  preDestroy?(): Promise<void>;
+  preDestroy?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
 
   /**
    * destroy the object
    */
-  destroy?(): Promise<void>;
+  destroy?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;
 }

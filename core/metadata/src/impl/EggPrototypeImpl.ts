@@ -4,7 +4,7 @@ import {
   EggProtoImplClass,
   EggPrototypeName, MetaDataKey, MetadataUtil,
   ObjectInitTypeLike,
-  QualifierInfo,
+  QualifierInfo, QualifierValue,
 } from '@eggjs/core-decorator';
 import { Id } from '@eggjs/tegg-lifecycle';
 
@@ -55,6 +55,10 @@ export class EggPrototypeImpl implements EggPrototype {
   verifyQualifier(qualifier: QualifierInfo): boolean {
     const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
+  }
+
+  getQualifier(attribute: string): QualifierValue | undefined {
+    return this.qualifiers.find(t => t.attribute === attribute)?.value;
   }
 
   constructEggObject(): object {

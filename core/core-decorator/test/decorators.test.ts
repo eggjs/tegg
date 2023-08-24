@@ -16,6 +16,8 @@ import {
   DEFAULT_PROTO_IMPL_TYPE,
 } from '..';
 import QualifierCacheService from './fixtures/decators/QualifierCacheService';
+import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger';
+import { EggMultiInstancePrototypeInfo } from '../src/model/EggMultiInstancePrototypeInfo';
 
 describe('test/decorator.test.ts', () => {
   describe('ContextProto', () => {
@@ -87,6 +89,33 @@ describe('test/decorator.test.ts', () => {
       assert(
         QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.InitType')) === ObjectInitType.SINGLETON,
       );
+    });
+  });
+
+  describe('MultiInstanceProto', () => {
+    it('should work', () => {
+      assert(PrototypeUtil.isEggMultiInstancePrototype(FooLogger));
+      const expectObjectProperty: EggMultiInstancePrototypeInfo = {
+        initType: ObjectInitType.SINGLETON,
+        accessLevel: AccessLevel.PUBLIC,
+        protoImplType: 'foo',
+        objects: [{
+          name: 'foo',
+          qualifiers: [{
+            attribute: FOO_ATTRIBUTE,
+            value: 'foo1',
+          }],
+        }, {
+          name: 'foo',
+          qualifiers: [{
+            attribute: FOO_ATTRIBUTE,
+            value: 'foo2',
+          }],
+        }],
+      };
+      assert.deepStrictEqual(PrototypeUtil.getMultiInstanceProperty(FooLogger, {
+        unitPath: 'foo',
+      }), expectObjectProperty);
     });
   });
 

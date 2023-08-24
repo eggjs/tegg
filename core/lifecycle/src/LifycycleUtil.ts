@@ -1,5 +1,5 @@
 import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 import { LifecycleContext, LifecycleHook, LifecycleObject } from './LifecycleHook';
 import { EggObjectLifecycle } from './EggObjectLifecycle';
 
