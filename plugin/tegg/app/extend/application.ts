@@ -17,7 +17,7 @@ import {
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggProtoImplClass, PrototypeUtil, IdenticalUtil, RuntimeConfig } from '@eggjs/tegg';
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
 export default {
   // @eggjs/tegg-metadata should not depend by other egg plugins.
