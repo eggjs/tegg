@@ -1,3 +1,4 @@
+export * from './src/EggModuleLoader';
 export * from './src/Runner';
 export * from './src/main';
 export * from './src/StandaloneInnerObjectProto';
