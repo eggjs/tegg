@@ -16,7 +16,8 @@ import {
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { EggProtoImplClass, PrototypeUtil, IdenticalUtil } from '@eggjs/tegg';
+import { EggProtoImplClass, PrototypeUtil, IdenticalUtil, RuntimeConfig } from '@eggjs/tegg';
+import { Application } from 'egg';
 
 export default {
   // @eggjs/tegg-metadata should not depend by other egg plugins.
@@ -76,6 +77,16 @@ export default {
 
   get identicalUtil() {
     return IdenticalUtil;
+  },
+
+  get runtimeConfig(): RuntimeConfig {
+    const app = this as unknown as Application;
+    const config = app.config;
+    return {
+      baseDir: config.baseDir,
+      env: config.env,
+      name: config.name,
+    };
   },
 
   async getEggObject(clazz: EggProtoImplClass) {
