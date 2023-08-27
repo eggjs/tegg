@@ -3,7 +3,7 @@ import {
   EggPrototype, EggPrototypeLifecycleUtil,
   LoadUnit,
   LoadUnitFactory,
-  LoadUnitLifecycleUtil,
+  LoadUnitLifecycleUtil, LoadUnitMultiInstanceProtoHook,
 } from '@eggjs/tegg-metadata';
 import {
   ContextHandler,
@@ -43,6 +43,7 @@ export class Runner {
   private loadUnitLoader: EggModuleLoader;
   private runnerProto: EggPrototype;
   private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
+  private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
 
   private readonly loadUnitInnerClassHook: LoadUnitInnerClassHook;
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
@@ -120,6 +121,9 @@ export class Runner {
     EggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
     LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
     EggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
+
+    this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
+    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
   }
 
   async init() {
@@ -202,6 +206,10 @@ export class Runner {
     }
     if (this.eggObjectAopHook) {
       EggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);
+    }
+
+    if (this.loadUnitMultiInstanceProtoHook) {
+      LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
     }
   }
 }

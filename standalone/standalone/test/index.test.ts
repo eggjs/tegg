@@ -78,16 +78,23 @@ describe('test/index.test.ts', () => {
   describe('multi instance prototype runner', () => {
     const fixturePath = path.join(__dirname, './fixtures/multi-callback-instance-module');
     afterEach(async () => {
-      await fs.unlink(path.join(fixturePath, 'foo.log'));
-      await fs.unlink(path.join(fixturePath, 'bar.log'));
+      await fs.unlink(path.join(fixturePath, 'main', 'foo.log'));
+      await fs.unlink(path.join(fixturePath, 'main', 'bar.log'));
+      await fs.unlink(path.join(fixturePath, 'biz', 'fooBiz.log'));
+      await fs.unlink(path.join(fixturePath, 'biz', 'barBiz.log'));
     });
 
     it('should work', async () => {
       await main(fixturePath);
-      const fooContent = await fs.readFile(path.join(fixturePath, 'foo.log'), 'utf8');
-      const barContent = await fs.readFile(path.join(fixturePath, 'bar.log'), 'utf8');
+      const fooContent = await fs.readFile(path.join(fixturePath, 'main', 'foo.log'), 'utf8');
+      const barContent = await fs.readFile(path.join(fixturePath, 'main', 'bar.log'), 'utf8');
       assert(fooContent.includes('hello, foo'));
       assert(barContent.includes('hello, bar'));
+
+      const fooBizContent = await fs.readFile(path.join(fixturePath, 'biz', 'fooBiz.log'), 'utf8');
+      const barBizContent = await fs.readFile(path.join(fixturePath, 'biz', 'barBiz.log'), 'utf8');
+      assert(fooBizContent.includes('hello, foo biz'));
+      assert(barBizContent.includes('hello, bar biz'));
     });
   });
 
