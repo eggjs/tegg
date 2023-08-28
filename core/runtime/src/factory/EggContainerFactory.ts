@@ -1,7 +1,7 @@
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainer } from '../model/EggContainer';
 import { LifecycleContext } from '@eggjs/tegg-lifecycle';
-import { EggObjectName, ObjectInitTypeLike } from '@eggjs/core-decorator';
+import { EggObjectName, ObjectInitTypeLike, PrototypeUtil, EggProtoImplClass } from '@eggjs/core-decorator';
 import { EggObject } from '../model/EggObject';
 import { ContextHandler } from '../model/ContextHandler';
 import { ContextInitiator } from '../impl/ContextInitiator';
@@ -38,6 +38,19 @@ export class EggContainerFactory {
       await initiator.init(obj);
     }
     return obj;
+  }
+
+  /**
+   * get or create egg object from the Class
+   * If get singleton egg object in context,
+   * will create context egg object for it.
+   */
+  static async getOrCreateEggObjectFromClazz(clazz: EggProtoImplClass, name?: EggObjectName): Promise<EggObject> {
+    const proto = PrototypeUtil.getClazzProto(clazz) as EggPrototype;
+    if (!proto) {
+      throw new Error(`can not get proto for clazz ${clazz.name}`);
+    }
+    return await this.getOrCreateEggObject(proto, name);
   }
 
   static getEggObject(proto: EggPrototype, name?: EggObjectName): EggObject {
