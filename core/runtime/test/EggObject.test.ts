@@ -81,7 +81,7 @@ describe('test/EggObject.test.ts', () => {
           'destroy',
         ]);
         // get obj from class
-        const barObj2 = await EggContainerFactory.getOrCreateEggObjectFromClazz(barProto.clazz, barProto.name);
+        const barObj2 = await EggContainerFactory.getOrCreateEggObjectFromClazz((barProto as any).clazz, barProto.name);
         assert.equal(barObj2, barObj);
         assert.equal(barObj2.obj, barObj.obj);
       });
