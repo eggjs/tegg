@@ -69,6 +69,11 @@ describe('test/EggObject.test.ts', () => {
         const barProto = EggPrototypeFactory.instance.getPrototype('bar');
         const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
         const bar = barObj.obj as Bar;
+        // get obj from class
+        const barObj2 = await EggContainerFactory.getOrCreateEggObjectFromClazz((barProto as any).clazz, barProto.name);
+        assert.equal(barObj2, barObj);
+        assert.equal(barObj2.obj, barObj.obj);
+
         await TestUtil.destroyLoadUnitInstance(instance);
         const called = bar.getLifecycleCalled();
         assert.deepStrictEqual(called, [
@@ -80,10 +85,6 @@ describe('test/EggObject.test.ts', () => {
           'preDestroy',
           'destroy',
         ]);
-        // get obj from class
-        const barObj2 = await EggContainerFactory.getOrCreateEggObjectFromClazz((barProto as any).clazz, barProto.name);
-        assert.equal(barObj2, barObj);
-        assert.equal(barObj2.obj, barObj.obj);
       });
     });
   });
