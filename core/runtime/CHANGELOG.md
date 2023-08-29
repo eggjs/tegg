@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.18.0](https://github.com/eggjs/tegg/compare/v3.17.0...v3.18.0) (2023-08-29)
+
+
+### Features
+
+* add helper to get EggObject from class ([#148](https://github.com/eggjs/tegg/issues/148)) ([77eaf38](https://github.com/eggjs/tegg/commit/77eaf38383ad974b30d13f4c30c489fb7fa7274d))
+
+
+
+
+
 # [3.17.0](https://github.com/eggjs/tegg/compare/v3.16.0...v3.17.0) (2023-08-24)
 
 
