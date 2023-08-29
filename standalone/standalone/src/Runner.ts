@@ -1,19 +1,22 @@
 import { ModuleConfigUtil, ModuleReference, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
-  EggPrototype,
+  EggPrototype, EggPrototypeLifecycleUtil,
   LoadUnit,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
 } from '@eggjs/tegg-metadata';
 import {
   ContextHandler,
-  EggContainerFactory, EggContext,
+  EggContainerFactory, EggContext, EggObjectLifecycleUtil,
   LoadUnitInstance,
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
+import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
+import { EggObjectAopHook, EggPrototypeCrossCutHook, LoadUnitAopHook } from '@eggjs/tegg-aop-runtime';
+
 import { EggModuleLoader } from './EggModuleLoader';
 import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
 import { StandaloneContext } from './StandaloneContext';
@@ -21,6 +24,7 @@ import { StandaloneContextHandler } from './StandaloneContextHandler';
 import { ModuleConfigHolder, ModuleConfigs } from './ModuleConfigs';
 import { ConfigSourceQualifierAttribute } from './ConfigSource';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
+import { LoadUnitInnerClassHook } from './LoadUnitInnerClassHook';
 
 export interface RunnerOptions {
   /**
@@ -39,6 +43,12 @@ export class Runner {
   private loadUnitLoader: EggModuleLoader;
   private runnerProto: EggPrototype;
   private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
+
+  private readonly loadUnitInnerClassHook: LoadUnitInnerClassHook;
+  private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
+  private readonly loadUnitAopHook: LoadUnitAopHook;
+  private readonly eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
+  private readonly eggObjectAopHook: EggObjectAopHook;
 
   loadUnits: LoadUnit[] = [];
   loadUnitInstances: LoadUnitInstance[] = [];
@@ -96,6 +106,20 @@ export class Runner {
     this.loadUnitLoader = new EggModuleLoader(this.moduleReferences);
     const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
     LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
+
+    this.loadUnitInnerClassHook = new LoadUnitInnerClassHook();
+    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitInnerClassHook);
+
+    // TODO refactor with egg module
+    // aop runtime
+    this.crosscutAdviceFactory = new CrosscutAdviceFactory();
+    this.loadUnitAopHook = new LoadUnitAopHook(this.crosscutAdviceFactory);
+    this.eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(this.crosscutAdviceFactory);
+    this.eggObjectAopHook = new EggObjectAopHook();
+
+    EggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
+    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
+    EggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
   }
 
   async init() {
@@ -164,6 +188,20 @@ export class Runner {
     }
     if (this.configSourceEggPrototypeHook) {
       LoadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
+    }
+
+    if (this.loadUnitInnerClassHook) {
+      LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitInnerClassHook);
+    }
+
+    if (this.eggPrototypeCrossCutHook) {
+      EggPrototypeLifecycleUtil.deleteLifecycle(this.eggPrototypeCrossCutHook);
+    }
+    if (this.loadUnitAopHook) {
+      LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitAopHook);
+    }
+    if (this.eggObjectAopHook) {
+      EggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);
     }
   }
 }
