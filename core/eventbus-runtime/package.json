@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-runtime",
-  "version": "3.18.0",
+  "version": "3.18.1",
   "description": "tegg eventbus runtime",
   "keywords": [
     "egg",
@@ -37,10 +37,10 @@
     "directory": "core/eventbus-runtime"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.18.0",
-    "@eggjs/eventbus-decorator": "^3.18.0",
-    "@eggjs/tegg-common-util": "^3.18.0",
-    "@eggjs/tegg-runtime": "^3.18.0",
+    "@eggjs/core-decorator": "^3.18.1",
+    "@eggjs/eventbus-decorator": "^3.18.1",
+    "@eggjs/tegg-common-util": "^3.18.1",
+    "@eggjs/tegg-runtime": "^3.18.1",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0"
   },
@@ -48,8 +48,8 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^3.18.0",
-    "@eggjs/tegg-metadata": "^3.18.0",
+    "@eggjs/tegg-loader": "^3.18.1",
+    "@eggjs/tegg-metadata": "^3.18.1",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "coffee": "^5.4.0",
