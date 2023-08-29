@@ -46,7 +46,8 @@
     "@eggjs/tegg-lifecycle": "^3.17.0",
     "@eggjs/tegg-loader": "^3.17.0",
     "@eggjs/tegg-metadata": "^3.17.0",
-    "@eggjs/tegg-runtime": "^3.17.0"
+    "@eggjs/tegg-runtime": "^3.17.0",
+    "@eggjs/tegg-aop-runtime": "^3.17.0"
   },
   "publishConfig": {
     "access": "public"

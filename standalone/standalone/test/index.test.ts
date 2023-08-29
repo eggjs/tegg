@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import { main, StandaloneContext, Runner } from '..';
 import { ModuleConfigs } from '../src/ModuleConfigs';
 import { ModuleConfig } from 'egg';
+import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 
 describe('test/index.test.ts', () => {
   describe('simple runner', () => {
@@ -87,6 +88,30 @@ describe('test/index.test.ts', () => {
       const barContent = await fs.readFile(path.join(fixturePath, 'bar.log'), 'utf8');
       assert(fooContent.includes('hello, foo'));
       assert(barContent.includes('hello, bar'));
+    });
+  });
+
+  describe('dynamic inject', () => {
+    const fixturePath = path.join(__dirname, './fixtures/dynamic-inject-module');
+
+    it('should work', async () => {
+      const msgs = await main(fixturePath);
+      assert.deepStrictEqual(msgs, [
+        'hello, foo(context:0)',
+        'hello, bar(context:0)',
+        'hello, foo(singleton:0)',
+        'hello, bar(singleton:0)',
+      ]);
+    });
+  });
+
+  describe('aop runtime', () => {
+    const fixturePath = path.join(__dirname, './fixtures/aop-module');
+
+    it('should work', async () => {
+      const msg = await main(fixturePath);
+      assert.deepStrictEqual(msg,
+        `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`);
     });
   });
 });

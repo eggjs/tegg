@@ -5,6 +5,10 @@ import {
 } from '@eggjs/tegg';
 import { ConfigSourceQualifier, ConfigSourceQualifierAttribute } from './ConfigSource';
 
+/**
+ * Hook for inject moduleConfig.
+ * Add default qualifier value is current module name.
+ */
 export class ConfigSourceLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   async preCreate(ctx: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
     const classList = ctx.loader.load();
