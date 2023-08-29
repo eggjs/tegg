@@ -5,6 +5,7 @@ import {
   LifecycleDestroy,
   QualifierUtil,
   EggProtoImplClass,
+  AccessLevel,
 } from '@eggjs/tegg';
 import { EggObject, ModuleConfigUtil, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
 import fs from 'node:fs';
@@ -22,9 +23,14 @@ export function LogPath(name: string) {
 
 
 @MultiInstanceProto({
+  accessLevel: AccessLevel.PUBLIC,
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath);
-    return (config as any).features.logger.map(name => {
+    const logger = (config as any)?.features.logger;
+    if (!logger) {
+      return [];
+    }
+    return logger.map(name => {
       return {
         name: 'dynamicLogger',
         qualifiers: [{

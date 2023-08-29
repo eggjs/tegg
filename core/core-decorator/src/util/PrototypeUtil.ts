@@ -132,15 +132,11 @@ export class PrototypeUtil {
       return metadata;
     }
     const callBackMetadata = MetadataUtil.getMetaData<EggMultiInstanceCallbackPrototypeInfo>(this.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
-    // callback only be called once
-    // cache result to static property
     if (callBackMetadata) {
-      const metadata = {
+      return {
         ...callBackMetadata,
         objects: callBackMetadata.getObjects(ctx),
       };
-      this.setMultiInstanceStaticProperty(clazz, metadata);
-      return metadata;
     }
   }
 
