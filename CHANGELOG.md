@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.19.0](https://github.com/eggjs/tegg/compare/v3.18.1...v3.19.0) (2023-08-31)
+
+
+### Features
+
+* add LoadUnitMultiInstanceProtoHook for tegg plugin ([#150](https://github.com/eggjs/tegg/issues/150)) ([b938580](https://github.com/eggjs/tegg/commit/b9385803383dceedfc26bd990e5d752cd33f0f67))
+
+
+
+
+
 ## [3.18.1](https://github.com/eggjs/tegg/compare/v3.18.0...v3.18.1) (2023-08-29)
 
 
