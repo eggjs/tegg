@@ -8,12 +8,14 @@ import { ModuleHandler } from './lib/ModuleHandler';
 import { EggContextHandler } from './lib/EggContextHandler';
 import { hijackRunInBackground } from './lib/run_in_background';
 import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook';
+import { LoadUnitMultiInstanceProtoHook } from '@eggjs/tegg-metadata';
 
 export default class App {
   private readonly app: Application;
   private compatibleHook?: EggContextCompatibleHook;
   private eggContextHandler: EggContextHandler;
   private eggQualifierProtoHook: EggQualifierProtoHook;
+  private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
 
   constructor(app: Application) {
     this.app = app;
@@ -32,6 +34,9 @@ export default class App {
 
   async didLoad() {
     hijackRunInBackground(this.app);
+    this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
+
     // wait all file loaded, so app/ctx has all properties
     this.eggQualifierProtoHook = new EggQualifierProtoHook(this.app);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.eggQualifierProtoHook);
