@@ -32,7 +32,7 @@ export interface RunnerOptions {
    * use inner object handlers instead
    */
   innerObjects?: Record<string, object>;
-
+  env?: string;
   innerObjectHandlers?: Record<string, InnerObject[]>;
 }
 
@@ -40,6 +40,7 @@ export class Runner {
   readonly cwd: string;
   readonly moduleReferences: readonly ModuleReference[];
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
+  readonly env?: string;
   private loadUnitLoader: EggModuleLoader;
   private runnerProto: EggPrototype;
   private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
@@ -57,6 +58,7 @@ export class Runner {
 
   constructor(cwd: string, options?: RunnerOptions) {
     this.cwd = cwd;
+    this.env = options?.env;
     this.moduleReferences = ModuleConfigUtil.readModuleReference(this.cwd);
     this.moduleConfigs = {};
     this.innerObjects = {
@@ -77,13 +79,14 @@ export class Runner {
     for (const reference of this.moduleReferences) {
       const absoluteRef = {
         path: ModuleConfigUtil.resolveModuleDir(reference.path, this.cwd),
+        name: reference.name,
       };
 
       const moduleName = ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
       this.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path) || {},
+        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path, undefined, this.env) || {},
       };
     }
     for (const moduleConfig of Object.values(this.moduleConfigs)) {

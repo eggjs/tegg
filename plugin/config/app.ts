@@ -15,13 +15,14 @@ export default class App {
     for (const reference of this.app.moduleReferences) {
       const absoluteRef = {
         path: ModuleConfigUtil.resolveModuleDir(reference.path, this.app.baseDir),
+        name: reference.name,
       };
 
       const moduleName = ModuleConfigUtil.readModuleNameSync(absoluteRef.path);
       this.app.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path) || {},
+        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path, undefined, this.app.config.env) || {},
       };
     }
   }

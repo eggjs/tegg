@@ -4,8 +4,10 @@ import fs, { promises as fsPromise } from 'fs';
 import path from 'path';
 import globby from 'globby';
 import { FSUtil } from './FSUtil';
+import extend from 'extend2';
 
 export interface ModuleReference {
+  name: string;
   path: string;
 }
 
@@ -45,11 +47,17 @@ const DEFAULT_READ_MODULE_REF_OPTS = {
 };
 
 export class ModuleConfigUtil {
-  public static moduleYamlPath(modulePath: string): string {
+  public static moduleYamlPath(modulePath: string, env?: string): string {
+    if (env) {
+      return path.join(modulePath, `module.${env}.yml`);
+    }
     return path.join(modulePath, 'module.yml');
   }
 
-  public static moduleJsonPath(modulePath: string): string {
+  public static moduleJsonPath(modulePath: string, env?: string): string {
+    if (env) {
+      return path.join(modulePath, `module.${env}.json`);
+    }
     return path.join(modulePath, 'module.json');
   }
 
@@ -75,12 +83,16 @@ export class ModuleConfigUtil {
         // path.posix for windows keep path as foo/package.json
         const pkgJson = path.posix.join(moduleReferenceConfig.package, 'package.json');
         const file = require.resolve(pkgJson, options);
+        const modulePath = path.dirname(file);
         moduleReference = {
-          path: path.dirname(file),
+          path: modulePath,
+          name: ModuleConfigUtil.readModuleNameSync(modulePath),
         };
       } else if (ModuleReferenceConfigHelp.isInlineModuleReference(moduleReferenceConfig)) {
+        const modulePath = path.join(configDir, moduleReferenceConfig.path);
         moduleReference = {
-          path: path.join(configDir, moduleReferenceConfig.path),
+          path: modulePath,
+          name: ModuleConfigUtil.readModuleNameSync(modulePath),
         };
       } else {
         throw new Error('unknown type of module reference config: ' + JSON.stringify(moduleReferenceConfig));
@@ -124,13 +136,15 @@ export class ModuleConfigUtil {
       }
       moduleDirSet.add(moduleDir);
 
+      let name: string;
       try {
-        this.readModuleNameSync(moduleDir);
+        name = this.readModuleNameSync(moduleDir);
       } catch (_) {
         continue;
       }
       ref.push({
         path: moduleDir,
+        name,
       });
     }
     const moduleReferences = this.readModuleFromNodeModules(baseDir);
@@ -143,6 +157,7 @@ export class ModuleConfigUtil {
       });
       ref.push({
         path: moduleReference.path,
+        name: moduleReference.name,
       });
     }
     return ref;
@@ -169,11 +184,11 @@ export class ModuleConfigUtil {
       const absolutePkgPath = path.dirname(packageJsonPath);
       const realPkgPath = fs.realpathSync(absolutePkgPath);
       try {
-        if (this.readModuleNameSync(realPkgPath)) {
-          ref.push({
-            path: realPkgPath,
-          });
-        }
+        const name = this.readModuleNameSync(realPkgPath);
+        ref.push({
+          path: realPkgPath,
+          name,
+        });
       } catch (_) {
         continue;
       }
@@ -189,33 +204,44 @@ export class ModuleConfigUtil {
     return path.join(baseDir, 'config', moduleDir);
   }
 
+  private static getModuleName(pkg: any) {
+    assert(pkg.eggModule && pkg.eggModule.name, 'eggModule.name not found in package.json');
+    return pkg.eggModule.name;
+  }
+
   public static async readModuleName(baseDir: string, moduleDir: string): Promise<string> {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
     const pkgContent = await fsPromise.readFile(path.join(moduleDir, 'package.json'), 'utf8');
     const pkg = JSON.parse(pkgContent);
-    assert(pkg.eggModule && pkg.eggModule.name, 'eggModule.name not found in package.json');
-    return pkg.eggModule.name;
+    return ModuleConfigUtil.getModuleName(pkg);
   }
 
   public static readModuleNameSync(moduleDir: string, baseDir?: string): string {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
     const pkgContent = fs.readFileSync(path.join(moduleDir, 'package.json'), 'utf8');
     const pkg = JSON.parse(pkgContent);
-    assert(pkg.eggModule && pkg.eggModule.name, 'eggModule.name not found in package.json');
-    return pkg.eggModule.name;
+    return ModuleConfigUtil.getModuleName(pkg);
   }
 
-  public static async loadModuleConfig(moduleDir: string, baseDir?: string): Promise<ModuleConfig | undefined> {
+  public static async loadModuleConfig(moduleDir: string, baseDir?: string, env?: string): Promise<ModuleConfig | undefined> {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    const yamlConfig = await ModuleConfigUtil.loadModuleYaml(moduleDir);
-    if (yamlConfig) {
-      return yamlConfig;
+    let defaultConfig = await ModuleConfigUtil.loadModuleYaml(moduleDir);
+    if (!defaultConfig) {
+      defaultConfig = await ModuleConfigUtil.loadModuleJson(moduleDir);
     }
-    return await ModuleConfigUtil.loadModuleJson(moduleDir);
+    let envConfig: ModuleConfig | undefined;
+    if (env) {
+      envConfig = await ModuleConfigUtil.loadModuleYaml(moduleDir, env);
+      if (!envConfig) {
+        envConfig = await ModuleConfigUtil.loadModuleJson(moduleDir, env);
+      }
+    }
+    extend(true, defaultConfig, envConfig);
+    return defaultConfig;
   }
 
-  private static async loadModuleJson(moduleDir: string): Promise<ModuleConfig | undefined> {
-    const moduleJsonPath = ModuleConfigUtil.moduleJsonPath(moduleDir);
+  private static async loadModuleJson(moduleDir: string, env?: string): Promise<ModuleConfig | undefined> {
+    const moduleJsonPath = ModuleConfigUtil.moduleJsonPath(moduleDir, env);
     const moduleJsonPathExists = await FSUtil.fileExists(moduleJsonPath);
     if (!moduleJsonPathExists) {
       return;
@@ -225,8 +251,8 @@ export class ModuleConfigUtil {
     return moduleJson.config;
   }
 
-  private static async loadModuleYaml(moduleDir: string): Promise<ModuleConfig | undefined> {
-    const moduleYamlPath = ModuleConfigUtil.moduleYamlPath(moduleDir);
+  private static async loadModuleYaml(moduleDir: string, env?: string): Promise<ModuleConfig | undefined> {
+    const moduleYamlPath = ModuleConfigUtil.moduleYamlPath(moduleDir, env);
     const moduleYamlPathExists = await FSUtil.fileExists(moduleYamlPath);
     if (!moduleYamlPathExists) {
       return;
@@ -235,17 +261,25 @@ export class ModuleConfigUtil {
     return yaml.safeLoad(moduleYamlContent) as ModuleConfigUtil;
   }
 
-  public static loadModuleConfigSync(moduleDir: string, baseDir?: string): ModuleConfig | undefined {
+  public static loadModuleConfigSync(moduleDir: string, baseDir?: string, env?: string): ModuleConfig | undefined {
     moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    const yamlConfig = ModuleConfigUtil.loadModuleYamlSync(moduleDir);
-    if (yamlConfig) {
-      return yamlConfig;
+    let defaultConfig = ModuleConfigUtil.loadModuleYamlSync(moduleDir);
+    if (!defaultConfig) {
+      defaultConfig = ModuleConfigUtil.loadModuleJsonSync(moduleDir);
     }
-    return ModuleConfigUtil.loadModuleJsonSync(moduleDir);
+    let envConfig: ModuleConfig | undefined;
+    if (env) {
+      envConfig = ModuleConfigUtil.loadModuleYamlSync(moduleDir, env);
+      if (!envConfig) {
+        envConfig = ModuleConfigUtil.loadModuleJsonSync(moduleDir, env);
+      }
+    }
+    extend(true, defaultConfig, envConfig);
+    return defaultConfig;
   }
 
-  private static loadModuleJsonSync(moduleDir: string): ModuleConfig | undefined {
-    const moduleJsonPath = ModuleConfigUtil.moduleJsonPath(moduleDir);
+  private static loadModuleJsonSync(moduleDir: string, env?: string): ModuleConfig | undefined {
+    const moduleJsonPath = ModuleConfigUtil.moduleJsonPath(moduleDir, env);
     const moduleJsonPathExists = fs.existsSync(moduleJsonPath);
     if (!moduleJsonPathExists) {
       return;
@@ -255,8 +289,8 @@ export class ModuleConfigUtil {
     return moduleJson.config;
   }
 
-  private static loadModuleYamlSync(moduleDir: string): ModuleConfig | undefined {
-    const moduleYamlPath = ModuleConfigUtil.moduleYamlPath(moduleDir);
+  private static loadModuleYamlSync(moduleDir: string, env?: string): ModuleConfig | undefined {
+    const moduleYamlPath = ModuleConfigUtil.moduleYamlPath(moduleDir, env);
     const moduleYamlPathExists = fs.existsSync(moduleYamlPath);
     if (!moduleYamlPathExists) {
       return;
