@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.20.0](https://github.com/eggjs/tegg/compare/v3.19.0...v3.20.0) (2023-09-07)
+
+
+### Features
+
+* support load module config with env ([#151](https://github.com/eggjs/tegg/issues/151)) ([c087226](https://github.com/eggjs/tegg/commit/c087226bd7764242fadce5622fccd9e9fee56322))
+
+
+
+
+
 # [3.19.0](https://github.com/eggjs/tegg/compare/v3.18.1...v3.19.0) (2023-08-31)
 
 
