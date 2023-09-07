@@ -32,6 +32,7 @@ describe('test/ReadModule.test.ts', () => {
         config: {},
         name: 'moduleA',
         reference: {
+          name: 'moduleA',
           path: path.join(fixturesPath, 'app/module-a'),
         },
       },

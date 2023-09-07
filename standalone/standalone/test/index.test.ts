@@ -54,6 +54,19 @@ describe('test/index.test.ts', () => {
         },
       });
     });
+
+    it('should work with env', async () => {
+      const config = await main(path.join(__dirname, './fixtures/module-with-env-config'), {
+        env: 'dev',
+      });
+      assert.deepStrictEqual(config, {
+        features: {
+          dynamic: {
+            foo: 'foo',
+          },
+        },
+      });
+    });
   });
 
   describe('@ConfigSource qualifier', () => {
