@@ -33,6 +33,7 @@ export interface RunnerOptions {
    */
   innerObjects?: Record<string, object>;
   env?: string;
+  name?: string;
   innerObjectHandlers?: Record<string, InnerObject[]>;
 }
 
@@ -41,6 +42,7 @@ export class Runner {
   readonly moduleReferences: readonly ModuleReference[];
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   readonly env?: string;
+  readonly name?: string;
   private loadUnitLoader: EggModuleLoader;
   private runnerProto: EggPrototype;
   private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
@@ -59,6 +61,7 @@ export class Runner {
   constructor(cwd: string, options?: RunnerOptions) {
     this.cwd = cwd;
     this.env = options?.env;
+    this.name = options?.name;
     this.moduleReferences = ModuleConfigUtil.readModuleReference(this.cwd);
     this.moduleConfigs = {};
     this.innerObjects = {
@@ -70,6 +73,8 @@ export class Runner {
 
     const runtimeConfig: Partial<RuntimeConfig> = {
       baseDir: this.cwd,
+      name: this.name,
+      env: this.env,
     };
     // Inject runtimeConfig
     this.innerObjects.runtimeConfig = [{
