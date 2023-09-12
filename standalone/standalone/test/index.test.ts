@@ -84,7 +84,23 @@ describe('test/index.test.ts', () => {
   describe('runner with runtimeConfig', () => {
     it('should work', async () => {
       const msg = await main(path.join(__dirname, './fixtures/runtime-config'));
-      assert.deepEqual(msg, { baseDir: path.join(__dirname, './fixtures/runtime-config') });
+      assert.deepEqual(msg, {
+        baseDir: path.join(__dirname, './fixtures/runtime-config'),
+        env: undefined,
+        name: undefined,
+      });
+    });
+
+    it('should auto set name and env', async () => {
+      const msg = await main(path.join(__dirname, './fixtures/runtime-config'), {
+        name: 'foo',
+        env: 'unittest',
+      });
+      assert.deepEqual(msg, {
+        baseDir: path.join(__dirname, './fixtures/runtime-config'),
+        name: 'foo',
+        env: 'unittest',
+      });
     });
   });
 
