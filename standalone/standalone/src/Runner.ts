@@ -134,7 +134,7 @@ export class Runner {
     LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
   }
 
-  async init() {
+  async load() {
     StandaloneContextHandler.register();
     LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
       return new StandaloneLoadUnit(this.innerObjects);
@@ -146,8 +146,11 @@ export class Runner {
       },
     });
     const loadUnits = await this.loadUnitLoader.load();
-    this.loadUnits = [ standaloneLoadUnit, ...loadUnits ];
+    return [ standaloneLoadUnit, ...loadUnits ];
+  }
 
+  async init() {
+    this.loadUnits = await this.load();
     const instances: LoadUnitInstance[] = [];
     for (const loadUnit of this.loadUnits) {
       const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
