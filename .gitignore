@@ -38,3 +38,5 @@ plugin/dal/test/fixtures/modules/*/dal/
 !plugin/orm/test/fixtures/prepare.js
 !benchmark/**/*.js
 plugin/tegg/test/fixtures/apps/**/*.js
+!standalone/standalone/test/fixtures/**/node_modules
+!standalone/standalone/test/fixtures/**/node_modules/**/*.js
