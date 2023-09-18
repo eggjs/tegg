@@ -14,6 +14,17 @@ describe('test/index.test.ts', () => {
     });
   });
 
+  describe('runner with dependency', () => {
+    it('should work', async () => {
+      const msg: string = await main(path.join(__dirname, './fixtures/dependency'), {
+        dependencies: [
+          path.join(__dirname, './fixtures/dependency/node_modules/dependency-1'),
+        ],
+      });
+      assert(msg === 'hello!{"features":{"dynamic":{"foo":"bar"}}}');
+    });
+  });
+
   describe('runner with inner object', () => {
     it('should work', async () => {
       const msg: string = await main(path.join(__dirname, './fixtures/inner-object'), {

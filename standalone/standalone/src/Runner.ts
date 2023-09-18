@@ -1,4 +1,4 @@
-import { ModuleConfigUtil, ModuleReference, RuntimeConfig } from '@eggjs/tegg-common-util';
+import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
   EggPrototype, EggPrototypeLifecycleUtil,
   LoadUnit,
@@ -26,6 +26,10 @@ import { ConfigSourceQualifierAttribute } from './ConfigSource';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
 import { LoadUnitInnerClassHook } from './LoadUnitInnerClassHook';
 
+export interface ModuleDependency extends ReadModuleReferenceOptions {
+  baseDir: string;
+}
+
 export interface RunnerOptions {
   /**
    * @deprecated
@@ -35,6 +39,7 @@ export interface RunnerOptions {
   env?: string;
   name?: string;
   innerObjectHandlers?: Record<string, InnerObject[]>;
+  dependencies?: (string | ModuleDependency)[];
 }
 
 export class Runner {
@@ -62,7 +67,11 @@ export class Runner {
     this.cwd = cwd;
     this.env = options?.env;
     this.name = options?.name;
-    this.moduleReferences = ModuleConfigUtil.readModuleReference(this.cwd);
+    const moduleDirs = (options?.dependencies || []).concat(this.cwd);
+    this.moduleReferences = moduleDirs.reduce((list, baseDir) => {
+      const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
+      return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
+    }, [] as readonly ModuleReference[]);
     this.moduleConfigs = {};
     this.innerObjects = {
       moduleConfigs: [{
