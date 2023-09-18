@@ -67,7 +67,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
   }
 
   hasMethodAcl(method: HTTPMethodMeta): boolean {
-    return method.needAcL || this.needAcl;
+    return method.needAcl || this.needAcl;
   }
 
   getMethodAcl(method: HTTPMethodMeta): string | undefined {
