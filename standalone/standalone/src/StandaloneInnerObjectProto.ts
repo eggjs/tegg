@@ -25,7 +25,6 @@ export class StandaloneInnerObjectProto implements EggPrototype {
   readonly accessLevel: AccessLevel;
   readonly injectObjects: InjectObjectProto[];
   readonly loadUnitId: Id;
-  readonly className?: string;
 
   constructor(
     id: string,
@@ -34,7 +33,6 @@ export class StandaloneInnerObjectProto implements EggPrototype {
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
-    className?: string,
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -44,7 +42,6 @@ export class StandaloneInnerObjectProto implements EggPrototype {
     this.injectObjects = [];
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
-    this.className = className;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -76,10 +73,9 @@ export class StandaloneInnerObjectProto implements EggPrototype {
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;
     const name = ctx.prototypeInfo.name;
-    const className = ctx.prototypeInfo.className;
     const id = IdenticalUtil.createProtoId(loadUnit.id, name);
     const proto = new StandaloneInnerObjectProto(
-      id, name, clazz, ctx.prototypeInfo.initType, loadUnit.id, QualifierUtil.getProtoQualifiers(clazz), className,
+      id, name, clazz, ctx.prototypeInfo.initType, loadUnit.id, QualifierUtil.getProtoQualifiers(clazz),
     );
     return proto;
   }
