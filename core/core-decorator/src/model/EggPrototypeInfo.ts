@@ -26,4 +26,8 @@ export interface EggPrototypeInfo {
    * EggPrototype qualifiers
    */
   qualifiers?: QualifierInfo[];
+  /**
+   * The class name of the object
+   */
+  className?: string;
 }
