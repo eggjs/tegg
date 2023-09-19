@@ -28,6 +28,7 @@ export class EggPrototypeCreatorFactory {
           initType: multiInstanceProtoInfo.initType,
           accessLevel: multiInstanceProtoInfo.accessLevel,
           qualifiers: obj.qualifiers,
+          className: multiInstanceProtoInfo.className,
         });
       }
     } else {

@@ -11,6 +11,10 @@ export interface EggPrototypeInfo {
    */
   name: EggPrototypeName;
   /**
+   * The class name of the object
+   */
+  className: string;
+  /**
    * obj init type
    */
   initType: ObjectInitTypeLike;
@@ -26,8 +30,4 @@ export interface EggPrototypeInfo {
    * EggPrototype qualifiers
    */
   qualifiers?: QualifierInfo[];
-  /**
-   * The class name of the object
-   */
-  className?: string;
 }
