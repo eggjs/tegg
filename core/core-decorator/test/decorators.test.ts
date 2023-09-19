@@ -114,6 +114,7 @@ describe('test/decorator.test.ts', () => {
             value: 'foo2',
           }],
         }],
+        className: 'FooLogger',
       };
       assert.deepStrictEqual(PrototypeUtil.getMultiInstanceProperty(FooLogger, {
         unitPath: 'foo',
