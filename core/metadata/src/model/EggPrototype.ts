@@ -45,7 +45,7 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   readonly accessLevel: AccessLevel;
   readonly loadUnitId: string;
   readonly injectObjects: InjectObjectProto[];
-  readonly className: string;
+  readonly className?: string;
 
   /**
    * get metedata for key

@@ -40,7 +40,7 @@ export class EggPrototypeBuilder {
   private injectObjects: Array<InjectObject> = [];
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
-  private className: string;
+  private className?: string;
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;

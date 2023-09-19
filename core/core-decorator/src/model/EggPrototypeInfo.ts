@@ -13,7 +13,7 @@ export interface EggPrototypeInfo {
   /**
    * The class name of the object
    */
-  className: string;
+  className?: string;
   /**
    * obj init type
    */

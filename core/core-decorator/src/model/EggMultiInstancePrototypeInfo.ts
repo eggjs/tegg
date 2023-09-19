@@ -16,7 +16,7 @@ export interface EggMultiInstancePrototypeInfo {
   /**
    * The class name of the object
    */
-  className: string;
+  className?: string;
   /**
    * obj init type
    */
@@ -40,7 +40,7 @@ export interface EggMultiInstanceCallbackPrototypeInfo {
   /**
    * The class name of the object
    */
-  className: string;
+  className?: string;
   /**
    * obj init type
    */
