@@ -28,6 +28,7 @@ describe('test/decorator.test.ts', () => {
         initType: ObjectInitType.CONTEXT,
         accessLevel: AccessLevel.PUBLIC,
         protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        className: 'ContextCache',
       };
       assert.deepStrictEqual(PrototypeUtil.getProperty(ContextCache), expectObjectProperty);
     });
@@ -41,6 +42,7 @@ describe('test/decorator.test.ts', () => {
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PUBLIC,
         protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        className: 'SingletonCache',
       };
       assert.deepStrictEqual(PrototypeUtil.getProperty(SingletonCache), expectObjectProperty);
     });

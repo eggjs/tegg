@@ -161,4 +161,39 @@ describe('test/index.test.ts', () => {
         `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`);
     });
   });
+
+  describe('load', () => {
+    let runner: Runner;
+    afterEach(async () => {
+      if (runner) await runner.destroy();
+    });
+
+    it('should work', async () => {
+      runner = new Runner(path.join(__dirname, './fixtures/simple'));
+      const loadunits = await runner.load();
+      for (const loadunit of loadunits) {
+        for (const proto of loadunit.iterateEggPrototype()) {
+          if (proto.id.match(/:hello$/)) {
+            assert.strictEqual(proto.className, 'Hello');
+          } else if (proto.id.match(/:moduleConfigs$/)) {
+            assert.strictEqual(proto.className, undefined);
+          } else if (proto.id.match(/:moduleConfig$/)) {
+            assert.strictEqual(proto.className, undefined);
+          }
+        }
+      }
+    });
+
+    it('should work with multi', async () => {
+      runner = new Runner(path.join(__dirname, './fixtures/multi-callback-instance-module'));
+      const loadunits = await runner.load();
+      for (const loadunit of loadunits) {
+        for (const proto of loadunit.iterateEggPrototype()) {
+          if (proto.id.match(/:dynamicLogger$/)) {
+            assert.strictEqual(proto.className, 'DynamicLogger');
+          }
+        }
+      }
+    });
+  });
 });

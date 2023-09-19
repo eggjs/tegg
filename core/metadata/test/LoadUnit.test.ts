@@ -17,9 +17,10 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const appRepoProto = loadUnit.getEggPrototype('appRepo', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
       const sprintRepoProto = loadUnit.getEggPrototype('sprintRepo', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
       const userRepoProto = loadUnit.getEggPrototype('userRepo', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
-      assert(appRepoProto);
-      assert(sprintRepoProto);
-      assert(userRepoProto);
+      assert.strictEqual(appRepoProto.length, 1);
+      assert.strictEqual(appRepoProto[0].className, 'AppRepo');
+      assert.strictEqual(sprintRepoProto.length, 1);
+      assert.strictEqual(userRepoProto.length, 1);
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
     });
 
@@ -92,6 +93,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const foo2Prototype = loadUnit.getEggPrototype('foo', [{ attribute: FOO_ATTRIBUTE, value: 'foo2' }]);
       assert(foo1Prototype);
       assert(foo1Prototype.length === 1);
+      assert.strictEqual(foo1Prototype[0].className, 'FooLogger');
       assert(foo2Prototype);
       assert(foo2Prototype.length === 1);
       await LoadUnitFactory.destroyLoadUnit(loadUnit);

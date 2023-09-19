@@ -20,6 +20,7 @@ export class EggPrototypeImpl implements EggPrototype {
   readonly accessLevel: AccessLevel;
   readonly injectObjects: InjectObjectProto[];
   readonly loadUnitId: Id;
+  readonly className?: string;
 
   constructor(
     id: string,
@@ -31,6 +32,7 @@ export class EggPrototypeImpl implements EggPrototype {
     injectObjectMap: InjectObjectProto[],
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
+    className?: string,
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -41,6 +43,7 @@ export class EggPrototypeImpl implements EggPrototype {
     this.injectObjects = injectObjectMap;
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
+    this.className = className;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
