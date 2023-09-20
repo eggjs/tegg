@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.23.0](https://github.com/eggjs/tegg/compare/v3.22.0...v3.23.0) (2023-09-20)
+
+
+### Bug Fixes
+
+* typo `acL` to `acl` ([#156](https://github.com/eggjs/tegg/issues/156)) ([a775d34](https://github.com/eggjs/tegg/commit/a775d34d38c481c5f9e90504224553d31ad728d3))
+
+
+
+
+
 # [3.20.0](https://github.com/eggjs/tegg/compare/v3.19.0...v3.20.0) (2023-09-07)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
