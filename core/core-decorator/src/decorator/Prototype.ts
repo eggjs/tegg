@@ -26,6 +26,7 @@ export function Prototype(param?: PrototypeParams) {
     const property: Partial<EggPrototypeInfo> = {
       ...DEFAULT_PARAMS,
       ...param,
+      className: clazz.name,
     };
     if (!property.name) {
       property.name = NameUtil.getClassName(clazz);

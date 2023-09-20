@@ -40,6 +40,7 @@ export class EggPrototypeBuilder {
   private injectObjects: Array<InjectObject> = [];
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
+  private className?: string;
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;
@@ -48,6 +49,7 @@ export class EggPrototypeBuilder {
     const builder = new EggPrototypeBuilder();
     builder.clazz = clazz;
     builder.name = ctx.prototypeInfo.name;
+    builder.className = ctx.prototypeInfo.className;
     builder.initType = ctx.prototypeInfo.initType;
     builder.accessLevel = ctx.prototypeInfo.accessLevel;
     builder.filepath = filepath!;
@@ -131,6 +133,7 @@ export class EggPrototypeBuilder {
       injectObjectProtos,
       this.loadUnit.id,
       this.qualifiers,
+      this.className,
     );
   }
 }

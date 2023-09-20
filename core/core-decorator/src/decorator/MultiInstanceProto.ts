@@ -52,16 +52,17 @@ export function MultiInstanceProto(param: MultiInstancePrototypeParams) {
       const property: EggMultiInstancePrototypeInfo = {
         ...DEFAULT_PARAMS,
         ...param as MultiInstancePrototypeStaticParams,
+        className: clazz.name,
       };
       PrototypeUtil.setMultiInstanceStaticProperty(clazz, property);
     } else if ((param as MultiInstancePrototypeCallbackParams).getObjects) {
       const property: EggMultiInstanceCallbackPrototypeInfo = {
         ...DEFAULT_PARAMS,
         ...param as MultiInstancePrototypeCallbackParams,
+        className: clazz.name,
       };
       PrototypeUtil.setMultiInstanceCallbackProperty(clazz, property);
     }
-
 
     // './tegg/core/common-util/src/StackUtil.ts',
     // './tegg/core/core-decorator/src/decorator/Prototype.ts',

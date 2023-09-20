@@ -14,6 +14,10 @@ export interface MultiInstancePrototypeGetObjectsContext {
 
 export interface EggMultiInstancePrototypeInfo {
   /**
+   * The class name of the object
+   */
+  className?: string;
+  /**
    * obj init type
    */
   initType: ObjectInitTypeLike;
@@ -33,6 +37,10 @@ export interface EggMultiInstancePrototypeInfo {
 }
 
 export interface EggMultiInstanceCallbackPrototypeInfo {
+  /**
+   * The class name of the object
+   */
+  className?: string;
   /**
    * obj init type
    */
