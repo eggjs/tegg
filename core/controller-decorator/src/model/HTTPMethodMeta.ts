@@ -8,7 +8,20 @@ export abstract class ParamMeta {
 
   abstract validate(httpPath: string);
 }
+export class RequestParamMeta extends ParamMeta {
+  type = HTTPParamType.REQUEST;
 
+  validate() {
+    return;
+  }
+}
+export class ResponseParamMeta extends ParamMeta {
+  type = HTTPParamType.RESPONSE;
+
+  validate() {
+    return;
+  }
+}
 export class BodyParamMeta extends ParamMeta {
   type = HTTPParamType.BODY;
 
@@ -117,6 +130,12 @@ export class ParamMetaUtil {
       case HTTPParamType.QUERY: {
         assert(name, 'query param must has name');
         return new QueryParamMeta(name!);
+      }
+      case HTTPParamType.REQUEST: {
+        return new RequestParamMeta();
+      }
+      case HTTPParamType.RESPONSE: {
+        return new ResponseParamMeta();
       }
       default:
         assert.fail('never arrive');

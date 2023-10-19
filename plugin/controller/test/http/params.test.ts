@@ -98,4 +98,47 @@ describe('test/params.test.ts', () => {
         });
       });
   });
+
+  it('body param should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .post('/apps')
+      .send({
+        name: 'foo',
+        desc: 'mock-desc',
+      })
+      .expect(200)
+      .expect(res => {
+        assert(res.body.success === true);
+        assert(res.body.traceId);
+      });
+  });
+
+  it('InjectHTTPRequest should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .post('/apps')
+      .send({
+        name: 'foo',
+        desc: 'mock-desc',
+      })
+      .expect(200)
+      .expect(res => {
+        assert(res.body.request);
+      });
+  });
+
+  it('InjectHTTPResponse should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .post('/apps')
+      .send({
+        name: 'foo',
+        desc: 'mock-desc',
+      })
+      .expect(200)
+      .expect(res => {
+        assert(res.body.response);
+      });
+  });
 });

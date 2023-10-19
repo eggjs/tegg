@@ -7,6 +7,8 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPQuery,
+  InjectHTTPRequest,
+  InjectHTTPResponse,
   Middleware,
   Inject,
 } from '@eggjs/tegg';
@@ -52,12 +54,14 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '',
   })
-  async save(@Context() ctx: EggContext, @HTTPBody() app: App) {
+  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @InjectHTTPRequest()request: any, @InjectHTTPResponse()response: any) {
     const traceId = await ctx.tracer.traceId;
     await this.appService.save(app);
     return {
       success: true,
       traceId,
+      request,
+      response,
     };
   }
 }

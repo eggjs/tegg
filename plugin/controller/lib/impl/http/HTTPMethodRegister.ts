@@ -90,6 +90,14 @@ export class HTTPMethodRegister {
             args[index] = ctx.queries[queryParam.name];
             break;
           }
+          case HTTPParamType.REQUEST: {
+            args[index] = ctx.request;
+            break;
+          }
+          case HTTPParamType.RESPONSE: {
+            args[index] = ctx.response;
+            break;
+          }
           default:
             assert.fail('never arrive');
         }
