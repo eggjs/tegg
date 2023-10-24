@@ -94,10 +94,6 @@ export class HTTPMethodRegister {
             args[index] = ctx.request;
             break;
           }
-          case HTTPParamType.RESPONSE: {
-            args[index] = ctx.response;
-            break;
-          }
           default:
             assert.fail('never arrive');
         }

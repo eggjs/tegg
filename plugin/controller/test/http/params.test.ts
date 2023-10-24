@@ -127,18 +127,4 @@ describe('test/params.test.ts', () => {
         assert(res.body.request);
       });
   });
-
-  it('InjectHTTPResponse should work', async () => {
-    app.mockCsrf();
-    await app.httpRequest()
-      .post('/apps')
-      .send({
-        name: 'foo',
-        desc: 'mock-desc',
-      })
-      .expect(200)
-      .expect(res => {
-        assert(res.body.response);
-      });
-  });
 });

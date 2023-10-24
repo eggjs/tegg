@@ -36,5 +36,4 @@ export enum HTTPParamType {
   BODY = 'BODY',
   PARAM = 'PARAM',
   REQUEST = 'REQUEST',
-  RESPONSE = 'RESPONSE',
 }

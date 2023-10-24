@@ -15,13 +15,7 @@ export class RequestParamMeta extends ParamMeta {
     return;
   }
 }
-export class ResponseParamMeta extends ParamMeta {
-  type = HTTPParamType.RESPONSE;
 
-  validate() {
-    return;
-  }
-}
 export class BodyParamMeta extends ParamMeta {
   type = HTTPParamType.BODY;
 
@@ -133,9 +127,6 @@ export class ParamMetaUtil {
       }
       case HTTPParamType.REQUEST: {
         return new RequestParamMeta();
-      }
-      case HTTPParamType.RESPONSE: {
-        return new ResponseParamMeta();
       }
       default:
         assert.fail('never arrive');
