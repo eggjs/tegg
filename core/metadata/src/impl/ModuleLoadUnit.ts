@@ -32,13 +32,14 @@ class ProtoNode implements GraphNodeObj {
   readonly qualifiers: QualifierInfo[];
   readonly initType: ObjectInitTypeLike;
 
-  constructor(clazz: EggProtoImplClass) {
-    const property = PrototypeUtil.getProperty(clazz)!;
-    this.name = property.name;
+  constructor(clazz: EggProtoImplClass, objName: EggPrototypeName, unitPath: string) {
+    this.name = objName;
     this.id = '' + (id++);
     this.clazz = clazz;
     this.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
-    this.initType = property.initType;
+    this.initType = PrototypeUtil.getInitType(clazz, {
+      unitPath,
+    })!;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -63,10 +64,12 @@ class ProtoNode implements GraphNodeObj {
 export class ModuleGraph {
   private graph: Graph<ProtoNode>;
   clazzList: EggProtoImplClass[];
+  readonly unitPath: string;
 
-  constructor(clazzList: EggProtoImplClass[]) {
+  constructor(clazzList: EggProtoImplClass[], unitPath: string) {
     this.clazzList = clazzList;
     this.graph = new Graph<ProtoNode>();
+    this.unitPath = unitPath;
     this.build();
   }
 
@@ -96,7 +99,15 @@ export class ModuleGraph {
   }
 
   private build() {
-    const protoGraphNodes = this.clazzList.map(t => new GraphNode(new ProtoNode(t)));
+    const protoGraphNodes: GraphNode<ProtoNode>[] = [];
+    for (const clazz of this.clazzList) {
+      const objNames = PrototypeUtil.getObjNames(clazz, {
+        unitPath: this.unitPath,
+      });
+      for (const objName of objNames) {
+        protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, objName, this.unitPath)));
+      }
+    }
     for (const node of protoGraphNodes) {
       if (!this.graph.addVertex(node)) {
         throw new Error(`duplicate proto: ${node.val.id}`);
@@ -120,7 +131,11 @@ export class ModuleGraph {
     if (loopPath) {
       throw new Error('proto has recursive deps: ' + loopPath);
     }
-    this.clazzList = this.graph.sort().map(t => t.val.clazz);
+    const clazzSet = new Set<EggProtoImplClass>();
+    for (const clazz of this.graph.sort()) {
+      clazzSet.add(clazz.val.clazz);
+    }
+    this.clazzList = Array.from(clazzSet);
   }
 }
 
@@ -144,10 +159,11 @@ export class ModuleLoadUnit implements LoadUnit {
   private loadClazz(): EggProtoImplClass[] {
     const clazzList = this.loader.load();
     for (const clazz of clazzList) {
-      const property = PrototypeUtil.getProperty(clazz)!;
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
-        value: property.initType,
+        value: PrototypeUtil.getInitType(clazz, {
+          unitPath: this.unitPath,
+        })!,
       }, {
         attribute: LoadUnitNameQualifierAttribute,
         value: this.name,
@@ -161,12 +177,14 @@ export class ModuleLoadUnit implements LoadUnit {
 
   async init() {
     const clazzList = this.loadClazz();
-    const protoGraph = new ModuleGraph(clazzList);
+    const protoGraph = new ModuleGraph(clazzList, this.unitPath);
     protoGraph.sort();
     this.clazzList = protoGraph.clazzList;
     for (const clazz of this.clazzList) {
-      const proto = await EggPrototypeCreatorFactory.createProto(clazz, this);
-      EggPrototypeFactory.instance.registerPrototype(proto, this);
+      const protos = await EggPrototypeCreatorFactory.createProto(clazz, this);
+      for (const proto of protos) {
+        EggPrototypeFactory.instance.registerPrototype(proto, this);
+      }
     }
   }
 

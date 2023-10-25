@@ -1,7 +1,6 @@
 import { LifecycleContext, LifecycleObject } from '@eggjs/tegg-lifecycle';
 import { EggObjectName, EggPrototypeName } from '@eggjs/core-decorator';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { EggContext } from './EggContext';
 import { EggObject } from './EggObject';
 
 export interface EggContainer<T extends LifecycleContext> extends LifecycleObject<T> {
@@ -12,9 +11,9 @@ export interface EggContainer<T extends LifecycleContext> extends LifecycleObjec
   deleteProtoToCreate(name: EggPrototypeName);
 
   // async method for get or create object
-  getOrCreateEggObject(name: EggPrototypeName, proto: EggPrototype, ctx?: EggContext): Promise<EggObject>;
+  getOrCreateEggObject(name: EggPrototypeName, proto: EggPrototype): Promise<EggObject>;
 
   // sync method for get object
   // object should be created before get, or throw Error
-  getEggObject(name: EggPrototypeName, proto: EggPrototype, ctx?: EggContext): EggObject;
+  getEggObject(name: EggPrototypeName, proto: EggPrototype): EggObject;
 }

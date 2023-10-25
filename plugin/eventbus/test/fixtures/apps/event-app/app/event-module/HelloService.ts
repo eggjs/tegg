@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject, EventBus } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject, ContextEventBus } from '@eggjs/tegg';
 
 declare module '@eggjs/tegg' {
   interface Events {
@@ -12,7 +12,15 @@ declare module '@eggjs/tegg' {
 })
 export class HelloService {
   @Inject()
-  private readonly eventBus: EventBus;
+  private readonly eventBus: ContextEventBus;
+
+  cork() {
+    this.eventBus.cork();
+  }
+
+  uncork() {
+    this.eventBus.uncork();
+  }
 
   hello() {
     this.eventBus.emit('helloEgg', '01');

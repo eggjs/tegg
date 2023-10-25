@@ -1,5 +1,13 @@
 import { AccessLevel, ContextProto, SingletonProto } from '@eggjs/core-decorator';
-import { EggObjectLifecycle } from '@eggjs/tegg-lifecycle';
+import {
+  EggObjectLifecycle,
+  LifecyclePostConstruct,
+  LifecyclePreInject,
+  LifecyclePostInject,
+  LifecycleInit,
+  LifecyclePreDestroy,
+  LifecycleDestroy,
+} from '@eggjs/tegg-lifecycle';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -43,7 +51,7 @@ export class Foo implements EggObjectLifecycle {
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class Bar implements EggObjectLifecycle {
+export class Bar {
   private called: string[] = [];
 
   getLifecycleCalled() {
@@ -54,27 +62,37 @@ export class Bar implements EggObjectLifecycle {
     this.called.push('construct');
   }
 
-  async postConstruct(): Promise<void> {
+  @LifecyclePostConstruct()
+  protected async _postConstruct() {
     this.called.push('postConstruct');
   }
 
-  async preInject(): Promise<void> {
+  @LifecyclePreInject()
+  protected async _preInject() {
     this.called.push('preInject');
   }
 
-  async postInject(): Promise<void> {
+  @LifecyclePostInject()
+  protected async _postInject() {
     this.called.push('postInject');
   }
 
-  async init(): Promise<void> {
+  protected async init() {
+    this.called.push('init should not called');
+  }
+
+  @LifecycleInit()
+  protected async _init() {
     this.called.push('init');
   }
 
-  async preDestroy(): Promise<void> {
+  @LifecyclePreDestroy()
+  protected async _preDestroy() {
     this.called.push('preDestroy');
   }
 
-  async destroy(): Promise<void> {
+  @LifecycleDestroy()
+  protected async _destroy() {
     this.called.push('destroy');
   }
 }

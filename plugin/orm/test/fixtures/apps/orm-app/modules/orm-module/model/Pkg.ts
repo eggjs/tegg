@@ -1,7 +1,9 @@
 import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
 import { DataTypes, Bone } from 'leoric';
 
-@Model()
+@Model({
+  dataSource: 'test',
+})
 export class Pkg extends Bone {
   @Attribute(DataTypes.STRING)
   name: string;

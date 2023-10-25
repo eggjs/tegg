@@ -4,11 +4,13 @@ import { IAdvice } from '../decorator/Advice';
 export interface AdviceInfo {
   clazz: EggProtoImplClass<IAdvice>;
   order: number;
+  adviceParams: any;
 }
 
 export interface AspectAdvice {
   name: string;
   clazz: EggProtoImplClass<IAdvice>;
+  adviceParams: any;
 }
 
 export class Aspect {
@@ -44,6 +46,7 @@ export class AspectBuilder {
       return {
         clazz: t.clazz,
         name: this.adviceName(t.clazz, i),
+        adviceParams: t.adviceParams,
       };
     });
     return new Aspect(this.clazz, this.method, aspectAdviceList);

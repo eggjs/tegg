@@ -9,6 +9,19 @@ export type EventName = string | symbol;
  * use `emit` to emit a event
  */
 export interface EventBus extends Pick<TypedEventEmitter<Events>, 'emit'> {
+  cork(corkId: string);
+
+  /**
+   * @return true if uncorked
+   */
+  uncork(corkId: string): boolean;
+}
+
+export const CORK_ID = Symbol.for('eventBus#corkId');
+
+export interface ContextEventBus extends EventBus {
+  cork();
+  uncork();
 }
 
 export type EventKeys = keyof Events;

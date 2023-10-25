@@ -4,7 +4,7 @@ import {
   AccessLevel,
   ObjectInitTypeLike,
   MetaDataKey,
-  EggProtoImplClass,
+  EggProtoImplClass, EggPrototypeInfo, QualifierValue, QualifierAttribute,
 } from '@eggjs/core-decorator';
 import { LifecycleObject, LifecycleContext, LifecycleUtil } from '@eggjs/tegg-lifecycle';
 import { LoadUnit } from './LoadUnit';
@@ -32,6 +32,7 @@ export type EggPrototypeClass = new (...args: any[]) => EggPrototype;
 
 export interface EggPrototypeLifecycleContext extends LifecycleContext {
   clazz: EggProtoImplClass;
+  prototypeInfo: EggPrototypeInfo;
   loadUnit: LoadUnit;
 }
 
@@ -44,6 +45,7 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   readonly accessLevel: AccessLevel;
   readonly loadUnitId: string;
   readonly injectObjects: InjectObjectProto[];
+  readonly className?: string;
 
   /**
    * get metedata for key
@@ -62,6 +64,7 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
    */
   verifyQualifier(qualifier: QualifierInfo): boolean;
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean;
+  getQualifier(attribute: QualifierAttribute): QualifierValue | undefined
 
   /**
    * construct egg object, not trigger lifecycle method/hook

@@ -1,11 +1,15 @@
 import assert from 'assert';
 import path from 'path';
-import mm from 'egg-mock';
+// @ts-expect-error: the library definition is wrong
+import { Logger } from 'leoric';
+import mm, { MockApplication } from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
 import os from 'os';
 import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService';
 import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg';
 import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App';
+import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService';
+import { EggContext } from '@eggjs/tegg';
 
 describe('test/orm.test.ts', () => {
   // TODO win32 ci not support mysql
@@ -13,11 +17,10 @@ describe('test/orm.test.ts', () => {
     return;
   }
 
-  let app;
-  let ctx;
+  let app: MockApplication;
+  let appService: AppService;
 
   afterEach(async () => {
-    await app.destroyModuleContext(ctx);
     await Promise.all([
       Pkg.truncate(),
       App.truncate(),
@@ -42,8 +45,7 @@ describe('test/orm.test.ts', () => {
   });
 
   it('bone should work', async () => {
-    ctx = await app.mockModuleContext();
-    const appService = await ctx.getEggObject(AppService);
+    const appService = await app.getEggObject(AppService);
     const appModel = await appService.createApp({
       name: 'egg',
       desc: 'the framework',
@@ -59,8 +61,7 @@ describe('test/orm.test.ts', () => {
   });
 
   it('hook should work', async () => {
-    ctx = await app.mockModuleContext();
-    const pkgService = await ctx.getEggObject(PkgService);
+    const pkgService = await app.getEggObject(PkgService);
     const pkgModel = await pkgService.createPkg({
       name: 'egg',
       desc: 'the framework',
@@ -76,10 +77,120 @@ describe('test/orm.test.ts', () => {
   });
 
   it('ctx should inject with Model', async () => {
-    ctx = await app.mockModuleContext();
-    const appService = await ctx.getEggObject(AppService);
+    const appService = await app.getEggObject(AppService);
     app.mockLog();
     await appService.findApp('egg');
-    app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1 path: \//);
+    app.expectLog(/sql: SELECT \* FROM `apps` WHERE `name` = 'egg' LIMIT 1/);
+    // Model.ctx should be undefined in Singleton Service
+    app.expectLog(/path: undefined/);
+  });
+
+  it('singleton ORM client', async () => {
+    appService = await app.getEggObject(AppService);
+
+    describe('raw query', () => {
+      before(async () => {
+        const appModel = await appService.createApp({
+          name: 'egg',
+          desc: 'the framework',
+        });
+        assert(appModel);
+        assert(appModel.name === 'egg');
+        assert(appModel.desc === 'the framework');
+      });
+
+      it('query success', async () => {
+        const res = await appService.rawQuery('test', 'select * from apps where name = "egg"');
+        assert(res.rows.length === 1);
+        assert(res.rows[0].name === 'egg');
+      });
+
+      it('query success for args', async () => {
+        const res = await appService.rawQuery('test', 'select * from apps where name = ?', [ 'egg' ]);
+        assert(res.rows.length === 1);
+        assert(res.rows[0].name === 'egg');
+      });
+    });
+
+    describe('multi db', () => {
+
+      it('should work for multi database', async () => {
+        const appleClient = await appService.getClient('apple');
+        const bananaClient = await appService.getClient('banana');
+        assert(appleClient.options.database === 'apple');
+        assert(appleClient.options.database === 'apple');
+        assert(bananaClient.options.database === 'banana');
+        assert(bananaClient.options.database === 'banana');
+      });
+
+      it('should throw when invalid database', async () => {
+        await assert.rejects(async () => {
+          await appService.getClient('orange');
+        }, /not found orange datasource/);
+      });
+
+      it('should return undefined when get default client', async () => {
+        const defaultClient = await appService.getDefaultClient();
+        assert(defaultClient === undefined);
+      });
+    });
+
+  });
+
+  describe('context proto', () => {
+    let ctx: EggContext;
+    let ctxService: CtxService;
+    beforeEach(async () => {
+      ctx = await app.mockModuleContext();
+      ctxService = await ctx.getEggObject(CtxService);
+    });
+    afterEach(async () => {
+      await app.destroyModuleContext(ctx);
+    });
+
+    it('should work for ContextProto service', async () => {
+      const ctxPkg = await ctxService.createCtxPkg({
+        name: 'egg',
+        desc: 'the framework',
+      });
+      assert(ctxPkg.name === 'egg_before_create_hook');
+    });
+
+    it('should query work', async () => {
+      app.mockLog();
+      await ctxService.createCtxPkg({
+        name: 'egg',
+        desc: 'the framework',
+      });
+      const ctxPkg = await ctxService.findCtxPkg('egg_before_create_hook');
+      assert(ctxPkg);
+      assert(ctxPkg.name === 'egg_before_create_hook');
+      app.expectLog(/sql: SELECT \* FROM `pkgs` WHERE `name` = 'egg_before_create_hook' LIMIT 1 path: \//);
+
+    });
+
+    it('should tracer ctx set', async () => {
+      let ctx;
+      await (app as any).leoricRegister.ready();
+      for (const realm of app.leoricRegister.realmMap.values()) {
+        realm.driver.logger = new Logger({
+          // eslint-disable-next-line no-loop-func
+          logQuery(_: any, __: any, options: { Model: { ctx: any; }; }) {
+            if (options.Model) {
+              ctx = options.Model.ctx;
+            }
+          },
+        });
+      }
+      await ctxService.createCtxPkg({
+        name: 'egg',
+        desc: 'the framework',
+      });
+
+      assert(ctx.originalUrl === '/');
+      assert(ctx.tracer.traceId);
+
+    });
+
   });
 });

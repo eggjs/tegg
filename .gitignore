@@ -1,4 +1,4 @@
-/node_modules
+node_modules
 coverage
 *.log
 npm-debug.log
@@ -23,10 +23,7 @@ dist
 **/*.js
 **/*.d.ts
 core/**/dist
-core/**/node_modules
 plugin/**/dist
-plugin/**/node_modules
-standalone/**/node_modules/
 
 plugin/oneapi/test/fixtures/modules/*/oneapi
 plugin/dal/test/fixtures/modules/*/dal/
@@ -34,10 +31,12 @@ plugin/dal/test/fixtures/modules/*/dal/
 !core/common-util/test/fixtures/**/node_modules
 !core/common-util/test/fixtures/**/node_modules/**/*.js
 !plugin/*/test/fixtures/**/*.js
-!**/.autod.conf.js
 !plugin/*/typings/*.d.ts
 !plugin/*/test/fixtures/apps/*/config/*.js
 !plugin/*/test/fixtures/apps/**/typings/*.d.ts
 !core/eventbus-decorator/src/type.d.ts
 !plugin/orm/test/fixtures/prepare.js
 !benchmark/**/*.js
+plugin/tegg/test/fixtures/apps/**/*.js
+!standalone/standalone/test/fixtures/**/node_modules
+!standalone/standalone/test/fixtures/**/node_modules/**/*.js

@@ -1,7 +1,6 @@
-import { EggObject, EggObjectLifeCycleContext } from '../model/EggObject';
+import { EggObject, EggObjectLifeCycleContext, EggObjectLifecycleUtil } from '../model/EggObject';
 import { EggObjectName } from '@eggjs/core-decorator';
 import { EggPrototype, EggPrototypeClass, LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggContext } from '../model/EggContext';
 import EggObjectImpl from '../impl/EggObjectImpl';
 import { LoadUnitInstanceFactory } from './LoadUnitInstanceFactory';
 
@@ -10,7 +9,7 @@ interface EggObjectPair {
   ctx: EggObjectLifeCycleContext;
 }
 
-export type CreateObjectMethod = (name: EggObjectName, proto: EggPrototype, lifecycleContext: EggObjectLifeCycleContext, ctx?: EggContext) => Promise<EggObject>;
+export type CreateObjectMethod = (name: EggObjectName, proto: EggPrototype, lifecycleContext: EggObjectLifeCycleContext) => Promise<EggObject>;
 
 export class EggObjectFactory {
   static eggObjectMap: Map<string, EggObjectPair> = new Map();
@@ -27,7 +26,7 @@ export class EggObjectFactory {
     return EggObjectImpl.createObject;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype, ctx?: EggContext): Promise<EggObject> {
+  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<EggObject> {
     const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
     if (!loadUnit) {
       throw new Error(`not found load unit ${proto.loadUnitId}`);
@@ -38,7 +37,7 @@ export class EggObjectFactory {
       loadUnitInstance: loadUnitInstance!,
     };
     const method = this.getEggObjectCreateMethod(proto.constructor as EggPrototypeClass);
-    const args = [ name, proto, lifecycleContext, ctx ];
+    const args = [ name, proto, lifecycleContext ];
     const obj = await Reflect.apply(method, null, args);
     this.eggObjectMap.set(obj.id, { obj, ctx: lifecycleContext });
     return obj;
@@ -52,6 +51,7 @@ export class EggObjectFactory {
       }
     } finally {
       this.eggObjectMap.delete(obj.id);
+      EggObjectLifecycleUtil.clearObjectLifecycle(obj);
     }
   }
 }

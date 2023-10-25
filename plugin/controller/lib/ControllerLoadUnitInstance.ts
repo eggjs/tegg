@@ -37,10 +37,6 @@ export class ControllerLoadUnitInstance implements LoadUnitInstance {
     await this.loadUnitInstanceLifecycleUtil.objectPostCreate(ctx, this);
   }
 
-  async destroy(ctx: LoadUnitInstanceLifecycleContext): Promise<void> {
-    await this.loadUnitInstanceLifecycleUtil.objectPreDestroy(ctx, this);
-  }
-
   async getOrCreateEggObject(): Promise<EggObject> {
     throw new Error('controller load unit not allow have singleton proto');
   }

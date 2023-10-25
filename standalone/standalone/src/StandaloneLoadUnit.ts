@@ -6,33 +6,39 @@ import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto';
 
 export const StandaloneLoadUnitType = 'StandaloneLoadUnitType';
 
+export interface InnerObject {
+  obj: object,
+  qualifiers?: QualifierInfo[],
+}
+
 export class StandaloneLoadUnit implements LoadUnit {
   readonly id: string = 'StandaloneLoadUnit';
   readonly name: string = 'StandaloneLoadUnit';
   readonly unitPath: string = 'MockStandaloneLoadUnitPath';
   readonly type = StandaloneLoadUnitType;
 
-  private innerObject: Record<string, object>;
+  private innerObject: Record<string, InnerObject[]>;
   private protoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
 
-  constructor(innerObject: Record<string, object>) {
+  constructor(innerObject: Record<string, InnerObject[]>) {
     this.innerObject = innerObject;
   }
 
   async init() {
-    for (const [ name, obj ] of Object.entries(this.innerObject)) {
-      const proto = new StandaloneInnerObjectProto(
-        IdenticalUtil.createProtoId(this.id, name),
-        name,
-        (() => obj) as any,
-        ObjectInitType.SINGLETON,
-        this.id,
-        [],
-      );
-      EggPrototypeFactory.instance.registerPrototype(proto, this);
+    for (const [ name, objs ] of Object.entries(this.innerObject)) {
+      for (const { obj, qualifiers } of objs) {
+        const proto = new StandaloneInnerObjectProto(
+          IdenticalUtil.createProtoId(this.id, name),
+          name,
+          (() => obj) as any,
+          ObjectInitType.SINGLETON,
+          this.id,
+          qualifiers || [],
+        );
+        EggPrototypeFactory.instance.registerPrototype(proto, this);
+      }
     }
   }
-
 
   containPrototype(proto: EggPrototype): boolean {
     return !!(this.protoMap.get(proto.name)?.find(t => t === proto));

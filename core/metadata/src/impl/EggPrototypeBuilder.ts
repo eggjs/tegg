@@ -4,16 +4,16 @@ import {
   EggProtoImplClass,
   EggPrototypeName, InitTypeQualifierAttribute,
   ObjectInitTypeLike, PrototypeUtil,
-  QualifierInfo, QualifierUtil, ObjectInitType,
-  DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/core-decorator';
+  QualifierInfo, QualifierUtil,
+  DEFAULT_PROTO_IMPL_TYPE, ObjectInitType,
+} from '@eggjs/core-decorator';
 import { LoadUnit } from '../model/LoadUnit';
 import { EggPrototype, EggPrototypeLifecycleContext, InjectObjectProto } from '../model/EggPrototype';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { FrameworkErrorFormater } from 'egg-errors';
 import { EggPrototypeImpl } from '../impl/EggPrototypeImpl';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { MultiPrototypeFound, IncompatibleProtoInject } from '../errors';
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors';
 
 export interface InjectObject {
   /**
@@ -40,56 +40,81 @@ export class EggPrototypeBuilder {
   private injectObjects: Array<InjectObject> = [];
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
+  private className?: string;
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;
     const filepath = PrototypeUtil.getFilePath(clazz);
     assert(filepath, 'not find filepath');
-    let property = PrototypeUtil.getProperty(clazz);
-    assert(property, 'not find property');
-    property = property!;
     const builder = new EggPrototypeBuilder();
     builder.clazz = clazz;
-    builder.name = property.name;
-    builder.initType = property.initType;
-    builder.accessLevel = property.accessLevel;
+    builder.name = ctx.prototypeInfo.name;
+    builder.className = ctx.prototypeInfo.className;
+    builder.initType = ctx.prototypeInfo.initType;
+    builder.accessLevel = ctx.prototypeInfo.accessLevel;
     builder.filepath = filepath!;
     builder.injectObjects = PrototypeUtil.getInjectObjects(clazz) || [];
     builder.loadUnit = loadUnit;
-    builder.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
+    builder.qualifiers = [
+      ...QualifierUtil.getProtoQualifiers(clazz),
+      ...(ctx.prototypeInfo.qualifiers ?? []),
+    ];
     return builder.build();
+  }
+
+  private tryFindDefaultPrototype(injectObject: InjectObject): EggPrototype {
+    const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+  }
+
+  private tryFindContextPrototype(injectObject: InjectObject): EggPrototype {
+    let propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    propertyQualifiers = [
+      ...propertyQualifiers,
+      {
+        attribute: InitTypeQualifierAttribute,
+        value: ObjectInitType.CONTEXT,
+      },
+    ];
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+  }
+
+  private tryFindSelfInitTypePrototype(injectObject: InjectObject): EggPrototype {
+    let propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    propertyQualifiers = [
+      ...propertyQualifiers,
+      {
+        attribute: InitTypeQualifierAttribute,
+        value: this.initType,
+      },
+    ];
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+  }
+
+  private findInjectObjectPrototype(injectObject: InjectObject): EggPrototype {
+    const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    try {
+      return this.tryFindDefaultPrototype(injectObject);
+    } catch (e) {
+      if (!(e instanceof MultiPrototypeFound && !propertyQualifiers.find(t => t.attribute === InitTypeQualifierAttribute))) {
+        throw e;
+      }
+    }
+    try {
+      return this.tryFindContextPrototype(injectObject);
+    } catch (e) {
+      if (!(e instanceof EggPrototypeNotFound)) {
+        throw e;
+      }
+    }
+    return this.tryFindSelfInitTypePrototype(injectObject);
   }
 
   public build(): EggPrototype {
     const injectObjectProtos: InjectObjectProto[] = [];
     for (const injectObject of this.injectObjects) {
       const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
-      let proto: EggPrototype;
-      try {
-        proto = EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
-      } catch (e) {
-        // If multi proto found and property has no init type qualifier
-        // try use self init type as init type qualifier
-        if (
-          e instanceof MultiPrototypeFound
-          && !propertyQualifiers.find(t => t.attribute === InitTypeQualifierAttribute)
-        ) {
-          propertyQualifiers.push({
-            attribute: InitTypeQualifierAttribute,
-            value: this.initType,
-          });
-          proto = EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
-        } else {
-          throw e;
-        }
-      }
-
-      // throw when try to inject ContextProto into singleton
-      if (this.initType === ObjectInitType.SINGLETON && proto.initType === ObjectInitType.CONTEXT) {
-        const err = new IncompatibleProtoInject(`can not inject ContextProto(${String(proto.name)}) in SingletonProto(${String(this.name)})`);
-        throw FrameworkErrorFormater.formatError(err);
-      }
-
+      const proto = this.findInjectObjectPrototype(injectObject);
       injectObjectProtos.push({
         refName: injectObject.refName,
         objName: injectObject.objName,
@@ -108,6 +133,7 @@ export class EggPrototypeBuilder {
       injectObjectProtos,
       this.loadUnit.id,
       this.qualifiers,
+      this.className,
     );
   }
 }

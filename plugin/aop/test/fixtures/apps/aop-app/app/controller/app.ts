@@ -8,4 +8,11 @@ export default class App extends Controller {
     this.ctx.status = 200;
     this.ctx.body = { msg };
   }
+
+  async contextAdviceWithSingleton() {
+    const hello: Hello = await (this.app.module as any).aopModule.singletonHello;
+    const msg = await hello.hello('foo');
+    this.ctx.status = 200;
+    this.ctx.body = { msg };
+  }
 }
