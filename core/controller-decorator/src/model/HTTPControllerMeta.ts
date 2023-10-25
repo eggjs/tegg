@@ -14,7 +14,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
   public readonly methods: readonly HTTPMethodMeta[];
   public readonly needAcl: boolean;
   public readonly aclCode?: string;
-  public readonly host?: string;
+  public readonly hosts?: string[];
 
   constructor(
     className: string,
@@ -25,7 +25,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     methods: HTTPMethodMeta[],
     needAcl: boolean,
     aclCode: string | undefined,
-    host: string | undefined,
+    hosts: string[] | undefined,
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;
@@ -35,7 +35,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     this.methods = methods;
     this.needAcl = needAcl;
     this.aclCode = aclCode;
-    this.host = host;
+    this.hosts = hosts;
   }
 
   getMethodRealPath(method: HTTPMethodMeta) {
@@ -45,11 +45,11 @@ export class HTTPControllerMeta implements ControllerMetadata {
     return method.path;
   }
 
-  getMethodHost(method: HTTPMethodMeta): string | undefined {
-    if (this.host) {
-      return this.host;
+  getMethodHosts(method: HTTPMethodMeta): string[] | undefined {
+    if (this.hosts) {
+      return this.hosts;
     }
-    return method.host;
+    return method.hosts;
   }
 
   getMethodName(method: HTTPMethodMeta) {
@@ -67,7 +67,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
   }
 
   hasMethodAcl(method: HTTPMethodMeta): boolean {
-    return method.needAcL || this.needAcl;
+    return method.needAcl || this.needAcl;
   }
 
   getMethodAcl(method: HTTPMethodMeta): string | undefined {

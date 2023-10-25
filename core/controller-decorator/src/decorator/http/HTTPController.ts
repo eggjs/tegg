@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
+import { AccessLevel, EggProtoImplClass, PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 import ControllerInfoUtil from '../../util/ControllerInfoUtil';
@@ -14,13 +14,13 @@ export function HTTPController(param?: HTTPControllerParams) {
   return function(constructor: EggProtoImplClass) {
     ControllerInfoUtil.setControllerType(constructor, ControllerType.HTTP);
     if (param?.controllerName) {
-      ControllerInfoUtil.setControllerName(constructor, param?.controllerName);
+      ControllerInfoUtil.setControllerName(constructor, param.controllerName);
     }
     if (param?.path) {
       HTTPInfoUtil.setHTTPPath(param.path, constructor);
     }
     // TODO elegant?
-    const func = ContextProto({
+    const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
       name: param?.protoName,
     });

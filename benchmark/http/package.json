@@ -1,20 +1,19 @@
 {
   "name": "tegg_benchmark",
   "egg": {
-    "typescript": true
   },
   "scripts": {
     "dev": "egg-bin dev"
   },
   "dependencies": {
-    "@eggjs/tegg": "^1.1.1",
-    "@eggjs/tegg-config": "^1.1.1",
-    "@eggjs/tegg-controller-plugin": "^1.1.1",
-    "@eggjs/tegg-plugin": "^1.1.1",
+    "@eggjs/tegg": "^3.7.0",
+    "@eggjs/tegg-config": "^3.7.0",
+    "@eggjs/tegg-controller-plugin": "^3.7.0",
+    "@eggjs/tegg-plugin": "^3.7.0",
     "@eggjs/tsconfig": "^1.1.0",
-    "egg": "^2.36.0"
+    "egg": "^3.9.1"
   },
   "devDependencies": {
-    "egg-bin": "^5.1.1"
+    "egg-bin": "6"
   }
 }

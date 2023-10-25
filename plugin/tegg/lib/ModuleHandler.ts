@@ -18,29 +18,36 @@ export class ModuleHandler extends Base {
   private readonly app: Application;
 
   constructor(app: Application) {
-    super({ initMethod: '_init' });
+    super();
     this.app = app;
     this.loadUnitLoader = new EggModuleLoader(this.app);
   }
 
-  async _init() {
-    this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
-      COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl.create);
+  async init() {
+    try {
+      this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
+        COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl.create);
 
-    await this.loadUnitLoader.load();
-    const instances: LoadUnitInstance[] = [];
-    // TODO fixtures dts broken the module defintion
-    (this.app as any).module = {};
+      await this.loadUnitLoader.load();
+      const instances: LoadUnitInstance[] = [];
+      // TODO fixtures dts broken the module defintion
+      (this.app as any).module = {};
 
-    for (const loadUnit of this.loadUnits) {
-      const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
-      if (instance.loadUnit.type !== EggLoadUnitType.APP) {
-        CompatibleUtil.appCompatible(this.app, instance);
+      for (const loadUnit of this.loadUnits) {
+        const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+        if (instance.loadUnit.type !== EggLoadUnitType.APP) {
+          CompatibleUtil.appCompatible(this.app, instance);
+        }
+        instances.push(instance);
       }
-      instances.push(instance);
+      CompatibleUtil.contextModuleCompatible((this.app as any).context as Context, instances);
+      this.loadUnitInstances = instances;
+      this.ready(true);
+    } catch (e) {
+      this.ready(e);
+      throw e;
     }
-    CompatibleUtil.contextModuleCompatible((this.app as any).context as Context, instances);
-    this.loadUnitInstances = instances;
+
   }
 
   async destroy() {

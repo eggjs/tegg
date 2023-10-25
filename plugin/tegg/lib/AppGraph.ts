@@ -49,7 +49,9 @@ export class ModuleNode implements GraphNodeObj {
   }
 
   getPublicClazzList(): readonly EggProtoImplClass[] {
-    return this.clazzList.filter(clazz => PrototypeUtil.getProperty(clazz)?.accessLevel === AccessLevel.PUBLIC);
+    return this.clazzList.filter(clazz => PrototypeUtil.getAccessLevel(clazz, {
+      unitPath: this.moduleConfig.path,
+    }) === AccessLevel.PUBLIC);
   }
 
   toString() {
@@ -78,7 +80,9 @@ export class ModuleNode implements GraphNodeObj {
     }
     const clazzList = innerFind ? this.clazzList : this.getPublicClazzList();
     const implList = clazzList
-      .filter(clazz => PrototypeUtil.getProperty(clazz)?.name === objName)
+      .filter(clazz => PrototypeUtil.getObjNames(clazz, {
+        unitPath: this.moduleConfig.path,
+      }).includes(objName))
       .filter(clazz => this.verifyQualifiers(clazz, qualifiers));
     if (implList.length === 1) {
       return implList;

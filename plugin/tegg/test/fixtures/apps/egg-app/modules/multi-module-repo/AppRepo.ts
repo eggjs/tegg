@@ -1,8 +1,8 @@
 import PersistenceService from './PersistenceService';
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import App from '../multi-module-common/model/App';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export default class AppRepo {

@@ -1,13 +1,7 @@
 import { EggLoadUnitType, Loader, LoadUnit, LoadUnitFactory } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { StandaloneGraph, ModuleNode } from './StandaloneGraph';
-import {
-  InitTypeQualifierAttribute,
-  LoadUnitNameQualifierAttribute,
-  PrototypeUtil,
-  QualifierUtil,
-} from '@eggjs/tegg';
-import { ModuleConfigUtil, ModuleReference } from '@eggjs/tegg-common-util';
+import { AppGraph, ModuleNode } from '@eggjs/tegg/helper';
+import { ModuleReference } from '@eggjs/tegg-common-util';
 
 export class EggModuleLoader {
   private moduleReferences: readonly ModuleReference[];
@@ -17,7 +11,7 @@ export class EggModuleLoader {
   }
 
   private buildAppGraph(loaderCache: Map<string, Loader>) {
-    const appGraph = new StandaloneGraph();
+    const appGraph = new AppGraph();
     for (const moduleConfig of this.moduleReferences) {
       const modulePath = moduleConfig.path;
       const moduleNode = new ModuleNode(moduleConfig);
@@ -25,19 +19,6 @@ export class EggModuleLoader {
       loaderCache.set(modulePath, loader);
       const clazzList = loader.load();
       for (const clazz of clazzList) {
-        // TODO copy from ModuleLoadUnit, duplicate code
-        const moduleName = ModuleConfigUtil.readModuleNameSync(modulePath);
-        const property = PrototypeUtil.getProperty(clazz)!;
-        const defaultQualifier = [{
-          attribute: InitTypeQualifierAttribute,
-          value: property.initType,
-        }, {
-          attribute: LoadUnitNameQualifierAttribute,
-          value: moduleName,
-        }];
-        defaultQualifier.forEach(qualifier => {
-          QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
-        });
         moduleNode.addClazz(clazz);
       }
       appGraph.addNode(moduleNode);

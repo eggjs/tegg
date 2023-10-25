@@ -21,6 +21,7 @@ import {
   PointcutAdviceOverwriteChildExample,
   PointcutAdviceOverwriteParentExample,
 } from './fixtures/InheritExample';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 
 describe('test/AspectMetaBuild.test.ts', () => {
   const crosscutAdviceFactory = new CrosscutAdviceFactory();
@@ -44,8 +45,8 @@ describe('test/AspectMetaBuild.test.ts', () => {
       const advices = aspect.adviceList;
 
       assert.deepStrictEqual(advices, [
-        { name: 'PointcutExample#hello#PointcutAdviceBeforeCallExample#0', clazz: PointcutAdviceBeforeCallExample },
-        { name: 'PointcutExample#hello#PointcutAdviceAfterReturnExample#1', clazz: PointcutAdviceAfterReturnExample },
+        { name: 'PointcutExample#hello#PointcutAdviceBeforeCallExample#0', clazz: PointcutAdviceBeforeCallExample, adviceParams: undefined },
+        { name: 'PointcutExample#hello#PointcutAdviceAfterReturnExample#1', clazz: PointcutAdviceAfterReturnExample, adviceParams: undefined },
       ]);
     });
   });
@@ -62,9 +63,9 @@ describe('test/AspectMetaBuild.test.ts', () => {
       assert(aspect.method === 'hello');
       const advices = aspect.adviceList;
       assert.deepStrictEqual(advices, [
-        { name: 'CrosscutExample#hello#CrosscutClassAdviceExample#0', clazz: CrosscutClassAdviceExample },
-        { name: 'CrosscutExample#hello#CrosscutNameAdviceExample#1', clazz: CrosscutNameAdviceExample },
-        { name: 'CrosscutExample#hello#CrosscutCustomAdviceExample#2', clazz: CrosscutCustomAdviceExample },
+        { name: 'CrosscutExample#hello#CrosscutClassAdviceExample#0', clazz: CrosscutClassAdviceExample, adviceParams: undefined },
+        { name: 'CrosscutExample#hello#CrosscutNameAdviceExample#1', clazz: CrosscutNameAdviceExample, adviceParams: undefined },
+        { name: 'CrosscutExample#hello#CrosscutCustomAdviceExample#2', clazz: CrosscutCustomAdviceExample, adviceParams: undefined },
       ]);
     });
   });
@@ -82,11 +83,11 @@ describe('test/AspectMetaBuild.test.ts', () => {
       const overwriteAdvices = overwriteAspect.adviceList;
 
       assert.deepStrictEqual(overwriteAdvices, [
-        { name: 'ChildExample#overwriteMethod#CrosscutOverwriteParentExample#0', clazz: CrosscutOverwriteParentExample },
-        { name: 'ChildExample#overwriteMethod#CrosscutOverwriteChildExample#1', clazz: CrosscutOverwriteChildExample },
+        { name: 'ChildExample#overwriteMethod#CrosscutOverwriteParentExample#0', clazz: CrosscutOverwriteParentExample, adviceParams: undefined },
+        { name: 'ChildExample#overwriteMethod#CrosscutOverwriteChildExample#1', clazz: CrosscutOverwriteChildExample, adviceParams: undefined },
         // FIXME: parent/child should has correct order
-        { name: 'ChildExample#overwriteMethod#PointcutAdviceOverwriteChildExample#2', clazz: PointcutAdviceOverwriteChildExample },
-        { name: 'ChildExample#overwriteMethod#PointcutAdviceOverwriteParentExample#3', clazz: PointcutAdviceOverwriteParentExample },
+        { name: 'ChildExample#overwriteMethod#PointcutAdviceOverwriteChildExample#2', clazz: PointcutAdviceOverwriteChildExample, adviceParams: undefined },
+        { name: 'ChildExample#overwriteMethod#PointcutAdviceOverwriteParentExample#3', clazz: PointcutAdviceOverwriteParentExample, adviceParams: undefined },
       ]);
 
       const noOverwriteAspect = aspects.find(t => t.method === 'noOverwriteMethod');
@@ -94,8 +95,8 @@ describe('test/AspectMetaBuild.test.ts', () => {
       assert(noOverwriteAspect.clazz === ChildExample);
       const noOverwriteAdvices = noOverwriteAspect.adviceList;
       assert.deepStrictEqual(noOverwriteAdvices, [
-        { name: 'ChildExample#noOverwriteMethod#CrosscutNoOverwriteParentExample#0', clazz: CrosscutNoOverwriteParentExample },
-        { name: 'ChildExample#noOverwriteMethod#PointcutAdviceNoOverwriteParentExample#1', clazz: PointcutAdviceNoOverwriteParentExample },
+        { name: 'ChildExample#noOverwriteMethod#CrosscutNoOverwriteParentExample#0', clazz: CrosscutNoOverwriteParentExample, adviceParams: undefined },
+        { name: 'ChildExample#noOverwriteMethod#PointcutAdviceNoOverwriteParentExample#1', clazz: PointcutAdviceNoOverwriteParentExample, adviceParams: undefined },
       ]);
     });
 
@@ -111,8 +112,8 @@ describe('test/AspectMetaBuild.test.ts', () => {
       assert(overwriteAspect.clazz === ParentExample);
       const overwriteAdvices = overwriteAspect.adviceList;
       assert.deepStrictEqual(overwriteAdvices, [
-        { name: 'ParentExample#overwriteMethod#CrosscutOverwriteParentExample#0', clazz: CrosscutOverwriteParentExample },
-        { name: 'ParentExample#overwriteMethod#PointcutAdviceOverwriteParentExample#1', clazz: PointcutAdviceOverwriteParentExample },
+        { name: 'ParentExample#overwriteMethod#CrosscutOverwriteParentExample#0', clazz: CrosscutOverwriteParentExample, adviceParams: undefined },
+        { name: 'ParentExample#overwriteMethod#PointcutAdviceOverwriteParentExample#1', clazz: PointcutAdviceOverwriteParentExample, adviceParams: undefined },
       ]);
 
       const noOverwriteAspect = aspects.find(t => t.method === 'noOverwriteMethod');
@@ -120,8 +121,8 @@ describe('test/AspectMetaBuild.test.ts', () => {
       assert(noOverwriteAspect.clazz === ParentExample);
       const noOverwriteAdvices = noOverwriteAspect.adviceList;
       assert.deepStrictEqual(noOverwriteAdvices, [
-        { name: 'ParentExample#noOverwriteMethod#CrosscutNoOverwriteParentExample#0', clazz: CrosscutNoOverwriteParentExample },
-        { name: 'ParentExample#noOverwriteMethod#PointcutAdviceNoOverwriteParentExample#1', clazz: PointcutAdviceNoOverwriteParentExample },
+        { name: 'ParentExample#noOverwriteMethod#CrosscutNoOverwriteParentExample#0', clazz: CrosscutNoOverwriteParentExample, adviceParams: undefined },
+        { name: 'ParentExample#noOverwriteMethod#PointcutAdviceNoOverwriteParentExample#1', clazz: PointcutAdviceNoOverwriteParentExample, adviceParams: undefined },
       ]);
     });
   });
@@ -132,5 +133,10 @@ describe('test/AspectMetaBuild.test.ts', () => {
     });
     const aspects = builder.build();
     assert(aspects.length === 1);
+  });
+
+  it('should has right file path', () => {
+    const filePath = PrototypeUtil.getFilePath(CrosscutClassAdviceExample);
+    assert(filePath === require.resolve('./fixtures/CrosscutExample'));
   });
 });

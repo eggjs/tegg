@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-background-task",
   "description": "background util for tegg",
-  "version": "1.4.0",
+  "version": "3.23.0",
   "keywords": [
     "egg",
     "typescript",
@@ -16,11 +16,11 @@
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
-    "autod": "autod"
+    "prepublishOnly": "npm run tsc:pub"
   },
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
@@ -37,12 +37,19 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/core-decorator": "^1.4.0",
-    "@eggjs/tegg-lifecycle": "^1.0.0"
+    "@eggjs/core-decorator": "^3.23.0",
+    "@eggjs/tegg-lifecycle": "^3.23.0",
+    "@eggjs/tegg-runtime": "^3.23.0"
   },
   "devDependencies": {
-    "egg": "^2.26.0",
-    "mz-modules": "^2.1.0"
+    "@eggjs/tegg-common-util": "^3.23.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "cross-env": "^7.0.3",
+    "egg": "^3.9.1",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   },
   "publishConfig": {
     "access": "public"

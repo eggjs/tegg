@@ -1,6 +1,6 @@
-import { Application, Context } from 'egg';
+import { AsyncLocalStorage } from 'async_hooks';
+import { Context } from 'egg';
 import '@eggjs/tegg-config';
-import { ModuleHandler } from '../lib/ModuleHandler';
 import { EggPrototypeCreatorFactory } from '@eggjs/tegg-metadata';
 import {
   EggPrototypeFactory,
@@ -16,9 +16,12 @@ import {
   EggObjectLifecycleUtil,
   AbstractEggContext,
   EggObjectFactory,
+  EggContext,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
+import { ModuleHandler } from '../lib/ModuleHandler';
+import { EggContextHandler } from '../lib/EggContextHandler';
 
 declare module 'egg' {
   export interface EggModule {
@@ -46,10 +49,12 @@ declare module 'egg' {
     eggPrototypeLifecycleUtil: typeof EggPrototypeLifecycleUtil;
     eggContextLifecycleUtil: typeof EggContextLifecycleUtil;
     eggObjectLifecycleUtil: typeof EggObjectLifecycleUtil;
-
+    teggContext: EggContext;
     moduleHandler: ModuleHandler;
+    eggContextHandler: EggContextHandler;
 
     mockModuleContext(data?: any): Promise<Context>;
+    mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
     destroyModuleContext(context: Context): Promise<void>;
     // 兼容现有 module 的定义
     module: EggModule & EggApplicationModule;

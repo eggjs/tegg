@@ -3,7 +3,6 @@ import { Id, LifecycleContext } from '@eggjs/tegg-lifecycle';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggObjectName, ObjectInitType } from '@eggjs/core-decorator';
 import { EggObject } from '../model/EggObject';
-import { EggContext } from '../model/EggContext';
 import { EggObjectFactory } from '../factory/EggObjectFactory';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 
@@ -31,8 +30,8 @@ export class EggAlwaysNewObjectContainer implements EggContainer<LifecycleContex
     throw new Error('Always Object can not use getEggObject, should use getOrCreateEggObject');
   }
 
-  async getOrCreateEggObject(name: string, proto: EggPrototype, ctx?: EggContext): Promise<EggObject> {
-    return EggObjectFactory.createObject(name, proto, ctx);
+  async getOrCreateEggObject(name: string, proto: EggPrototype): Promise<EggObject> {
+    return EggObjectFactory.createObject(name, proto);
   }
 
   async destroy(): Promise<void> {

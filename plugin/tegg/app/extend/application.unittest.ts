@@ -1,29 +1,33 @@
 import { MockApplication } from 'egg-mock';
 import { Context } from 'egg';
-import { TEggPluginContext } from './context';
 import { EggContextImpl } from '../../lib/EggContextImpl';
 import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
-import { TEGG_CONTEXT, EGG_CONTEXT } from '@eggjs/egg-module-common';
 
 const TEGG_LIFECYCLE_CACHE: Map<EggContext, EggContextLifecycleContext> = new Map();
 
+let hasMockModuleContext = false;
+
 export default {
   async mockModuleContext(this: MockApplication, data?: any): Promise<Context> {
-    const ctx = this.mockContext(data) as TEggPluginContext;
-    const teggCtx = ctx[TEGG_CONTEXT] = new EggContextImpl(ctx);
-    ctx[TEGG_CONTEXT] = teggCtx;
-    teggCtx.set(EGG_CONTEXT, ctx);
+    this.deprecate('app.mockModuleContext is deprecated, use mockModuleContextScope.');
+    if (hasMockModuleContext) {
+      throw new Error('should not call mockModuleContext twice.');
+    }
+    const ctx = this.mockContext(data);
+    const teggCtx = new EggContextImpl(ctx);
     const lifecycle = {};
     TEGG_LIFECYCLE_CACHE.set(teggCtx, lifecycle);
     if (teggCtx.init) {
       await teggCtx.init(lifecycle);
     }
+    hasMockModuleContext = true;
     return ctx;
   },
 
   async destroyModuleContext(ctx: Context) {
-    const teggPluginCtx = ctx as TEggPluginContext;
-    const teggCtx = teggPluginCtx[TEGG_CONTEXT];
+    hasMockModuleContext = false;
+
+    const teggCtx = ctx.teggContext;
     if (!teggCtx) {
       return;
     }
@@ -31,5 +35,23 @@ export default {
     if (teggCtx.destroy && lifecycle) {
       await teggCtx.destroy(lifecycle);
     }
+  },
+
+  async mockModuleContextScope<R=any>(this: MockApplication, fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
+    if (hasMockModuleContext) {
+      throw new Error('mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.');
+    }
+    return this.mockContextScope(async ctx => {
+      const teggCtx = new EggContextImpl(ctx);
+      const lifecycle = {};
+      if (teggCtx.init) {
+        await teggCtx.init(lifecycle);
+      }
+      try {
+        return await fn(ctx);
+      } finally {
+        await teggCtx.destroy(lifecycle);
+      }
+    }, data);
   },
 };

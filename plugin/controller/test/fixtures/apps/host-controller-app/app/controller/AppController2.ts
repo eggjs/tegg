@@ -5,7 +5,6 @@ import {
   Host,
 } from '@eggjs/tegg';
 
-@Host('bar.eggjs.com')
 @HTTPController({
   path: '/apps',
 })
@@ -14,6 +13,7 @@ export class AppController2 {
     method: HTTPMethodEnum.GET,
     path: '/:id',
   })
+  @Host('bar.eggjs.com')
   async get() {
     return 'bar';
   }

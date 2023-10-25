@@ -61,7 +61,10 @@ import { ContextProto } from '@eggjs/tegg';
 
 @ContextProto()
 export class Hello {
-  @Pointcut(AdviceExample)
+
+  // 创建 Hello.hello 的切面 AdviceExample，并传递 adviceParams 给 AdviceExample
+  // AdviceExample 的切面函数可以通过 ctx.adviceParams 拿到注解传入的参数
+  @Pointcut(AdviceExample, { adviceParams: { foo: 'bar' } })
   async hello(name: string) {
     return `hello ${name}`;
   }
@@ -81,11 +84,13 @@ export class Hello {
 import { Crosscut, Advice, IAdvice } from '@eggjs/tegg/aop';
 
 // 通过类型来指定
+// 创建 CrosscutClassAdviceExample.hello 的切面 CrosscutExample，并传递 adviceParams 给 CrosscutExample
+// CrosscutExample 的切面函数可以通过 ctx.adviceParams 拿到注解传入的参数
 @Crosscut({
   type: PointcutType.CLASS,
   clazz: CrosscutExample,
   methodName: 'hello',
-})
+}, { adviceParams: { foo: 'bar' } })
 @Advice()
 export class CrosscutClassAdviceExample implements IAdvice {
 }

@@ -37,16 +37,18 @@ describe('test/AccessLevelCheck.test.ts', () => {
   });
 
   it('should work: private has some name', async () => {
-    const ctx = await app.mockModuleContext();
-    const mainService: MainService = await ctx.getEggObject(MainService);
-    assert(mainService);
-    assert(mainService.invokeFoo() === 'moduleMain-FooService-Method');
+    await app.mockModuleContextScope(async ctx => {
+      const mainService: MainService = await ctx.getEggObject(MainService);
+      assert(mainService);
+      assert(mainService.invokeFoo() === 'moduleMain-FooService-Method');
+    });
   });
 
   it('should work: public/private has some name', async () => {
-    const ctx = await app.mockModuleContext();
-    const mainService: MainService = await ctx.getEggObject(MainService);
-    assert(mainService);
-    assert(mainService.invokeBar() === 'moduleMain-BarService-Method');
+    await app.mockModuleContextScope(async ctx => {
+      const mainService: MainService = await ctx.getEggObject(MainService);
+      assert(mainService);
+      assert(mainService.invokeBar() === 'moduleMain-BarService-Method');
+    });
   });
 });

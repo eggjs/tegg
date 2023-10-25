@@ -5,10 +5,9 @@ import {
   MetadataUtil,
   ObjectInitTypeLike,
   QualifierInfo,
-  PrototypeUtil,
   QualifierUtil,
   Id,
-  IdenticalUtil,
+  IdenticalUtil, QualifierValue,
 } from '@eggjs/tegg';
 import {
   EggPrototype,
@@ -67,13 +66,16 @@ export class StandaloneInnerObjectProto implements EggPrototype {
     return MetadataUtil.getMetaData(metadataKey, this.clazz);
   }
 
+  getQualifier(attribute: string): QualifierValue | undefined {
+    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+  }
+
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;
-    const property = PrototypeUtil.getProperty(clazz)!;
-    const name = property.name;
+    const name = ctx.prototypeInfo.name;
     const id = IdenticalUtil.createProtoId(loadUnit.id, name);
     const proto = new StandaloneInnerObjectProto(
-      id, name, clazz, property.initType, loadUnit.id, QualifierUtil.getProtoQualifiers(clazz),
+      id, name, clazz, ctx.prototypeInfo.initType, loadUnit.id, QualifierUtil.getProtoQualifiers(clazz),
     );
     return proto;
   }

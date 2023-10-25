@@ -1,7 +1,7 @@
-import { ContextProto, Inject } from '@eggjs/tegg';
+import { Inject, SingletonProto } from '@eggjs/tegg';
 import { Pkg } from './model/Pkg';
 
-@ContextProto()
+@SingletonProto()
 export class PkgService {
   @Inject()
   Pkg: typeof Pkg;

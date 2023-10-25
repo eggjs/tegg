@@ -1,6 +1,8 @@
+import assert from 'assert';
 import { AccessLevel, ContextProto, Inject } from '@eggjs/core-decorator';
-import type { EggLogger } from 'egg';
+import type { EggLogger, EggAppConfig } from 'egg';
 import { EggObjectLifecycle } from '@eggjs/tegg-lifecycle';
+import { ContextHandler, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -12,7 +14,23 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
   // default timeout for async task
   timeout = 5000;
 
+  @Inject()
+  config: EggAppConfig;
+
   private backgroundTasks: Array<Promise<void>> = [];
+
+  async init() {
+    const ctx = ContextHandler.getContext();
+    assert(ctx, 'background task helper must be init in context');
+    EggContextLifecycleUtil.registerObjectLifecycle(ctx, {
+      preDestroy: async () => {
+        await this.doPreDestroy();
+      },
+    });
+    if (this.config.backgroundTask?.timeout) {
+      this.timeout = this.config.backgroundTask.timeout;
+    }
+  }
 
   run(fn: () => Promise<void>) {
     const backgroundTask = new Promise<void>(resolve => {
@@ -37,21 +55,28 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
     this.backgroundTasks.push(backgroundTask);
   }
 
-  async preDestroy(): Promise<void> {
+  async doPreDestroy(): Promise<void> {
     // quick quit
     if (!this.backgroundTasks.length) return;
+    const backgroundTasks = this.backgroundTasks.slice();
+    if (this.timeout <= 0 || this.timeout === Infinity) {
+      await Promise.all(backgroundTasks);
+    } else {
+      const { promise: timeout, resolve } = this.sleep();
 
-    const { promise: timeout, resolve } = this.sleep();
-
-    await Promise.race([
-      // not block the pre destroy process too long
-      timeout,
-      // ensure all background task are done before destroy the context
-      Promise.all(this.backgroundTasks),
-    ]);
-
-    // always resolve the sleep promise
-    resolve();
+      await Promise.race([
+        // not block the pre destroy process too long
+        timeout,
+        // ensure all background task are done before destroy the context
+        Promise.all(backgroundTasks),
+      ]);
+      // always resolve the sleep promise
+      resolve();
+    }
+    if (this.backgroundTasks.length !== backgroundTasks.length) {
+      this.backgroundTasks = this.backgroundTasks.slice(backgroundTasks.length);
+      return this.doPreDestroy();
+    }
   }
 
   private sleep() {

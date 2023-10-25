@@ -15,6 +15,9 @@ module.exports = function(appInfo) {
         ignoreJSON: false,
       }
     },
+    backgroundTask: {
+      timeout: Infinity,
+    },
   };
   return config;
 };

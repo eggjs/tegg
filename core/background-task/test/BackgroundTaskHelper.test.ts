@@ -1,5 +1,5 @@
 import { BackgroundTaskHelper } from '../src/BackgroundTaskHelper';
-import sleep from 'mz-modules/sleep';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import assert from 'assert';
 
 describe('test/BackgroundTaskHelper.test.ts', () => {
@@ -14,11 +14,11 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
     it('should done', async () => {
       let run = false;
       helper.run(async () => {
-        await sleep(10);
+        await TimerUtil.sleep(10);
         run = true;
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
       assert(run);
     });
   });
@@ -28,11 +28,11 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
       let run = false;
       helper.timeout = 10;
       helper.run(async () => {
-        await sleep(100);
+        await TimerUtil.sleep(100);
         run = true;
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
       assert(run === false);
     });
   });
@@ -40,11 +40,11 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
   describe('fn reject', () => {
     it('should done', async () => {
       helper.run(async () => {
-        await sleep(10);
+        await TimerUtil.sleep(10);
         throw new Error('mock error');
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
     });
   });
 
@@ -54,7 +54,24 @@ describe('test/BackgroundTaskHelper.test.ts', () => {
         throw new Error('mock error');
       });
 
-      await helper.preDestroy();
+      await helper.doPreDestroy();
+    });
+  });
+
+  describe('recursive fn', () => {
+    it('should done', async () => {
+      let runDone = 0;
+      helper.run(async () => {
+        await TimerUtil.sleep(10);
+        runDone++;
+        helper.run(async () => {
+          await TimerUtil.sleep(10);
+          runDone++;
+        });
+      });
+
+      await helper.doPreDestroy();
+      assert(runDone === 2);
     });
   });
 });

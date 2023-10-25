@@ -1,5 +1,5 @@
 import { ScheduleTypeLike } from '../model/ScheduleMetadata';
-import { AccessLevel, ContextProto, EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
+import { AccessLevel, EggProtoImplClass, PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { ScheduleInfoUtil } from '../util/ScheduleInfoUtil';
 import { StackUtil } from '@eggjs/tegg-common-util';
 
@@ -40,7 +40,7 @@ export function Schedule<T>(param: ScheduleParams<T>, options?: ScheduleOptions)
     if (options) {
       ScheduleInfoUtil.setScheduleOptions(options, clazz);
     }
-    const func = ContextProto({
+    const func = SingletonProto({
       name: clazz.name,
       accessLevel: AccessLevel.PUBLIC,
     });

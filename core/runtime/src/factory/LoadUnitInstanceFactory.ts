@@ -1,9 +1,12 @@
-import { LoadUnitInstance, LoadUnitInstanceLifecycleContext } from '../model/LoadUnitInstance';
+import {
+  LoadUnitInstance,
+  LoadUnitInstanceLifecycleContext,
+  LoadUnitInstanceLifecycleUtil,
+} from '../model/LoadUnitInstance';
 import { EggLoadUnitTypeLike, EggPrototype, LoadUnit } from '@eggjs/tegg-metadata';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggContainerFactory } from './EggContainerFactory';
 import { ObjectInitType } from '@eggjs/core-decorator';
-
 
 type LoadUnitInstanceCreator = (ctx: LoadUnitInstanceLifecycleContext) => LoadUnitInstance;
 interface LoadUnitInstancePair {
@@ -48,10 +51,12 @@ export class LoadUnitInstanceFactory {
 
   static async destroyLoadUnitInstance(loadUnitInstance: LoadUnitInstance) {
     const { ctx } = this.instanceMap.get(loadUnitInstance.id)!;
+    await LoadUnitInstanceLifecycleUtil.objectPreDestroy(ctx, loadUnitInstance);
     if (loadUnitInstance.destroy) {
       await loadUnitInstance.destroy(ctx);
     }
     this.instanceMap.delete(loadUnitInstance.id);
+    LoadUnitInstanceLifecycleUtil.clearObjectLifecycle(loadUnitInstance);
   }
 
   static getLoadUnitInstanceByProto(proto: EggPrototype): LoadUnitInstance {

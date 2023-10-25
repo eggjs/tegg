@@ -17,22 +17,35 @@ export class LeoricRegister extends Base {
     this.realmMap = new Map();
   }
 
-  getOrCreateRealm(datasource: string | undefined): any {
+  getConfig(datasource?: string) {
     let config: OrmConfig | undefined;
     if (!datasource) {
       config = this.dataSourceManager.getDefaultConfig();
     } else {
       config = this.dataSourceManager.getConfig(datasource);
     }
-    if (!config) {
-      throw new Error(`not found datasource for ${datasource}`);
+    return config;
+  }
+
+  getRealm(config: OrmConfig | undefined): Realm | undefined {
+    if (!config?.database) {
+      return undefined;
     }
-    let realm = this.realmMap.get(config.database);
-    if (realm) {
-      return realm;
+    const realm = this.realmMap.get(config.database);
+    return realm;
+  }
+
+  getOrCreateRealm(datasource: string | undefined): any {
+    const config = this.getConfig(datasource);
+    let realm: Realm | undefined;
+    if (config) {
+      realm = this.getRealm(config);
+      if (realm) {
+        return realm;
+      }
     }
     realm = new (Realm as any)({ ...config });
-    this.realmMap.set(config.database, realm);
+    this.realmMap.set(config!.database, realm);
     return realm;
   }
 

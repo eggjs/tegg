@@ -1,7 +1,7 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import BarService from './BarService';
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PRIVATE,
 })
 export default class FooService {

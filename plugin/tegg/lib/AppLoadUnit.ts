@@ -38,10 +38,11 @@ export class AppLoadUnit implements LoadUnit {
     const clazzList = this.loader.load();
     for (const clazz of clazzList) {
       // TODO duplicate code, same in ModuleLoadUnit
-      const property = PrototypeUtil.getProperty(clazz)!;
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
-        value: property.initType,
+        value: PrototypeUtil.getInitType(clazz, {
+          unitPath: this.unitPath,
+        })!,
       }, {
         attribute: LoadUnitNameQualifierAttribute,
         value: this.name,
@@ -49,8 +50,10 @@ export class AppLoadUnit implements LoadUnit {
       defaultQualifier.forEach(qualifier => {
         QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
       });
-      const proto = await EggPrototypeCreatorFactory.createProto(clazz, this);
-      EggPrototypeFactory.instance.registerPrototype(proto, this);
+      const protos = await EggPrototypeCreatorFactory.createProto(clazz, this);
+      for (const proto of protos) {
+        EggPrototypeFactory.instance.registerPrototype(proto, this);
+      }
     }
   }
 

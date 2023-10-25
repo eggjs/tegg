@@ -1,19 +1,22 @@
-import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto, Inject, RuntimeConfig } from '@eggjs/tegg';
 import { EggAppConfig } from 'egg';
 
 interface XSessionUser {
   userName: string;
 }
 
-@ContextProto({
+@SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export default class ConfigService {
   @Inject()
-  user: XSessionUser;
+  private user: XSessionUser;
 
   @Inject()
-  config: EggAppConfig;
+  private config: EggAppConfig;
+
+  @Inject()
+  private runtimeConfig: RuntimeConfig;
 
   getBaseDir(): string {
     return this.config.baseDir;
@@ -22,4 +25,9 @@ export default class ConfigService {
   async getCurrentUserName(): Promise<string> {
     return this.user.userName;
   }
+
+  getRuntimeConfig(): RuntimeConfig {
+    return this.runtimeConfig;
+  }
+
 }

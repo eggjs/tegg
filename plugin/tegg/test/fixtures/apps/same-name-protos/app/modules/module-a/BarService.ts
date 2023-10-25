@@ -1,7 +1,7 @@
-import { ContextProto, Inject, ModuleQualifier } from '@eggjs/tegg';
+import { SingletonProto, Inject, ModuleQualifier } from '@eggjs/tegg';
 import { FooService } from '../module-foo/FooService';
 
-@ContextProto()
+@SingletonProto()
 export class BarService {
   @Inject()
   @ModuleQualifier('foo')

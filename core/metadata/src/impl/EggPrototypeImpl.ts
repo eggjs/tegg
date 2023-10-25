@@ -4,7 +4,7 @@ import {
   EggProtoImplClass,
   EggPrototypeName, MetaDataKey, MetadataUtil,
   ObjectInitTypeLike,
-  QualifierInfo,
+  QualifierInfo, QualifierValue,
 } from '@eggjs/core-decorator';
 import { Id } from '@eggjs/tegg-lifecycle';
 
@@ -20,6 +20,7 @@ export class EggPrototypeImpl implements EggPrototype {
   readonly accessLevel: AccessLevel;
   readonly injectObjects: InjectObjectProto[];
   readonly loadUnitId: Id;
+  readonly className?: string;
 
   constructor(
     id: string,
@@ -31,6 +32,7 @@ export class EggPrototypeImpl implements EggPrototype {
     injectObjectMap: InjectObjectProto[],
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
+    className?: string,
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -41,6 +43,7 @@ export class EggPrototypeImpl implements EggPrototype {
     this.injectObjects = injectObjectMap;
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
+    this.className = className;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -55,6 +58,10 @@ export class EggPrototypeImpl implements EggPrototype {
   verifyQualifier(qualifier: QualifierInfo): boolean {
     const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
+  }
+
+  getQualifier(attribute: string): QualifierValue | undefined {
+    return this.qualifiers.find(t => t.attribute === attribute)?.value;
   }
 
   constructEggObject(): object {

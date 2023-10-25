@@ -1,20 +1,30 @@
-import { Inject, SingletonProto } from '@eggjs/tegg';
+import { ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 
 @SingletonProto()
 export class Hello {
   hello() {
-    return 'hello';
+    return 'hello!';
   }
 }
 
-@SingletonProto()
+@ContextProto()
+export class HelloContext {
+  hello() {
+    return 'hello from ctx';
+  }
+}
+
+@ContextProto()
 @Runner()
 export class Foo implements MainRunner<string> {
   @Inject()
   hello: Hello;
 
+  @Inject()
+  helloContext: HelloContext;
+
   async main(): Promise<string> {
-    return this.hello.hello();
+    return this.hello.hello() + this.helloContext.hello();
   }
 }

@@ -1,4 +1,4 @@
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
+import { EggProtoImplClass, EggPrototypeInfo, PrototypeUtil } from '@eggjs/core-decorator';
 import { LoadUnit } from '../model/LoadUnit';
 import { EggPrototype, EggPrototypeLifecycleContext, EggPrototypeLifecycleUtil } from '../model/EggPrototype';
 
@@ -15,24 +15,47 @@ export class EggPrototypeCreatorFactory {
     return this.creatorMap.get(type);
   }
 
-  static async createProto(clazz: EggProtoImplClass, loadUnit: LoadUnit): Promise<EggPrototype> {
-    const property = PrototypeUtil.getProperty(clazz)!;
-    const creator = this.getPrototypeCreator(property.protoImplType);
-    if (!creator) {
-      throw new Error(`not found proto creator for type: ${property.protoImplType}`);
+  static async createProto(clazz: EggProtoImplClass, loadUnit: LoadUnit): Promise<EggPrototype[]> {
+    let properties: EggPrototypeInfo[] = [];
+    if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+      const multiInstanceProtoInfo = PrototypeUtil.getMultiInstanceProperty(clazz, {
+        unitPath: loadUnit.unitPath,
+      })!;
+      for (const obj of multiInstanceProtoInfo.objects) {
+        properties.push({
+          name: obj.name,
+          protoImplType: multiInstanceProtoInfo.protoImplType,
+          initType: multiInstanceProtoInfo.initType,
+          accessLevel: multiInstanceProtoInfo.accessLevel,
+          qualifiers: obj.qualifiers,
+          className: multiInstanceProtoInfo.className,
+        });
+      }
+    } else {
+      properties = [ PrototypeUtil.getProperty(clazz)! ];
     }
-    const ctx: EggPrototypeLifecycleContext = {
-      clazz,
-      loadUnit,
-    };
-    const proto = creator(ctx);
-    // TODO release egg prototype
-    await EggPrototypeLifecycleUtil.objectPreCreate(ctx, proto);
-    if (proto.init) {
-      await proto.init(ctx);
+    const protos: EggPrototype[] = [];
+    for (const property of properties) {
+      const creator = this.getPrototypeCreator(property.protoImplType);
+      if (!creator) {
+        throw new Error(`not found proto creator for type: ${property.protoImplType}`);
+      }
+      const ctx: EggPrototypeLifecycleContext = {
+        clazz,
+        loadUnit,
+        prototypeInfo: property,
+      };
+      const proto = creator(ctx);
+      // TODO release egg prototype
+      await EggPrototypeLifecycleUtil.objectPreCreate(ctx, proto);
+      if (proto.init) {
+        await proto.init(ctx);
+      }
+      await EggPrototypeLifecycleUtil.objectPostCreate(ctx, proto);
+      PrototypeUtil.setClazzProto(clazz, proto);
+      protos.push(proto);
     }
-    await EggPrototypeLifecycleUtil.objectPostCreate(ctx, proto);
-    PrototypeUtil.setClazzProto(clazz, proto);
-    return proto;
+    return protos;
+
   }
 }

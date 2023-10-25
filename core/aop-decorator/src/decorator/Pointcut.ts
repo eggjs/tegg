@@ -7,6 +7,7 @@ import { AdviceInfoUtil } from '../util/AdviceInfoUtil';
 export interface PointcutOptions {
   // default is 1000
   order?: number;
+  adviceParams?: any;
 }
 
 const defaultPointcutOptions = {
@@ -21,6 +22,7 @@ export function Pointcut(adviceClazz: EggProtoImplClass<IAdvice>, options?: Poin
     PointcutAdviceInfoUtil.addPointcutAdviceInfo({
       clazz: adviceClazz,
       order: options?.order ?? defaultPointcutOptions.order,
+      adviceParams: options?.adviceParams,
     }, targetClazz, methodName);
   };
 }
