@@ -44,7 +44,8 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "egg": "^2.26.0"
+    "egg": "^2.26.0",
+    "undici": "^5.26.5"
   },
   "publishConfig": {
     "access": "public"
