@@ -17,7 +17,7 @@ import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { RootProtoManager } from '../../RootProtoManager';
 import pathToRegexp from 'path-to-regexp';
 import { aclMiddlewareFactory } from './Acl';
-import { FetchRequest } from './Req';
+import { HTTPRequest } from './Req';
 import { RouterConflictError } from '../../errors';
 import { FrameworkErrorFormater } from 'egg-errors';
 import { EggRouter } from '@eggjs/router';
@@ -92,7 +92,7 @@ export class HTTPMethodRegister {
             break;
           }
           case HTTPParamType.REQUEST: {
-            args[index] = new FetchRequest(ctx);
+            args[index] = new HTTPRequest(ctx);
             break;
           }
           default:

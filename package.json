@@ -47,7 +47,8 @@
     "source-map-support": "^0.5.16",
     "test-exclude": "^6.0.0",
     "ts-node": "^10.1.0",
-    "typescript": "^4.0.0"
+    "typescript": "^4.0.0",
+    "undici": "^5.26.5"
   },
   "workspaces": [
     "core/*",
