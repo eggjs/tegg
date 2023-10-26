@@ -6,7 +6,7 @@ import {
   HTTPMethodEnum,
   Middleware,
   Request,
-  HTTPRequest
+  HTTPRequest,
 } from '@eggjs/tegg';
 import { countMw } from '../middleware/count_mw';
 
