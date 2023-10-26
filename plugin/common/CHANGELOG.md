@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0](https://github.com/eggjs/tegg/compare/v3.23.0...v3.24.0) (2023-10-26)
+
+**Note:** Version bump only for package @eggjs/egg-module-common
+
+
+
+
+
 # [3.23.0](https://github.com/eggjs/tegg/compare/v3.22.0...v3.23.0) (2023-09-20)
 
 **Note:** Version bump only for package @eggjs/egg-module-common

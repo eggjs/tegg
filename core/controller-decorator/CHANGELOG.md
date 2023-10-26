@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.24.0](https://github.com/eggjs/tegg/compare/v3.23.0...v3.24.0) (2023-10-26)
+
+
+### Features
+
+* support Request  decorators for HTTPController ([#159](https://github.com/eggjs/tegg/issues/159)) ([945e1eb](https://github.com/eggjs/tegg/commit/945e1eb18237f40879acdd2e43cd53dd2e8272a9))
+
+
+
+
+
 # [3.23.0](https://github.com/eggjs/tegg/compare/v3.22.0...v3.23.0) (2023-09-20)
 
 
