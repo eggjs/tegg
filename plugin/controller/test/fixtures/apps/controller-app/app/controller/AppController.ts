@@ -54,7 +54,20 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '',
   })
-  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @Request() request: HTTPRequest) {
+  async save(@Context() ctx: EggContext, @HTTPBody() app: App) {
+    const traceId = await ctx.tracer.traceId;
+    await this.appService.save(app);
+    return {
+      success: true,
+      traceId,
+    };
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.POST,
+    path: '/testRequest',
+  })
+  async testRequest(@Context() ctx: EggContext, @HTTPBody() app: App, @Request() request: HTTPRequest) {
     const traceId = await ctx.tracer.traceId;
     await this.appService.save(app);
     return {

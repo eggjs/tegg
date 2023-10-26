@@ -109,7 +109,7 @@ describe('test/params.test.ts', () => {
       };
       const headerKey = 'test-header';
       await app.httpRequest()
-        .post('/apps')
+        .post('/apps/testRequest')
         .send(param)
         .set('test', headerKey)
         .expect(200)
