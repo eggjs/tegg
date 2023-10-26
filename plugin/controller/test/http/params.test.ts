@@ -99,26 +99,4 @@ describe('test/params.test.ts', () => {
       });
   });
 
-  const [ nodeMajor ] = process.versions.node.split('.').map(v => Number(v));
-  if (nodeMajor >= 16) {
-    it('Request should work', async () => {
-      app.mockCsrf();
-      const param = {
-        name: 'foo',
-        desc: 'mock-desc',
-      };
-      const headerKey = 'test-header';
-      await app.httpRequest()
-        .post('/apps/testRequest')
-        .send(param)
-        .set('test', headerKey)
-        .expect(200)
-        .expect(res => {
-          assert(res.body.headers.test === headerKey);
-          assert(res.body.method === 'POST');
-          assert(res.body.requestBody === JSON.stringify(param));
-        });
-    });
-  }
-
 });

@@ -7,10 +7,8 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPQuery,
-  Request,
   Middleware,
   Inject,
-  HTTPRequest,
 } from '@eggjs/tegg';
 import AppService from '../../modules/multi-module-service/AppService';
 import App from '../../modules/multi-module-common/model/App';
@@ -60,22 +58,6 @@ export class AppController {
     return {
       success: true,
       traceId,
-    };
-  }
-
-  @HTTPMethod({
-    method: HTTPMethodEnum.POST,
-    path: '/testRequest',
-  })
-  async testRequest(@Context() ctx: EggContext, @HTTPBody() app: App, @Request() request: HTTPRequest) {
-    const traceId = await ctx.tracer.traceId;
-    await this.appService.save(app);
-    return {
-      success: true,
-      traceId,
-      headers: Object.fromEntries(request.headers),
-      method: request.method,
-      requestBody: await request.text(),
     };
   }
 }
