@@ -10,6 +10,7 @@ import {
   InjectHTTPRequest,
   Middleware,
   Inject,
+  HTTPRequest,
 } from '@eggjs/tegg';
 import AppService from '../../modules/multi-module-service/AppService';
 import App from '../../modules/multi-module-common/model/App';
@@ -53,13 +54,32 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '',
   })
-  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @InjectHTTPRequest()request: any) {
+  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @InjectHTTPRequest() request: HTTPRequest) {
     const traceId = await ctx.tracer.traceId;
+    async function streamToText(stream) {
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let result = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+        const chunk = decoder.decode(value, { stream: true });
+        result += chunk;
+      }
+
+      return result;
+    }
     await this.appService.save(app);
     return {
       success: true,
       traceId,
-      request,
+      headers: Object.fromEntries(request.headers),
+      method: request.method,
+      requestBody: await streamToText(request.body),
     };
   }
 }

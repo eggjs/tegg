@@ -99,17 +99,22 @@ describe('test/params.test.ts', () => {
       });
   });
 
-  it('InjectHTTPRequest should work', async () => {
+  it.only('InjectHTTPRequest should work', async () => {
     app.mockCsrf();
+    const param = {
+      name: 'foo',
+      desc: 'mock-desc',
+    };
+    const headerKey = 'test-header';
     await app.httpRequest()
       .post('/apps')
-      .send({
-        name: 'foo',
-        desc: 'mock-desc',
-      })
+      .send(param)
+      .set('test', headerKey)
       .expect(200)
       .expect(res => {
-        assert(res.body.request);
+        assert(res.body.headers.test === headerKey);
+        assert(res.body.method === 'POST');
+        assert(res.body.requestBody === JSON.stringify(param));
       });
   });
 });

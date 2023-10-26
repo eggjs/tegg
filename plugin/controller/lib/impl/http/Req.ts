@@ -1,4 +1,4 @@
-import type{ Context } from 'egg';
+import type { Context } from 'egg';
 import { HTTPRequest as BaseHTTPRequest } from '@eggjs/tegg';
 export class HTTPRequest extends BaseHTTPRequest {
   constructor(ctx:Context) {
@@ -7,7 +7,7 @@ export class HTTPRequest extends BaseHTTPRequest {
     super(request.href, {
       method: request.method,
       headers: request.headers as Record<string, string | string[]>,
-      body: request.body,
+      body: JSON.stringify(request.body),
     });
   }
 }
