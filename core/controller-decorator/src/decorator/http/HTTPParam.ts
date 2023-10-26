@@ -69,7 +69,7 @@ export function HTTPParam(param?: HTTPParamParams) {
   };
 }
 
-export function InjectHTTPRequest() {
+export function Request() {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
     assert(typeof propertyKey === 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);

@@ -7,7 +7,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPQuery,
-  InjectHTTPRequest,
+  Request,
   Middleware,
   Inject,
   HTTPRequest,
@@ -54,7 +54,7 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '',
   })
-  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @InjectHTTPRequest() request: HTTPRequest) {
+  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @Request() request: HTTPRequest) {
     const traceId = await ctx.tracer.traceId;
     async function streamToString(stream) {
       const decoder = new TextDecoder();
