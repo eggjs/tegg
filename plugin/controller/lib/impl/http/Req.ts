@@ -7,7 +7,7 @@ export class HTTPRequest extends BaseHTTPRequest {
     super(request.href, {
       method: request.method,
       headers: request.headers as Record<string, string | string[]>,
-      body: Object.prototype.toString.call(request.body) === '[object Object]' ? JSON.stringify(request.body) : request.body,
+      body: (ctx.request as any).rawBody,
     });
   }
 }
