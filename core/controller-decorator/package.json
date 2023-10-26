@@ -41,7 +41,8 @@
     "@eggjs/tegg-common-util": "^3.23.0",
     "@eggjs/tegg-metadata": "^3.23.0",
     "path-to-regexp": "^1.8.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "undici": "^5.26.5"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
