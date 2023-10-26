@@ -99,7 +99,7 @@ describe('test/params.test.ts', () => {
       });
   });
 
-  it.only('InjectHTTPRequest should work', async () => {
+  it('InjectHTTPRequest should work', async () => {
     app.mockCsrf();
     const param = {
       name: 'foo',
