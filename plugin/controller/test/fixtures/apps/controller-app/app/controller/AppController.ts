@@ -56,27 +56,13 @@ export class AppController {
   })
   async save(@Context() ctx: EggContext, @HTTPBody() app: App, @Request() request: HTTPRequest) {
     const traceId = await ctx.tracer.traceId;
-    async function streamToString(stream) {
-      const decoder = new TextDecoder();
-      const reader = stream.getReader();
-      let result = '';
-      async function readChunk() {
-        const { done, value } = await reader.read();
-        if (done) {
-          return result;
-        }
-        result += decoder.decode(value, { stream: true });
-        return readChunk();
-      }
-      return readChunk();
-    }
     await this.appService.save(app);
     return {
       success: true,
       traceId,
       headers: Object.fromEntries(request.headers),
       method: request.method,
-      requestBody: await streamToString(request.body),
+      requestBody: await request.text(),
     };
   }
 }
