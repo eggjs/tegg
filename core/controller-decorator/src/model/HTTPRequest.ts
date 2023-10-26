@@ -1,2 +1,2 @@
-import { Request } from 'undici';
-export class HTTPRequest extends Request {}
+import * as undici from 'undici';
+export class HTTPRequest extends undici.Request {}
