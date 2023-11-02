@@ -1,5 +1,4 @@
-import { ModuleConfig } from 'egg';
-import { ModuleReference } from '@eggjs/tegg-common-util';
+import { ModuleConfig, ModuleReference } from './ModuleConfig';
 
 export interface ModuleConfigHolder {
   name: string;

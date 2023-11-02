@@ -1,4 +1,5 @@
-import { QualifierUtil, EggProtoImplClass } from '@eggjs/tegg';
+import { QualifierUtil } from '../util/QualifierUtil';
+import { EggProtoImplClass } from '../model/EggPrototypeInfo';
 
 export const ConfigSourceQualifierAttribute = Symbol.for('Qualifier.ConfigSource');
 

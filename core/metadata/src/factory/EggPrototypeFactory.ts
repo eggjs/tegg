@@ -42,6 +42,7 @@ export class EggPrototypeFactory {
     qualifiers = qualifiers || [];
     const protos = this.doGetPrototype(name, qualifiers, loadUnit);
     if (!protos.length) {
+      console.log('this.publicProtoMap: ', this.publicProtoMap.get('moduleConfigs'), qualifiers);
       throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(name, loadUnit?.id));
     }
     if (protos.length === 1) {

@@ -15,8 +15,12 @@ import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
+import { ModuleConfigLoader } from './ModuleConfigLoader';
 
-export const APP_CLAZZ_BLACK_LIST = [ 'eggObjectFactory' ];
+export const APP_CLAZZ_BLACK_LIST = [
+  'eggObjectFactory',
+  'moduleConfigs',
+];
 
 export const CONTEXT_CLAZZ_BLACK_LIST = [
   // just use the app.logger, ctx logger is deprecated.
@@ -29,9 +33,11 @@ export const DEFAULT_CONTEXT_CLAZZ = [
 
 export class EggAppLoader implements Loader {
   private readonly app: Application;
+  private readonly moduleConfigLoader: ModuleConfigLoader;
 
   constructor(app) {
     this.app = app;
+    this.moduleConfigLoader = new ModuleConfigLoader(this.app);
   }
 
   private buildClazz(name: string, eggType: EggType): EggProtoImplClass {
@@ -124,11 +130,13 @@ export class EggAppLoader implements Loader {
     const allSingletonClazzs = allSingletonClazzNames.map(name => this.buildClazz(name, EggType.APP));
     const allContextClazzs = allContextClazzNames.map(name => this.buildClazz(name, EggType.CONTEXT));
     const appLoggerClazzs = loggerNames.map(name => this.buildAppLoggerClazz(name));
+    const moduleConfigList = this.moduleConfigLoader.loadModuleConfigList();
 
     return [
       ...allSingletonClazzs,
       ...allContextClazzs,
       ...appLoggerClazzs,
+      ...moduleConfigList,
 
       // inner helper class list
       // TODO: should auto the inner class

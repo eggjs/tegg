@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { main, StandaloneContext, Runner } from '..';
-import { ModuleConfigs } from '../src/ModuleConfigs';
+import { ModuleConfigs } from '@eggjs/tegg';
 import { ModuleConfig } from 'egg';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 
