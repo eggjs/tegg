@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
 
-describe('test/NoModuleJson.test.ts', () => {
+describe('test/ModuleConfig.test.ts', () => {
   let app;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/inject-module-config');
 
