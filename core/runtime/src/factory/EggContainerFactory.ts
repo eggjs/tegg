@@ -1,10 +1,17 @@
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { EggPrototype, EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggContainer } from '../model/EggContainer';
 import { LifecycleContext } from '@eggjs/tegg-lifecycle';
-import { EggObjectName, ObjectInitTypeLike, PrototypeUtil, EggProtoImplClass } from '@eggjs/core-decorator';
+import {
+  EggObjectName,
+  ObjectInitTypeLike,
+  PrototypeUtil,
+  EggProtoImplClass,
+  QualifierInfo,
+} from '@eggjs/core-decorator';
 import { EggObject } from '../model/EggObject';
 import { ContextHandler } from '../model/ContextHandler';
 import { ContextInitiator } from '../impl/ContextInitiator';
+import { NameUtil } from '@eggjs/tegg-common-util';
 
 export type ContainerGetMethod = (proto: EggPrototype) => EggContainer<LifecycleContext>;
 
@@ -45,8 +52,15 @@ export class EggContainerFactory {
    * If get singleton egg object in context,
    * will create context egg object for it.
    */
-  static async getOrCreateEggObjectFromClazz(clazz: EggProtoImplClass, name?: EggObjectName): Promise<EggObject> {
-    const proto = PrototypeUtil.getClazzProto(clazz) as EggPrototype;
+  static async getOrCreateEggObjectFromClazz(clazz: EggProtoImplClass, name?: EggObjectName, qualifiers?: QualifierInfo[]): Promise<EggObject> {
+    let proto = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass) as EggPrototype | undefined;
+    if (proto) {
+      name = name ?? proto.name;
+    } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz as EggProtoImplClass)) {
+      const defaultName = NameUtil.getClassName(clazz as EggProtoImplClass);
+      name = name ?? defaultName;
+      proto = EggPrototypeFactory.instance.getPrototype(name, undefined, qualifiers);
+    }
     if (!proto) {
       throw new Error(`can not get proto for clazz ${clazz.name}`);
     }

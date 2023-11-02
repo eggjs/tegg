@@ -21,13 +21,13 @@ export default {
     return this[TEGG_CONTEXT];
   },
 
-  async getEggObject(this: Context, clazz: EggProtoImplClass) {
+  async getEggObject(this: Context, clazz: EggProtoImplClass, name?: string) {
     const protoObj = PrototypeUtil.getClazzProto(clazz);
     if (!protoObj) {
       throw new Error(`can not get proto for clazz ${clazz.name}`);
     }
     const proto = protoObj as EggPrototype;
-    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, proto.name);
+    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, name ?? proto.name);
     return eggObject.obj;
   },
 };

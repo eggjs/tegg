@@ -1,5 +1,4 @@
 import {
-  EggPrototype,
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
@@ -16,7 +15,7 @@ import {
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { EggProtoImplClass, PrototypeUtil, IdenticalUtil, RuntimeConfig } from '@eggjs/tegg';
+import { EggProtoImplClass, IdenticalUtil, RuntimeConfig, QualifierInfo } from '@eggjs/tegg';
 import type { Application } from 'egg';
 
 export default {
@@ -89,12 +88,8 @@ export default {
     };
   },
 
-  async getEggObject(clazz: EggProtoImplClass) {
-    const proto = PrototypeUtil.getClazzProto(clazz);
-    if (!proto) {
-      throw new Error(`can not get proto for clazz ${clazz.name}`);
-    }
-    const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype);
+  async getEggObject(clazz: EggProtoImplClass, name?: string, qualifiers?: QualifierInfo[]) {
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers);
     return eggObject.obj;
   },
 };
