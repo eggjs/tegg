@@ -1,8 +1,6 @@
-import { ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
+import { ContextProto, Inject, SingletonProto, ModuleConfigs, ConfigSourceQualifier } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 import { ModuleConfig } from 'egg';
-import { ConfigSourceQualifier } from '../../../../src/ConfigSource';
-import { ModuleConfigs } from '../../../../src/ModuleConfigs';
 
 @SingletonProto()
 export class Hello {

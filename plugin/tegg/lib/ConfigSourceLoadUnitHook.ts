@@ -8,6 +8,7 @@ import {
 } from '@eggjs/tegg';
 
 /**
+ * Copy from standalone/src/ConfigSourceLoadUnitHook
  * Hook for inject moduleConfig.
  * Add default qualifier value is current module name.
  */
