@@ -12,7 +12,7 @@ import {
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
-import { EggProtoImplClass, PrototypeUtil, ModuleConfigHolder, ModuleConfigs } from '@eggjs/tegg';
+import { EggProtoImplClass, PrototypeUtil, ModuleConfigHolder, ModuleConfigs, ConfigSourceQualifierAttribute } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { EggObjectAopHook, EggPrototypeCrossCutHook, LoadUnitAopHook } from '@eggjs/tegg-aop-runtime';
@@ -21,7 +21,6 @@ import { EggModuleLoader } from './EggModuleLoader';
 import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
-import { ConfigSourceQualifierAttribute } from '@eggjs/core-decorator/src/decorator/ConfigSource';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
 import { LoadUnitInnerClassHook } from './LoadUnitInnerClassHook';
 
