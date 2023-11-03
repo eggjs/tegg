@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.25.1](https://github.com/eggjs/tegg/compare/v3.25.0...v3.25.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* fix standalone import ConfigSource ([#163](https://github.com/eggjs/tegg/issues/163)) ([6922071](https://github.com/eggjs/tegg/commit/6922071219413a8a11387be3d05f0e3970ce4f48))
+
+
+
+
+
 # [3.25.0](https://github.com/eggjs/tegg/compare/v3.24.0...v3.25.0) (2023-11-03)
 
 **Note:** Version bump only for package @eggjs/tegg-orm-plugin
