@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.25.0](https://github.com/eggjs/tegg/compare/v3.24.0...v3.25.0) (2023-11-03)
+
+
+### Features
+
+* tegg plugin support ModuleConfig ([#162](https://github.com/eggjs/tegg/issues/162)) ([58bd9fa](https://github.com/eggjs/tegg/commit/58bd9fafdd0d56aabdde5f7c33f17c45568bada8))
+
+
+
+
+
 # [3.24.0](https://github.com/eggjs/tegg/compare/v3.23.0...v3.24.0) (2023-10-26)
 
 **Note:** Version bump only for package @eggjs/tegg

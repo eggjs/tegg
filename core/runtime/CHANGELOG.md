@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.25.0](https://github.com/eggjs/tegg/compare/v3.24.0...v3.25.0) (2023-11-03)
+
+
+### Features
+
+* getObject support MultiInstanceProto ([#161](https://github.com/eggjs/tegg/issues/161)) ([1a24e48](https://github.com/eggjs/tegg/commit/1a24e48cd9a38e906966a21c5f0d1304c4b40d7c))
+
+
+
+
+
 # [3.24.0](https://github.com/eggjs/tegg/compare/v3.23.0...v3.24.0) (2023-10-26)
 
 **Note:** Version bump only for package @eggjs/tegg-runtime
