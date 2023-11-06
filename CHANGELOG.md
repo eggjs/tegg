@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.25.2](https://github.com/eggjs/tegg/compare/v3.25.1...v3.25.2) (2023-11-06)
+
+
+### Bug Fixes
+
+* verify isEggMultiInstancePrototype before proto exists ([#164](https://github.com/eggjs/tegg/issues/164)) ([db9a621](https://github.com/eggjs/tegg/commit/db9a62159886829de36b831f49f296fe05f0b228))
+
+
+
+
+
 ## [3.25.1](https://github.com/eggjs/tegg/compare/v3.25.0...v3.25.1) (2023-11-03)
 
 
