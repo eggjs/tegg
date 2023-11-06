@@ -87,11 +87,16 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
       assert(foo2.loadUnitPath);
       assert(foo2.foo === 'foo2');
 
-      const obj = await EggContainerFactory.getOrCreateEggObjectFromClazz(FooLogger, 'foo', [{
+      const obj1 = await EggContainerFactory.getOrCreateEggObjectFromClazz(FooLogger, 'foo', [{
+        attribute: FOO_ATTRIBUTE,
+        value: 'foo1',
+      }]);
+      const obj2 = await EggContainerFactory.getOrCreateEggObjectFromClazz(FooLogger, 'foo', [{
         attribute: FOO_ATTRIBUTE,
         value: 'foo2',
       }]);
-      assert(foo2Obj === obj);
+      assert(foo1Obj === obj1);
+      assert(foo2Obj === obj2);
 
       await TestUtil.destroyLoadUnitInstance(instance);
     });
