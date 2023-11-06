@@ -88,7 +88,10 @@ export default {
     };
   },
 
-  async getEggObject(clazz: EggProtoImplClass, name?: string, qualifiers?: QualifierInfo[]) {
+  async getEggObject(clazz: EggProtoImplClass, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+    if (qualifiers) {
+      qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
+    }
     const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers);
     return eggObject.obj;
   },
