@@ -9,6 +9,7 @@ export enum ControllerType {
   SOFA_RPC = 'SOFA_RPC',
   MGW_RPC = 'MGW_RPC',
   MESSAGE = 'MESSAGE',
+  SCHEDULE = 'SCHEDULE',
 }
 
 export type HostType = string | string [];
@@ -20,6 +21,7 @@ export enum MethodType {
   SOFA_RPC = 'SOFA_RPC',
   MGW_RPC = 'MGW_RPC',
   MESSAGE = 'MESSAGE',
+  SCHEDULE = 'SCHEDULE',
 }
 
 export type MethodTypeLike = ControllerType | string;
