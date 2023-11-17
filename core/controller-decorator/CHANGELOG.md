@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.26.0](https://github.com/eggjs/tegg/compare/v3.25.2...v3.26.0) (2023-11-17)
+
+
+### Features
+
+* Add ControllerType = SCHEDULE ([#166](https://github.com/eggjs/tegg/issues/166)) ([2c22e7d](https://github.com/eggjs/tegg/commit/2c22e7d4943659848ddbae7b552febef38b57a3d))
+
+
+
+
+
 ## [3.25.2](https://github.com/eggjs/tegg/compare/v3.25.1...v3.25.2) (2023-11-06)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
