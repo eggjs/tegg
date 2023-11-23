@@ -67,6 +67,19 @@ export class EggContainerFactory {
     return await this.getOrCreateEggObject(proto, name);
   }
 
+  /**
+   * get or create egg object from the Name
+   * If get singleton egg object in context,
+   * will create context egg object for it.
+   */
+  static async getOrCreateEggObjectFromName(name: EggObjectName, qualifiers?: QualifierInfo[]): Promise<EggObject> {
+    const proto = EggPrototypeFactory.instance.getPrototype(name, undefined, qualifiers);
+    if (!proto) {
+      throw new Error(`can not get proto for clazz ${String(name)}`);
+    }
+    return await this.getOrCreateEggObject(proto, name);
+  }
+
   static getEggObject(proto: EggPrototype, name?: EggObjectName): EggObject {
     const container = this.getContainer(proto);
     name = name || proto.name;

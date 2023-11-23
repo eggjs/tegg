@@ -95,4 +95,12 @@ export default {
     const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers);
     return eggObject.obj;
   },
+
+  async getEggObjectFromName(name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+    if (qualifiers) {
+      qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
+    }
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers);
+    return eggObject.obj;
+  },
 };

@@ -74,6 +74,11 @@ describe('test/EggObject.test.ts', () => {
         assert.equal(barObj2, barObj);
         assert.equal(barObj2.obj, barObj.obj);
 
+        // get obj from name
+        const barObj3 = await EggContainerFactory.getOrCreateEggObjectFromName('bar');
+        assert.equal(barObj3, barObj);
+        assert.equal(barObj3.obj, barObj.obj);
+
         await TestUtil.destroyLoadUnitInstance(instance);
         const called = bar.getLifecycleCalled();
         assert.deepStrictEqual(called, [
