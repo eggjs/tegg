@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.27.0](https://github.com/eggjs/tegg/compare/v3.26.0...v3.27.0) (2023-11-23)
+
+
+### Features
+
+* impl getObjectFromName ([#167](https://github.com/eggjs/tegg/issues/167)) ([95843c7](https://github.com/eggjs/tegg/commit/95843c74c201ecdfeb7023e16e3f8348a1cb32ea))
+
+
+
+
+
 # [3.26.0](https://github.com/eggjs/tegg/compare/v3.25.2...v3.26.0) (2023-11-17)
 
 
