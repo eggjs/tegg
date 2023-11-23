@@ -7,9 +7,11 @@ import {
 } from '@eggjs/tegg-metadata';
 import { EggProtoImplClass } from '@eggjs/tegg';
 import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
+import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 
 const INNER_CLASS_LIST = [
   EggObjectFactory,
+  BackgroundTaskHelper,
 ];
 
 export class LoadUnitInnerClassHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
