@@ -19,7 +19,7 @@ import {
   EggContext,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { IdenticalUtil, EggProtoImplClass } from '@eggjs/tegg';
+import { IdenticalUtil, EggProtoImplClass, QualifierInfo } from '@eggjs/tegg';
 import { ModuleHandler } from '../lib/ModuleHandler';
 import { EggContextHandler } from '../lib/EggContextHandler';
 
@@ -60,6 +60,7 @@ declare module 'egg' {
     module: EggModule & EggApplicationModule;
 
     getEggObject<T>(clazz: EggProtoImplClass<T>): Promise<T>;
+    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
   }
 
   export interface TEggContext {

@@ -42,6 +42,18 @@ describe('test/app/extend/context.test.ts', () => {
     });
   });
 
+  describe('getEggObjectFromName', () => {
+    it('should work', async () => {
+      await app.mockModuleContextScope(async ctx => {
+        const appService = await ctx.getEggObjectFromName('appService');
+        assert(appService instanceof AppService);
+
+        const persistenceService = await ctx.getEggObjectFromName('persistenceService');
+        assert(persistenceService instanceof PersistenceService);
+      });
+    });
+  });
+
   describe('beginModuleScope', () => {
     it('should be reentrant', async () => {
       await app.mockModuleContextScope(async ctx => {

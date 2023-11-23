@@ -632,17 +632,23 @@ export interface Application {
 export interface Application {
   /**
    * 通过一个类来获取实例
-   * 注：app.getEggObject 只能获取 Singleton 实例
    */
   getEggObject<T> (clazz: EggProtoImplClass<T> ): Promise <T>;
+  /**
+   * 通过对象名称来获取实例
+   */
+  getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
 }
 
 export interface Context {
   /**
    * 通过一个类来获取实例
-   * 注：ctx.getEggObject 可以获取 Singleton/Context 实例
    */
   getEggObject<T> (clazz: EggProtoImplClass<T> ): Promise <T>;
+  /**
+   * 通过对象名称来获取实例
+   */
+  getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
 }
 ```
 
