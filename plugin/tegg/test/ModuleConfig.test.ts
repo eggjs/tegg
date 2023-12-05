@@ -37,4 +37,18 @@ describe('test/ModuleConfig.test.ts', () => {
         });
       });
   });
+
+  it('should work with overwrite', async () => {
+    mm(app.moduleConfigs.simple.config, 'features', { dynamic: { foo: 'bar', bar: 'overwrite foo' } });
+
+    await app.httpRequest()
+      .get('/config')
+      .expect(200)
+      .expect(res => {
+        assert.deepStrictEqual(res.body, {
+          moduleConfigs: { features: { dynamic: { foo: 'bar', bar: 'overwrite foo' } } },
+          moduleConfig: { features: { dynamic: { foo: 'bar', bar: 'overwrite foo' } } },
+        });
+      });
+  });
 });

@@ -49,7 +49,8 @@ export class ModuleConfigLoader {
     const moduleConfigMap: Record<string, ModuleConfigHolder> = {};
     for (const reference of this.app.moduleReferences) {
       const moduleName = ModuleConfigUtil.readModuleNameSync(reference.path);
-      const config = ModuleConfigUtil.loadModuleConfigSync(reference.path, undefined, this.app.config.env) || {};
+      // first read @eggjs/tegg-config moduleConfigs
+      const config = this.app.moduleConfigs[moduleName].config || ModuleConfigUtil.loadModuleConfigSync(reference.path, undefined, this.app.config.env) || {};
       moduleConfigMap[moduleName] = {
         name: moduleName,
         reference: {
