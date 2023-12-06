@@ -42,7 +42,7 @@ describe('test/ModuleConfig.test.ts', () => {
     mm(app.moduleConfigs.simple.config, 'features', { dynamic: { foo: 'bar', bar: 'overwrite foo' } });
 
     await app.httpRequest()
-      .get('/config')
+      .get('/overwrite_config')
       .expect(200)
       .expect(res => {
         assert.deepStrictEqual(res.body, {
