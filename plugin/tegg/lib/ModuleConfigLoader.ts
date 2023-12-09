@@ -13,6 +13,7 @@ import {
 import { ModuleConfigUtil } from '@eggjs/tegg/helper';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { Application } from 'egg';
+import extend from 'extend2';
 
 export class ModuleConfigLoader {
   constructor(readonly app: Application) {
@@ -49,7 +50,9 @@ export class ModuleConfigLoader {
     const moduleConfigMap: Record<string, ModuleConfigHolder> = {};
     for (const reference of this.app.moduleReferences) {
       const moduleName = ModuleConfigUtil.readModuleNameSync(reference.path);
-      const config = ModuleConfigUtil.loadModuleConfigSync(reference.path, undefined, this.app.config.env) || {};
+      const defaultConfig = ModuleConfigUtil.loadModuleConfigSync(reference.path, undefined, this.app.config.env);
+      // @eggjs/tegg-config moduleConfigs[module].config overwrite
+      const config = extend(true, {}, defaultConfig, this.app.moduleConfigs[moduleName]?.config);
       moduleConfigMap[moduleName] = {
         name: moduleName,
         reference: {
