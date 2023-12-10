@@ -39,8 +39,6 @@ describe('test/ModuleConfig.test.ts', () => {
   });
 
   it('should work with overwrite', async () => {
-    mm(app.moduleConfigs.simple.config, 'features', { dynamic: { foo: 'bar', bar: 'overwrite foo' } });
-
     await app.httpRequest()
       .get('/overwrite_config')
       .expect(200)
