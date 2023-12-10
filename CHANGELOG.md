@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.28.0](https://github.com/eggjs/tegg/compare/v3.27.0...v3.28.0) (2023-12-10)
+
+
+### Features
+
+* inject moduleConfig read from tegg-config app.moduleConfigs config ([#169](https://github.com/eggjs/tegg/issues/169)) ([2d984ef](https://github.com/eggjs/tegg/commit/2d984efad0806b333aa2ea30daac2df859967750))
+
+
+
+
+
 # [3.27.0](https://github.com/eggjs/tegg/compare/v3.26.0...v3.27.0) (2023-11-23)
 
 
