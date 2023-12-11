@@ -1,8 +1,7 @@
 import Base from 'sdk-base';
 import { ModelProtoManager } from './ModelProtoManager';
 import { DataSourceManager, OrmConfig } from './DataSourceManager';
-import Realm from 'leoric';
-import { hookNames } from 'leoric/lib/setup_hooks';
+import Realm, { hookNames } from 'leoric';
 import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
 
 export class LeoricRegister extends Base {
