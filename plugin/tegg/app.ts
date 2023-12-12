@@ -64,5 +64,8 @@ export default class App {
     if (this.configSourceEggPrototypeHook) {
       this.app.loadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
     }
+    if (this.loadUnitMultiInstanceProtoHook) {
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
+    }
   }
 }
