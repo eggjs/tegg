@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.28.2](https://github.com/eggjs/tegg/compare/v3.28.1...v3.28.2) (2023-12-12)
+
+
+### Bug Fixes
+
+* clear all hooks after app close ([#175](https://github.com/eggjs/tegg/issues/175)) ([6fe12b9](https://github.com/eggjs/tegg/commit/6fe12b9bd2cc1c250d02ac851a6e2e172ab12514))
+
+
+
+
+
 ## [3.28.1](https://github.com/eggjs/tegg/compare/v3.28.0...v3.28.1) (2023-12-11)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin
