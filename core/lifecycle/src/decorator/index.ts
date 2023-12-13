@@ -1,5 +1,5 @@
 import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { LifecycleUtil, LifecycleHookName } from '../LifycycleUtil';
+import { LifecycleUtil, LifecycleHookName } from '../LifecycleUtil';
 
 function createLifecycle(hookName: LifecycleHookName) {
   return () => {
