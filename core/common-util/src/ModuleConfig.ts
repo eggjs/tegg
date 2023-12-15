@@ -274,8 +274,7 @@ export class ModuleConfigUtil {
         envConfig = ModuleConfigUtil.loadModuleJsonSync(moduleDir, env);
       }
     }
-    extend(true, defaultConfig, envConfig);
-    return defaultConfig;
+    return extend(true, defaultConfig, envConfig);
   }
 
   private static loadModuleJsonSync(moduleDir: string, env?: string): ModuleConfig | undefined {

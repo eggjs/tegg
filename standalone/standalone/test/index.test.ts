@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { main, StandaloneContext, Runner } from '..';
@@ -57,7 +57,7 @@ describe('test/index.test.ts', () => {
   describe('module with config', () => {
     it('should work', async () => {
       const config = await main(path.join(__dirname, './fixtures/module-with-config'));
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
         features: {
           dynamic: {
             foo: 'bar',
@@ -70,7 +70,23 @@ describe('test/index.test.ts', () => {
       const config = await main(path.join(__dirname, './fixtures/module-with-env-config'), {
         env: 'dev',
       });
-      assert.deepStrictEqual(config, {
+      assert.deepEqual(config, {
+        features: {
+          dynamic: {
+            foo: 'foo',
+          },
+        },
+      });
+    });
+
+    it('should empty config work', async () => {
+      const config = await main(path.join(__dirname, './fixtures/module-with-empty-config'));
+      assert.deepEqual(config, {});
+    });
+
+    it('should empty default config work', async () => {
+      const config = await main(path.join(__dirname, './fixtures/module-with-empty-default-config'), { env: 'dev' });
+      assert.deepEqual(config, {
         features: {
           dynamic: {
             foo: 'foo',
@@ -87,8 +103,8 @@ describe('test/index.test.ts', () => {
         foo: ModuleConfig,
         bar: ModuleConfig,
       };
-      assert.deepStrictEqual(configs.get('foo'), foo);
-      assert.deepStrictEqual(configs.get('bar'), bar);
+      assert.deepEqual(configs.get('foo'), foo);
+      assert.deepEqual(configs.get('bar'), bar);
     });
   });
 
@@ -143,7 +159,7 @@ describe('test/index.test.ts', () => {
 
     it('should work', async () => {
       const msgs = await main(fixturePath);
-      assert.deepStrictEqual(msgs, [
+      assert.deepEqual(msgs, [
         'hello, foo(context:0)',
         'hello, bar(context:0)',
         'hello, foo(singleton:0)',
@@ -157,7 +173,7 @@ describe('test/index.test.ts', () => {
 
     it('should work', async () => {
       const msg = await main(fixturePath);
-      assert.deepStrictEqual(msg,
+      assert.deepEqual(msg,
         `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`);
     });
   });
@@ -174,11 +190,11 @@ describe('test/index.test.ts', () => {
       for (const loadunit of loadunits) {
         for (const proto of loadunit.iterateEggPrototype()) {
           if (proto.id.match(/:hello$/)) {
-            assert.strictEqual(proto.className, 'Hello');
+            assert.equal(proto.className, 'Hello');
           } else if (proto.id.match(/:moduleConfigs$/)) {
-            assert.strictEqual(proto.className, undefined);
+            assert.equal(proto.className, undefined);
           } else if (proto.id.match(/:moduleConfig$/)) {
-            assert.strictEqual(proto.className, undefined);
+            assert.equal(proto.className, undefined);
           }
         }
       }
@@ -190,7 +206,7 @@ describe('test/index.test.ts', () => {
       for (const loadunit of loadunits) {
         for (const proto of loadunit.iterateEggPrototype()) {
           if (proto.id.match(/:dynamicLogger$/)) {
-            assert.strictEqual(proto.className, 'DynamicLogger');
+            assert.equal(proto.className, 'DynamicLogger');
           }
         }
       }
