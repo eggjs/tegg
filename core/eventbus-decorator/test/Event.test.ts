@@ -6,8 +6,8 @@ import { EventInfoUtil } from '../src/EventInfoUtil';
 
 describe('test/Event.test.ts', () => {
   it('should work', () => {
-    const eventName = EventInfoUtil.getEventName(FooHandler);
-    assert(eventName === 'foo');
+    const eventList = EventInfoUtil.getEventNameList(FooHandler);
+    assert.deepStrictEqual(eventList, [ 'bar', 'foo' ]);
   });
 
   it('event type check should work', async () => {

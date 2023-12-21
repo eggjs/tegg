@@ -5,6 +5,7 @@ import { EventBus, Event } from '../..';
 declare module '@eggjs/tegg' {
   interface Events {
     foo: (msg: string) => void;
+    bar: (msg: string) => void;
   }
 }
 
@@ -19,6 +20,7 @@ export class FooProducer {
 }
 
 @Event('foo')
+@Event('bar')
 export class FooHandler {
   handle(msg: string): void {
     console.log('msg: ', msg);

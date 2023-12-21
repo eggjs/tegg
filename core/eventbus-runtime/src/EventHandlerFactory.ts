@@ -10,9 +10,11 @@ import { AccessLevel, SingletonProto } from '@eggjs/core-decorator';
 export class EventHandlerFactory {
   private handlerProtoMap: Map<EventName, Array<EggPrototype>> = new Map();
 
-  registerHandler(event: EventName, proto: EggPrototype) {
-    const protos = MapUtil.getOrStore(this.handlerProtoMap, event, []);
-    protos.push(proto);
+  registerHandler(events: EventName[], proto: EggPrototype) {
+    for (const event of events) {
+      const protos = MapUtil.getOrStore(this.handlerProtoMap, event, []);
+      protos.push(proto);
+    }
   }
 
   hasListeners(event: EventName) {

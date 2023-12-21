@@ -56,3 +56,14 @@ export class Foo {
   }
 }
 ```
+
+### handle multiple event
+```ts
+@Event('hello')
+@Event('hi')
+export class Foo {
+  async handle(msg: string): Promise<void> {
+    console.log('msg: ', msg);
+  }
+}
+```

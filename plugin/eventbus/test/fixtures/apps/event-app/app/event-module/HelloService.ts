@@ -3,6 +3,7 @@ import { AccessLevel, ContextProto, Inject, ContextEventBus } from '@eggjs/tegg'
 declare module '@eggjs/tegg' {
   interface Events {
     helloEgg: (msg: string) => void;
+    hiEgg: (msg: string) => void;
     trace: () => void,
   }
 }
@@ -24,6 +25,10 @@ export class HelloService {
 
   hello() {
     this.eventBus.emit('helloEgg', '01');
+  }
+
+  hi() {
+    this.eventBus.emit('hiEgg', 'Ydream');
   }
 
   traceTest() {

@@ -8,7 +8,7 @@ import { Events } from '@eggjs/tegg';
 
 export function Event<E extends keyof Events>(eventName: E) {
   return function(clazz: new () => EventHandler<E>) {
-    EventInfoUtil.setEventName(eventName, clazz);
+    EventInfoUtil.addEventName(eventName, clazz);
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
     });
