@@ -4,22 +4,24 @@ import { EventBus, Event } from '../..';
 
 declare module '@eggjs/tegg' {
   interface Events {
-    foo: (msg: string) => void;
+    hello: (msg: string) => void;
+    hi: (msg: string) => void;
   }
 }
 
 @SingletonProto()
-export class FooProducer {
+export class MultiProducer {
   @Inject()
   private readonly eventBus: EventBus;
 
   trigger() {
-    this.eventBus.emit('foo', 'hello');
+    this.eventBus.emit('hello', 'Ydream');
   }
 }
 
-@Event('foo')
-export class FooHandler {
+@Event('hello')
+@Event('hi')
+export class MultiHandler {
   handle(msg: string): void {
     console.log('msg: ', msg);
   }

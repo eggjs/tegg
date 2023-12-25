@@ -144,18 +144,23 @@ describe('test/eventbus.test.ts', () => {
   it('multi event handler should work', async function() {
     await app.mockModuleContextScope(async ctx => {
       const helloService = await ctx.getEggObject(HelloService);
-      const msg: string[] = [];
-      mm(MultiEventHandler.prototype, 'handle', m => {
-        msg.push(m);
+      let eventName = '';
+      let msg = '';
+      mm(MultiEventHandler.prototype, 'handle', (ctx, m) => {
+        eventName = ctx.eventName;
+        msg = m;
       });
       const eventWaiter = await app.getEventWaiter();
       const helloEvent = eventWaiter.await('helloEgg');
       helloService.hello();
       await helloEvent;
+      assert.equal(eventName, 'helloEgg');
+      assert.equal(msg, '01');
       const hiEvent = eventWaiter.await('hiEgg');
       helloService.hi();
       await hiEvent;
-      assert.deepStrictEqual(msg, [ '01', 'Ydream' ]);
+      assert.equal(eventName, 'hiEgg');
+      assert.equal(msg, 'Ydream');
     });
   });
 });

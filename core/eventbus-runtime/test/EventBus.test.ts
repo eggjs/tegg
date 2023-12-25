@@ -10,6 +10,7 @@ import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
 import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
+import { MultiWithContextHandler, MultiWithContextProducer } from './fixtures/modules/event/MultiEventWithContext';
 
 describe('test/EventBus.test.ts', () => {
   let modules: Array<LoadUnitInstance>;
@@ -36,7 +37,7 @@ describe('test/EventBus.test.ts', () => {
       });
       const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
       eventHandlerFactory.registerHandler(
-        EventInfoUtil.getEventNameList(HelloHandler),
+        EventInfoUtil.getEventName(HelloHandler)!,
         PrototypeUtil.getClazzProto(HelloHandler) as EggPrototype);
 
       const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
@@ -54,6 +55,32 @@ describe('test/EventBus.test.ts', () => {
     });
   });
 
+  it('should work with EventContext', async function() {
+    await EggTestContext.mockContext(async (ctx: EggTestContext) => {
+      const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
+      eventContextFactory.registerContextCreator(() => {
+        return ctx;
+      });
+      const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
+      EventInfoUtil.getEventNameList(MultiWithContextHandler)
+        .forEach(eventName =>
+          eventHandlerFactory.registerHandler(eventName, PrototypeUtil.getClazzProto(MultiWithContextHandler) as EggPrototype));
+
+      const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
+      const producer = await CoreTestHelper.getObject(MultiWithContextProducer);
+      const fooEvent = eventBus.await('foo');
+      producer.foo();
+      await fooEvent;
+      assert.equal(MultiWithContextHandler.eventName, 'foo');
+      assert.equal(MultiWithContextHandler.msg, '123');
+      const barEvent = eventBus.await('bar');
+      producer.bar();
+      await barEvent;
+      assert.equal(MultiWithContextHandler.eventName, 'bar');
+      assert.equal(MultiWithContextHandler.msg, '321');
+    });
+  });
+
   it('destroy should be called', async () => {
     await EggTestContext.mockContext(async (ctx: EggTestContext) => {
       let destroyCalled = false;
@@ -66,7 +93,7 @@ describe('test/EventBus.test.ts', () => {
       });
       const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
       eventHandlerFactory.registerHandler(
-        EventInfoUtil.getEventNameList(HelloHandler),
+        EventInfoUtil.getEventName(HelloHandler)!,
         PrototypeUtil.getClazzProto(HelloHandler) as EggPrototype);
 
       const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
@@ -88,10 +115,10 @@ describe('test/EventBus.test.ts', () => {
       });
       const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
       eventHandlerFactory.registerHandler(
-        EventInfoUtil.getEventNameList(Timeout0Handler),
+        EventInfoUtil.getEventName(Timeout0Handler)!,
         PrototypeUtil.getClazzProto(Timeout0Handler) as EggPrototype);
       eventHandlerFactory.registerHandler(
-        EventInfoUtil.getEventNameList(Timeout100Handler),
+        EventInfoUtil.getEventName(Timeout100Handler)!,
         PrototypeUtil.getClazzProto(Timeout100Handler) as EggPrototype);
 
       const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
@@ -112,7 +139,7 @@ describe('test/EventBus.test.ts', () => {
       });
       const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
       eventHandlerFactory.registerHandler(
-        EventInfoUtil.getEventNameList(HelloHandler),
+        EventInfoUtil.getEventName(HelloHandler)!,
         PrototypeUtil.getClazzProto(HelloHandler) as EggPrototype);
 
       const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
@@ -144,7 +171,7 @@ describe('test/EventBus.test.ts', () => {
       });
       const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
       eventHandlerFactory.registerHandler(
-        EventInfoUtil.getEventNameList(HelloHandler),
+        EventInfoUtil.getEventName(HelloHandler)!,
         PrototypeUtil.getClazzProto(HelloHandler) as EggPrototype);
 
       const eventBus = await CoreTestHelper.getObject(SingletonEventBus);

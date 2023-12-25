@@ -4,6 +4,7 @@ import { Events, PrototypeUtil, CORK_ID, ContextEventBus } from '@eggjs/tegg';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
+import type { Arguments } from '@eggjs/tegg';
 
 export class EggContextEventBus implements ContextEventBus {
   private readonly eventBus: SingletonEventBus;
@@ -33,7 +34,7 @@ export class EggContextEventBus implements ContextEventBus {
     }
   }
 
-  emit<E extends keyof Events>(event: E, ...args: any): boolean {
+  emit<E extends keyof Events>(event: E, ...args: Arguments<Events[E]>): boolean {
     return this.eventBus.emitWithContext(this.context, event, args);
   }
 

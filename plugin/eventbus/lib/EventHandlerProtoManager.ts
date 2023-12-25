@@ -19,8 +19,8 @@ export class EventHandlerProtoManager {
   async register() {
     const eventHandlerFactory = await this.app.getEggObject(EventHandlerFactory);
     for (const proto of this.protos) {
-      const eventList = proto.getMetaData(EVENT_NAME)! as EventName[];
-      eventHandlerFactory.registerHandler(eventList, proto);
+      const eventList = proto.getMetaData(EVENT_NAME) as EventName[] ?? [];
+      eventList.forEach(event => eventHandlerFactory.registerHandler(event, proto));
     }
 
     const eventFactory = await this.app.getEggObject(EventContextFactory);

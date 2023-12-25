@@ -2,12 +2,26 @@ import assert from 'assert';
 import path from 'path';
 import coffee from 'coffee';
 import { FooHandler } from './fixtures/right-event-handle';
+import { MultiHandler } from './fixtures/multiple-events-handle';
+import { EventContextHandler } from './fixtures/event-handle-with-context';
 import { EventInfoUtil } from '../src/EventInfoUtil';
 
 describe('test/Event.test.ts', () => {
-  it('should work', () => {
-    const eventList = EventInfoUtil.getEventNameList(FooHandler);
-    assert.deepStrictEqual(eventList, [ 'bar', 'foo' ]);
+  it('getEventName should work', () => {
+    const event = EventInfoUtil.getEventName(FooHandler);
+    assert.equal(event, 'foo');
+  });
+
+  it('getEventNameList should work', function() {
+    const event = EventInfoUtil.getEventName(MultiHandler);
+    assert.deepStrictEqual(event, 'hello');
+    const eventList = EventInfoUtil.getEventNameList(MultiHandler);
+    assert.deepStrictEqual(eventList, [ 'hi', 'hello' ]);
+  });
+
+  it('getEventHandlerContextInject', function() {
+    assert.equal(EventInfoUtil.getEventHandlerContextInject(EventContextHandler), true);
+    assert.equal(EventInfoUtil.getEventHandlerContextInject(FooHandler), false);
   });
 
   it('event type check should work', async () => {
