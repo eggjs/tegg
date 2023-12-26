@@ -81,6 +81,47 @@ describe('test/EventBus.test.ts', () => {
     });
   });
 
+  it('EventBus.awaitFirst should work', async function() {
+    await EggTestContext.mockContext(async (ctx: EggTestContext) => {
+      const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
+      eventContextFactory.registerContextCreator(() => {
+        return ctx;
+      });
+      const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
+      EventInfoUtil.getEventNameList(MultiWithContextHandler)
+        .forEach(eventName =>
+          eventHandlerFactory.registerHandler(eventName, PrototypeUtil.getClazzProto(MultiWithContextHandler) as EggPrototype));
+
+      const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
+      const producer = await CoreTestHelper.getObject(MultiWithContextProducer);
+      const fooEvent = eventBus.awaitFirst('foo', 'bar');
+      producer.foo();
+      await fooEvent;
+      assert.equal(MultiWithContextHandler.eventName, 'foo');
+      assert.equal(MultiWithContextHandler.msg, '123');
+    });
+  });
+
+  it('EventHandlerFactory.getHandlers should work', async function() {
+    await EggTestContext.mockContext(async (ctx: EggTestContext) => {
+      const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
+      eventContextFactory.registerContextCreator(() => {
+        return ctx;
+      });
+      const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
+      EventInfoUtil.getEventNameList(MultiWithContextHandler)
+        .forEach(eventName =>
+          eventHandlerFactory.registerHandler(eventName, PrototypeUtil.getClazzProto(MultiWithContextHandler) as EggPrototype));
+      const handlers = await eventHandlerFactory.getHandlers('foo');
+      assert.equal(handlers.length, 1);
+      const handler = handlers[0];
+      assert(handler instanceof MultiWithContextHandler);
+      await Reflect.apply(handler.handle, handler, [{ eventName: 'foo' }, '123' ]);
+      assert.equal(MultiWithContextHandler.eventName, 'foo');
+      assert.equal(MultiWithContextHandler.msg, '123');
+    });
+  });
+
   it('destroy should be called', async () => {
     await EggTestContext.mockContext(async (ctx: EggTestContext) => {
       let destroyCalled = false;

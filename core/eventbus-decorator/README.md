@@ -76,7 +76,7 @@ The context param must be the first param
 @Event('hello')
 @Event('hi')
 export class Foo {
-  async handle(@EventContext ctx: IEventContext, msg: string):Promise<void> {
+  async handle(@EventContext() ctx: IEventContext, msg: string):Promise<void> {
     console.log('eventName: ', ctx.eventName);
     console.log('msg: ', msg);
   }
