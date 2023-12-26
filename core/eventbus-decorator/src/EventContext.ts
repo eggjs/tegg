@@ -1,6 +1,6 @@
 // use @eggjs/tegg as namespace
 // eslint-disable-next-line import/no-unresolved
-import { Events } from '@eggjs/tegg';
+import type { Events } from '@eggjs/tegg';
 import { EggProtoImplClass } from '@eggjs/core-decorator';
 import assert from 'assert';
 import { EventInfoUtil } from './EventInfoUtil';
