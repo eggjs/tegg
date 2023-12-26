@@ -1,4 +1,4 @@
-import { EventHandler, EventName, Events } from '@eggjs/eventbus-decorator';
+import { EventHandler, EventName, Events, Arguments, EVENT_CONTEXT_INJECT } from '@eggjs/eventbus-decorator';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
@@ -19,11 +19,33 @@ export class EventHandlerFactory {
     return this.handlerProtoMap.has(event);
   }
 
-  async getHandlers(event: EventName): Promise<Array<EventHandler<keyof Events>>> {
+  getHandlerProtos(event: EventName): Array<EggPrototype> {
     const handlerProtos = this.handlerProtoMap.get(event) || [];
-    const eggObjs = await Promise.all(handlerProtos.map(proto => {
-      return EggContainerFactory.getOrCreateEggObject(proto, proto.name);
+    return handlerProtos;
+  }
+
+  async getHandler(proto: EggPrototype): Promise<EventHandler<keyof Events>> {
+    const eggObj = await EggContainerFactory.getOrCreateEggObject(proto, proto.name);
+    return eggObj.obj as EventHandler<keyof Events>;
+  }
+
+  async getHandlers(event: EventName): Promise<Array<EventHandler<keyof Events>>> {
+    const handlerProtos = this.getHandlerProtos(event);
+    return await Promise.all(handlerProtos.map(proto => {
+      return this.getHandler(proto);
     }));
-    return eggObjs.map(t => t.obj as EventHandler<keyof Events>);
+  }
+
+  async handle(eventName: EventName, proto: EggPrototype, args: Arguments<any>): Promise<void> {
+    const handler = await this.getHandler(proto);
+    const enableInjectCtx = proto.getMetaData<boolean>(EVENT_CONTEXT_INJECT) ?? false;
+    if (enableInjectCtx) {
+      const ctx = {
+        eventName,
+      };
+      await Reflect.apply(handler.handle, handler, [ ctx, ...args ]);
+    } else {
+      await Reflect.apply(handler.handle, handler, args);
+    }
   }
 }

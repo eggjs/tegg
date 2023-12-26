@@ -56,3 +56,29 @@ export class Foo {
   }
 }
 ```
+
+### handle multiple event
+```ts
+@Event('hello')
+@Event('hi')
+export class Foo {
+  async handle(msg: string): Promise<void> {
+    console.log('msg: ', msg);
+  }
+}
+```
+
+### inject event context 
+inject event context  if you want to know which event is being handled.
+The context param must be the first param
+
+```ts
+@Event('hello')
+@Event('hi')
+export class Foo {
+  async handle(@EventContext() ctx: IEventContext, msg: string):Promise<void> {
+    console.log('eventName: ', ctx.eventName);
+    console.log('msg: ', msg);
+  }
+}
+```

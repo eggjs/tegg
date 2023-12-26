@@ -4,11 +4,11 @@ import { EventHandler } from '../index';
 import { EventInfoUtil } from './EventInfoUtil';
 // use @eggjs/tegg as namespace
 // eslint-disable-next-line import/no-unresolved
-import { Events } from '@eggjs/tegg';
+import type { Events } from '@eggjs/tegg';
 
 export function Event<E extends keyof Events>(eventName: E) {
   return function(clazz: new () => EventHandler<E>) {
-    EventInfoUtil.setEventName(eventName, clazz);
+    EventInfoUtil.addEventName(eventName, clazz);
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
     });

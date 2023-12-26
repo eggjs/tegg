@@ -4,6 +4,7 @@ import mm, { MockApplication } from 'egg-mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService';
 import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger';
+import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler';
 
 describe('test/eventbus.test.ts', () => {
   let app: MockApplication;
@@ -138,5 +139,28 @@ describe('test/eventbus.test.ts', () => {
       }),
     ]);
     assert(helloCalled === 2);
+  });
+
+  it('multi event handler should work', async function() {
+    await app.mockModuleContextScope(async ctx => {
+      const helloService = await ctx.getEggObject(HelloService);
+      let eventName = '';
+      let msg = '';
+      mm(MultiEventHandler.prototype, 'handle', (ctx, m) => {
+        eventName = ctx.eventName;
+        msg = m;
+      });
+      const eventWaiter = await app.getEventWaiter();
+      const helloEvent = eventWaiter.await('helloEgg');
+      helloService.hello();
+      await helloEvent;
+      assert.equal(eventName, 'helloEgg');
+      assert.equal(msg, '01');
+      const hiEvent = eventWaiter.await('hiEgg');
+      helloService.hi();
+      await hiEvent;
+      assert.equal(eventName, 'hiEgg');
+      assert.equal(msg, 'Ydream');
+    });
   });
 });
