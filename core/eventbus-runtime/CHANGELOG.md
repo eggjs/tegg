@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.29.0](https://github.com/eggjs/tegg/compare/v3.28.2...v3.29.0) (2023-12-26)
+
+
+### Features
+
+* allow a handler to subscribe to multiple events ([#179](https://github.com/eggjs/tegg/issues/179)) ([1d460a5](https://github.com/eggjs/tegg/commit/1d460a5a6bdcf9a3d61b13d3527633c8b990a38c))
+
+
+
+
+
 ## [3.28.2](https://github.com/eggjs/tegg/compare/v3.28.1...v3.28.2) (2023-12-12)
 
 **Note:** Version bump only for package @eggjs/tegg-eventbus-runtime
