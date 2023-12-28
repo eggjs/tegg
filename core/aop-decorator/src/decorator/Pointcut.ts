@@ -4,17 +4,17 @@ import { PointcutAdviceInfoUtil } from '../util/PointcutAdviceInfoUtil';
 import assert from 'assert';
 import { AdviceInfoUtil } from '../util/AdviceInfoUtil';
 
-export interface PointcutOptions {
+export interface PointcutOptions<K = any> {
   // default is 1000
   order?: number;
-  adviceParams?: any;
+  adviceParams?: K;
 }
 
 const defaultPointcutOptions = {
   order: 1000,
 };
 
-export function Pointcut(adviceClazz: EggProtoImplClass<IAdvice>, options?: PointcutOptions) {
+export function Pointcut<T extends object, K = any>(adviceClazz: EggProtoImplClass<IAdvice<T, K>>, options?: PointcutOptions<K>) {
   return function(target: any, propertyKey: PropertyKey) {
     assert(AdviceInfoUtil.isAdvice(adviceClazz), `class ${adviceClazz} has no @Advice decorator`);
     const targetClazz = target.constructor as EggProtoImplClass;
