@@ -249,6 +249,9 @@ export class AppGraph {
       throw new Error('module has recursive deps: ' + loopPath);
     }
     this.moduleConfigList = this.graph.sort()
+      .filter(t => {
+        return t.val.moduleConfig.optional !== true || t.fromNodeMap.size > 0;
+      })
       .map(t => t.val.moduleConfig);
   }
 }

@@ -9,14 +9,17 @@ import extend from 'extend2';
 export interface ModuleReference {
   name: string;
   path: string;
+  optional?: boolean;
 }
 
 export interface InlineModuleReferenceConfig {
   path: string;
+  optional?: boolean;
 }
 
 export interface NpmModuleReferenceConfig {
   package: string;
+  optional?: boolean;
 }
 
 export type ModuleReferenceConfig = InlineModuleReferenceConfig | NpmModuleReferenceConfig;

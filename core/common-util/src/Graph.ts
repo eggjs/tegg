@@ -7,6 +7,7 @@ export interface GraphNodeObj {
 export class GraphNode<T extends GraphNodeObj> {
   val: T;
   toNodeMap: Map<string, GraphNode<T>> = new Map();
+  fromNodeMap: Map<string, GraphNode<T>> = new Map();
 
   constructor(val: T) {
     this.val = val;
@@ -24,6 +25,14 @@ export class GraphNode<T extends GraphNodeObj> {
     return true;
   }
 
+  addFromVertex(node: GraphNode<T>) {
+    if (this.fromNodeMap.has(node.id)) {
+      return false;
+    }
+    this.fromNodeMap.set(node.id, node);
+    return true;
+  }
+
   [inspect]() {
     return this.toJSON();
   }
@@ -32,6 +41,7 @@ export class GraphNode<T extends GraphNodeObj> {
     return {
       val: this.val,
       toNodes: Array.from(this.toNodeMap.values()),
+      fromNodes: Array.from(this.fromNodeMap.values()),
     };
   }
 
@@ -84,6 +94,7 @@ export class Graph<T extends GraphNodeObj> {
   }
 
   addEdge(from: GraphNode<T>, to: GraphNode<T>): boolean {
+    to.addFromVertex(from);
     return from.addToVertex(to);
   }
 

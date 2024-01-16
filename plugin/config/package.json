@@ -17,6 +17,8 @@
     "app.js",
     "app.d.ts",
     "typings/index.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
     "agent.js",
     "agent.d.ts"
   ],
