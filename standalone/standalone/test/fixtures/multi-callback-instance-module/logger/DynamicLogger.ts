@@ -26,7 +26,7 @@ export function LogPath(name: string) {
   accessLevel: AccessLevel.PUBLIC,
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath);
-    const logger = (config as any)?.features.logger;
+    const logger = (config as any)?.features?.logger;
     if (!logger) {
       return [];
     }
