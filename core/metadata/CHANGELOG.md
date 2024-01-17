@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.30.0](https://github.com/eggjs/tegg/compare/v3.29.0...v3.30.0) (2024-01-17)
+
+
+### Features
+
+* scan framework dependencies as optional module ([#184](https://github.com/eggjs/tegg/issues/184)) ([a4908c6](https://github.com/eggjs/tegg/commit/a4908c6c640000c7068def57d32052cca15adf47))
+
+
+
+
+
 # [3.29.0](https://github.com/eggjs/tegg/compare/v3.28.2...v3.29.0) (2023-12-26)
 
 **Note:** Version bump only for package @eggjs/tegg-metadata

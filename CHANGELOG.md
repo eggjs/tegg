@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.30.0](https://github.com/eggjs/tegg/compare/v3.29.0...v3.30.0) (2024-01-17)
+
+
+### Bug Fixes
+
+* config for env is not merged when default config is empty ([#178](https://github.com/eggjs/tegg/issues/178)) ([9c1de22](https://github.com/eggjs/tegg/commit/9c1de223e9c9befb0a803ac5a1bd843f74aa9493))
+
+
+### Features
+
+* scan framework dependencies as optional module ([#184](https://github.com/eggjs/tegg/issues/184)) ([a4908c6](https://github.com/eggjs/tegg/commit/a4908c6c640000c7068def57d32052cca15adf47))
+
+
+
+
+
 # [3.29.0](https://github.com/eggjs/tegg/compare/v3.28.2...v3.29.0) (2023-12-26)
 
 
