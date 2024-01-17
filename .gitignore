@@ -40,3 +40,4 @@ plugin/tegg/test/fixtures/apps/**/*.js
 !benchmark/**/*.js
 !standalone/standalone/test/fixtures/**/node_modules
 !standalone/standalone/test/fixtures/**/node_modules/**/*.js
+!plugin/tegg/test/fixtures/**/node_modules
