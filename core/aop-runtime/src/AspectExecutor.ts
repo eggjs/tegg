@@ -93,7 +93,7 @@ export class AspectExecutor {
       if (fn) {
         functions.push(async (ctx: InternalAdviceContext<object>, next: () => Promise<any>) => {
           const fnCtx: AdviceContext = Object.assign(ctx, {
-            adviceParams: aspectAdvice.adviceParams
+            adviceParams: aspectAdvice.adviceParams,
           });
           return await fn.call(advice, fnCtx, next);
         });
