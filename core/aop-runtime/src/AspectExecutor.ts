@@ -46,10 +46,12 @@ export class AspectExecutor {
          * 这里...写法使传入的参数变成了一个新的对象
          * 因此beforeCall里面如果修改了ctx.args
          * 最新的args是不会在方法里生效的
-         * 需要保持为原ctx同一个引用
-         * 其余地方类似问题
+         * 先保证args可以生效
+         * 不改动其余地方
          */
-        await advice.beforeCall(Object.assign(ctx, { adviceParams: aspectAdvice.adviceParams }));
+        const params = { ...ctx, adviceParams: aspectAdvice.adviceParams };
+        await advice.beforeCall(params);
+        ctx.args = params.args;
       }
     }
   }
@@ -58,7 +60,7 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.afterReturn) {
-        await advice.afterReturn(Object.assign(ctx, { adviceParams: aspectAdvice.adviceParams }), result);
+        await advice.afterReturn({ ...ctx, adviceParams: aspectAdvice.adviceParams }, result);
       }
     }
   }
@@ -67,7 +69,7 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.afterThrow) {
-        await advice.afterThrow(Object.assign(ctx, { adviceParams: aspectAdvice.adviceParams }), error);
+        await advice.afterThrow({ ...ctx, adviceParams: aspectAdvice.adviceParams }, error);
       }
     }
   }
@@ -76,7 +78,7 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.afterFinally) {
-        await advice.afterFinally(Object.assign(ctx, { adviceParams: aspectAdvice.adviceParams }));
+        await advice.afterFinally({ ...ctx, adviceParams: aspectAdvice.adviceParams });
       }
     }
   }
@@ -92,9 +94,10 @@ export class AspectExecutor {
       const fn = advice.around;
       if (fn) {
         functions.push(async (ctx: InternalAdviceContext<object>, next: () => Promise<any>) => {
-          const fnCtx: AdviceContext = Object.assign(ctx, {
+          const fnCtx: AdviceContext = {
+            ...ctx,
             adviceParams: aspectAdvice.adviceParams,
-          });
+          };
           return await fn.call(advice, fnCtx, next);
         });
       }
