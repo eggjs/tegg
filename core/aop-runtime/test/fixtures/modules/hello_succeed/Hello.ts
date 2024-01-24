@@ -21,9 +21,11 @@ export class CallTrace {
 }
 
 export const pointcutAdviceParams = {
-  point: Math.random().toString(),
-  cut: Math.random().toString(),
+  foo: 'bar',
 };
+
+// 测试aop修改ctx的args的值
+const TEST_CTX_ARGS_VALUE = 123;
 
 @Advice()
 export class PointcutAdvice implements IAdvice<Hello> {
@@ -40,11 +42,13 @@ export class PointcutAdvice implements IAdvice<Hello> {
       name: ctx.args[0],
       adviceParams: ctx.adviceParams,
     });
+    ctx.args = [...ctx.args, TEST_CTX_ARGS_VALUE];
   }
 
   async afterReturn(ctx: AdviceContext<Hello>, result: any): Promise<void> {
     assert.ok(ctx.adviceParams);
     assert.deepStrictEqual(ctx.adviceParams, pointcutAdviceParams);
+    assert.deepStrictEqual(ctx.args[ctx.args.length - 1], TEST_CTX_ARGS_VALUE);
     this.callTrace.addMsg({
       className: PointcutAdvice.name,
       methodName: 'afterReturn',
@@ -106,8 +110,7 @@ export class Hello {
 }
 
 export const crosscutAdviceParams = {
-  cross: Math.random().toString(),
-  cut: Math.random().toString(),
+  foo: 'bar',
 };
 
 @Crosscut({
