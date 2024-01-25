@@ -42,7 +42,16 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.beforeCall) {
-        await advice.beforeCall({ ...ctx, adviceParams: aspectAdvice.adviceParams });
+        /**
+         * 这里...写法使传入的参数变成了一个新的对象
+         * 因此beforeCall里面如果修改了ctx.args
+         * 最新的args是不会在方法里生效的
+         * 先保证args可以生效
+         * 不改动其余地方
+         */
+        const params = { ...ctx, adviceParams: aspectAdvice.adviceParams };
+        await advice.beforeCall(params);
+        ctx.args = params.args;
       }
     }
   }
