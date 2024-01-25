@@ -21,7 +21,8 @@ export class CallTrace {
 }
 
 export const pointcutAdviceParams = {
-  foo: 'bar',
+  point: Math.random().toString(),
+  cut: Math.random().toString(),
 };
 
 // 测试aop修改ctx的args的值
@@ -110,7 +111,8 @@ export class Hello {
 }
 
 export const crosscutAdviceParams = {
-  foo: 'bar',
+  cross: Math.random().toString(),
+  cut: Math.random().toString(),
 };
 
 @Crosscut({
