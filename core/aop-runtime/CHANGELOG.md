@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.30.1](https://github.com/eggjs/tegg/compare/v3.30.0...v3.30.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* fix modify ctx.args in aop beforeCall not work ([#187](https://github.com/eggjs/tegg/issues/187)) ([7656424](https://github.com/eggjs/tegg/commit/765642414387c8a9940525cd3c519fcb5fd694a0))
+
+
+
+
+
 # [3.30.0](https://github.com/eggjs/tegg/compare/v3.29.0...v3.30.0) (2024-01-17)
 
 **Note:** Version bump only for package @eggjs/tegg-aop-runtime
