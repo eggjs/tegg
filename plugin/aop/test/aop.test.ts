@@ -34,4 +34,14 @@ describe('test/aop.test.ts', () => {
       msg: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(foo))))',
     });
   });
+
+  it('module aop should work', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest()
+      .get('/singletonAop')
+      .expect(200);
+    assert.deepStrictEqual(res.body, {
+      msg: 'withContextPointAroundResult(hello withContextPointAroundParam(foo))',
+    });
+  });
 });

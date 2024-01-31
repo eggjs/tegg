@@ -7,7 +7,6 @@
     "noImplicitAny": false,
     "esModuleInterop": true,
     "useUnknownInCatchVariables": false,
-    "charset": "utf8",
     "allowJs": false,
     "pretty": true,
     "noEmitOnError": false,

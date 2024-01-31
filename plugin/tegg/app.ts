@@ -8,12 +8,16 @@ import { ModuleHandler } from './lib/ModuleHandler';
 import { EggContextHandler } from './lib/EggContextHandler';
 import { hijackRunInBackground } from './lib/run_in_background';
 import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook';
+import { LoadUnitMultiInstanceProtoHook } from '@eggjs/tegg-metadata';
+import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook';
 
 export default class App {
   private readonly app: Application;
   private compatibleHook?: EggContextCompatibleHook;
   private eggContextHandler: EggContextHandler;
   private eggQualifierProtoHook: EggQualifierProtoHook;
+  private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
+  private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
 
   constructor(app: Application) {
     this.app = app;
@@ -32,9 +36,16 @@ export default class App {
 
   async didLoad() {
     hijackRunInBackground(this.app);
+    this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
+
     // wait all file loaded, so app/ctx has all properties
     this.eggQualifierProtoHook = new EggQualifierProtoHook(this.app);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.eggQualifierProtoHook);
+
+    this.configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
+    this.app.loadUnitLifecycleUtil.registerLifecycle(this.configSourceEggPrototypeHook);
+
     // start load tegg objects
     await this.app.moduleHandler.init();
     this.compatibleHook = new EggContextCompatibleHook(this.app.moduleHandler);
@@ -49,6 +60,12 @@ export default class App {
     }
     if (this.eggQualifierProtoHook) {
       this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eggQualifierProtoHook);
+    }
+    if (this.configSourceEggPrototypeHook) {
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
+    }
+    if (this.loadUnitMultiInstanceProtoHook) {
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
     }
   }
 }

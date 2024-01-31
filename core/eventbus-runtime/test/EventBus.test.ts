@@ -1,15 +1,16 @@
 import path from 'path';
 import mm from 'mm';
+import assert from 'assert';
 import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { HelloHandler, HelloProducer } from './fixtures/modules/event/HelloEvent';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
-import assert from 'assert';
-import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
-import sleep from 'mz-modules/sleep';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
+import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
+import { MultiWithContextHandler, MultiWithContextProducer } from './fixtures/modules/event/MultiEventWithContext';
 
 describe('test/EventBus.test.ts', () => {
   let modules: Array<LoadUnitInstance>;
@@ -51,6 +52,73 @@ describe('test/EventBus.test.ts', () => {
 
       await helloEvent;
       assert(msg === '01');
+    });
+  });
+
+  it('should work with EventContext', async function() {
+    await EggTestContext.mockContext(async (ctx: EggTestContext) => {
+      const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
+      eventContextFactory.registerContextCreator(() => {
+        return ctx;
+      });
+      const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
+      EventInfoUtil.getEventNameList(MultiWithContextHandler)
+        .forEach(eventName =>
+          eventHandlerFactory.registerHandler(eventName, PrototypeUtil.getClazzProto(MultiWithContextHandler) as EggPrototype));
+
+      const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
+      const producer = await CoreTestHelper.getObject(MultiWithContextProducer);
+      const fooEvent = eventBus.await('foo');
+      producer.foo();
+      await fooEvent;
+      assert.equal(MultiWithContextHandler.eventName, 'foo');
+      assert.equal(MultiWithContextHandler.msg, '123');
+      const barEvent = eventBus.await('bar');
+      producer.bar();
+      await barEvent;
+      assert.equal(MultiWithContextHandler.eventName, 'bar');
+      assert.equal(MultiWithContextHandler.msg, '321');
+    });
+  });
+
+  it('EventBus.awaitFirst should work', async function() {
+    await EggTestContext.mockContext(async (ctx: EggTestContext) => {
+      const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
+      eventContextFactory.registerContextCreator(() => {
+        return ctx;
+      });
+      const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
+      EventInfoUtil.getEventNameList(MultiWithContextHandler)
+        .forEach(eventName =>
+          eventHandlerFactory.registerHandler(eventName, PrototypeUtil.getClazzProto(MultiWithContextHandler) as EggPrototype));
+
+      const eventBus = await CoreTestHelper.getObject(SingletonEventBus);
+      const producer = await CoreTestHelper.getObject(MultiWithContextProducer);
+      const fooEvent = eventBus.awaitFirst('foo', 'bar');
+      producer.foo();
+      await fooEvent;
+      assert.equal(MultiWithContextHandler.eventName, 'foo');
+      assert.equal(MultiWithContextHandler.msg, '123');
+    });
+  });
+
+  it('EventHandlerFactory.getHandlers should work', async function() {
+    await EggTestContext.mockContext(async (ctx: EggTestContext) => {
+      const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
+      eventContextFactory.registerContextCreator(() => {
+        return ctx;
+      });
+      const eventHandlerFactory = await CoreTestHelper.getObject(EventHandlerFactory);
+      EventInfoUtil.getEventNameList(MultiWithContextHandler)
+        .forEach(eventName =>
+          eventHandlerFactory.registerHandler(eventName, PrototypeUtil.getClazzProto(MultiWithContextHandler) as EggPrototype));
+      const handlers = await eventHandlerFactory.getHandlers('foo');
+      assert.equal(handlers.length, 1);
+      const handler = handlers[0];
+      assert(handler instanceof MultiWithContextHandler);
+      await Reflect.apply(handler.handle, handler, [{ eventName: 'foo' }, '123' ]);
+      assert.equal(MultiWithContextHandler.eventName, 'foo');
+      assert.equal(MultiWithContextHandler.msg, '123');
     });
   });
 
@@ -129,7 +197,7 @@ describe('test/EventBus.test.ts', () => {
       eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
       const triggerTime = Date.now();
 
-      await sleep(100);
+      await TimerUtil.sleep(100);
       eventBus.uncork(corkId);
       await helloEvent;
       assert(eventTime >= triggerTime + 100);
@@ -162,9 +230,9 @@ describe('test/EventBus.test.ts', () => {
       eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
       const triggerTime = Date.now();
 
-      await sleep(100);
+      await TimerUtil.sleep(100);
       eventBus.uncork(corkId);
-      await sleep(100);
+      await TimerUtil.sleep(100);
       eventBus.uncork(corkId);
 
       await helloEvent;

@@ -8,6 +8,11 @@ describe('test/ModuleConfig.test.ts', () => {
       const config = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/foo-yaml'));
       assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1' } });
     });
+
+    it('should load env', () => {
+      const config = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/dev-module-config'), undefined, 'dev');
+      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
+    });
   });
 
   describe('load module reference', () => {
@@ -16,10 +21,10 @@ describe('test/ModuleConfig.test.ts', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-no-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
-          { path: path.join(fixturesPath, 'app/module-a') },
-          { path: path.join(fixturesPath, 'app/module-b') },
-          { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e') },
-          { path: path.join(fixturesPath, 'node_modules/module-c') },
+          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
+          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB' },
+          { path: path.join(fixturesPath, 'app/module-b/test/fixtures/module-e'), name: 'moduleE' },
+          { path: path.join(fixturesPath, 'node_modules/module-c'), name: 'moduleC' },
         ]);
       });
 
@@ -33,7 +38,7 @@ describe('test/ModuleConfig.test.ts', () => {
           const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-symlink');
           const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
           assert.deepStrictEqual(ref, [
-            { path: path.join(fixturesPath, 'app/module-a') },
+            { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
           ]);
         });
       });
@@ -44,8 +49,8 @@ describe('test/ModuleConfig.test.ts', () => {
         const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-module-json');
         const ref = ModuleConfigUtil.readModuleReference(fixturesPath);
         assert.deepStrictEqual(ref, [
-          { path: path.join(fixturesPath, 'app/module-a') },
-          { path: path.join(fixturesPath, 'app/module-b') },
+          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
+          { path: path.join(fixturesPath, 'app/module-b'), name: 'moduleB' },
         ]);
       });
     });
@@ -57,7 +62,21 @@ describe('test/ModuleConfig.test.ts', () => {
           cwd: fixturesPath,
         });
         assert.deepStrictEqual(ref, [
-          { path: path.join(fixturesPath, 'node_modules/module-a') },
+          { path: path.join(fixturesPath, 'node_modules/module-a'), name: 'moduleA' },
+        ]);
+      });
+    });
+
+    describe('filter module', () => {
+      it('should work', () => {
+        const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-modules');
+        const readModuleOptions = {
+          cwd: fixturesPath,
+          extraFilePattern: [ '!**/dist' ],
+        };
+        const ref = ModuleConfigUtil.readModuleReference(fixturesPath, readModuleOptions);
+        assert.deepStrictEqual(ref, [
+          { path: path.join(fixturesPath, 'app/module-a'), name: 'moduleA' },
         ]);
       });
     });
@@ -76,6 +95,7 @@ describe('test/ModuleConfig.test.ts', () => {
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/e'),
+        name: 'e',
       }]);
     });
 
@@ -84,6 +104,7 @@ describe('test/ModuleConfig.test.ts', () => {
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/a/node_modules/c'),
+        name: 'c',
       }]);
     });
 
@@ -92,6 +113,7 @@ describe('test/ModuleConfig.test.ts', () => {
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
+        name: 'a',
       }]);
     });
   });

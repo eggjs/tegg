@@ -9,6 +9,7 @@ import { Bar, Foo } from './fixtures/modules/extends-module/Base';
 import mm from 'mm';
 import { ContextHandler } from '../src/model/ContextHandler';
 import { EggContextStorage } from './fixtures/EggContextStorage';
+import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance';
 
 describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
   describe('ModuleLoadUnitInstance', () => {
@@ -60,6 +61,43 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
       assert(bar.foo);
       assert(bar.logger);
       assert(foo.logger);
+      await TestUtil.destroyLoadUnitInstance(instance);
+    });
+
+    it('should load multi instance', async () => {
+      const instance = await TestUtil.createLoadUnitInstance('multi-instance-module');
+      const foo1Proto = EggPrototypeFactory.instance.getPrototype('foo', instance.loadUnit, [{
+        attribute: FOO_ATTRIBUTE,
+        value: 'foo1',
+      }]);
+      const foo1Obj = await EggContainerFactory.getOrCreateEggObject(foo1Proto, foo1Proto.name);
+      const foo1 = foo1Obj.obj as FooLogger;
+
+      const foo2Proto = EggPrototypeFactory.instance.getPrototype('foo', instance.loadUnit, [{
+        attribute: FOO_ATTRIBUTE,
+        value: 'foo2',
+      }]);
+      const foo2Obj = await EggContainerFactory.getOrCreateEggObject(foo2Proto, foo2Proto.name);
+      const foo2 = foo2Obj.obj as FooLogger;
+      assert(foo1);
+      assert(foo2);
+      assert(foo1 !== foo2);
+      assert(foo1.loadUnitPath);
+      assert(foo1.foo === 'foo1');
+      assert(foo2.loadUnitPath);
+      assert(foo2.foo === 'foo2');
+
+      const obj1 = await EggContainerFactory.getOrCreateEggObjectFromClazz(FooLogger, 'foo', [{
+        attribute: FOO_ATTRIBUTE,
+        value: 'foo1',
+      }]);
+      const obj2 = await EggContainerFactory.getOrCreateEggObjectFromClazz(FooLogger, 'foo', [{
+        attribute: FOO_ATTRIBUTE,
+        value: 'foo2',
+      }]);
+      assert(foo1Obj === obj1);
+      assert(foo2Obj === obj2);
+
       await TestUtil.destroyLoadUnitInstance(instance);
     });
   });

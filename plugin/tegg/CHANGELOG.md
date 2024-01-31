@@ -3,6 +3,294 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.30.1](https://github.com/eggjs/tegg/compare/v3.30.0...v3.30.1) (2024-01-25)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.30.0](https://github.com/eggjs/tegg/compare/v3.29.0...v3.30.0) (2024-01-17)
+
+
+### Features
+
+* scan framework dependencies as optional module ([#184](https://github.com/eggjs/tegg/issues/184)) ([a4908c6](https://github.com/eggjs/tegg/commit/a4908c6c640000c7068def57d32052cca15adf47))
+
+
+
+
+
+# [3.29.0](https://github.com/eggjs/tegg/compare/v3.28.2...v3.29.0) (2023-12-26)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+## [3.28.2](https://github.com/eggjs/tegg/compare/v3.28.1...v3.28.2) (2023-12-12)
+
+
+### Bug Fixes
+
+* clear all hooks after app close ([#175](https://github.com/eggjs/tegg/issues/175)) ([6fe12b9](https://github.com/eggjs/tegg/commit/6fe12b9bd2cc1c250d02ac851a6e2e172ab12514))
+
+
+
+
+
+## [3.28.1](https://github.com/eggjs/tegg/compare/v3.28.0...v3.28.1) (2023-12-11)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.28.0](https://github.com/eggjs/tegg/compare/v3.27.0...v3.28.0) (2023-12-10)
+
+
+### Features
+
+* inject moduleConfig read from tegg-config app.moduleConfigs config ([#169](https://github.com/eggjs/tegg/issues/169)) ([2d984ef](https://github.com/eggjs/tegg/commit/2d984efad0806b333aa2ea30daac2df859967750))
+
+
+
+
+
+# [3.27.0](https://github.com/eggjs/tegg/compare/v3.26.0...v3.27.0) (2023-11-23)
+
+
+### Features
+
+* impl getObjectFromName ([#167](https://github.com/eggjs/tegg/issues/167)) ([95843c7](https://github.com/eggjs/tegg/commit/95843c74c201ecdfeb7023e16e3f8348a1cb32ea))
+
+
+
+
+
+# [3.26.0](https://github.com/eggjs/tegg/compare/v3.25.2...v3.26.0) (2023-11-17)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+## [3.25.2](https://github.com/eggjs/tegg/compare/v3.25.1...v3.25.2) (2023-11-06)
+
+
+### Bug Fixes
+
+* verify isEggMultiInstancePrototype before proto exists ([#164](https://github.com/eggjs/tegg/issues/164)) ([db9a621](https://github.com/eggjs/tegg/commit/db9a62159886829de36b831f49f296fe05f0b228))
+
+
+
+
+
+## [3.25.1](https://github.com/eggjs/tegg/compare/v3.25.0...v3.25.1) (2023-11-03)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.25.0](https://github.com/eggjs/tegg/compare/v3.24.0...v3.25.0) (2023-11-03)
+
+
+### Features
+
+* getObject support MultiInstanceProto ([#161](https://github.com/eggjs/tegg/issues/161)) ([1a24e48](https://github.com/eggjs/tegg/commit/1a24e48cd9a38e906966a21c5f0d1304c4b40d7c))
+* tegg plugin support ModuleConfig ([#162](https://github.com/eggjs/tegg/issues/162)) ([58bd9fa](https://github.com/eggjs/tegg/commit/58bd9fafdd0d56aabdde5f7c33f17c45568bada8))
+
+
+
+
+
+# [3.24.0](https://github.com/eggjs/tegg/compare/v3.23.0...v3.24.0) (2023-10-26)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.23.0](https://github.com/eggjs/tegg/compare/v3.22.0...v3.23.0) (2023-09-20)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.20.0](https://github.com/eggjs/tegg/compare/v3.19.0...v3.20.0) (2023-09-07)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.19.0](https://github.com/eggjs/tegg/compare/v3.18.1...v3.19.0) (2023-08-31)
+
+
+### Features
+
+* add LoadUnitMultiInstanceProtoHook for tegg plugin ([#150](https://github.com/eggjs/tegg/issues/150)) ([b938580](https://github.com/eggjs/tegg/commit/b9385803383dceedfc26bd990e5d752cd33f0f67))
+
+
+
+
+
+## [3.18.1](https://github.com/eggjs/tegg/compare/v3.18.0...v3.18.1) (2023-08-29)
+
+
+### Bug Fixes
+
+* fix use MultiInstanceProto from other modules ([#147](https://github.com/eggjs/tegg/issues/147)) ([b71af60](https://github.com/eggjs/tegg/commit/b71af60ce6d1da0d778f5e712633b8c15052bd70))
+
+
+
+
+
+# [3.18.0](https://github.com/eggjs/tegg/compare/v3.17.0...v3.18.0) (2023-08-29)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.17.0](https://github.com/eggjs/tegg/compare/v3.16.0...v3.17.0) (2023-08-24)
+
+
+### Features
+
+* impl MultiInstanceProto ([#145](https://github.com/eggjs/tegg/issues/145)) ([12fd5cf](https://github.com/eggjs/tegg/commit/12fd5cff4004578bcc737dcdf4f7e9d1159f5633))
+
+
+
+
+
+# [3.16.0](https://github.com/eggjs/tegg/compare/v3.15.0...v3.16.0) (2023-08-24)
+
+
+### Features
+
+* implement RuntimeConfig ([#144](https://github.com/eggjs/tegg/issues/144)) ([0862655](https://github.com/eggjs/tegg/commit/0862655846f6765349d406ee697c036cec2a37bd))
+
+
+
+
+
+## [3.14.3](https://github.com/eggjs/tegg/compare/v3.14.2...v3.14.3) (2023-08-14)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+## [3.14.2](https://github.com/eggjs/tegg/compare/v3.14.1...v3.14.2) (2023-08-14)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+## [3.14.1](https://github.com/eggjs/tegg/compare/v3.14.0...v3.14.1) (2023-08-11)
+
+
+### Bug Fixes
+
+* ensure ContextInitiator be called after ctx ready ([#138](https://github.com/eggjs/tegg/issues/138)) ([79e16da](https://github.com/eggjs/tegg/commit/79e16dae913b6114ac8d13bde8de60164d57dab3))
+
+
+
+
+
+# [3.14.0](https://github.com/eggjs/tegg/compare/v3.13.0...v3.14.0) (2023-07-31)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.13.0](https://github.com/eggjs/tegg/compare/v3.12.0...v3.13.0) (2023-07-25)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.12.0](https://github.com/eggjs/tegg/compare/v3.11.1...v3.12.0) (2023-07-13)
+
+
+### Bug Fixes
+
+* after call mockModuleContext, hasMockModuleContext should be true ([#134](https://github.com/eggjs/tegg/issues/134)) ([88b3caa](https://github.com/eggjs/tegg/commit/88b3caadd24f08221b8098c42733e26376338cae))
+
+
+
+
+
+## [3.11.1](https://github.com/eggjs/tegg/compare/v3.11.0...v3.11.1) (2023-06-29)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.11.0](https://github.com/eggjs/tegg/compare/v3.10.0...v3.11.0) (2023-06-29)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.10.0](https://github.com/eggjs/tegg/compare/v3.9.0...v3.10.0) (2023-06-28)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.9.0](https://github.com/eggjs/tegg/compare/v3.8.0...v3.9.0) (2023-06-20)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
+# [3.8.0](https://github.com/eggjs/tegg/compare/v3.7.0...v3.8.0) (2023-05-30)
+
+
+### Features
+
+* impl EggObjectLifecycle hook in decorator ([#119](https://github.com/eggjs/tegg/issues/119)) ([cced8a2](https://github.com/eggjs/tegg/commit/cced8a2e009c33d5040fa21d00409fddef471b0e))
+
+
+
+
+
+# [3.7.0](https://github.com/eggjs/tegg/compare/v3.6.3...v3.7.0) (2023-04-03)
+
+**Note:** Version bump only for package @eggjs/tegg-plugin
+
+
+
+
+
 ## [3.6.3](https://github.com/eggjs/tegg/compare/v3.6.2...v3.6.3) (2023-03-02)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin

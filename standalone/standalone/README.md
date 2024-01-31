@@ -42,3 +42,44 @@ await main(cwd, {
   },
 });
 ```
+
+### 配置
+
+module 支持通过 module.yml 来定义配置，在代码中可以通过注入 moduleConfigs 获取全局配置，通过注入 moduleConfig 来获取单 module 的配置。
+
+```yaml
+# module.yml
+# module 根目录中
+
+features:
+  dynamic:
+    foo: 'bar'
+```
+
+```ts
+@ContextProto()
+export class Foo {
+  // 获取全局配置, 通过 get 方法来获取特定 module 的配置
+  @Inject()
+  moduleConfigs: ModuleConfigs;
+
+  // 注入当前 module 的配置
+  @Inject()
+  moduleConfig: ModuleConfig;
+
+  // 注入 "bar" module 的配置
+  @Inject({
+    name: 'moduleConfig',
+  })
+  @ConfigSourceQualifier('bar')
+  barModuleConfig: ModuleConfig;
+
+  async main() {
+    return {
+      configs: this.moduleConfigs,
+      foo: this.moduleConfig,
+      bar: this.barModuleConfig,
+    };
+  }
+}
+```

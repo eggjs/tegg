@@ -15,6 +15,7 @@ import { EggPrototype } from '@eggjs/tegg-metadata';
 import { RootProtoManager } from '../../RootProtoManager';
 import pathToRegexp from 'path-to-regexp';
 import { aclMiddlewareFactory } from './Acl';
+import { HTTPRequest } from './Req';
 import { RouterConflictError } from '../../errors';
 import { FrameworkErrorFormater } from 'egg-errors';
 import { EggRouter } from '@eggjs/router';
@@ -86,6 +87,10 @@ export class HTTPMethodRegister {
           case HTTPParamType.QUERIES: {
             const queryParam: QueriesParamMeta = param as QueriesParamMeta;
             args[index] = ctx.queries[queryParam.name];
+            break;
+          }
+          case HTTPParamType.REQUEST: {
+            args[index] = new HTTPRequest(ctx);
             break;
           }
           default:

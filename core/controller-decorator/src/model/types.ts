@@ -8,6 +8,8 @@ export enum ControllerType {
   HTTP = 'HTTP',
   SOFA_RPC = 'SOFA_RPC',
   MGW_RPC = 'MGW_RPC',
+  MESSAGE = 'MESSAGE',
+  SCHEDULE = 'SCHEDULE',
 }
 
 export type HostType = string | string [];
@@ -18,6 +20,8 @@ export enum MethodType {
   HTTP = 'HTTP',
   SOFA_RPC = 'SOFA_RPC',
   MGW_RPC = 'MGW_RPC',
+  MESSAGE = 'MESSAGE',
+  SCHEDULE = 'SCHEDULE',
 }
 
 export type MethodTypeLike = ControllerType | string;
@@ -37,4 +41,5 @@ export enum HTTPParamType {
   QUERIES = 'QUERIES',
   BODY = 'BODY',
   PARAM = 'PARAM',
+  REQUEST = 'REQUEST',
 }

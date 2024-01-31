@@ -3,6 +3,368 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.30.1](https://github.com/eggjs/tegg/compare/v3.30.0...v3.30.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* fix modify ctx.args in aop beforeCall not work ([#187](https://github.com/eggjs/tegg/issues/187)) ([7656424](https://github.com/eggjs/tegg/commit/765642414387c8a9940525cd3c519fcb5fd694a0))
+
+
+
+
+
+# [3.30.0](https://github.com/eggjs/tegg/compare/v3.29.0...v3.30.0) (2024-01-17)
+
+
+### Bug Fixes
+
+* config for env is not merged when default config is empty ([#178](https://github.com/eggjs/tegg/issues/178)) ([9c1de22](https://github.com/eggjs/tegg/commit/9c1de223e9c9befb0a803ac5a1bd843f74aa9493))
+
+
+### Features
+
+* scan framework dependencies as optional module ([#184](https://github.com/eggjs/tegg/issues/184)) ([a4908c6](https://github.com/eggjs/tegg/commit/a4908c6c640000c7068def57d32052cca15adf47))
+
+
+
+
+
+# [3.29.0](https://github.com/eggjs/tegg/compare/v3.28.2...v3.29.0) (2023-12-26)
+
+
+### Features
+
+* allow a handler to subscribe to multiple events ([#179](https://github.com/eggjs/tegg/issues/179)) ([1d460a5](https://github.com/eggjs/tegg/commit/1d460a5a6bdcf9a3d61b13d3527633c8b990a38c))
+
+
+
+
+
+## [3.28.2](https://github.com/eggjs/tegg/compare/v3.28.1...v3.28.2) (2023-12-12)
+
+
+### Bug Fixes
+
+* clear all hooks after app close ([#175](https://github.com/eggjs/tegg/issues/175)) ([6fe12b9](https://github.com/eggjs/tegg/commit/6fe12b9bd2cc1c250d02ac851a6e2e172ab12514))
+
+
+
+
+
+## [3.28.1](https://github.com/eggjs/tegg/compare/v3.28.0...v3.28.1) (2023-12-11)
+
+**Note:** Version bump only for package tegg
+
+
+
+
+
+# [3.28.0](https://github.com/eggjs/tegg/compare/v3.27.0...v3.28.0) (2023-12-10)
+
+
+### Features
+
+* inject moduleConfig read from tegg-config app.moduleConfigs config ([#169](https://github.com/eggjs/tegg/issues/169)) ([2d984ef](https://github.com/eggjs/tegg/commit/2d984efad0806b333aa2ea30daac2df859967750))
+
+
+
+
+
+# [3.27.0](https://github.com/eggjs/tegg/compare/v3.26.0...v3.27.0) (2023-11-23)
+
+
+### Features
+
+* impl getObjectFromName ([#167](https://github.com/eggjs/tegg/issues/167)) ([95843c7](https://github.com/eggjs/tegg/commit/95843c74c201ecdfeb7023e16e3f8348a1cb32ea))
+
+
+
+
+
+# [3.26.0](https://github.com/eggjs/tegg/compare/v3.25.2...v3.26.0) (2023-11-17)
+
+
+### Features
+
+* Add ControllerType = SCHEDULE ([#166](https://github.com/eggjs/tegg/issues/166)) ([2c22e7d](https://github.com/eggjs/tegg/commit/2c22e7d4943659848ddbae7b552febef38b57a3d))
+
+
+
+
+
+## [3.25.2](https://github.com/eggjs/tegg/compare/v3.25.1...v3.25.2) (2023-11-06)
+
+
+### Bug Fixes
+
+* verify isEggMultiInstancePrototype before proto exists ([#164](https://github.com/eggjs/tegg/issues/164)) ([db9a621](https://github.com/eggjs/tegg/commit/db9a62159886829de36b831f49f296fe05f0b228))
+
+
+
+
+
+## [3.25.1](https://github.com/eggjs/tegg/compare/v3.25.0...v3.25.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* fix standalone import ConfigSource ([#163](https://github.com/eggjs/tegg/issues/163)) ([6922071](https://github.com/eggjs/tegg/commit/6922071219413a8a11387be3d05f0e3970ce4f48))
+
+
+
+
+
+# [3.25.0](https://github.com/eggjs/tegg/compare/v3.24.0...v3.25.0) (2023-11-03)
+
+
+### Features
+
+* getObject support MultiInstanceProto ([#161](https://github.com/eggjs/tegg/issues/161)) ([1a24e48](https://github.com/eggjs/tegg/commit/1a24e48cd9a38e906966a21c5f0d1304c4b40d7c))
+* tegg plugin support ModuleConfig ([#162](https://github.com/eggjs/tegg/issues/162)) ([58bd9fa](https://github.com/eggjs/tegg/commit/58bd9fafdd0d56aabdde5f7c33f17c45568bada8))
+
+
+
+
+
+# [3.24.0](https://github.com/eggjs/tegg/compare/v3.23.0...v3.24.0) (2023-10-26)
+
+
+### Features
+
+* support Request  decorators for HTTPController ([#159](https://github.com/eggjs/tegg/issues/159)) ([945e1eb](https://github.com/eggjs/tegg/commit/945e1eb18237f40879acdd2e43cd53dd2e8272a9))
+
+
+
+
+
+# [3.23.0](https://github.com/eggjs/tegg/compare/v3.22.0...v3.23.0) (2023-09-20)
+
+
+### Bug Fixes
+
+* typo `acL` to `acl` ([#156](https://github.com/eggjs/tegg/issues/156)) ([a775d34](https://github.com/eggjs/tegg/commit/a775d34d38c481c5f9e90504224553d31ad728d3))
+
+
+### Features
+
+* add className property to EggPrototypeInfo ([#158](https://github.com/eggjs/tegg/issues/158)) ([bddac97](https://github.com/eggjs/tegg/commit/bddac97a9f575c9f13b794246a7e8346c58d1a09))
+
+
+
+
+
+# [3.20.0](https://github.com/eggjs/tegg/compare/v3.19.0...v3.20.0) (2023-09-07)
+
+
+### Features
+
+* support load module config with env ([#151](https://github.com/eggjs/tegg/issues/151)) ([c087226](https://github.com/eggjs/tegg/commit/c087226bd7764242fadce5622fccd9e9fee56322))
+
+
+
+
+
+# [3.19.0](https://github.com/eggjs/tegg/compare/v3.18.1...v3.19.0) (2023-08-31)
+
+
+### Features
+
+* add LoadUnitMultiInstanceProtoHook for tegg plugin ([#150](https://github.com/eggjs/tegg/issues/150)) ([b938580](https://github.com/eggjs/tegg/commit/b9385803383dceedfc26bd990e5d752cd33f0f67))
+
+
+
+
+
+## [3.18.1](https://github.com/eggjs/tegg/compare/v3.18.0...v3.18.1) (2023-08-29)
+
+
+### Bug Fixes
+
+* fix use MultiInstanceProto from other modules ([#147](https://github.com/eggjs/tegg/issues/147)) ([b71af60](https://github.com/eggjs/tegg/commit/b71af60ce6d1da0d778f5e712633b8c15052bd70))
+
+
+
+
+
+# [3.18.0](https://github.com/eggjs/tegg/compare/v3.17.0...v3.18.0) (2023-08-29)
+
+
+### Features
+
+* add aop runtime/dynamic inject runtime for standalone ([#149](https://github.com/eggjs/tegg/issues/149)) ([6091fc6](https://github.com/eggjs/tegg/commit/6091fc6be885976d72a6920d37ec685927b63d5d))
+* add helper to get EggObject from class ([#148](https://github.com/eggjs/tegg/issues/148)) ([77eaf38](https://github.com/eggjs/tegg/commit/77eaf38383ad974b30d13f4c30c489fb7fa7274d))
+
+
+
+
+
+# [3.17.0](https://github.com/eggjs/tegg/compare/v3.16.0...v3.17.0) (2023-08-24)
+
+
+### Features
+
+* impl MultiInstanceProto ([#145](https://github.com/eggjs/tegg/issues/145)) ([12fd5cf](https://github.com/eggjs/tegg/commit/12fd5cff4004578bcc737dcdf4f7e9d1159f5633))
+
+
+
+
+
+# [3.16.0](https://github.com/eggjs/tegg/compare/v3.15.0...v3.16.0) (2023-08-24)
+
+
+### Features
+
+* export EggModuleLoader in standalone ([#146](https://github.com/eggjs/tegg/issues/146)) ([9d1da9a](https://github.com/eggjs/tegg/commit/9d1da9a87dbd486930adc50cd43020c2fb478230))
+* implement RuntimeConfig ([#144](https://github.com/eggjs/tegg/issues/144)) ([0862655](https://github.com/eggjs/tegg/commit/0862655846f6765349d406ee697c036cec2a37bd))
+
+
+
+
+
+## [3.14.3](https://github.com/eggjs/tegg/compare/v3.14.2...v3.14.3) (2023-08-14)
+
+
+### Bug Fixes
+
+* fix aop plugin files ([#140](https://github.com/eggjs/tegg/issues/140)) ([f47eef6](https://github.com/eggjs/tegg/commit/f47eef634efd442ac5a8f68567e36c940247e48b))
+
+
+
+
+
+## [3.14.2](https://github.com/eggjs/tegg/compare/v3.14.1...v3.14.2) (2023-08-14)
+
+
+### Bug Fixes
+
+* init all context advice if root proto miss ([#139](https://github.com/eggjs/tegg/issues/139)) ([0602ea8](https://github.com/eggjs/tegg/commit/0602ea81578bf717ee4b4c490ace8c1c133478c5))
+
+
+
+
+
+## [3.14.1](https://github.com/eggjs/tegg/compare/v3.14.0...v3.14.1) (2023-08-11)
+
+
+### Bug Fixes
+
+* ensure ContextInitiator be called after ctx ready ([#138](https://github.com/eggjs/tegg/issues/138)) ([79e16da](https://github.com/eggjs/tegg/commit/79e16dae913b6114ac8d13bde8de60164d57dab3))
+
+
+
+
+
+# [3.14.0](https://github.com/eggjs/tegg/compare/v3.13.0...v3.14.0) (2023-07-31)
+
+
+### Features
+
+* impl ModuleConfigs for standalone ([#136](https://github.com/eggjs/tegg/issues/136)) ([7227492](https://github.com/eggjs/tegg/commit/7227492295b9c84e3660bfc006ca96e7a9652a25))
+
+
+
+
+
+# [3.13.0](https://github.com/eggjs/tegg/compare/v3.12.0...v3.13.0) (2023-07-25)
+
+
+### Features
+
+* 事务注解增加数据源选项 ([#135](https://github.com/eggjs/tegg/issues/135)) ([c33b3b5](https://github.com/eggjs/tegg/commit/c33b3b5ec9d32a8c6675d986013042f0cb8e4370))
+
+
+
+
+
+# [3.12.0](https://github.com/eggjs/tegg/compare/v3.11.1...v3.12.0) (2023-07-13)
+
+
+### Bug Fixes
+
+* after call mockModuleContext, hasMockModuleContext should be true ([#134](https://github.com/eggjs/tegg/issues/134)) ([88b3caa](https://github.com/eggjs/tegg/commit/88b3caadd24f08221b8098c42733e26376338cae))
+
+
+
+
+
+## [3.11.1](https://github.com/eggjs/tegg/compare/v3.11.0...v3.11.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* export StandaloneInnerObject ([#131](https://github.com/eggjs/tegg/issues/131)) ([e4b87e0](https://github.com/eggjs/tegg/commit/e4b87e0a48e3232adaf43bad75f44d0ae775c984))
+
+
+
+
+
+# [3.11.0](https://github.com/eggjs/tegg/compare/v3.10.0...v3.11.0) (2023-06-29)
+
+
+### Features
+
+* export transaction decorator from tegg ([8be0521](https://github.com/eggjs/tegg/commit/8be05212b62fe7f111688efaec935be64d623918))
+* impl transaction decorator ([#124](https://github.com/eggjs/tegg/issues/124)) ([4896615](https://github.com/eggjs/tegg/commit/4896615af951bbff940cda7abc116df40ed486e5))
+
+
+
+
+
+# [3.10.0](https://github.com/eggjs/tegg/compare/v3.9.0...v3.10.0) (2023-06-28)
+
+
+### Bug Fixes
+
+* use posix join for package path ([#127](https://github.com/eggjs/tegg/issues/127)) ([53672f4](https://github.com/eggjs/tegg/commit/53672f404edb72c7330e125f72dd356cde0607ad))
+
+
+### Features
+
+* standalone Runner run support ctx ([#126](https://github.com/eggjs/tegg/issues/126)) ([0788c7d](https://github.com/eggjs/tegg/commit/0788c7dfb57f96c55e94cc6692c0b6e9ac1ee03c))
+
+
+
+
+
+# [3.9.0](https://github.com/eggjs/tegg/compare/v3.8.0...v3.9.0) (2023-06-20)
+
+
+### Features
+
+* implement advice params ([76ec8ad](https://github.com/eggjs/tegg/commit/76ec8ad7b7170a637e59d74d49c1f00d8a201321))
+
+
+
+
+
+# [3.8.0](https://github.com/eggjs/tegg/compare/v3.7.0...v3.8.0) (2023-05-30)
+
+
+### Features
+
+* impl EggObjectLifecycle hook in decorator ([#119](https://github.com/eggjs/tegg/issues/119)) ([cced8a2](https://github.com/eggjs/tegg/commit/cced8a2e009c33d5040fa21d00409fddef471b0e))
+
+
+
+
+
+# [3.7.0](https://github.com/eggjs/tegg/compare/v3.6.3...v3.7.0) (2023-04-03)
+
+
+### Bug Fixes
+
+* don't check eventbus plugin name ([#113](https://github.com/eggjs/tegg/issues/113)) ([2a94a57](https://github.com/eggjs/tegg/commit/2a94a57c58e4fd971400966c15597aace4bb1ecc))
+
+
+### Features
+
+* The exposed module reads the options. ([#112](https://github.com/eggjs/tegg/issues/112)) ([a52b44b](https://github.com/eggjs/tegg/commit/a52b44b753463bfdef6fbbc39f920be8eccf1567))
+
+
+
+
+
 ## [3.6.3](https://github.com/eggjs/tegg/compare/v3.6.2...v3.6.3) (2023-03-02)
 
 

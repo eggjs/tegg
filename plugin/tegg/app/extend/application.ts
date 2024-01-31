@@ -1,5 +1,4 @@
 import {
-  EggPrototype,
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
@@ -16,7 +15,8 @@ import {
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { EggProtoImplClass, PrototypeUtil, IdenticalUtil } from '@eggjs/tegg';
+import { EggProtoImplClass, IdenticalUtil, RuntimeConfig, QualifierInfo } from '@eggjs/tegg';
+import type { Application } from 'egg';
 
 export default {
   // @eggjs/tegg-metadata should not depend by other egg plugins.
@@ -78,12 +78,29 @@ export default {
     return IdenticalUtil;
   },
 
-  async getEggObject(clazz: EggProtoImplClass) {
-    const proto = PrototypeUtil.getClazzProto(clazz);
-    if (!proto) {
-      throw new Error(`can not get proto for clazz ${clazz.name}`);
+  get runtimeConfig(): RuntimeConfig {
+    const app = this as unknown as Application;
+    const config = app.config;
+    return {
+      baseDir: config.baseDir,
+      env: config.env,
+      name: config.name,
+    };
+  },
+
+  async getEggObject(clazz: EggProtoImplClass, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+    if (qualifiers) {
+      qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObject(proto as EggPrototype);
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers);
+    return eggObject.obj;
+  },
+
+  async getEggObjectFromName(name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+    if (qualifiers) {
+      qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
+    }
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers);
     return eggObject.obj;
   },
 };

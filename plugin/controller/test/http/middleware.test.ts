@@ -48,4 +48,11 @@ describe('test/middleware.test.ts', () => {
         assert(res.body.log === 'use middleware');
       });
   });
+
+  it('method middleware call module should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .get('/middleware/methodCallModule')
+      .expect(200);
+  });
 });

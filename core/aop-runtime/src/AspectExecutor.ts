@@ -2,6 +2,12 @@ import { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/aop-decorator';
 import compose from 'koa-compose';
 import type { Middleware } from 'koa-compose';
 
+interface InternalAdviceContext<T = object> {
+  that: T;
+  method: PropertyKey;
+  args: any[];
+}
+
 export class AspectExecutor {
   obj: Object;
   method: PropertyKey;
@@ -14,7 +20,7 @@ export class AspectExecutor {
   }
 
   async execute(...args: any[]) {
-    const ctx: AdviceContext = {
+    const ctx: InternalAdviceContext = {
       that: this.obj,
       method: this.method,
       args,
@@ -32,53 +38,68 @@ export class AspectExecutor {
     }
   }
 
-  async beforeCall(ctx: AdviceContext) {
+  async beforeCall(ctx: InternalAdviceContext) {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.beforeCall) {
-        await advice.beforeCall(ctx);
+        /**
+         * 这里...写法使传入的参数变成了一个新的对象
+         * 因此beforeCall里面如果修改了ctx.args
+         * 最新的args是不会在方法里生效的
+         * 先保证args可以生效
+         * 不改动其余地方
+         */
+        const params = { ...ctx, adviceParams: aspectAdvice.adviceParams };
+        await advice.beforeCall(params);
+        ctx.args = params.args;
       }
     }
   }
 
-  async afterReturn(ctx: AdviceContext, result: any) {
+  async afterReturn(ctx: InternalAdviceContext, result: any) {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.afterReturn) {
-        await advice.afterReturn(ctx, result);
+        await advice.afterReturn({ ...ctx, adviceParams: aspectAdvice.adviceParams }, result);
       }
     }
   }
 
-  async afterThrow(ctx: AdviceContext, error: Error) {
+  async afterThrow(ctx: InternalAdviceContext, error: Error) {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.afterThrow) {
-        await advice.afterThrow(ctx, error);
+        await advice.afterThrow({ ...ctx, adviceParams: aspectAdvice.adviceParams }, error);
       }
     }
   }
 
-  async afterFinally(ctx: AdviceContext) {
+  async afterFinally(ctx: InternalAdviceContext) {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       if (advice.afterFinally) {
-        await advice.afterFinally(ctx);
+        await advice.afterFinally({ ...ctx, adviceParams: aspectAdvice.adviceParams });
       }
     }
   }
 
-  async doExecute(ctx: AdviceContext) {
+  async doExecute(ctx: InternalAdviceContext) {
     const lastCall = () => {
       const originMethod = Object.getPrototypeOf(this.obj)[this.method];
       return Reflect.apply(originMethod, ctx.that, ctx.args);
     };
-    const functions: Array<Middleware<AdviceContext>> = [];
+    const functions: Array<Middleware<InternalAdviceContext>> = [];
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice: IAdvice = ctx.that[aspectAdvice.name];
       const fn = advice.around;
       if (fn) {
-        functions.push(fn.bind(advice));
+        functions.push(async (ctx: InternalAdviceContext<object>, next: () => Promise<any>) => {
+          const fnCtx: AdviceContext = {
+            ...ctx,
+            adviceParams: aspectAdvice.adviceParams,
+          };
+          return await fn.call(advice, fnCtx, next);
+        });
       }
     }
     functions.push(lastCall);

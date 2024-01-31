@@ -19,6 +19,18 @@ exports.tegg = {
 };
 ```
 
+```js
+// config/config.default.js
+{
+  tegg: {
+    // 读取模块支持自定义配置，可用于扩展或过滤不需要的模块文件
+    readModuleOptions: {
+      extraFilePattern: ['!**/dist', '!**/release'],
+    },
+  };
+}
+```
+
 ## Usage
 
 ### 原型
@@ -144,6 +156,172 @@ export class HelloService {
 }
 ```
 
+#### MultiInstanceProto
+
+支持一个类有多个实例。比如说 logger 可能会初始化多个，用来输出到不同文件，db 可能会初始化多个，用来连接不同的数据库。
+使用这个注解可以方便的对接外部资源。
+
+##### 定义
+```ts
+// 静态定义
+@MultiInstanceProto(params: {
+  // 对象的生命周期
+  // CONTEXT: 每个上下文都有一个实例
+  // SINGLETON: 整个应用生命周期只有一个实例
+  initType?: ObjectInitTypeLike;
+
+  // 对象是在 module 内可访问还是全局可访问
+  // PRIVATE: 仅 module 内可访问
+  // PUBLIC: 全局可访问
+  // 默认值为 PRIVATE
+  accessLevel?: AccessLevel;
+
+  // 高阶参数，指定类型的实现原型
+  protoImplType?: string;
+
+  // 对象元信息
+  objects: ObjectInfo[];
+})
+
+// 动态定义
+@MultiInstanceProto(params: {
+  // 对象的生命周期
+  // CONTEXT: 每个上下文都有一个实例
+  // SINGLETON: 整个应用生命周期只有一个实例
+  initType?: ObjectInitTypeLike;
+
+  // 对象是在 module 内可访问还是全局可访问
+  // PRIVATE: 仅 module 内可访问
+  // PUBLIC: 全局可访问
+  // 默认值为 PRIVATE
+  accessLevel?: AccessLevel;
+
+  // 高阶参数，指定类型的实现原型
+  protoImplType?: string;
+
+  // 动态调用，获取对象元信息
+  // 仅会调用一次，调用后结果会被缓存
+  getObjects(ctx: MultiInstancePrototypeGetObjectsContext): ObjectInfo[];
+})
+```
+
+##### 示例
+
+首先定义一个自定义 Qualifier 注解
+```ts
+import {
+  QualifierUtil,
+  EggProtoImplClass,
+} from '@eggjs/tegg';
+
+export const LOG_PATH_ATTRIBUTE = Symbol.for('LOG_PATH_ATTRIBUTE');
+
+export function LogPath(name: string) {
+  return function(target: any, propertyKey: PropertyKey) {
+    QualifierUtil.addProperQualifier(target.constructor as EggProtoImplClass, propertyKey, LOG_PATH_ATTRIBUTE, name);
+  };
+}
+
+```
+
+定一个具体实现
+
+```typescript
+import {
+  MultiInstanceProto,
+  MultiInstancePrototypeGetObjectsContext,
+  LifecycleInit,
+  LifecycleDestroy,
+  QualifierUtil,
+  EggProtoImplClass,
+} from '@eggjs/tegg';
+import { EggObject, ModuleConfigUtil, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
+import fs from 'node:fs';
+import { Writable } from 'node:stream';
+import path from 'node:path';
+import { EOL } from 'node:os';
+
+export const LOG_PATH_ATTRIBUTE = Symbol.for('LOG_PATH_ATTRIBUTE');
+
+@MultiInstanceProto({
+  // 从 module.yml 中动态获取配置来决定需要初始化几个对象
+  getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
+    const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath);
+    return (config as any).features.logger.map(name => {
+      return {
+        name: 'dynamicLogger',
+        qualifiers: [{
+          attribute: LOG_PATH_ATTRIBUTE,
+          value: name,
+        }],
+      }
+    });
+  },
+})
+export class DynamicLogger {
+  stream: Writable;
+  loggerName: string;
+
+  @LifecycleInit()
+  async init(ctx: EggObjectLifeCycleContext, obj: EggObject) {
+    // 获取需要实例化对象的 Qualifieri
+    const loggerName = obj.proto.getQualifier(LOG_PATH_ATTRIBUTE);
+    this.loggerName = loggerName as string;
+    this.stream = fs.createWriteStream(path.join(ctx.loadUnit.unitPath, `${loggerName}.log`));
+  }
+
+  @LifecycleDestroy()
+  async destroy() {
+    return new Promise<void>((resolve, reject) => {
+      this.stream.end(err => {
+        if (err)  {
+          return reject(err);
+        }
+        return resolve();
+      });
+    });
+  }
+
+  info(msg: string) {
+    return new Promise<void>((resolve, reject) => {
+      this.stream.write(msg + EOL,err => {
+        if (err)  {
+          return reject(err);
+        }
+        return resolve();
+      });
+    });
+  }
+
+}
+```
+
+使用 DynamicLogger.
+```ts
+@SingletonProto()
+export class Foo {
+  @Inject({
+    name: 'dynamicLogger',
+  })
+  // 通过自定义注解来指定 Qualifier
+  @LogPath('foo')
+  fooDynamicLogger: DynamicLogger;
+
+  @Inject({
+    name: 'dynamicLogger',
+  })
+  @LogPath('bar')
+  barDynamicLogger: DynamicLogger;
+
+  async hello(): Promise<void> {
+    await this.fooDynamicLogger.info('hello, foo');
+    await this.barDynamicLogger.info('hello, bar');
+  }
+}
+```
+
+
+
 #### 生命周期 hook
 
 由于对象的生命周期交给了容器来托管，代码中无法感知什么时候对象初始化，什么时候依赖被注入了。所以提供了生命周期 hook 来实现这些通知的功能。
@@ -220,6 +398,62 @@ export class Foo implements EggObjectLifecycle {
 
   async destroy(): Promise<void> {
     console.log('执行一些释放资源的操作');
+  }
+}
+```
+
+##### 生命周期方法装饰器
+
+上面展示的 hook 是通过方法命名约定来实现生命周期 hook，我们还提供了更加可读性更强的装饰器模式。
+
+```ts
+import {
+  LifecyclePostConstruct,
+  LifecyclePreInject,
+  LifecyclePostInject,
+  LifecycleInit,
+  LifecyclePreDestroy,
+  LifecycleDestroy,
+} from '@eggjs/tegg';
+
+@SingletonProto({
+  accessLevel: AccessLevel.PUBLIC,
+  name: 'helloInterface',
+})
+export class HelloService {
+  @LifecyclePostConstruct()
+  protected async _postConstruct() {
+    console.log('对象构造完成');
+  }
+
+  @LifecyclePreInject()
+  protected async _preInject() {
+    console.log('依赖将要注入');
+  }
+
+  @LifecyclePostInject()
+  protected async _postInject() {
+    console.log('依赖注入完成');
+  }
+
+  @LifecycleInit()
+  protected async _init() {
+    console.log('执行一些异步的初始化过程');
+  }
+
+  @LifecyclePreDestroy()
+  protected async _preDestroy() {
+    console.log('对象将要释放了');
+  }
+
+  @LifecycleDestroy()
+  protected async _destroy() {
+    console.log('执行一些释放资源的操作');
+  }
+
+  async hello(user: User) {
+    const echoResponse = await this.echoAdapter.echo({ name: user.name });
+    return `hello, ${echoResponse.name}`;
   }
 }
 ```
@@ -398,17 +632,23 @@ export interface Application {
 export interface Application {
   /**
    * 通过一个类来获取实例
-   * 注：app.getEggObject 只能获取 Singleton 实例
    */
   getEggObject<T> (clazz: EggProtoImplClass<T> ): Promise <T>;
+  /**
+   * 通过对象名称来获取实例
+   */
+  getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
 }
 
 export interface Context {
   /**
    * 通过一个类来获取实例
-   * 注：ctx.getEggObject 可以获取 Singleton/Context 实例
    */
   getEggObject<T> (clazz: EggProtoImplClass<T> ): Promise <T>;
+  /**
+   * 通过对象名称来获取实例
+   */
+  getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
 }
 ```
 
@@ -735,10 +975,10 @@ export class HelloService {
 ]
 ```
 
-支持通过 `pkg` 引用使用 npm 发布的 module。
+支持通过 `package` 引用使用 npm 发布的 module。
 
 ```json
 [
-  {"pkg": "foo"}
+  {"package": "foo"}
 ]
 ```

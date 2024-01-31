@@ -1,0 +1,6 @@
+{
+  "name": "egg-app",
+  "egg": {
+    "framework": "foo"
+  }
+}

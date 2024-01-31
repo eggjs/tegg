@@ -8,6 +8,13 @@ export abstract class ParamMeta {
 
   abstract validate(httpPath: string);
 }
+export class RequestParamMeta extends ParamMeta {
+  type = HTTPParamType.REQUEST;
+
+  validate() {
+    return;
+  }
+}
 
 export class BodyParamMeta extends ParamMeta {
   type = HTTPParamType.BODY;
@@ -71,7 +78,7 @@ export class HTTPMethodMeta implements MethodMeta {
   public readonly contextParamIndex: number | undefined;
   public readonly paramMap: Map<number, ParamMeta>;
   public readonly priority: number;
-  public readonly needAcL: boolean;
+  public readonly needAcl: boolean;
   public readonly aclCode: string | undefined;
   public readonly hosts: string[] | undefined;
 
@@ -94,7 +101,7 @@ export class HTTPMethodMeta implements MethodMeta {
     this.contextParamIndex = contextParamIndex;
     this.paramMap = paramTypeMap;
     this.priority = priority;
-    this.needAcL = needAcl;
+    this.needAcl = needAcl;
     this.aclCode = aclCode;
     this.hosts = hosts;
   }
@@ -117,6 +124,9 @@ export class ParamMetaUtil {
       case HTTPParamType.QUERY: {
         assert(name, 'query param must has name');
         return new QueryParamMeta(name!);
+      }
+      case HTTPParamType.REQUEST: {
+        return new RequestParamMeta();
       }
       default:
         assert.fail('never arrive');

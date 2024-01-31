@@ -3,6 +3,7 @@ import assert from 'assert';
 import { EggLoadUnitType, LoadUnitFactory } from '..';
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/core-decorator';
 import { TestLoader } from './fixtures/TestLoader';
+import { FOO_ATTRIBUTE } from './fixtures/modules/multi-instance-module/MultiInstance';
 
 
 describe('test/LoadUnit/LoadUnit.test.ts', () => {
@@ -16,9 +17,10 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const appRepoProto = loadUnit.getEggPrototype('appRepo', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
       const sprintRepoProto = loadUnit.getEggPrototype('sprintRepo', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
       const userRepoProto = loadUnit.getEggPrototype('userRepo', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
-      assert(appRepoProto);
-      assert(sprintRepoProto);
-      assert(userRepoProto);
+      assert.strictEqual(appRepoProto.length, 1);
+      assert.strictEqual(appRepoProto[0].className, 'AppRepo');
+      assert.strictEqual(sprintRepoProto.length, 1);
+      assert.strictEqual(userRepoProto.length, 1);
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
     });
 
@@ -77,6 +79,39 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const injectProto = singletonProto.injectObjects.find(t => t.objName === 'appCache');
       assert(injectProto);
       assert(injectProto.proto.initType === ObjectInitType.CONTEXT);
+    });
+  });
+
+  describe('MultiInstance proto', () => {
+    it('should load static work', async () => {
+      const multiInstanceModule = path.join(__dirname, './fixtures/modules/multi-instance-module');
+      const loader = new TestLoader(multiInstanceModule);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(multiInstanceModule, EggLoadUnitType.MODULE, loader);
+      assert(loadUnit.id === 'LOAD_UNIT:multiInstanceModule');
+      assert(loadUnit.unitPath === multiInstanceModule);
+      const foo1Prototype = loadUnit.getEggPrototype('foo', [{ attribute: FOO_ATTRIBUTE, value: 'foo1' }]);
+      const foo2Prototype = loadUnit.getEggPrototype('foo', [{ attribute: FOO_ATTRIBUTE, value: 'foo2' }]);
+      assert(foo1Prototype);
+      assert(foo1Prototype.length === 1);
+      assert.strictEqual(foo1Prototype[0].className, 'FooLogger');
+      assert(foo2Prototype);
+      assert(foo2Prototype.length === 1);
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    });
+
+    it('should load callback work', async () => {
+      const multiCallbackInstanceModule = path.join(__dirname, './fixtures/modules/multi-callback-instance-module');
+      const loader = new TestLoader(multiCallbackInstanceModule);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(multiCallbackInstanceModule, EggLoadUnitType.MODULE, loader);
+      assert(loadUnit.id === 'LOAD_UNIT:multiCallbackInstanceModule');
+      assert(loadUnit.unitPath === multiCallbackInstanceModule);
+      const foo1Prototype = loadUnit.getEggPrototype('foo', [{ attribute: FOO_ATTRIBUTE, value: 'foo' }]);
+      const foo2Prototype = loadUnit.getEggPrototype('foo', [{ attribute: FOO_ATTRIBUTE, value: 'bar' }]);
+      assert(foo1Prototype);
+      assert(foo1Prototype.length === 1);
+      assert(foo2Prototype);
+      assert(foo2Prototype.length === 1);
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
     });
   });
 });

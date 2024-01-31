@@ -5,10 +5,10 @@ import {
   MetadataUtil,
   ObjectInitTypeLike,
   QualifierInfo,
-  PrototypeUtil,
   QualifierUtil,
   Id,
   IdenticalUtil,
+  QualifierValue,
 } from '@eggjs/tegg';
 import {
   EggPrototype,
@@ -62,6 +62,10 @@ export class EggCompatibleProtoImpl implements EggPrototype {
     return selfQualifiers?.value === qualifier.value;
   }
 
+  getQualifier(attribute: string): QualifierValue | undefined {
+    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+  }
+
   constructEggObject(): object {
     return Reflect.apply(this.clazz, null, []);
   }
@@ -72,11 +76,13 @@ export class EggCompatibleProtoImpl implements EggPrototype {
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;
-    const property = PrototypeUtil.getProperty(clazz)!;
-    const name = property.name;
+    const name = ctx.prototypeInfo.name;
     const id = IdenticalUtil.createProtoId(loadUnit.id, name);
     const proto = new EggCompatibleProtoImpl(
-      id, name, clazz, property.initType, loadUnit.id, QualifierUtil.getProtoQualifiers(clazz),
+      id, name, clazz, ctx.prototypeInfo.initType, loadUnit.id, [
+        ...QualifierUtil.getProtoQualifiers(clazz),
+        ...(ctx.prototypeInfo.qualifiers ?? []),
+      ],
     );
     return proto;
   }

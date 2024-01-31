@@ -2,7 +2,7 @@ import { Context } from 'egg';
 import { EggContext } from '@eggjs/tegg-runtime';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import ctxLifecycleMiddleware from '../../lib/ctx_lifecycle_middleware';
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
+import { EggProtoImplClass, PrototypeUtil, QualifierInfo } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 
 export interface TEggPluginContext extends Context {
@@ -21,13 +21,21 @@ export default {
     return this[TEGG_CONTEXT];
   },
 
-  async getEggObject(this: Context, clazz: EggProtoImplClass) {
+  async getEggObject(this: Context, clazz: EggProtoImplClass, name?: string) {
     const protoObj = PrototypeUtil.getClazzProto(clazz);
     if (!protoObj) {
       throw new Error(`can not get proto for clazz ${clazz.name}`);
     }
     const proto = protoObj as EggPrototype;
-    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, proto.name);
+    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObject(proto, name ?? proto.name);
+    return eggObject.obj;
+  },
+
+  async getEggObjectFromName(this: Context, name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+    if (qualifiers) {
+      qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
+    }
+    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers);
     return eggObject.obj;
   },
 };

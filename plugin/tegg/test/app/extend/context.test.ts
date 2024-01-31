@@ -2,7 +2,7 @@ import assert from 'assert';
 import path from 'path';
 import mm from 'egg-mock';
 import { Application } from 'egg';
-import sleep from 'mz-modules/sleep';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';
 import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService';
 import { LONG_STACK_DELIMITER } from '../../../lib/run_in_background';
@@ -42,6 +42,18 @@ describe('test/app/extend/context.test.ts', () => {
     });
   });
 
+  describe('getEggObjectFromName', () => {
+    it('should work', async () => {
+      await app.mockModuleContextScope(async ctx => {
+        const appService = await ctx.getEggObjectFromName('appService');
+        assert(appService instanceof AppService);
+
+        const persistenceService = await ctx.getEggObjectFromName('persistenceService');
+        assert(persistenceService instanceof PersistenceService);
+      });
+    });
+  });
+
   describe('beginModuleScope', () => {
     it('should be reentrant', async () => {
       await app.mockModuleContextScope(async ctx => {
@@ -58,7 +70,7 @@ describe('test/app/extend/context.test.ts', () => {
       let backgroundIsDone = false;
       await app.mockModuleContextScope(async ctx => {
         ctx.runInBackground(async () => {
-          await sleep(100);
+          await TimerUtil.sleep(100);
           backgroundIsDone = true;
         });
       });
@@ -69,9 +81,9 @@ describe('test/app/extend/context.test.ts', () => {
       let backgroundIsDone = false;
       await app.mockModuleContextScope(async ctx => {
         ctx.runInBackground(async () => {
-          await sleep(100);
+          await TimerUtil.sleep(100);
           ctx.runInBackground(async () => {
-            await sleep(100);
+            await TimerUtil.sleep(100);
             backgroundIsDone = true;
           });
         });
@@ -88,7 +100,7 @@ describe('test/app/extend/context.test.ts', () => {
         ctx.runInBackground(async () => {
           throw new Error('background');
         });
-        await sleep(1000);
+        await TimerUtil.sleep(1000);
       });
       const stack: string = backgroundError.stack;
       // background

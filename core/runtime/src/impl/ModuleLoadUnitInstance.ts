@@ -15,7 +15,7 @@ export class ModuleLoadUnitInstance implements LoadUnitInstance {
   readonly loadUnit: LoadUnit;
   readonly id: string;
   readonly name: string;
-  private protoToCreateMap: Map<EggPrototypeName, EggPrototype> = new Map();
+  private protoToCreateMap: [EggPrototypeName, EggPrototype][] = [];
   private eggObjectMap: Map<Id, Map<EggPrototypeName, EggObject>> = new Map();
   private eggObjectPromiseMap: Map<Id, Map<EggPrototypeName, Promise<EggObject>>> = new Map();
 
@@ -25,22 +25,27 @@ export class ModuleLoadUnitInstance implements LoadUnitInstance {
     const iterator = this.loadUnit.iterateEggPrototype();
     for (const proto of iterator) {
       if (proto.initType === ObjectInitType.SINGLETON) {
-        this.protoToCreateMap.set(proto.name, proto);
+        this.protoToCreateMap.push([
+          proto.name, proto,
+        ]);
       }
     }
     this.id = IdenticalUtil.createLoadUnitInstanceId(loadUnit.id);
   }
 
   iterateProtoToCreate(): IterableIterator<[ EggObjectName, EggPrototype ]> {
-    return this.protoToCreateMap.entries();
+    return this.protoToCreateMap[Symbol.iterator]();
   }
 
   addProtoToCreate(name: string, proto: EggPrototype) {
-    this.protoToCreateMap.set(name, proto);
+    this.protoToCreateMap.push([ name, proto ]);
   }
 
   deleteProtoToCreate(name: string) {
-    this.protoToCreateMap.delete(name);
+    const index = this.protoToCreateMap.findIndex(([ protoName ]) => protoName === name);
+    if (index !== -1) {
+      this.protoToCreateMap.splice(index, 1);
+    }
   }
 
   async init(ctx: LoadUnitInstanceLifecycleContext): Promise<void> {

@@ -1,13 +1,13 @@
 import assert from 'assert';
 import path from 'path';
-import mm from 'egg-mock';
-import sleep from 'mz-modules/sleep';
+import mm, { MockApplication } from 'egg-mock';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService';
 import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger';
+import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler';
 
 describe('test/eventbus.test.ts', () => {
-  let app;
-  let ctx;
+  let app: MockApplication;
 
   afterEach(async () => {
     mm.restore();
@@ -30,85 +30,86 @@ describe('test/eventbus.test.ts', () => {
   });
 
   it('msg should work', async () => {
-    ctx = await app.mockModuleContext();
-    const helloService = await ctx.getEggObject(HelloService);
-    let msg: string | undefined;
-    // helloLogger is in child context
-    mm(HelloLogger.prototype, 'handle', m => {
-      msg = m;
+    await app.mockModuleContextScope(async ctx => {
+      const helloService = await ctx.getEggObject(HelloService);
+      let msg: string | undefined;
+      // helloLogger is in child context
+      mm(HelloLogger.prototype, 'handle', m => {
+        msg = m;
+      });
+      const eventWaiter = await app.getEventWaiter();
+      const helloEvent = eventWaiter.await('helloEgg');
+      helloService.hello();
+      await helloEvent;
+      assert(msg === '01');
     });
-    const eventWaiter = await app.getEventWaiter();
-    const helloEvent = eventWaiter.await('helloEgg');
-    helloService.hello();
-    await helloEvent;
-    assert(msg === '01');
   });
 
   it('cork/uncork should work', async () => {
-    ctx = await app.mockModuleContext();
+    await app.mockModuleContextScope(async ctx => {
+      const helloService = await ctx.getEggObject(HelloService);
+      let helloTime = 0;
+      // helloLogger is in child context
+      mm(HelloLogger.prototype, 'handle', () => {
+        helloTime = Date.now();
+      });
+      helloService.cork();
+      const triggerTime = Date.now();
+      helloService.hello();
 
-    const helloService = await ctx.getEggObject(HelloService);
-    let helloTime = 0;
-    // helloLogger is in child context
-    mm(HelloLogger.prototype, 'handle', () => {
-      helloTime = Date.now();
+      await TimerUtil.sleep(100);
+      helloService.uncork();
+
+      const eventWaiter = await app.getEventWaiter();
+      const helloEvent = eventWaiter.await('helloEgg');
+      await helloEvent;
+      assert(helloTime >= triggerTime + 100);
     });
-    helloService.cork();
-    const triggerTime = Date.now();
-    helloService.hello();
-
-    await sleep(100);
-    helloService.uncork();
-
-    const eventWaiter = await app.getEventWaiter();
-    const helloEvent = eventWaiter.await('helloEgg');
-    await helloEvent;
-    assert(helloTime >= triggerTime + 100);
   });
 
   it('can call cork/uncork multi times', async () => {
-    ctx = await app.mockModuleContext();
+    await app.mockModuleContextScope(async ctx => {
+      const helloService = await ctx.getEggObject(HelloService);
+      const eventWaiter = await app.getEventWaiter();
 
-    const helloService = await ctx.getEggObject(HelloService);
-    const eventWaiter = await app.getEventWaiter();
+      let helloCalled = 0;
+      // helloLogger is in child context
+      mm(HelloLogger.prototype, 'handle', () => {
+        helloCalled++;
+      });
+      helloService.cork();
+      helloService.hello();
+      helloService.uncork();
+      await eventWaiter.await('helloEgg');
 
-    let helloCalled = 0;
-    // helloLogger is in child context
-    mm(HelloLogger.prototype, 'handle', () => {
-      helloCalled++;
+      helloService.cork();
+      helloService.hello();
+      helloService.uncork();
+      await eventWaiter.await('helloEgg');
+
+      assert(helloCalled === 2);
     });
-    helloService.cork();
-    helloService.hello();
-    helloService.uncork();
-    await eventWaiter.await('helloEgg');
-
-    helloService.cork();
-    helloService.hello();
-    helloService.uncork();
-    await eventWaiter.await('helloEgg');
-
-    assert(helloCalled === 2);
   });
 
   it('reentry cork/uncork should work', async () => {
-    ctx = await app.mockModuleContext();
+    await app.mockModuleContextScope(async ctx => {
+      const helloService = await ctx.getEggObject(HelloService);
+      const eventWaiter = await app.getEventWaiter();
 
-    const helloService = await ctx.getEggObject(HelloService);
-    const eventWaiter = await app.getEventWaiter();
+      let helloCalled = 0;
+      // helloLogger is in child context
+      mm(HelloLogger.prototype, 'handle', () => {
+        helloCalled++;
+      });
+      helloService.cork();
+      helloService.cork();
+      helloService.hello();
+      helloService.uncork();
+      helloService.uncork();
+      await eventWaiter.await('helloEgg');
 
-    let helloCalled = 0;
-    // helloLogger is in child context
-    mm(HelloLogger.prototype, 'handle', () => {
-      helloCalled++;
+      assert(helloCalled === 1);
     });
-    helloService.cork();
-    helloService.cork();
-    helloService.hello();
-    helloService.uncork();
-    helloService.uncork();
-    await eventWaiter.await('helloEgg');
-
-    assert(helloCalled === 1);
   });
 
   it('concurrent cork/uncork should work', async () => {
@@ -123,7 +124,7 @@ describe('test/eventbus.test.ts', () => {
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
         helloService.hello();
-        await sleep(100);
+        await TimerUtil.sleep(100);
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),
@@ -132,11 +133,34 @@ describe('test/eventbus.test.ts', () => {
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
         helloService.hello();
-        await sleep(100);
+        await TimerUtil.sleep(100);
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),
     ]);
     assert(helloCalled === 2);
+  });
+
+  it('multi event handler should work', async function() {
+    await app.mockModuleContextScope(async ctx => {
+      const helloService = await ctx.getEggObject(HelloService);
+      let eventName = '';
+      let msg = '';
+      mm(MultiEventHandler.prototype, 'handle', (ctx, m) => {
+        eventName = ctx.eventName;
+        msg = m;
+      });
+      const eventWaiter = await app.getEventWaiter();
+      const helloEvent = eventWaiter.await('helloEgg');
+      helloService.hello();
+      await helloEvent;
+      assert.equal(eventName, 'helloEgg');
+      assert.equal(msg, '01');
+      const hiEvent = eventWaiter.await('hiEgg');
+      helloService.hi();
+      await hiEvent;
+      assert.equal(eventName, 'hiEgg');
+      assert.equal(msg, 'Ydream');
+    });
   });
 });

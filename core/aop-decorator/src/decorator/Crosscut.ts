@@ -12,6 +12,7 @@ import {
 export interface CrosscutOptions {
   // 默认值 100
   order?: number;
+  adviceParams?: any;
 }
 
 const defaultCrossOptions = {
@@ -48,6 +49,7 @@ export function Crosscut(param: CrosscutParam, options?: CrosscutOptions) {
         adviceInfo: {
           clazz: constructor,
           order: options?.order ?? defaultCrossOptions.order,
+          adviceParams: options?.adviceParams,
         },
       };
     } else if (param.type === PointcutType.NAME) {
@@ -56,6 +58,7 @@ export function Crosscut(param: CrosscutParam, options?: CrosscutOptions) {
         adviceInfo: {
           clazz: constructor,
           order: options?.order ?? defaultCrossOptions.order,
+          adviceParams: options?.adviceParams,
         },
       };
     } else {
@@ -64,6 +67,7 @@ export function Crosscut(param: CrosscutParam, options?: CrosscutOptions) {
         adviceInfo: {
           clazz: constructor,
           order: options?.order ?? defaultCrossOptions.order,
+          adviceParams: options?.adviceParams,
         },
       };
     }

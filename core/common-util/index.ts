@@ -6,3 +6,6 @@ export * from './src/FSUtil';
 export * from './src/StackUtil';
 export * from './src/ProxyUtil';
 export * from './src/ModuleConfig';
+export * from './src/ModuleConfigs';
+export * from './src/TimerUtil';
+export * from './src/RuntimeConfig';
