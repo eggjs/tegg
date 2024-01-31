@@ -953,7 +953,7 @@ export class HelloService {
   private readonly eggObjectFactory: EggObjectFactory;
 
   async hello(): Promise<string[]> {
-    const helloImpls = await this.eggObjectFactory.getEggObjects(AbstractHello, HelloType.BAR);
+    const helloImpls = await this.eggObjectFactory.getEggObjects(AbstractHello);
     const messages = [];
     for await (const helloImpl of helloImpls) {
       messages.push(helloImpl.hello());
