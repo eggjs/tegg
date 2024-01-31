@@ -934,10 +934,31 @@ import { EggObjectFactory } from '@eggjs/tegg';
 export class HelloService {
   @Inject()
   private readonly eggObjectFactory: EggObjectFactory;
-  
+
   async hello(): Promise<string> {
     const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, HelloType.BAR);
     return helloImpl.hello();
+  }
+}
+```
+
+动态获取多个实现，通过 for/await 循环获得实例。
+
+```ts
+import { EggObjectFactory } from '@eggjs/tegg';
+
+@ContextProto()
+export class HelloService {
+  @Inject()
+  private readonly eggObjectFactory: EggObjectFactory;
+
+  async hello(): Promise<string[]> {
+    const helloImpls = await this.eggObjectFactory.getEggObjects(AbstractHello);
+    const messages = [];
+    for await (const helloImpl of helloImpls) {
+      messages.push(helloImpl.hello());
+    }
+    return messages;
   }
 }
 ```
