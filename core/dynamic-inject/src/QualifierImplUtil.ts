@@ -9,8 +9,14 @@ export class QualifierImplUtil {
     implMap.set(qualifierValue, implClazz);
   }
 
-  static getQualifierImp(abstractClazz: EggAbstractClazz, qualifierValue: QualifierValue):EggProtoImplClass | undefined {
+  static getQualifierImp(abstractClazz: EggAbstractClazz, qualifierValue: QualifierValue): EggProtoImplClass | undefined {
     const implMap: Map<QualifierValue, EggProtoImplClass> | undefined = MetadataUtil.getMetaData(QUALIFIER_IMPL_MAP, abstractClazz as unknown as EggProtoImplClass);
     return implMap?.get(qualifierValue);
+  }
+
+  static listQualifierImps(abstractClazz: EggAbstractClazz): EggProtoImplClass[] {
+    const implMap: Map<QualifierValue, EggProtoImplClass> | undefined = MetadataUtil.getMetaData(QUALIFIER_IMPL_MAP, abstractClazz as unknown as EggProtoImplClass);
+    if (!implMap) return [];
+    return Array.from(implMap.values());
   }
 }
