@@ -1,5 +1,6 @@
-import { EggAbstractClazz } from './typing';
 import { EggProtoImplClass, MetadataUtil, QualifierValue } from '@eggjs/core-decorator';
+
+import { EggAbstractClazz } from './typing';
 
 export const QUALIFIER_IMPL_MAP = Symbol.for('EggPrototype#qualifierImplMap');
 
@@ -14,9 +15,8 @@ export class QualifierImplUtil {
     return implMap?.get(qualifierValue);
   }
 
-  static listQualifierImps(abstractClazz: EggAbstractClazz): EggProtoImplClass[] {
+  static getQualifierImpMap(abstractClazz: EggAbstractClazz): Map<QualifierValue, EggProtoImplClass> {
     const implMap: Map<QualifierValue, EggProtoImplClass> | undefined = MetadataUtil.getMetaData(QUALIFIER_IMPL_MAP, abstractClazz as unknown as EggProtoImplClass);
-    if (!implMap) return [];
-    return Array.from(implMap.values());
+    return implMap || new Map();
   }
 }

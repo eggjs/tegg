@@ -1,8 +1,9 @@
 import { ContextProto, Inject } from '@eggjs/core-decorator';
-import { ContextHelloType, SingletonHelloType } from './FooType';
+import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject';
+
 import { AbstractContextHello } from './AbstractContextHello';
 import { AbstractSingletonHello } from './AbstractSingletonHello';
-import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject';
+import { ContextHelloType, SingletonHelloType } from './FooType';
 
 @ContextProto()
 export class HelloService {
@@ -17,6 +18,21 @@ export class HelloService {
       this.eggObjectFactory.getEggObject(AbstractSingletonHello, SingletonHelloType.BAR),
     ]);
     const msgs = helloImpls.map(helloImpl => helloImpl.hello());
+    return msgs;
+  }
+
+  async sayHelloToAll(): Promise<string[]> {
+    const singletonHellos = await this.eggObjectFactory.getEggObjects(AbstractSingletonHello);
+    const contextHellos = await this.eggObjectFactory.getEggObjects(AbstractContextHello);
+
+    const msgs: string[] = [];
+    for await (const helloImpl of singletonHellos) {
+      msgs.push(helloImpl.hello());
+    }
+    for await (const helloImpl of contextHellos) {
+      msgs.push(helloImpl.hello());
+    }
+
     return msgs;
   }
 }

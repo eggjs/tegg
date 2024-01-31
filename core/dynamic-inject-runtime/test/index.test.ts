@@ -1,10 +1,12 @@
-import path from 'path';
-import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggTestContext } from '../../test-util';
-import { HelloService } from './fixtures/modules/dynamic-inject-module/HelloService';
-import { CoreTestHelper } from '../../test-util/CoreTestHelper';
 import assert from 'assert';
+import path from 'path';
+
+import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+
+import { EggTestContext } from '../../test-util';
+import { CoreTestHelper } from '../../test-util/CoreTestHelper';
+import { HelloService } from './fixtures/modules/dynamic-inject-module/HelloService';
 
 describe('test/dynamic-inject-runtime.test.ts', () => {
   let modules: Array<LoadUnitInstance>;
@@ -46,5 +48,19 @@ describe('test/dynamic-inject-runtime.test.ts', () => {
         'hello, bar(singleton:1)',
       ]);
     });
+  });
+
+  it('should work with getAllEggObjects', async () => {
+    await EggTestContext.mockContext(async () => {
+      const helloService = await CoreTestHelper.getObject(HelloService);
+      const msgs = await helloService.sayHelloToAll();
+      assert.deepStrictEqual(msgs, [
+        'hello, bar(singleton:0)',
+        'hello, foo(singleton:0)',
+        'hello, bar(context:0)',
+        'hello, foo(context:0)',
+      ]);
+    });
+
   });
 });
