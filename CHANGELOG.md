@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.31.0](https://github.com/eggjs/tegg/compare/v3.30.1...v3.31.0) (2024-01-31)
+
+
+### Features
+
+* add getEggObjects API to fetch all instances ([#189](https://github.com/eggjs/tegg/issues/189)) ([f8592c2](https://github.com/eggjs/tegg/commit/f8592c2cd141d01b4f1730b1e3d66e35c3e1ce05))
+
+
+
+
+
 ## [3.30.1](https://github.com/eggjs/tegg/compare/v3.30.0...v3.30.1) (2024-01-25)
 
 
