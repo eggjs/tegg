@@ -28,14 +28,17 @@ export class ModuleScanner {
     });
     const frameworkDir = path.dirname(frameworkPkg);
     const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});
-    return [
+    const result = [
       ...moduleReferences,
-      ...optionalModuleReferences.map(t => {
-        return {
-          ...t,
-          optional: true,
-        };
-      }),
     ];
+    for (const optionalModuleReference of optionalModuleReferences) {
+      if (!result.some(t => t.path === optionalModuleReference.path)) {
+        result.push({
+          ...optionalModuleReference,
+          optional: true,
+        });
+      }
+    }
+    return result;
   }
 }
