@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.32.0](https://github.com/eggjs/tegg/compare/v3.31.0...v3.32.0) (2024-02-19)
+
+
+### Bug Fixes
+
+* ignore duplicated module ([#191](https://github.com/eggjs/tegg/issues/191)) ([263467f](https://github.com/eggjs/tegg/commit/263467fc43a25eb5a1670de4778de127662a201b))
+
+
+
+
+
 # [3.31.0](https://github.com/eggjs/tegg/compare/v3.30.1...v3.31.0) (2024-01-31)
 
 **Note:** Version bump only for package @eggjs/tegg-config
