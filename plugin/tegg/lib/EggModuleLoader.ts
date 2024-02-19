@@ -18,6 +18,12 @@ export class EggModuleLoader {
 
   private buildAppGraph(loaderCache: Map<string, Loader>) {
     const appGraph = new AppGraph();
+    for (const plugin of Object.values(this.app.plugins)) {
+      const modulePlugin = this.app.moduleReferences.find(t => t.path === plugin.path);
+      if (modulePlugin) {
+        modulePlugin.optional = false;
+      }
+    }
     for (const moduleConfig of this.app.moduleReferences) {
       const modulePath = moduleConfig.path;
       const moduleNode = new ModuleNode(moduleConfig);
