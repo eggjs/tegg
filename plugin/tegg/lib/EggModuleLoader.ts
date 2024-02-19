@@ -19,6 +19,7 @@ export class EggModuleLoader {
   private buildAppGraph(loaderCache: Map<string, Loader>) {
     const appGraph = new AppGraph();
     for (const plugin of Object.values(this.app.plugins)) {
+      if (!plugin.enable) continue;
       const modulePlugin = this.app.moduleReferences.find(t => t.path === plugin.path);
       if (modulePlugin) {
         modulePlugin.optional = false;
