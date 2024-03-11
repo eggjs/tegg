@@ -20,6 +20,7 @@ export class EggPrototypeCreatorFactory {
     if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
       const multiInstanceProtoInfo = PrototypeUtil.getMultiInstanceProperty(clazz, {
         unitPath: loadUnit.unitPath,
+        moduleName: loadUnit.name,
       })!;
       for (const obj of multiInstanceProtoInfo.objects) {
         properties.push({

@@ -42,6 +42,7 @@ export class AppLoadUnit implements LoadUnit {
         attribute: InitTypeQualifierAttribute,
         value: PrototypeUtil.getInitType(clazz, {
           unitPath: this.unitPath,
+          moduleName: this.name,
         })!,
       }, {
         attribute: LoadUnitNameQualifierAttribute,

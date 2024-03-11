@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14, 16, 18, 20 ]
+        node-version: [ 16, 18, 20 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 14, 16, 18, 20 ]
+        node-version: [ 16, 18, 20 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master
@@ -80,32 +80,33 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-  Runner-windows:
-    runs-on: windows-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [ 14, 16, 18, 20 ]
-    steps:
-      - name: Checkout Git Source
-        uses: actions/checkout@master
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install Npm
-        run: npm i -g npm@8
-
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Continuous integration
-        run: npm run ci
-
-      - name: Code Coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+# GitHub mysql service not support windows
+#  Runner-windows:
+#    runs-on: windows-latest
+#
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        node-version: [ 16, 18, 20 ]
+#    steps:
+#      - name: Checkout Git Source
+#        uses: actions/checkout@master
+#
+#      - name: Setup Node.js
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: ${{ matrix.node-version }}
+#
+#      - name: Install Npm
+#        run: npm i -g npm@8
+#
+#      - name: Install Dependencies
+#        run: npm i
+#
+#      - name: Continuous integration
+#        run: npm run ci
+#
+#      - name: Code Coverage
+#        uses: codecov/codecov-action@v1
+#        with:
+#          token: ${{ secrets.CODECOV_TOKEN }}

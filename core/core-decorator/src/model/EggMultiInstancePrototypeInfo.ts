@@ -9,6 +9,7 @@ export interface ObjectInfo {
 }
 
 export interface MultiInstancePrototypeGetObjectsContext {
+  moduleName: string;
   unitPath: string;
 }
 

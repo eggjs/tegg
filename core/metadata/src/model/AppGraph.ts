@@ -58,6 +58,7 @@ export class ClazzMap {
           for (const instanceNode of graph.nodes.values()) {
             const property = PrototypeUtil.getMultiInstanceProperty(clazz, {
               unitPath: instanceNode.val.moduleConfig.path,
+              moduleName: instanceNode.val.moduleConfig.name,
             });
             assert(property, `multi instance property not found for ${clazz.name}`);
             for (const info of property.objects) {
@@ -66,6 +67,7 @@ export class ClazzMap {
                 name: info.name,
                 accessLevel: PrototypeUtil.getAccessLevel(clazz, {
                   unitPath: instanceNode.val.moduleConfig.path,
+                  moduleName: instanceNode.val.moduleConfig.name,
                 }) as AccessLevel,
                 qualifiers: [
                   ...qualifiers,
@@ -84,6 +86,7 @@ export class ClazzMap {
             name: property.name,
             accessLevel: PrototypeUtil.getAccessLevel(clazz, {
               unitPath: ownerNode.val.moduleConfig.path,
+              moduleName: ownerNode.val.moduleConfig.name,
             }) as AccessLevel,
             qualifiers,
             ownerModule: ownerNode,
@@ -185,6 +188,7 @@ export class ModuleNode implements GraphNodeObj {
       attribute: InitTypeQualifierAttribute,
       value: PrototypeUtil.getInitType(clazz, {
         unitPath: this.moduleConfig.path,
+        moduleName: this.moduleConfig.name,
       })!,
     }, {
       attribute: LoadUnitNameQualifierAttribute,
