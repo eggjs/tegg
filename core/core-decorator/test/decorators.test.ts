@@ -118,6 +118,7 @@ describe('test/decorator.test.ts', () => {
       };
       assert.deepStrictEqual(PrototypeUtil.getMultiInstanceProperty(FooLogger, {
         unitPath: 'foo',
+        moduleName: '',
       }), expectObjectProperty);
     });
   });

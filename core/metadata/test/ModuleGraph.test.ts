@@ -7,7 +7,7 @@ describe('test/ModuleGraph.test.ts', () => {
     const modulePath = path.join(__dirname, './fixtures/modules/extends-module');
     const loader = new TestLoader(modulePath);
     const clazzList = loader.load();
-    const graph = new ModuleGraph(clazzList, modulePath);
+    const graph = new ModuleGraph(clazzList, modulePath, 'foo');
     graph.sort();
   });
 });

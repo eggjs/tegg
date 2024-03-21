@@ -32,13 +32,14 @@ class ProtoNode implements GraphNodeObj {
   readonly qualifiers: QualifierInfo[];
   readonly initType: ObjectInitTypeLike;
 
-  constructor(clazz: EggProtoImplClass, objName: EggPrototypeName, unitPath: string) {
+  constructor(clazz: EggProtoImplClass, objName: EggPrototypeName, unitPath: string, moduleName: string) {
     this.name = objName;
     this.id = '' + (id++);
     this.clazz = clazz;
     this.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
     this.initType = PrototypeUtil.getInitType(clazz, {
       unitPath,
+      moduleName,
     })!;
   }
 
@@ -65,11 +66,13 @@ export class ModuleGraph {
   private graph: Graph<ProtoNode>;
   clazzList: EggProtoImplClass[];
   readonly unitPath: string;
+  readonly name: string;
 
-  constructor(clazzList: EggProtoImplClass[], unitPath: string) {
+  constructor(clazzList: EggProtoImplClass[], unitPath: string, name: string) {
     this.clazzList = clazzList;
     this.graph = new Graph<ProtoNode>();
     this.unitPath = unitPath;
+    this.name = name;
     this.build();
   }
 
@@ -103,9 +106,10 @@ export class ModuleGraph {
     for (const clazz of this.clazzList) {
       const objNames = PrototypeUtil.getObjNames(clazz, {
         unitPath: this.unitPath,
+        moduleName: this.name,
       });
       for (const objName of objNames) {
-        protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, objName, this.unitPath)));
+        protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, objName, this.unitPath, this.name)));
       }
     }
     for (const node of protoGraphNodes) {
@@ -163,6 +167,7 @@ export class ModuleLoadUnit implements LoadUnit {
         attribute: InitTypeQualifierAttribute,
         value: PrototypeUtil.getInitType(clazz, {
           unitPath: this.unitPath,
+          moduleName: this.name,
         })!,
       }, {
         attribute: LoadUnitNameQualifierAttribute,
@@ -177,7 +182,7 @@ export class ModuleLoadUnit implements LoadUnit {
 
   async init() {
     const clazzList = this.loadClazz();
-    const protoGraph = new ModuleGraph(clazzList, this.unitPath);
+    const protoGraph = new ModuleGraph(clazzList, this.unitPath, this.name);
     protoGraph.sort();
     this.clazzList = protoGraph.clazzList;
     for (const clazz of this.clazzList) {
