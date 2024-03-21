@@ -24,7 +24,7 @@ describe('test/SqlGenerator.test.ts', () => {
       '  double_column DOUBLE(10,5) UNSIGNED ZEROFILL NOT NULL,\n' +
       '  date_column DATE NOT NULL,\n' +
       '  date_time_column DATETIME(3) NOT NULL,\n' +
-      '  timestamp_column TIMESTAMP(3) NOT NULL,\n' +
+      '  timestamp_column TIMESTAMP(3) NULL,\n' +
       '  time_column TIME(3) NOT NULL,\n' +
       '  year_column YEAR NOT NULL,\n' +
       '  var_char_column VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,\n' +
