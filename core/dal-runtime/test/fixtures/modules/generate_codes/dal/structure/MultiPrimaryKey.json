@@ -31,7 +31,7 @@
         "type": "VARCHAR",
         "length": 100
       },
-      "canNull": true,
+      "canNull": false,
       "uniqueKey": true
     }
   ],

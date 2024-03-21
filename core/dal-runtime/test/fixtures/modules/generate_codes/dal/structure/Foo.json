@@ -20,7 +20,7 @@
         "type": "VARCHAR",
         "length": 100
       },
-      "canNull": true,
+      "canNull": false,
       "uniqueKey": true
     },
     {
@@ -30,7 +30,7 @@
         "type": "VARCHAR",
         "length": 100
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "bit_column",
@@ -39,7 +39,7 @@
         "type": "BIT",
         "length": 10
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "bool_column",
@@ -47,7 +47,7 @@
       "type": {
         "type": "BOOL"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "tiny_int_column",
@@ -58,7 +58,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "small_int_column",
@@ -69,7 +69,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "medium_int_column",
@@ -80,7 +80,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "int_column",
@@ -91,7 +91,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "big_int_column",
@@ -102,7 +102,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "decimal_column",
@@ -114,7 +114,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "float_column",
@@ -126,7 +126,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "double_column",
@@ -138,7 +138,7 @@
         "unsigned": true,
         "zeroFill": true
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "date_column",
@@ -146,7 +146,7 @@
       "type": {
         "type": "DATE"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "date_time_column",
@@ -155,7 +155,7 @@
         "type": "DATETIME",
         "precision": 3
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "timestamp_column",
@@ -164,7 +164,7 @@
         "type": "TIMESTAMP",
         "precision": 3
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "time_column",
@@ -173,7 +173,7 @@
         "type": "TIME",
         "precision": 3
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "year_column",
@@ -181,7 +181,7 @@
       "type": {
         "type": "YEAR"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "var_char_column",
@@ -192,7 +192,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "binary_column",
@@ -200,7 +200,7 @@
       "type": {
         "type": "BINARY"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "var_binary_column",
@@ -209,7 +209,7 @@
         "type": "VARBINARY",
         "length": 100
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "tiny_blob_column",
@@ -217,7 +217,7 @@
       "type": {
         "type": "TINYBLOB"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "tiny_text_column",
@@ -227,7 +227,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "blob_column",
@@ -236,7 +236,7 @@
         "type": "BLOB",
         "length": 100
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "text_column",
@@ -247,7 +247,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "medium_blob_column",
@@ -255,7 +255,7 @@
       "type": {
         "type": "MEDIUMBLOB"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "long_blob_column",
@@ -263,7 +263,7 @@
       "type": {
         "type": "LONGBLOB"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "medium_text_column",
@@ -273,7 +273,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "long_text_column",
@@ -283,7 +283,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "enum_column",
@@ -297,7 +297,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "set_column",
@@ -311,7 +311,7 @@
         "characterSet": "utf8mb4",
         "collate": "utf8mb4_unicode_ci"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "geometry_column",
@@ -319,7 +319,7 @@
       "type": {
         "type": "GEOMETRY"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "point_column",
@@ -327,7 +327,7 @@
       "type": {
         "type": "POINT"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "line_string_column",
@@ -335,7 +335,7 @@
       "type": {
         "type": "LINESTRING"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "polygon_column",
@@ -343,7 +343,7 @@
       "type": {
         "type": "POLYGON"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "multipoint_column",
@@ -351,7 +351,7 @@
       "type": {
         "type": "MULTIPOINT"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "multi_line_string_column",
@@ -359,7 +359,7 @@
       "type": {
         "type": "MULTILINESTRING"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "multi_polygon_column",
@@ -367,7 +367,7 @@
       "type": {
         "type": "MULTIPOLYGON"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "geometry_collection_column",
@@ -375,7 +375,7 @@
       "type": {
         "type": "GEOMETRYCOLLECTION"
       },
-      "canNull": true
+      "canNull": false
     },
     {
       "columnName": "json_column",
@@ -383,7 +383,7 @@
       "type": {
         "type": "JSON"
       },
-      "canNull": true
+      "canNull": false
     }
   ],
   "indices": [

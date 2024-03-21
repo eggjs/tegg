@@ -7,16 +7,16 @@ import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook';
 
 export default class ControllerAppBootHook {
   private readonly app: Application;
-  private readonly dalTableEggPrototypeHook: DalTableEggPrototypeHook;
+  private dalTableEggPrototypeHook: DalTableEggPrototypeHook;
   private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
 
   constructor(app: Application) {
     this.app = app;
-    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.app.logger);
   }
 
   configWillLoad() {
     this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.app.moduleConfigs);
+    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.app.logger);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }

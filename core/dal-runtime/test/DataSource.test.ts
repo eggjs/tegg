@@ -29,6 +29,7 @@ describe('test/Datasource.test.ts', () => {
 
     const sqlGenerator = new SqlGenerator();
     const createTableSql = sqlGenerator.generate(tableModel);
+    console.log('create table: ', createTableSql);
 
     await mysql.query(createTableSql);
 
