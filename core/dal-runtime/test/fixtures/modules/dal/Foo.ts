@@ -163,6 +163,8 @@ export class Foo {
   @Column({
     type: ColumnType.TIMESTAMP,
     precision: 3,
+  }, {
+    canNull: true,
   })
   timestampColumn: Date;
 

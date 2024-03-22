@@ -52,8 +52,7 @@ export class ColumnModel {
 
   static build(property: string, type: ColumnTypeParams, params?: ColumnParams) {
     const columnName = params?.name ?? snakecase(property);
-    // TODO can null default should be false
-    let canNull = params?.canNull ?? true;
+    let canNull = params?.canNull ?? false;
     if (params?.primaryKey) {
       canNull = false;
     }

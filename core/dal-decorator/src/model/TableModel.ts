@@ -104,7 +104,6 @@ export class TableModel<T=object> {
     const name = params?.name ?? snakecase(pluralize(clazz.name));
     const columnInfoMap = ColumnInfoUtil.getColumnInfoMap(clazz as EggProtoImplClass);
     const columnTypeMap = ColumnInfoUtil.getColumnTypeMap(clazz as EggProtoImplClass);
-    // TODO set to default name
     const dataSourceName = params?.dataSourceName ?? 'default';
     assert(TableInfoUtil.getIsTable(clazz as EggProtoImplClass), `${name} is not Table`);
     assert(columnTypeMap, `${name} has no columns`);
