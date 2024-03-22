@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-decorator",
-  "version": "3.33.1",
+  "version": "3.34.0",
   "description": "tegg controller decorator",
   "keywords": [
     "egg",
@@ -37,9 +37,9 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.33.1",
-    "@eggjs/tegg-common-util": "^3.33.1",
-    "@eggjs/tegg-metadata": "^3.33.1",
+    "@eggjs/core-decorator": "^3.34.0",
+    "@eggjs/tegg-common-util": "^3.34.0",
+    "@eggjs/tegg-metadata": "^3.34.0",
     "path-to-regexp": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "undici": "^5.26.5"
