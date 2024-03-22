@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ColumnType, IndexType, SqlType, SqlMap, TableModel } from '@eggjs/dal-decorator';
-import { type EggLogger } from 'egg';
+import { Logger } from '@eggjs/tegg';
 import { TemplateUtil } from './TemplateUtil';
 
 export interface GenerateSqlMap {
@@ -11,9 +11,9 @@ export interface GenerateSqlMap {
 
 export class BaseSqlMapGenerator {
   private readonly tableModel: TableModel;
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
-  constructor(tableModel: TableModel, logger: EggLogger) {
+  constructor(tableModel: TableModel, logger: Logger) {
     this.tableModel = tableModel;
     this.logger = logger;
   }

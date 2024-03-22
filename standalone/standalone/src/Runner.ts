@@ -12,7 +12,14 @@ import {
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
-import { EggProtoImplClass, PrototypeUtil, ModuleConfigHolder, ModuleConfigs, ConfigSourceQualifierAttribute } from '@eggjs/tegg';
+import {
+  EggProtoImplClass,
+  PrototypeUtil,
+  ModuleConfigHolder,
+  ModuleConfigs,
+  ConfigSourceQualifierAttribute,
+  Logger,
+} from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { EggObjectAopHook, EggPrototypeCrossCutHook, LoadUnitAopHook } from '@eggjs/tegg-aop-runtime';
@@ -23,6 +30,11 @@ import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
 import { LoadUnitInnerClassHook } from './LoadUnitInnerClassHook';
+import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
+import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
+import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSourceManager';
+import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
+import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
 
 export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;
@@ -50,6 +62,8 @@ export class Runner {
   private runnerProto: EggPrototype;
   private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
   private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
+  private dalTableEggPrototypeHook: DalTableEggPrototypeHook;
+  private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
 
   private readonly loadUnitInnerClassHook: LoadUnitInnerClassHook;
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
@@ -139,6 +153,13 @@ export class Runner {
 
     this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
     LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
+
+    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.moduleConfigs);
+    const loggerInnerObject = this.innerObjects.logger && this.innerObjects.logger[0];
+    const logger = loggerInnerObject?.obj || console;
+    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(logger as Logger);
+    EggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
+    LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }
 
   async load() {
@@ -229,5 +250,15 @@ export class Runner {
     if (this.loadUnitMultiInstanceProtoHook) {
       LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
     }
+
+    if (this.dalTableEggPrototypeHook) {
+      await EggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
+    }
+    if (this.dalModuleLoadUnitHook) {
+      await LoadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
+    }
+    MysqlDataSourceManager.instance.clear();
+    SqlMapManager.instance.clear();
+    TableModelManager.instance.clear();
   }
 }

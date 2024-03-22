@@ -5,6 +5,7 @@ import { main, StandaloneContext, Runner } from '..';
 import { ModuleConfigs } from '@eggjs/tegg';
 import { ModuleConfig } from 'egg';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
+import { Foo } from './fixtures/dal-module/Foo';
 
 describe('test/index.test.ts', () => {
   describe('simple runner', () => {
@@ -210,6 +211,14 @@ describe('test/index.test.ts', () => {
           }
         }
       }
+    });
+  });
+
+  describe('dal runner', () => {
+    it('should work', async () => {
+      const foo: Foo = await main(path.join(__dirname, './fixtures/dal-module'));
+      assert(foo);
+      assert(foo.name, '2333');
     });
   });
 });
