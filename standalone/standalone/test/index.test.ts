@@ -246,7 +246,7 @@ describe('test/index.test.ts', () => {
     it('should work', async () => {
       const foo: Foo = await main(path.join(__dirname, './fixtures/dal-module'));
       assert(foo);
-      assert(foo.name, '2333');
+      assert.equal(foo.col1, '2333');
     });
   });
 });
