@@ -1,15 +1,15 @@
 import path from 'node:path';
 import { TableModel, SqlMap } from '@eggjs/dal-decorator';
-import { type EggLogger } from 'egg';
+import { Logger } from '@eggjs/tegg';
 import { BaseSqlMapGenerator } from './BaseSqlMap';
 import { TableSqlMap } from './TableSqlMap';
 
 export class SqlMapLoader {
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
   private readonly tableModel: TableModel;
   private readonly sqlMapPath: string;
 
-  constructor(tableModel: TableModel, moduleDir: string, logger: EggLogger) {
+  constructor(tableModel: TableModel, moduleDir: string, logger: Logger) {
     this.sqlMapPath = path.join(moduleDir, 'dal/extension', `${tableModel.clazz.name}Extension.ts`);
     this.logger = logger;
     this.tableModel = tableModel;

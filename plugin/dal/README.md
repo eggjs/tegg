@@ -2,8 +2,9 @@
 
 @eggjs/tegg-dal-plugin 支持使用注解的方式来开发 egg 中的 dal。
 
-## Install
+## egg 模式
 
+### Install
 ```shell
 # tegg 注解
 npm i --save @eggjs/tegg
@@ -13,18 +14,15 @@ npm i --save @eggjs/tegg-plugin
 npm i --save @eggjs/tegg-dal-plugin
 ```
 
-## Prepare
+### Prepare
 ```json
 // tsconfig.json
 {
-  "compilerOptions": {
-    // 注解特性需要显示打开
-    "experimentalDecorators": true
-  }
+  "extends": "@eggjs/tsconfig"
 }
 ```
 
-## Config
+### Config
 
 ```js
 // config/plugin.js
@@ -37,6 +35,24 @@ exports.teggDal = {
   package: '@eggjs/tegg-dal-plugin',
   enable: true,
 };
+```
+
+## standalone 模式
+
+### Install
+```shell
+# tegg 注解
+npm i --save @eggjs/tegg
+# tegg dal 插件
+npm i --save @eggjs/tegg-dal-plugin
+```
+
+### Prepare
+```json
+// tsconfig.json
+{
+  "extends": "@eggjs/tsconfig"
+}
 ```
 
 ## Usage

@@ -1,15 +1,15 @@
 import { LifecycleHook } from '@eggjs/tegg-lifecycle';
 import { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 import { TableInfoUtil, TableModel } from '@eggjs/dal-decorator';
-import { EggLogger } from 'egg';
+import { Logger } from '@eggjs/tegg';
 import { SqlMapLoader } from '@eggjs/dal-runtime';
 import { TableModelManager } from './TableModelManager';
 import { SqlMapManager } from './SqlMapManager';
 
 export class DalTableEggPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
-  private readonly logger: EggLogger;
+  private readonly logger: Logger;
 
-  constructor(logger: EggLogger) {
+  constructor(logger: Logger) {
     this.logger = logger;
   }
 

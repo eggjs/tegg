@@ -47,7 +47,8 @@
     "@eggjs/tegg-lifecycle": "^3.33.1",
     "@eggjs/tegg-loader": "^3.33.1",
     "@eggjs/tegg-metadata": "^3.33.1",
-    "@eggjs/tegg-runtime": "^3.33.1"
+    "@eggjs/tegg-runtime": "^3.33.1",
+    "@eggjs/tegg-dal-plugin": "^3.33.1"
   },
   "publishConfig": {
     "access": "public"
