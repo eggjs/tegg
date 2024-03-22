@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.33.0](https://github.com/eggjs/tegg/compare/v3.32.0...v3.33.0) (2024-03-22)
+
+
+### Features
+
+* impl dal ([#192](https://github.com/eggjs/tegg/issues/192)) ([1c7d145](https://github.com/eggjs/tegg/commit/1c7d1454bc8c600cd58c3ec7b9cda4e8a98c7287))
+
+
+
+
+
 # [3.32.0](https://github.com/eggjs/tegg/compare/v3.31.0...v3.32.0) (2024-02-19)
 
 **Note:** Version bump only for package @eggjs/tegg
