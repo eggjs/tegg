@@ -17,10 +17,7 @@ npm i --save @eggjs/tegg-controller-plugin
 ```json
 // tsconfig.json
 {
-  "compilerOptions": {
-    // 注解特性需要显示打开
-    "experimentalDecorators": true
-  }
+  "extends": "@eggjs/tsconfig"
 }
 ```
 

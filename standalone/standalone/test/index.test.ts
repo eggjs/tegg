@@ -6,6 +6,8 @@ import { ModuleConfigs } from '@eggjs/tegg';
 import { ModuleConfig } from 'egg';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 import { Foo } from './fixtures/dal-module/Foo';
+import { MysqlDataSource, SqlGenerator } from '@eggjs/dal-runtime';
+import { TableModel } from '@eggjs/dal-decorator';
 
 describe('test/index.test.ts', () => {
   describe('simple runner', () => {
@@ -215,6 +217,32 @@ describe('test/index.test.ts', () => {
   });
 
   describe('dal runner', () => {
+    let mysqlDataSource: MysqlDataSource;
+
+    before(async () => {
+      mysqlDataSource = new MysqlDataSource({
+        name: 'foo',
+        host: '127.0.0.1',
+        user: 'root',
+        database: 'test',
+        timezone: '+08:00',
+        initSql: 'SET GLOBAL time_zone = \'+08:00\';',
+      });
+      await mysqlDataSource.ready();
+      await mysqlDataSource.query('DROP TABLE IF EXISTS egg_foo');
+
+      const tableModel = TableModel.build(Foo);
+
+      const sqlGenerator = new SqlGenerator();
+      const createTableSql = sqlGenerator.generate(tableModel);
+
+      await mysqlDataSource.query(createTableSql);
+    });
+
+    after(async () => {
+      await mysqlDataSource.query('DROP TABLE IF EXISTS egg_foo');
+    });
+
     it('should work', async () => {
       const foo: Foo = await main(path.join(__dirname, './fixtures/dal-module'));
       assert(foo);
