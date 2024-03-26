@@ -21,7 +21,7 @@
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json && npm run cp:template",
-    "cp:template": "cp -r src/templates dist/src/templates",
+    "cp:template": "rm -rf dist/src/templates && cp -r src/templates dist/src/templates",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
