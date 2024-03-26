@@ -68,16 +68,16 @@ Optional<{{clazzName}},
 >
 {% endmacro %}
 
-import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types';
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '@eggjs/tegg/dal';
+import type { InsertResult, UpdateResult, DeleteResult } from '{{dalPkg}}';
+import { SingletonProto, AccessLevel, Inject } from '{{teggPkg}}';
+import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '{{dalPkg}}';
 import { {{ clazzName }} } from '{{ tableModelPath }}';
 // empty-line
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 /**
  * 自动生成的 {{ clazzName }}DAO 基类
  * @class Base{{ clazzName }}DAO
- * @classdesc 该文件由 @eggjs/tegg 自动生成，请**不要**修改它！
+ * @classdesc 该文件由 {{teggPkg}} 自动生成，请**不要**修改它！
  */
 /* istanbul ignore next */
 @SingletonProto({

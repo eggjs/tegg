@@ -1,1 +1,1 @@
-export { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types';
+export { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds';

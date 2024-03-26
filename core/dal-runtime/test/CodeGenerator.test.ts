@@ -10,6 +10,7 @@ describe('test/CodeGenerator.test.ts', () => {
     const generator = new CodeGenerator({
       moduleDir: path.join(__dirname, './fixtures/modules/generate_codes'),
       moduleName: 'dal',
+      dalPkg: '@eggjs/dal-decorator',
     });
     const fooModel = TableModel.build(Foo);
     await generator.generate(fooModel);
