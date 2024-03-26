@@ -11,6 +11,8 @@ import { SqlGenerator } from './SqlGenerator';
 export interface CodeGeneratorOptions {
   moduleDir: string;
   moduleName: string;
+  teggPkg?: string;
+  dalPkg?: string;
 }
 
 export enum Templates {
@@ -22,10 +24,14 @@ export enum Templates {
 export class CodeGenerator {
   private readonly moduleDir: string;
   private readonly moduleName: string;
+  private readonly teggPkg: string;
+  private readonly dalPkg: string;
 
   constructor(options: CodeGeneratorOptions) {
     this.moduleDir = options.moduleDir;
     this.moduleName = options.moduleName;
+    this.teggPkg = options.teggPkg ?? '@eggjs/tegg';
+    this.dalPkg = options.dalPkg ?? '@eggjs/tegg/dal';
     this.createNunjucksEnv();
   }
 
@@ -49,6 +55,8 @@ export class CodeGenerator {
       fileName: path.basename(filePath),
       clazzName: tableModel.clazz.name,
       moduleName: this.moduleName,
+      teggPkg: this.teggPkg,
+      dalPkg: this.dalPkg,
       id: tableModel.columns.find(t => t.propertyName === 'id'),
       primaryIndex: tableModel.getPrimary(),
       tableModelPath: TemplateUtil.importPath(tableModelAbsolutePath, path.dirname(filePath)),

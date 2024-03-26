@@ -1,6 +1,6 @@
-import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types';
+import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/dal-decorator';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '@eggjs/tegg/dal';
+import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '@eggjs/dal-decorator';
 import { MultiPrimaryKey } from '../../../MultiPrimaryKey';
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
