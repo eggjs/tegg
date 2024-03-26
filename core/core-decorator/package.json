@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/core-decorator",
-  "version": "3.35.0",
+  "version": "3.35.1",
   "description": "tegg core decorator",
   "keywords": [
     "egg",
@@ -36,7 +36,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^3.35.0",
+    "@eggjs/tegg-common-util": "^3.35.1",
     "reflect-metadata": "^0.1.13"
   },
   "publishConfig": {

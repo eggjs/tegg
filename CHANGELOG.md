@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.35.1](https://github.com/eggjs/tegg/compare/v3.35.0...v3.35.1) (2024-03-26)
+
+
+### Bug Fixes
+
+* fix dal templates build ([#199](https://github.com/eggjs/tegg/issues/199)) ([17afe8c](https://github.com/eggjs/tegg/commit/17afe8c98929c7613739e32e897e881619bbdb2a))
+
+
+
+
+
 # [3.35.0](https://github.com/eggjs/tegg/compare/v3.34.0...v3.35.0) (2024-03-26)
 
 
