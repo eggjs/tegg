@@ -1,7 +1,7 @@
 import mm from 'egg-mock';
 import path from 'path';
 
-describe('test/priority.test.ts', () => {
+describe('plugin/controller/test/http/priority.test.ts', () => {
   let app;
 
   beforeEach(() => {

@@ -15,7 +15,7 @@ import { EggControllerPrototypeHook } from '../../lib/EggControllerPrototypeHook
 import { HTTPMethodRegister } from '../../lib/impl/http/HTTPMethodRegister';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 
-describe('test/lib/HTTPControllerRegister.test.ts', () => {
+describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
 
   describe('method/path is registered', () => {
     const router = new KoaRouter();

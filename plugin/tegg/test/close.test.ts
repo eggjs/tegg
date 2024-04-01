@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
 
-describe('test/close.test.ts', () => {
+describe('plugin/tegg/test/close.test.ts', () => {
   it('should clean lifecycle hooks', async () => {
     mm(process.env, 'EGG_TYPESCRIPT', true);
     mm(process, 'cwd', () => {

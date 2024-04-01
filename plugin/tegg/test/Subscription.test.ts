@@ -3,7 +3,7 @@ import assert from 'assert';
 import path from 'path';
 import AppService from './fixtures/apps/schedule-app/modules/multi-module-service/AppService';
 
-describe('test/Subscription.test.ts', () => {
+describe('plugin/tegg/test/Subscription.test.ts', () => {
   let app;
 
   after(async () => {

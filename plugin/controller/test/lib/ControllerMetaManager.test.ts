@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
 
-describe('test/ControllerMetaManager.test.ts', () => {
+describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
   beforeEach(() => {
     mm(process.env, 'EGG_TYPESCRIPT', true);
   });

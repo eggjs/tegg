@@ -5,6 +5,7 @@
 ## egg 模式
 
 ### Install
+
 ```shell
 # tegg 注解
 npm i --save @eggjs/tegg
@@ -15,6 +16,7 @@ npm i --save @eggjs/tegg-dal-plugin
 ```
 
 ### Prepare
+
 ```json
 // tsconfig.json
 {
@@ -40,6 +42,7 @@ exports.teggDal = {
 ## standalone 模式
 
 ### Install
+
 ```shell
 # tegg 注解
 npm i --save @eggjs/tegg
@@ -48,6 +51,7 @@ npm i --save @eggjs/tegg-dal-plugin
 ```
 
 ### Prepare
+
 ```json
 // tsconfig.json
 {
@@ -58,6 +62,7 @@ npm i --save @eggjs/tegg-dal-plugin
 ## Usage
 
 ### module.yml
+
 通过 module.yml 来配置 module 中的 mysql 数据源。
 
 ```yaml
@@ -73,6 +78,7 @@ dataSource:
 ```
 
 ### Table
+
 `TableModel` 定义一个表结构，包括表配置、列、索引。
 
 ```ts
@@ -108,6 +114,7 @@ export class Foo {
 详细参数定义如下，具体参数值可以参考 https://dev.mysql.com/doc/refman/8.0/en/create-table.html
 
 建表参数，使用方式为 `@Table(parmas?: TableParams)`
+
 ```ts
 export interface TableParams {
   // 数据库表名
@@ -134,6 +141,7 @@ export interface TableParams {
 ```
 
 建索引参数，使用方式为 `@Index(parmas?: IndexParams)`
+
 ```ts
 export interface IndexParams {
   // 索引的列
@@ -153,6 +161,7 @@ export interface IndexParams {
 ```
 
 建列参数，使用方式为 `@Column(type: ColumnTypeParams, parmas?: ColumnParams)`
+
 ```ts
 export interface ColumnParams {
   // 列名，默认转换规则 userName 至 user_name
@@ -174,6 +183,7 @@ export interface ColumnParams {
 ```
 
 支持的类型
+
 ```ts
 export enum ColumnType {
   // Numeric
@@ -225,6 +235,7 @@ export enum ColumnType {
 支持的类型参数，详细可参考 https://dev.mysql.com/doc/refman/8.0/en/data-types.html
 
 如果 mysql 类型和 ts 类型对应关系不确定可直接使用 `ColumnTsType` 类型，如
+
 ```ts
 import { Table, Index, Column, ColumnType, IndexType, ColumnTsType } from '@eggjs/tegg/dal';
 
@@ -506,7 +517,8 @@ export interface GeometryCollectionParams {
 ```
 
 ### 目录结构
-运行 `egg-bin dal gen` 即可生成 `dal` 相关目录，包括 dao、extension、structure 
+
+运行 `egg-bin dal gen` 即可生成 `dal` 相关目录，包括 dao、extension、structure
 
 ```plain
 dal
@@ -519,7 +531,7 @@ dal
 └── structure
     ├── Foo.json
     └── Foo.sql
-``` 
+```
 
 - dao: 表访问类，生成的 BaseDAO 请勿修改，其中包含了根据表结构生成的基础访问方法，如 insert/update/delete 以及根据索引信息生成的 find 方法
 - extension: 扩展文件，如果需要自定义 sql，需要在 extension 文件中定义
@@ -543,8 +555,9 @@ export class FooRepository {
 }
 ```
 
-#### 自定义 Sql
-1. 在 extension 中定义自定义 Sql
+#### 自定义 SQL
+
+1. 在 extension 中定义自定义 SQL
 
 ```ts
 // dal/extension/FooExtension.ts
@@ -559,6 +572,7 @@ export default {
 ```
 
 2. 在 dao 中定义自定义方法
+
 ```ts
 import { SingletonProto, AccessLevel } from '@eggjs/tegg';
 import { BaseFooDAO } from './base/BaseFooDAO';
@@ -577,6 +591,7 @@ export default class FooDAO extends BaseFooDAO {
 ```
 
 支持的自定义 filter
+
 ```
 - toPoint
 - toLine
@@ -589,6 +604,7 @@ export default class FooDAO extends BaseFooDAO {
 ```
 
 支持自定义 block 来简化 sql, 如内置的 allColumns
+
 ```ts
 export default {
   findByName: {
@@ -599,7 +615,8 @@ export default {
 ```
 
 ### DataSource
-DataSource 仅能在 DAO 中使用，可以将 mysql 返回的数据反序列化为类。支持的方法有
+
+DataSource 仅能在 DAO 中使用，可以将 MySQL 返回的数据反序列化为类。支持的方法有
 
 ```ts
 export interface DataSource<T> {
@@ -634,6 +651,7 @@ dataSource:
 ```
 
 可以通过以下 SQL 来查看数据库时区
+
 ```sql
 SELECT @@GLOBAL.time_zone;
 ```

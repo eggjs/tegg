@@ -4,7 +4,7 @@ import path from 'path';
 import { EggControllerLoader } from '../../lib/EggControllerLoader';
 import { ControllerMetadataUtil } from '@eggjs/tegg';
 
-describe('test/lib/EggModuleLoader.test.ts', () => {
+describe('plugin/controller/test/lib/EggModuleLoader.test.ts', () => {
   beforeEach(() => {
     mm(process.env, 'EGG_TYPESCRIPT', true);
   });

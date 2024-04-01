@@ -3,7 +3,7 @@ import assert from 'assert';
 import path from 'path';
 import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used';
 
-describe('test/OptionalPluginModule.test.ts', () => {
+describe('plugin/tegg/test/OptionalPluginModule.test.ts', () => {
   let app;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/plugin-module');
 

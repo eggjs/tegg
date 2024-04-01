@@ -3,7 +3,7 @@ import assert from 'assert';
 import path from 'path';
 import { BarService } from './fixtures/apps/same-name-protos/app/modules/module-a/BarService';
 
-describe('test/SameProtoName.test.ts', () => {
+describe('plugin/tegg/test/SameProtoName.test.ts', () => {
   let app;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/same-name-protos');
 

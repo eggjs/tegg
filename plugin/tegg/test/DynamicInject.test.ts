@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
 
-describe('test/DynamicInject.test.ts', () => {
+describe('plugin/tegg/test/DynamicInject.test.ts', () => {
   let app;
 
   after(async () => {

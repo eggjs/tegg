@@ -6,7 +6,7 @@ import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloSe
 import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger';
 import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler';
 
-describe('test/eventbus.test.ts', () => {
+describe('plugin/eventbus/test/eventbus.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {

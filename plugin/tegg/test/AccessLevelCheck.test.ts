@@ -3,7 +3,7 @@ import assert from 'assert';
 import path from 'path';
 import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService';
 
-describe('test/AccessLevelCheck.test.ts', () => {
+describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
   let app;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/access-level-check');
 

@@ -1,13 +1,12 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import { ModuleConfig, ModuleConfigs } from '@eggjs/tegg/helper';
 import { main, StandaloneContext, Runner } from '..';
-import { ModuleConfigs } from '@eggjs/tegg';
-import { ModuleConfig } from 'egg';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 import { Foo } from './fixtures/dal-module/Foo';
 
-describe('test/index.test.ts', () => {
+describe('standalone/standalone/test/index.test.ts', () => {
   describe('simple runner', () => {
     it('should work', async () => {
       const msg: string = await main(path.join(__dirname, './fixtures/simple'));
@@ -221,6 +220,44 @@ describe('test/index.test.ts', () => {
       });
       assert(foo);
       assert.equal(foo.col1, '2333');
+    });
+  });
+
+  describe('ajv runner', () => {
+    it('should throw AjvInvalidParamError', async () => {
+      await assert.rejects(async () => {
+        await main<string>(path.join(__dirname, './fixtures/ajv-module'), {
+          dependencies: [
+            path.dirname(require.resolve('@eggjs/tegg-ajv-plugin/package.json')),
+          ],
+        });
+      }, (err: any) => {
+        assert.equal(err.name, 'AjvInvalidParamError');
+        assert.equal(err.message, 'Validation Failed');
+        assert.deepEqual(err.errorData, {});
+        assert.equal(err.currentSchema, '{"type":"object","properties":{"fullname":{"transform":["trim"],"maxLength":100,"type":"string"},"skipDependencies":{"type":"boolean"},"registryName":{"type":"string"}},"required":["fullname","skipDependencies"]}');
+        assert.deepEqual(err.errors, [
+          {
+            instancePath: '',
+            schemaPath: '#/required',
+            keyword: 'required',
+            params: {
+              missingProperty: 'fullname',
+            },
+            message: "must have required property 'fullname'",
+          },
+        ]);
+        return true;
+      });
+    });
+
+    it('should pass', async () => {
+      const result = await main<string>(path.join(__dirname, './fixtures/ajv-module-pass'), {
+        dependencies: [
+          path.dirname(require.resolve('@eggjs/tegg-ajv-plugin/package.json')),
+        ],
+      });
+      assert.equal(result, '{"body":{"fullname":"mock fullname","skipDependencies":true,"registryName":"ok"}}');
     });
   });
 });

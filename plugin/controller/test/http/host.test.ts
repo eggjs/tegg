@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
 
-describe('test/host.test.ts', () => {
+describe('plugin/controller/test/http/host.test.ts', () => {
   let app;
 
   beforeEach(() => {
