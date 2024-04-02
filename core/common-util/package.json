@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-common-util",
   "description": "common util for tegg",
-  "version": "3.35.1",
+  "version": "3.36.0",
   "keywords": [
     "egg",
     "typescript",
