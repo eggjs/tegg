@@ -355,12 +355,18 @@ export interface DateParams {
 export interface DateTimeParams {
   type: ColumnType.DATETIME;
   precision?: number;
+  // 自动添加 ON UPDATE CURRENT_TIMESTAMP
+  // 如果有精度则为 ON UPDATE CURRENT_TIMESTAMP(precision)
+  autoUpdate?: boolean;
 }
 
 // Timestamp 类型，对应 js 中的 Date
 export interface TimestampParams {
   type: ColumnType.TIMESTAMP;
   precision?: number;
+  // 自动添加 ON UPDATE CURRENT_TIMESTAMP
+  // 如果有精度则为 ON UPDATE CURRENT_TIMESTAMP(precision)
+  autoUpdate?: boolean;
 }
 
 // Times 类型，对应 js 中的 string
