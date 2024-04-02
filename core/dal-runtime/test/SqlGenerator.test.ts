@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { Foo } from './fixtures/modules/dal/Foo';
 import { SqlGenerator } from '../src/SqlGenerator';
 import { TableModel } from '@eggjs/dal-decorator';
+import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime';
 
 describe('test/SqlGenerator.test.ts', () => {
   it('generator should work', () => {
@@ -52,5 +53,18 @@ describe('test/SqlGenerator.test.ts', () => {
       '  FULLTEXT KEY idx_col1 (col1) COMMENT \'index comment\\n\',\n' +
       '  UNIQUE KEY uk_name_col1 (name,col1) USING BTREE COMMENT \'index comment\\n\'\n' +
       ') DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_unicode_ci, COMMENT=\'foo table\';');
+  });
+
+  it('generator auto update should work', () => {
+    const generator = new SqlGenerator();
+    const autoUpdateTimeTableModel = TableModel.build(AutoUpdateTime);
+    const sql = generator.generate(autoUpdateTimeTableModel);
+    assert.equal(sql, 'CREATE TABLE IF NOT EXISTS auto_update_times (\n' +
+      '  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT \'the primary key\',\n' +
+      '  date DATETIME ON UPDATE CURRENT_TIMESTAMP NOT NULL UNIQUE KEY,\n' +
+      '  date_2 DATETIME(3) ON UPDATE CURRENT_TIMESTAMP(3) NOT NULL UNIQUE KEY,\n' +
+      '  date_3 TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL UNIQUE KEY,\n' +
+      '  date_4 TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) NOT NULL UNIQUE KEY\n' +
+      ') ;');
   });
 });

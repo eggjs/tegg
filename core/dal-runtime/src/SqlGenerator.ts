@@ -126,7 +126,21 @@ export class SqlGenerator {
         break;
       }
       case ColumnType.DATETIME:
-      case ColumnType.TIMESTAMP:
+      case ColumnType.TIMESTAMP: {
+        if (columnType.precision) {
+          sqls.push(`${columnType.type}(${columnType.precision})`);
+        } else {
+          sqls.push(columnType.type);
+        }
+        if (columnType.autoUpdate) {
+          if (columnType.precision) {
+            sqls.push(`ON UPDATE CURRENT_TIMESTAMP(${columnType.precision})`);
+          } else {
+            sqls.push('ON UPDATE CURRENT_TIMESTAMP');
+          }
+        }
+        break;
+      }
       case ColumnType.TIME: {
         if (columnType.precision) {
           sqls.push(`${columnType.type}(${columnType.precision})`);

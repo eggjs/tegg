@@ -84,11 +84,13 @@ export interface DateParams extends IColumnTypeParams {
 export interface DateTimeParams extends IColumnTypeParams {
   type: ColumnType.DATETIME;
   precision?: number;
+  autoUpdate?: boolean;
 }
 
 export interface TimestampParams extends IColumnTypeParams {
   type: ColumnType.TIMESTAMP;
   precision?: number;
+  autoUpdate?: boolean;
 }
 
 export interface TimeParams extends IColumnTypeParams {
