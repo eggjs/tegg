@@ -1,12 +1,12 @@
 import { RDSClient } from '@eggjs/rds';
-// TODO fix export
-import type { RDSClientOptions } from '@eggjs/rds/lib/types';
+import type { RDSClientOptions } from '@eggjs/rds';
 import Base from 'sdk-base';
 
 export interface DataSourceOptions extends RDSClientOptions {
   name: string;
   // default is select 1 + 1;
   initSql?: string;
+  forkDb?: boolean;
 }
 
 const DEFAULT_OPTIONS: RDSClientOptions = {
@@ -16,18 +16,22 @@ const DEFAULT_OPTIONS: RDSClientOptions = {
 };
 
 export class MysqlDataSource extends Base {
-  private readonly client: RDSClient;
+  private client: RDSClient;
   private readonly initSql: string;
   readonly name: string;
   readonly timezone?: string;
+  readonly rdsOptions: RDSClientOptions;
+  readonly forkDb?: boolean;
 
   constructor(options: DataSourceOptions) {
     super({ initMethod: '_init' });
-    const { name, initSql, ...mysqlOptions } = options;
-    this.client = new RDSClient(Object.assign({}, DEFAULT_OPTIONS, mysqlOptions));
+    const { name, initSql, forkDb, ...mysqlOptions } = options;
+    this.forkDb = forkDb;
     this.initSql = initSql ?? 'SELECT 1 + 1';
     this.name = name;
     this.timezone = options.timezone;
+    this.rdsOptions = Object.assign({}, DEFAULT_OPTIONS, mysqlOptions);
+    this.client = new RDSClient(this.rdsOptions);
   }
 
   protected async _init() {

@@ -17,7 +17,7 @@ export default class ControllerAppBootHook {
   }
 
   configWillLoad() {
-    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.app.moduleConfigs);
+    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.app.config.env, this.app.moduleConfigs);
     this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.app.logger);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);

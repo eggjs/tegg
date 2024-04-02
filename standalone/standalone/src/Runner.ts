@@ -154,7 +154,7 @@ export class Runner {
     this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
     LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
 
-    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.moduleConfigs);
+    this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.env ?? '', this.moduleConfigs);
     const loggerInnerObject = this.innerObjects.logger && this.innerObjects.logger[0];
     const logger = loggerInnerObject?.obj || console;
     this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(logger as Logger);

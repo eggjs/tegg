@@ -637,3 +637,15 @@ dataSource:
 ```sql
 SELECT @@GLOBAL.time_zone;
 ```
+
+## Unittest
+可以在 `module.yml` 中开启 forkDb 配置，即可实现 unittest 环境自动创建数据库
+
+```yaml
+# module.yml
+dataSource:
+  foo:
+    # 开启 ci 环境自动创建数据库
+    forkDb: true
+
+```
