@@ -5,35 +5,38 @@ import { Foo } from './fixtures/modules/dal/Foo';
 import { TableModel } from '@eggjs/dal-decorator';
 import path from 'node:path';
 import { DataSource } from '../src/DataSource';
-import { SqlGenerator } from '../src/SqlGenerator';
 import FooDAO from './fixtures/modules/dal/dal/dao/FooDAO';
+import { DatabaseForker } from '../src/DatabaseForker';
 
 describe('test/DAO.test.ts', () => {
   let dataSource: DataSource<Foo>;
   let tableModel: TableModel<Foo>;
+  let forker: DatabaseForker;
 
   before(async () => {
-    const mysql = new MysqlDataSource({
+    const mysqlOptions = {
       name: 'foo',
       host: '127.0.0.1',
       user: 'root',
-      database: 'test',
+      database: 'test_runtime',
       timezone: '+08:00',
       initSql: 'SET GLOBAL time_zone = \'+08:00\';',
-    });
+      forkDb: true,
+    };
+    forker = new DatabaseForker('unittest', mysqlOptions);
+    await forker.forkDb(path.join(__dirname, './fixtures/modules/dal/dal'));
+
+    const mysql = new MysqlDataSource(mysqlOptions);
     await mysql.ready();
-    await mysql.query('DROP TABLE IF EXISTS egg_foo');
 
     tableModel = TableModel.build(Foo);
-
-    const sqlGenerator = new SqlGenerator();
-    const createTableSql = sqlGenerator.generate(tableModel);
-
-    await mysql.query(createTableSql);
-
     const sqlMapLoader = new SqlMapLoader(tableModel, path.join(__dirname, './fixtures/modules/dal'), console as any);
     const sqlMap = sqlMapLoader.load();
     dataSource = new DataSource(tableModel, mysql, sqlMap);
+  });
+
+  after(async () => {
+    await forker.destroy();
   });
 
   it('execute should work', async () => {
