@@ -252,10 +252,10 @@ export class Runner {
     }
 
     if (this.dalTableEggPrototypeHook) {
-      await EggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
+      EggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
     }
     if (this.dalModuleLoadUnitHook) {
-      await LoadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
+      LoadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
     }
     MysqlDataSourceManager.instance.clear();
     SqlMapManager.instance.clear();

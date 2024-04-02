@@ -5,7 +5,7 @@ import { RootProto } from './fixtures/apps/optional-module/app/modules/root/Root
 import { UsedProto } from './fixtures/apps/optional-module/node_modules/used/Used';
 import { UnusedProto } from './fixtures/apps/optional-module/node_modules/unused/Unused';
 
-describe('test/OptionalModule.test.ts', () => {
+describe('plugin/tegg/test/OptionalModule.test.ts', () => {
   let app;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/optional-module');
 

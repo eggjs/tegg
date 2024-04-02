@@ -124,7 +124,6 @@ export class PrototypeUtil {
    * get class property
    * @param {EggProtoImplClass} clazz -
    * @param {MultiInstancePrototypeGetObjectsContext} ctx -
-   * @return {EggPrototypeInfo} -
    */
   static getMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggMultiInstancePrototypeInfo | undefined {
     const metadata = MetadataUtil.getMetaData<EggMultiInstancePrototypeInfo>(this.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, clazz);

@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
 
-describe('test/ReadModule.test.ts', () => {
+describe('plugin/config/test/ReadModule.test.ts', () => {
   let app;
   const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-modules');
 

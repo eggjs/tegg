@@ -25,10 +25,10 @@ export default class ControllerAppBootHook {
 
   async beforeClose() {
     if (this.dalTableEggPrototypeHook) {
-      await this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
+      this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
     }
     if (this.dalModuleLoadUnitHook) {
-      await this.app.loadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
+      this.app.loadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
     }
     MysqlDataSourceManager.instance.clear();
     SqlMapManager.instance.clear();

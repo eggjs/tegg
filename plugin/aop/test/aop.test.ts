@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
 
-describe('test/aop.test.ts', () => {
+describe('plugin/aop/test/aop.test.ts', () => {
   let app;
 
   after(async () => {

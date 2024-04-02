@@ -4,7 +4,7 @@ import path from 'path';
 import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService';
 import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService';
 
-describe('test/EggCompatible.test.ts', () => {
+describe('plugin/tegg/test/EggCompatible.test.ts', () => {
   let app;
 
   after(async () => {

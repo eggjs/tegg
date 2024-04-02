@@ -12,7 +12,7 @@ export default class AopAppHook {
   private readonly eggObjectAopHook: EggObjectAopHook;
   private aopContextHook: AopContextHook;
 
-  constructor(app) {
+  constructor(app: Application) {
     this.app = app;
     this.crosscutAdviceFactory = new CrosscutAdviceFactory();
     this.loadUnitAopHook = new LoadUnitAopHook(this.crosscutAdviceFactory);

@@ -4,7 +4,7 @@ import assert from 'assert';
 import mm from 'egg-mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 
-describe('test/schedule.test.ts', () => {
+describe('plugin/schedule/test/schedule.test.ts', () => {
   let app;
 
   afterEach(async () => {

@@ -4,7 +4,7 @@ import mm, { MockApplication } from 'egg-mock';
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO';
 import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo';
 
-describe('test/dal.test.ts', () => {
+describe('plugin/dal/test/dal.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {

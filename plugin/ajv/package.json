@@ -1,0 +1,71 @@
+{
+  "name": "@eggjs/tegg-ajv-plugin",
+  "eggPlugin": {
+    "name": "teggAjv",
+    "strict": false,
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "eggModule": {
+    "name": "teggAjv"
+  },
+  "version": "3.35.1",
+  "description": "ajv plugin for egg and tegg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg",
+    "ajv"
+  ],
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "typings/*.d.ts"
+  ],
+  "types": "typings/index.d.ts",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/ajv"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@eggjs/tegg": "^3.35.1",
+    "@sinclair/typebox": "^0.32.20",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^3.0.1",
+    "ajv-keywords": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eggjs/tegg-config": "^3.35.1",
+    "@eggjs/tegg-plugin": "^3.35.1",
+    "@eggjs/tegg-controller-plugin": "^3.35.1",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "cross-env": "^7.0.3",
+    "egg": "^3.9.1",
+    "egg-mock": "^5.5.0",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -2,7 +2,7 @@ import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
 
-describe('test/NoModuleJson.test.ts', () => {
+describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
   let app;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/app-with-no-module-json');
 

@@ -8,7 +8,7 @@ import { BackgroundTaskHelper } from '@eggjs/tegg';
 import { EggContext, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService';
 
-describe('test/BackgroundTask.test.ts', () => {
+describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
   const appDir = path.join(__dirname, 'fixtures/apps/background-app');
   let app;
 
