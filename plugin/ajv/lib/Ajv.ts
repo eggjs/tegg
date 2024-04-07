@@ -1,5 +1,5 @@
 import Ajv2019, { type Schema } from 'ajv/dist/2019';
-import addFormats from 'ajv-formats';
+import addFormats from '@eggjs/ajv-formats';
 import keyWords from '@eggjs/ajv-keywords';
 import { type Ajv as IAjv, AjvInvalidParamError } from '@eggjs/tegg/ajv';
 import { SingletonProto, AccessLevel, LifecycleInit } from '@eggjs/tegg';
