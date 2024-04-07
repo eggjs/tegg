@@ -39,7 +39,8 @@
   "dependencies": {
     "@eggjs/core-decorator": "^3.37.1",
     "@eggjs/tegg-lifecycle": "^3.37.1",
-    "@eggjs/tegg-runtime": "^3.37.1"
+    "@eggjs/tegg-runtime": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1"
   },
   "devDependencies": {
     "@eggjs/tegg-common-util": "^3.37.1",

@@ -39,6 +39,7 @@
     "@eggjs/core-decorator": "^3.37.1",
     "@eggjs/tegg-common-util": "^3.37.1",
     "@eggjs/tegg-metadata": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1",
     "lodash": "^4.17.21",
     "pluralize": "^8.0.0"
   },

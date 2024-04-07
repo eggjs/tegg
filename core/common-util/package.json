@@ -36,6 +36,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
+    "@eggjs/tegg-types": "^3.36.2",
     "extend2": "^1.0.0",
     "globby": "^11.1.0",
     "js-yaml": "^3.14.0"

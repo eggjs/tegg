@@ -1,8 +1,7 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { ColumnParams, ColumnTypeParams } from '../decorator/Column';
+import { DAL_COLUMN_INFO_MAP, DAL_COLUMN_TYPE_MAP } from '@eggjs/tegg-types';
+import type { ColumnParams, ColumnTypeParams, EggProtoImplClass } from '@eggjs/tegg-types';
+import { MetadataUtil } from '@eggjs/core-decorator';
 
-export const DAL_COLUMN_INFO_MAP = Symbol('EggPrototype#dalColumnInfoMap');
-export const DAL_COLUMN_TYPE_MAP = Symbol('EggPrototype#dalColumnTypeMap');
 export type ColumnInfoMap = Map<string, ColumnParams>;
 export type ColumnTypeMap = Map<string, ColumnTypeParams>;
 

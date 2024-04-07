@@ -1,4 +1,5 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
+import { MetadataUtil } from '@eggjs/core-decorator';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { AttributeOptions } from '../decorator/Attribute';
 import { IndexOptions } from '../decorator/Index';
 

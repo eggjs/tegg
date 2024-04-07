@@ -1,7 +1,6 @@
 import 'reflect-metadata';
-import { EggProtoImplClass } from '../model/EggPrototypeInfo';
+import type { EggProtoImplClass, MetaDataKey } from '@eggjs/tegg-types';
 
-export type MetaDataKey = symbol | string;
 
 export class MetadataUtil {
   static deleteMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass) {

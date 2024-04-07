@@ -1,10 +1,10 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import path from 'node:path';
+import { ClassUtil } from '@eggjs/tegg-metadata';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { HTTPMethodMeta, ParamMeta, ParamMetaUtil } from '../../model';
 import { MethodValidator } from '../../util/validator/MethodValidator';
 import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 import MethodInfoUtil from '../../util/MethodInfoUtil';
-import { ClassUtil } from '@eggjs/tegg-metadata';
-import path from 'path';
 import { HTTPPriorityUtil } from '../../util/HTTPPriorityUtil';
 
 export class HTTPControllerMethodMetaBuilder {

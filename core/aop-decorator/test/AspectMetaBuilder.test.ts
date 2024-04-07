@@ -1,7 +1,10 @@
+import assert from 'node:assert';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { CrosscutAdviceFactory } from '../src/CrosscutAdviceFactory';
 import {
   CrosscutClassAdviceExample,
-  CrosscutCustomAdviceExample, CrosscutExample,
+  CrosscutCustomAdviceExample,
+  CrosscutExample,
   CrosscutNameAdviceExample,
 } from './fixtures/CrosscutExample';
 import {
@@ -11,7 +14,6 @@ import {
   PointcutExample,
 } from './fixtures/PointcutExample';
 import { AspectMetaBuilder } from '../src/AspectMetaBuilder';
-import assert from 'assert';
 import {
   ChildExample,
   CrosscutNoOverwriteParentExample,
@@ -21,7 +23,6 @@ import {
   PointcutAdviceOverwriteChildExample,
   PointcutAdviceOverwriteParentExample,
 } from './fixtures/InheritExample';
-import { PrototypeUtil } from '@eggjs/core-decorator';
 
 describe('test/AspectMetaBuild.test.ts', () => {
   const crosscutAdviceFactory = new CrosscutAdviceFactory();

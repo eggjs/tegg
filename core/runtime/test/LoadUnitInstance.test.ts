@@ -1,12 +1,13 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import mm from 'mm';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import { LoadUnitInstance } from '@eggjs/tegg-types';
 import { EggTestContext } from './fixtures/EggTestContext';
 import TestUtil from './util';
-import { EggContainerFactory, LoadUnitInstance } from '..';
+import { EggContainerFactory } from '..';
 import CountController from './fixtures/modules/module-for-load-unit-instance/CountController';
 import AppService from './fixtures/modules/multi-module/multi-module-service/AppService';
 import { Bar, Foo } from './fixtures/modules/extends-module/Base';
-import mm from 'mm';
 import { ContextHandler } from '../src/model/ContextHandler';
 import { EggContextStorage } from './fixtures/EggContextStorage';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance';

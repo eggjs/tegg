@@ -1,18 +1,7 @@
-import { ObjectInitType, ObjectInitTypeLike } from '../enum/ObjectInitType';
-import { AccessLevel } from '../enum/AccessLevel';
-import { EggProtoImplClass, EggPrototypeInfo } from '../model/EggPrototypeInfo';
-import { PrototypeUtil } from '../util/PrototypeUtil';
 import { NameUtil, StackUtil } from '@eggjs/tegg-common-util';
-
-
-export interface PrototypeParams {
-  name?: string;
-  initType?: ObjectInitTypeLike;
-  accessLevel?: AccessLevel;
-  protoImplType?: string;
-}
-
-export const DEFAULT_PROTO_IMPL_TYPE = 'DEFAULT';
+import { AccessLevel, DEFAULT_PROTO_IMPL_TYPE, ObjectInitType } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, EggPrototypeInfo, PrototypeParams } from '@eggjs/tegg-types';
+import { PrototypeUtil } from '../util/PrototypeUtil';
 
 const DEFAULT_PARAMS = {
   initType: ObjectInitType.SINGLETON,

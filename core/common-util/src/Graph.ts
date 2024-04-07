@@ -1,8 +1,6 @@
-const inspect = Symbol.for('nodejs.util.inspect.custom');
+import type { GraphNodeObj } from '@eggjs/tegg-types';
 
-export interface GraphNodeObj {
-  readonly id: string;
-}
+const inspect = Symbol.for('nodejs.util.inspect.custom');
 
 export class GraphNode<T extends GraphNodeObj> {
   val: T;

@@ -1,8 +1,6 @@
-import assert from 'assert';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { IAdvice } from './decorator/Advice';
+import assert from 'node:assert';
+import type { EggProtoImplClass, IAdvice, AdviceInfo } from '@eggjs/tegg-types';
 import { CrosscutInfoUtil } from './util/CrosscutInfoUtil';
-import { AdviceInfo } from './model/Aspect';
 
 export class CrosscutAdviceFactory {
   private readonly crosscutAdviceClazzList: Array<EggProtoImplClass<IAdvice>> = [];

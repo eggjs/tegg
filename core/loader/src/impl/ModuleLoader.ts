@@ -1,11 +1,8 @@
 import globby from 'globby';
-import path from 'path';
-
+import path from 'node:path';
 import { LoaderUtil } from '../LoaderUtil';
-
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, Loader } from '@eggjs/tegg-types';
 import { LoaderFactory } from '../LoaderFactory';
-import type { Loader } from '@eggjs/tegg-metadata';
 
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;

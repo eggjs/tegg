@@ -1,15 +1,16 @@
 import path from 'node:path';
-import {
-  ColumnModel,
-  ColumnType,
-  Geometry, GeometryCollection,
+import { ColumnModel, SpatialHelper } from '@eggjs/tegg/dal';
+import { ColumnType } from '@eggjs/tegg-types';
+import type {
+  Geometry,
+  GeometryCollection,
   Line,
   MultiLine,
   MultiPoint,
   MultiPolygon,
   Point,
-  Polygon, SpatialHelper,
-} from '@eggjs/tegg/dal';
+  Polygon,
+} from '@eggjs/tegg-types';
 
 export class TemplateUtil {
   static isSpatialType(columnModel: ColumnModel): boolean {

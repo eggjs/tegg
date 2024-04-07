@@ -1,4 +1,4 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ScheduleMetadata } from '../model/ScheduleMetadata';
 import { ScheduleInfoUtil } from '../util/ScheduleInfoUtil';
 import { ScheduleOptions } from '../decorator/Schedule';

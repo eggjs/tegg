@@ -1,4 +1,4 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { IndexMeta } from '../model/IndexMeta';
 import { ModelIndexInfo, ModelInfoUtil } from '../util/ModelInfoUtil';
 import { NameUtil } from '../util/NameUtil';

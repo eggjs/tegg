@@ -1,10 +1,10 @@
-import TestUtil from './util';
-import assert from 'assert';
+import assert from 'node:assert';
 import mm from 'mm';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggObjectUtil } from '../src/impl/EggObjectUtil';
 import { ContextHandler } from '../src/model/ContextHandler';
 import { EggTestContext } from './fixtures/EggTestContext';
+import TestUtil from './util';
 
 describe('test/EggObjectUtil.test.ts', () => {
   let ctx: EggTestContext;

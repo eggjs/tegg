@@ -1,6 +1,5 @@
 import { MainRunnerClass } from '../typing';
 
-
 export class StandaloneUtil {
   private static runnerClass: MainRunnerClass | undefined;
 

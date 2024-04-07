@@ -1,8 +1,4 @@
-export type Id = string;
-
-export class IdenticalObject {
-  id: Id;
-}
+import type { Id } from '@eggjs/tegg-types';
 
 export class IdenticalUtil {
   private static objIndex = 0;

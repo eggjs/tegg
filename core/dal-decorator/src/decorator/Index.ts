@@ -1,18 +1,5 @@
-import { IndexType } from '../enum/IndexType';
-import { IndexStoreType } from '../enum/IndexStoreType';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, IndexParams } from '@eggjs/tegg-types';
 import { IndexInfoUtil } from '../util/IndexInfoUtil';
-
-export interface IndexParams {
-  keys: string[];
-  name?: string;
-  type?: IndexType,
-  storeType?: IndexStoreType;
-  comment?: string;
-  engineAttribute?: string;
-  secondaryEngineAttribute?: string;
-  parser?: string;
-}
 
 export function Index(params: IndexParams) {
   return function(constructor: EggProtoImplClass) {

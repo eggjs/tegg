@@ -1,18 +1,5 @@
-import { ColumnType } from '../enum/ColumnType';
-
-export interface Point {
-  x: number;
-  y: number;
-}
-
-export type Line = Array<Point>;
-export type Polygon = Array<Line>;
-export type Geometry = Point | Line | Polygon;
-
-export type MultiPoint = Array<Point>;
-export type MultiLine = Array<Line>;
-export type MultiPolygon = Array<Polygon>;
-export type GeometryCollection = Array<Point | Line | Polygon>;
+import { ColumnType } from '@eggjs/tegg-types';
+import type { Geometry, GeometryCollection } from '@eggjs/tegg-types';
 
 export class SpatialHelper {
   static isPoint(t: Geometry) {

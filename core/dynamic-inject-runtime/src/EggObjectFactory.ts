@@ -1,10 +1,12 @@
-import type { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { AccessLevel, PrototypeUtil, QualifierValue, SingletonProto } from '@eggjs/core-decorator';
-import {
+import { AccessLevel } from '@eggjs/tegg-types';
+import type {
+  QualifierValue,
   EggAbstractClazz,
   EggObjectFactory as IEggObjectFactory,
-  QualifierImplUtil,
-} from '@eggjs/tegg-dynamic-inject';
+} from '@eggjs/tegg-types';
+import type { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
+import { QualifierImplUtil } from '@eggjs/tegg-dynamic-inject';
 
 import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype';
 

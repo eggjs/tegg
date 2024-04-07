@@ -1,23 +1,20 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import {
+  AccessLevel,
+  ObjectInitType,
+  LoadUnitNameQualifierAttribute,
+  InitTypeQualifierAttribute,
+  DEFAULT_PROTO_IMPL_TYPE,
+} from '@eggjs/tegg-types';
+import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
 
 import CacheService from './fixtures/decators/CacheService';
 import ContextCache from './fixtures/decators/ContextCache';
 import SingletonCache from './fixtures/decators/SingletonCache';
 
-import {
-  PrototypeUtil,
-  AccessLevel,
-  ObjectInitType,
-  EggPrototypeInfo,
-  InjectObjectInfo,
-  QualifierUtil,
-  LoadUnitNameQualifierAttribute,
-  InitTypeQualifierAttribute,
-  DEFAULT_PROTO_IMPL_TYPE,
-} from '..';
+import { PrototypeUtil, QualifierUtil } from '..';
 import QualifierCacheService from './fixtures/decators/QualifierCacheService';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger';
-import { EggMultiInstancePrototypeInfo } from '../src/model/EggMultiInstancePrototypeInfo';
 
 describe('test/decorator.test.ts', () => {
   describe('ContextProto', () => {

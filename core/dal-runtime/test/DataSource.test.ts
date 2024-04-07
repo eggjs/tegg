@@ -1,12 +1,12 @@
 import assert from 'node:assert';
+import path from 'node:path';
+import { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types';
+import { TableModel } from '@eggjs/dal-decorator';
 import { MysqlDataSource } from '../src/MySqlDataSource';
 import { SqlMapLoader } from '../src/SqlMapLoader';
 import { Foo } from './fixtures/modules/dal/Foo';
-import { TableModel } from '@eggjs/dal-decorator';
-import path from 'node:path';
 import { DataSource } from '../src/DataSource';
 import { TableModelInstanceBuilder } from '../src/TableModelInstanceBuilder';
-import { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types';
 import { DatabaseForker } from '../src/DatabaseForker';
 
 describe('test/Datasource.test.ts', () => {

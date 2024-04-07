@@ -1,15 +1,20 @@
-import { EggObject, EggObjectLifeCycleContext, EggObjectLifecycleUtil } from '../model/EggObject';
-import { EggObjectName } from '@eggjs/core-decorator';
-import { EggPrototype, EggPrototypeClass, LoadUnitFactory } from '@eggjs/tegg-metadata';
+import type {
+  CreateObjectMethod,
+  EggObject,
+  EggObjectLifeCycleContext,
+  EggObjectName,
+  EggPrototype,
+  EggPrototypeClass
+} from '@eggjs/tegg-types';
+import { LoadUnitFactory } from '@eggjs/tegg-metadata';
 import EggObjectImpl from '../impl/EggObjectImpl';
+import { EggObjectLifecycleUtil } from '../model/EggObject';
 import { LoadUnitInstanceFactory } from './LoadUnitInstanceFactory';
 
 interface EggObjectPair {
   obj: EggObject;
   ctx: EggObjectLifeCycleContext;
 }
-
-export type CreateObjectMethod = (name: EggObjectName, proto: EggPrototype, lifecycleContext: EggObjectLifeCycleContext) => Promise<EggObject>;
 
 export class EggObjectFactory {
   static eggObjectMap: Map<string, EggObjectPair> = new Map();

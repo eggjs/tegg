@@ -1,9 +1,6 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { ScheduleOptions, ScheduleParams } from '../decorator/Schedule';
-
-export const IS_SCHEDULE = Symbol.for('EggPrototype#isSchedule');
-export const SCHEDULE_PARAMS = Symbol.for('EggPrototype#schedule#params');
-export const SCHEDULE_OPTIONS = Symbol.for('EggPrototype#schedule#options');
+import { MetadataUtil } from '@eggjs/core-decorator';
+import { IS_SCHEDULE, SCHEDULE_PARAMS, SCHEDULE_OPTIONS } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, ScheduleOptions, ScheduleParams } from '@eggjs/tegg-types';
 
 export class ScheduleInfoUtil {
   static isSchedule(clazz: EggProtoImplClass): boolean {

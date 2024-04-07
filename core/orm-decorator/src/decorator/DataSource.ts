@@ -1,4 +1,4 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/ModelInfoUtil';
 
 export function DataSource(dataSource: string) {

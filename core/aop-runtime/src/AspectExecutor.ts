@@ -1,4 +1,4 @@
-import { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/aop-decorator';
+import type { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/tegg-types';
 import compose from 'koa-compose';
 import type { Middleware } from 'koa-compose';
 

@@ -1,14 +1,13 @@
-import { EggContext, EggContextLifecycleContext, EggContextLifecycleUtil } from './EggContext';
-import { EggObjectName, EggPrototypeName, ObjectInitType } from '@eggjs/core-decorator';
-import { EggPrototype, TeggError } from '@eggjs/tegg-metadata';
-import { EggObject } from './EggObject';
-import { Id } from '@eggjs/tegg-lifecycle';
+import { ObjectInitType } from '@eggjs/tegg-types';
+import type { EggRuntimeContext, EggContextLifecycleContext, EggObject, EggObjectName, EggPrototype, EggPrototypeName, Id } from '@eggjs/tegg-types';
+import { TeggError } from '@eggjs/tegg-metadata';
+import { EggContextLifecycleUtil } from './EggContext';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 import { EggObjectFactory } from '../factory/EggObjectFactory';
 import { ContextHandler } from './ContextHandler';
 
-export abstract class AbstractEggContext implements EggContext {
+export abstract class AbstractEggContext implements EggRuntimeContext {
   private contextData: Map<string | symbol, any> = new Map();
   private protoToCreate: Map<EggPrototypeName, EggPrototype> = new Map();
   private eggObjectMap: Map<Id, Map<EggPrototypeName, EggObject>> = new Map();

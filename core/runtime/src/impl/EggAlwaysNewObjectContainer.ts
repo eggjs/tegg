@@ -1,8 +1,5 @@
-import { EggContainer } from '../model/EggContainer';
-import { Id, LifecycleContext } from '@eggjs/tegg-lifecycle';
-import { EggPrototype } from '@eggjs/tegg-metadata';
-import { EggObjectName, ObjectInitType } from '@eggjs/core-decorator';
-import { EggObject } from '../model/EggObject';
+import { ObjectInitType } from '@eggjs/tegg-types';
+import type { EggContainer, EggObject, EggObjectName, EggPrototype, Id, LifecycleContext } from '@eggjs/tegg-types';
 import { EggObjectFactory } from '../factory/EggObjectFactory';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 

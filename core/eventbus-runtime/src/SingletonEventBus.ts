@@ -1,8 +1,10 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
+import { Inject, SingletonProto } from '@eggjs/core-decorator';
 import { EventBus, Events, EventWaiter, EventName, CORK_ID } from '@eggjs/eventbus-decorator';
 import type { Arguments } from '@eggjs/eventbus-decorator';
-import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
+import { ContextHandler } from '@eggjs/tegg-runtime';
 import type { EggLogger } from 'egg';
+import { AccessLevel } from '@eggjs/tegg-types';
+import type { EggRuntimeContext } from '@eggjs/tegg-types';
 import { EventContextFactory } from './EventContextFactory';
 import { EventHandlerFactory } from './EventHandlerFactory';
 import { EventEmitter } from 'events';
@@ -12,7 +14,7 @@ import awaitFirst from 'await-first';
 export interface Event {
   name: EventName;
   args: Array<any>;
-  context?: EggContext;
+  context?: EggRuntimeContext;
 }
 
 export interface CorkEvents {
@@ -108,7 +110,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     corkdEvents.events.push(event);
   }
 
-  emitWithContext<E extends keyof Events>(parentContext: EggContext, event: E, args: Arguments<Events[E]>): boolean {
+  emitWithContext<E extends keyof Events>(parentContext: EggRuntimeContext, event: E, args: Arguments<Events[E]>): boolean {
     const corkId = parentContext.get(CORK_ID);
     const hasListener = this.eventHandlerFactory.hasListeners(event);
     if (corkId) {
@@ -118,7 +120,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     return this.doEmitWithContext(parentContext, event, args);
   }
 
-  private doEmitWithContext(parentContext: EggContext, event: EventName, args: Array<any>): boolean {
+  private doEmitWithContext(parentContext: EggRuntimeContext, event: EventName, args: Array<any>): boolean {
     const hasListener = this.eventHandlerFactory.hasListeners(event);
     const ctx = this.eventContextFactory.createContext(parentContext);
     this.doEmit(ctx, event, args);
@@ -134,7 +136,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     }
   }
 
-  private async doEmit(ctx: EggContext, event: EventName, args: Array<any>) {
+  private async doEmit(ctx: EggRuntimeContext, event: EventName, args: Array<any>) {
     await ContextHandler.run(ctx, async () => {
       const lifecycle = {};
       if (ctx.init) {

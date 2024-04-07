@@ -1,7 +1,8 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import { ControllerType } from '@eggjs/tegg-types';
 import { AclController } from './fixtures/AclController';
 import { ControllerMetaBuilderFactory } from '../src/builder/ControllerMetaBuilderFactory';
-import { ControllerType, HTTPControllerMeta } from '../src/model';
+import { HTTPControllerMeta } from '../src/model';
 
 describe('test/Context.test.ts', () => {
   it('should work', () => {

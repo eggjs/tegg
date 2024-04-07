@@ -1,4 +1,5 @@
-import { AccessLevel, ContextProto, Inject, SingletonProto } from '@eggjs/core-decorator';
+import { AccessLevel } from '@eggjs/tegg-types';
+import { ContextProto, Inject, SingletonProto } from '@eggjs/core-decorator';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

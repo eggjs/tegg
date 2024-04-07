@@ -18,7 +18,8 @@
   "dependencies": {
     "@eggjs/core-decorator": "^3.37.1",
     "@eggjs/tegg-common-util": "^3.37.1",
-    "@eggjs/tegg-metadata": "^3.37.1"
+    "@eggjs/tegg-metadata": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1"
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",

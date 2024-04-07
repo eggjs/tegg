@@ -1,4 +1,5 @@
-import { AccessLevel, ContextProto } from '../../..';
+import { AccessLevel } from '@eggjs/tegg-types';
+import { ContextProto } from '../../..';
 import { ICache } from './ICache';
 
 @ContextProto({

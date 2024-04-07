@@ -49,6 +49,7 @@
     "@eggjs/tegg-lifecycle": "^3.37.1",
     "@eggjs/tegg-metadata": "^3.37.1",
     "@eggjs/tegg-runtime": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1",
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {

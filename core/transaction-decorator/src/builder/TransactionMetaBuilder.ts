@@ -1,5 +1,4 @@
-import { EggProtoImplClass } from '@eggjs/tegg';
-import { TransactionMetadata } from '../model/TransactionMetadata';
+import type { EggProtoImplClass, TransactionMetadata } from '@eggjs/tegg-types';
 import { TransactionMetadataUtil } from '../util/TransactionMetadataUtil';
 
 export class TransactionMetaBuilder {

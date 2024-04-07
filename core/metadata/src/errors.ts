@@ -1,11 +1,6 @@
 import { FrameworkBaseError } from 'egg-errors';
-import { EggPrototypeName, QualifierInfo } from '@eggjs/core-decorator';
-
-export enum ErrorCodes {
-  EGG_PROTO_NOT_FOUND = 'EGG_PROTO_NOT_FOUND',
-  MULTI_PROTO_FOUND = 'MULTI_PROTO_FOUND',
-  INCOMPATIBLE_PROTO_INJECT = 'INCOMPATIBLE_PROTO_INJECT',
-}
+import { ErrorCodes } from '@eggjs/tegg-types';
+import type { EggPrototypeName, QualifierInfo } from '@eggjs/tegg-types';
 
 export class TeggError extends FrameworkBaseError {
   get module() {

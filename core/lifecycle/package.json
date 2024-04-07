@@ -39,7 +39,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.37.1"
+    "@eggjs/core-decorator": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1"
   },
   "devDependencies": {
     "@eggjs/tegg-metadata": "^3.37.1",

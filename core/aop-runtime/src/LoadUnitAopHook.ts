@@ -1,11 +1,13 @@
-import { LifecycleHook } from '@eggjs/tegg-lifecycle';
-import { CrosscutAdviceFactory, AspectMetaBuilder, AspectInfoUtil } from '@eggjs/aop-decorator';
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import { EggPrototype, LoadUnit, LoadUnitLifecycleContext, TeggError } from '@eggjs/tegg-metadata';
-
-export interface EggPrototypeWithClazz extends EggPrototype {
-  clazz?: EggProtoImplClass;
-}
+import { AspectInfoUtil, AspectMetaBuilder, CrosscutAdviceFactory } from '@eggjs/aop-decorator';
+import { PrototypeUtil } from '@eggjs/core-decorator';
+import { TeggError } from '@eggjs/tegg-metadata';
+import type {
+  EggPrototype,
+  EggPrototypeWithClazz,
+  LifecycleHook,
+  LoadUnit,
+  LoadUnitLifecycleContext,
+} from '@eggjs/tegg-types';
 
 export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
