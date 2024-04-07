@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.36.1](https://github.com/eggjs/tegg/compare/v3.36.0...v3.36.1) (2024-04-07)
+
+**Note:** Version bump only for package @eggjs/aop-decorator
+
+
+
+
+
 # [3.36.0](https://github.com/eggjs/tegg/compare/v3.35.1...v3.36.0) (2024-04-02)
 
 **Note:** Version bump only for package @eggjs/aop-decorator
