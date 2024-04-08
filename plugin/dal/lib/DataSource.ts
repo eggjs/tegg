@@ -21,14 +21,7 @@ import { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
 import { TableModelManager } from './TableModelManager';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 import { SqlMapManager } from './SqlMapManager';
-import BuiltinModule from 'module';
-
-// Guard against poorly mocked module constructors.
-const Module = module.constructor.length > 1
-  ? module.constructor
-  /* istanbul ignore next */
-  : BuiltinModule;
-const EXTENSION = Object.keys((Module as any)._extensions).find(t => t === '.ts') ? '.ts' : '.js';
+import { LoaderUtil } from '@eggjs/tegg/helper';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -44,7 +37,7 @@ const EXTENSION = Object.keys((Module as any)._extensions).find(t => t === '.ts'
     } catch {
       return [];
     }
-    const daos = dirents.filter(t => t.endsWith(`DAO${EXTENSION}`));
+    const daos = dirents.filter(t => t.endsWith(`DAO${LoaderUtil.extension}`));
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const daoClazzList = daos.map(t => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires

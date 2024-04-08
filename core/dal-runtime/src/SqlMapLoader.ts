@@ -3,6 +3,7 @@ import { TableModel, SqlMap } from '@eggjs/dal-decorator';
 import { Logger } from '@eggjs/tegg';
 import { BaseSqlMapGenerator } from './BaseSqlMap';
 import { TableSqlMap } from './TableSqlMap';
+import { LoaderUtil } from '@eggjs/tegg/helper';
 
 export class SqlMapLoader {
   private readonly logger: Logger;
@@ -10,7 +11,7 @@ export class SqlMapLoader {
   private readonly sqlMapPath: string;
 
   constructor(tableModel: TableModel, moduleDir: string, logger: Logger) {
-    this.sqlMapPath = path.join(moduleDir, 'dal/extension', `${tableModel.clazz.name}Extension.ts`);
+    this.sqlMapPath = path.join(moduleDir, 'dal/extension', `${tableModel.clazz.name}Extension${LoaderUtil.extension}`);
     this.logger = logger;
     this.tableModel = tableModel;
   }
