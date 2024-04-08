@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.36.2](https://github.com/eggjs/tegg/compare/v3.36.1...v3.36.2) (2024-04-08)
+
+
+### Bug Fixes
+
+* fix dao extension in prod ([#206](https://github.com/eggjs/tegg/issues/206)) ([0498e9d](https://github.com/eggjs/tegg/commit/0498e9d11bd9e4d186160e8b6af07e627dde6a20))
+
+
+
+
+
 ## [3.36.1](https://github.com/eggjs/tegg/compare/v3.36.0...v3.36.1) (2024-04-07)
 
 

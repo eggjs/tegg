@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dal-runtime",
-  "version": "3.36.1",
+  "version": "3.36.2",
   "description": "tegg dal decorator",
   "keywords": [
     "egg",
@@ -39,7 +39,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/dal-decorator": "^3.36.1",
+    "@eggjs/dal-decorator": "^3.36.2",
     "@eggjs/rds": "^1.0.0",
     "js-beautify": "^1.15.1",
     "lodash": "^4.17.21",
@@ -51,7 +51,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@eggjs/tegg": "^3.36.1",
+    "@eggjs/tegg": "^3.36.2",
     "@types/lodash": "^4.17.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
