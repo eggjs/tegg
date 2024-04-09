@@ -3,7 +3,6 @@ import type { AttributeOptions, EggProtoImplClass } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/ModelInfoUtil';
 
 
-
 export function Attribute(dataType: string, options?: AttributeOptions) {
   return function(target: any, propertyKey: PropertyKey) {
     const clazz = target.constructor as EggProtoImplClass;

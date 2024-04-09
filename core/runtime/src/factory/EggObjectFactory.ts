@@ -4,7 +4,7 @@ import type {
   EggObjectLifeCycleContext,
   EggObjectName,
   EggPrototype,
-  EggPrototypeClass
+  EggPrototypeClass,
 } from '@eggjs/tegg-types';
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
 import EggObjectImpl from '../impl/EggObjectImpl';
