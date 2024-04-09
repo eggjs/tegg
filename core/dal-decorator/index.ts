@@ -1,4 +1,4 @@
-export * from '@eggjs/tegg-types/dal-decorator';
+export * from '@eggjs/tegg-types/dal';
 export * from './src/decorator/Index';
 export * from './src/decorator/Table';
 export * from './src/decorator/Column';

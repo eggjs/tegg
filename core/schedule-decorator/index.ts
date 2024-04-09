@@ -1,4 +1,4 @@
-export * from '@eggjs/tegg-types/schedule-decorator';
+export * from '@eggjs/tegg-types/schedule';
 export * from './src/model/ScheduleMetadata';
 export * from './src/util/ScheduleInfoUtil';
 export * from './src/util/ScheduleMetadataUtil';

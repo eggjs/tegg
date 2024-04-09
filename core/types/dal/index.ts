@@ -5,7 +5,10 @@ export * from './enum/IndexStoreType';
 export * from './enum/IndexType';
 export * from './enum/InsertMethod';
 export * from './enum/RowFormat';
+export * from './enum/SqlType';
+export * from './enum/Templates';
 
+export * from './type/CodeGenerator';
 export * from './type/ColumnTsType';
 export * from './type/DateSource';
 export * from './type/Spatial';

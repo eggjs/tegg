@@ -1,10 +1,4 @@
-export enum SqlType {
-  BLOCK = 'BLOCK',
-  INSERT = 'INSERT',
-  SELECT = 'SELECT',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-}
+import type { SqlType } from '../enum/SqlType';
 
 export interface BaseSqlMap {
   type?: SqlType;
@@ -21,3 +15,9 @@ export interface BlockSqlMap extends BaseSqlMap {
 }
 
 export type SqlMap = FullSqlMap | BlockSqlMap;
+
+export interface GenerateSqlMap {
+  name: string;
+  type: SqlType.DELETE | SqlType.UPDATE | SqlType.INSERT | SqlType.SELECT;
+  sql: string;
+}

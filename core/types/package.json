@@ -20,7 +20,7 @@
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
     "prepublishOnly": "npm run tsc:pub"
   },
-  "author": "killagu <killa123@126.com>",
+  "author": "gxkl <gxkl203@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {

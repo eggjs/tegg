@@ -1,4 +1,4 @@
-export * from '@eggjs/tegg-types/aop-decorator';
+export * from '@eggjs/tegg-types/aop';
 export * from './src/decorator/Advice';
 export * from './src/decorator/Pointcut';
 export * from './src/decorator/Crosscut';

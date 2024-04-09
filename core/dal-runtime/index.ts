@@ -1,4 +1,3 @@
-export * from '@eggjs/tegg-types/dal-runtime';
 export * from './src/SqlGenerator';
 export * from './src/CodeGenerator';
 export { TableSqlMap } from './src/TableSqlMap';
