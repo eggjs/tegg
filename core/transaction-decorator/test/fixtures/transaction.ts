@@ -1,5 +1,5 @@
+import { PropagationType } from '@eggjs/tegg-types';
 import { Transactional } from '../../src/decorator/Transactional';
-import { PropagationType } from '../../src/Common';
 
 export class Foo {
 

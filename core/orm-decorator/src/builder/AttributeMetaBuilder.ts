@@ -1,6 +1,6 @@
-import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, ModelAttributeInfo } from '@eggjs/tegg-types';
 import { AttributeMeta } from '../model/AttributeMeta';
-import { ModelAttributeInfo, ModelInfoUtil } from '../util/ModelInfoUtil';
+import { ModelInfoUtil } from '../util/ModelInfoUtil';
 import { NameUtil } from '../util/NameUtil';
 
 export class AttributeMetaBuilder {
