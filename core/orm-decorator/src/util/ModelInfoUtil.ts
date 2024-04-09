@@ -1,23 +1,18 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { AttributeOptions } from '../decorator/Attribute';
-import { IndexOptions } from '../decorator/Index';
-
-export const IS_MODEL = Symbol.for('EggPrototype#model#isModel');
-export const MODEL_DATA_SOURCE = Symbol.for('EggPrototype#model#dataSource');
-export const MODEL_DATA_TABLE_NAME = Symbol.for('EggPrototype#model#tableName');
-export const MODEL_DATA_INDICES = Symbol.for('EggPrototype#model#indices');
-export const MODEL_DATA_ATTRIBUTES = Symbol.for('EggPrototype#model#attributes');
-
-export interface ModelIndexInfo {
-  fields: string[];
-  options?: IndexOptions;
-}
-
-export interface ModelAttributeInfo {
-  dataType: string;
-  options?: AttributeOptions;
-}
+import type {
+  AttributeOptions,
+  EggProtoImplClass,
+  IndexOptions,
+  ModelAttributeInfo,
+  ModelIndexInfo,
+} from '@eggjs/tegg-types';
+import {
+  IS_MODEL,
+  MODEL_DATA_ATTRIBUTES,
+  MODEL_DATA_INDICES,
+  MODEL_DATA_SOURCE,
+  MODEL_DATA_TABLE_NAME,
+} from '@eggjs/tegg-types';
 
 type ModelAttributeMap = Map<string, ModelAttributeInfo>;
 

@@ -22,4 +22,20 @@ export interface ModelParams {
   dataSource?: string;
 }
 
+export interface ModelIndexInfo {
+  fields: string[];
+  options?: IndexOptions;
+}
+
+export interface ModelAttributeInfo {
+  dataType: string;
+  options?: AttributeOptions;
+}
+
 export const MODEL_PROTO_IMPL_TYPE = 'MODEL_PROTO';
+
+export const IS_MODEL = Symbol.for('EggPrototype#model#isModel');
+export const MODEL_DATA_SOURCE = Symbol.for('EggPrototype#model#dataSource');
+export const MODEL_DATA_TABLE_NAME = Symbol.for('EggPrototype#model#tableName');
+export const MODEL_DATA_INDICES = Symbol.for('EggPrototype#model#indices');
+export const MODEL_DATA_ATTRIBUTES = Symbol.for('EggPrototype#model#attributes');
