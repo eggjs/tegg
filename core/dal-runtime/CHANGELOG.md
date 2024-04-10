@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.36.3](https://github.com/eggjs/tegg/compare/v3.36.2...v3.36.3) (2024-04-10)
+
+
+### Bug Fixes
+
+* fix custom sql extension ([#207](https://github.com/eggjs/tegg/issues/207)) ([a405233](https://github.com/eggjs/tegg/commit/a405233d11323cd8a51c6197e855f0c3ff98337d))
+
+
+
+
+
 ## [3.36.2](https://github.com/eggjs/tegg/compare/v3.36.1...v3.36.2) (2024-04-08)
 
 
