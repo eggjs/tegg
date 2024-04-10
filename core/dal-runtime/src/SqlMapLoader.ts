@@ -19,7 +19,7 @@ export class SqlMapLoader {
   load(): TableSqlMap {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const customSqlMap: Record<string, SqlMap> = require(this.sqlMapPath);
+      const { default: customSqlMap }: { default: Record<string, SqlMap> } = require(this.sqlMapPath);
       const baseSqlMapGenerator = new BaseSqlMapGenerator(this.tableModel, this.logger);
       const baseSqlMap = baseSqlMapGenerator.load();
       const sqlMap = {
