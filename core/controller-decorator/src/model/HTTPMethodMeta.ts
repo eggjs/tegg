@@ -24,6 +24,14 @@ export class BodyParamMeta extends ParamMeta {
   }
 }
 
+export class HeadersParamMeta extends ParamMeta {
+  type = HTTPParamType.HEADERS;
+
+  validate() {
+    return;
+  }
+}
+
 export class QueryParamMeta extends ParamMeta {
   type = HTTPParamType.QUERY;
   name: string;
@@ -116,6 +124,9 @@ export class ParamMetaUtil {
       }
       case HTTPParamType.BODY: {
         return new BodyParamMeta();
+      }
+      case HTTPParamType.HEADERS: {
+        return new HeadersParamMeta();
       }
       case HTTPParamType.QUERIES: {
         assert(name, 'queries param must has name');

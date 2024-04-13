@@ -1,6 +1,5 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-
 import { FooController } from './fixtures/HTTPFooController';
 
 describe('test/decorators.test.ts', () => {

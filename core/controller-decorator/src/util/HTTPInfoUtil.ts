@@ -1,6 +1,6 @@
 import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { HTTPMethodEnum, HTTPParamType } from '../model';
 import { MapUtil } from '@eggjs/tegg-common-util';
+import { HTTPMethodEnum, HTTPParamType } from '../model';
 
 const CONTROLLER_HTTP_PATH = Symbol.for('EggPrototype#controller#http#path');
 const CONTROLLER_METHOD_METHOD_MAP = Symbol.for('EggPrototype#controller#method#http#method');
