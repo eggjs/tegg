@@ -1,8 +1,10 @@
 import { HTTPController } from '../../src/decorator/http/HTTPController';
 import { Context } from '../../src/decorator/Context';
 import { Middleware } from '../../src/decorator/Middleware';
-import { EggContext, HTTPMethodEnum, Next } from '../../src/model';
-import { HTTPBody, HTTPParam, HTTPQueries, HTTPQuery } from '../../src/decorator/http/HTTPParam';
+import { EggContext, HTTPMethodEnum, Next, IncomingHttpHeaders } from '../../src/model';
+import {
+  HTTPBody, HTTPParam, HTTPQueries, HTTPQuery, HTTPHeaders,
+} from '../../src/decorator/http/HTTPParam';
 import { HTTPMethod } from '../../src/decorator/http/HTTPMethod';
 
 async function middleware1(ctx: EggContext, next: Next) {
@@ -45,8 +47,9 @@ export class ControllerWithParam {
     path: '/bar/:id',
     method: HTTPMethodEnum.GET,
   })
-  async bar(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPParam() fooId: string) {
-    console.log(ctx, id, fooId);
+  async bar(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPParam() fooId: string,
+    @HTTPHeaders() headers: IncomingHttpHeaders) {
+    console.log(ctx, id, fooId, headers);
   }
 }
 

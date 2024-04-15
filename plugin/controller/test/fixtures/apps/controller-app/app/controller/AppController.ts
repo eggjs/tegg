@@ -7,6 +7,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPQuery,
+  HTTPHeaders, IncomingHttpHeaders,
   Middleware,
   Inject,
 } from '@eggjs/tegg';
@@ -52,12 +53,13 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '',
   })
-  async save(@Context() ctx: EggContext, @HTTPBody() app: App) {
+  async save(@Context() ctx: EggContext, @HTTPBody() app: App, @HTTPHeaders() headers: IncomingHttpHeaders) {
     const traceId = await ctx.tracer.traceId;
     await this.appService.save(app);
     return {
       success: true,
       traceId,
+      sessionId: headers['x-session-id'],
     };
   }
 }
