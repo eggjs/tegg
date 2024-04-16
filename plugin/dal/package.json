@@ -51,7 +51,11 @@
   },
   "dependencies": {
     "@eggjs/dal-runtime": "^3.36.3",
-    "@eggjs/tegg": "^3.36.3"
+    "@eggjs/tegg": "^3.36.3",
+    "@eggjs/dal-decorator": "^3.36.3",
+    "@eggjs/core-decorator": "^3.36.3",
+    "@eggjs/tegg-lifecycle": "^3.36.3",
+    "@eggjs/tegg-common-util": "^3.36.3"
   },
   "devDependencies": {
     "@eggjs/tegg-config": "^3.36.3",
