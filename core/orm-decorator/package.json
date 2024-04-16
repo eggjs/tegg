@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-orm-decorator",
-  "version": "3.37.0",
+  "version": "3.37.1",
   "description": "tegg orm decorator",
   "main": "dist/index.js",
   "files": [
@@ -36,9 +36,9 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.37.0",
-    "@eggjs/tegg-common-util": "^3.37.0",
-    "@eggjs/tegg-metadata": "^3.37.0",
+    "@eggjs/core-decorator": "^3.37.1",
+    "@eggjs/tegg-common-util": "^3.37.1",
+    "@eggjs/tegg-metadata": "^3.37.1",
     "lodash": "^4.17.21",
     "pluralize": "^8.0.0"
   },

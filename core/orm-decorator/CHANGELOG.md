@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.1](https://github.com/eggjs/tegg/compare/v3.37.0...v3.37.1) (2024-04-16)
+
+**Note:** Version bump only for package @eggjs/tegg-orm-decorator
+
+
+
+
+
 # [3.37.0](https://github.com/eggjs/tegg/compare/v3.36.3...v3.37.0) (2024-04-16)
 
 **Note:** Version bump only for package @eggjs/tegg-orm-decorator

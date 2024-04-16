@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.1](https://github.com/eggjs/tegg/compare/v3.37.0...v3.37.1) (2024-04-16)
+
+
+### Bug Fixes
+
+* fix dal runtime dep ([#210](https://github.com/eggjs/tegg/issues/210)) ([5ad7f45](https://github.com/eggjs/tegg/commit/5ad7f4537114217924ae8dc7445e8fc77eee0b5a))
+
+
+
+
+
 # [3.37.0](https://github.com/eggjs/tegg/compare/v3.36.3...v3.37.0) (2024-04-16)
 
 
