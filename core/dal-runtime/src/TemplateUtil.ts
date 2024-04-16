@@ -9,7 +9,7 @@ import {
   MultiPolygon,
   Point,
   Polygon, SpatialHelper,
-} from '@eggjs/dal-decorator';
+} from '@eggjs/tegg/dal';
 
 export class TemplateUtil {
   static isSpatialType(columnModel: ColumnModel): boolean {

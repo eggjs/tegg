@@ -50,12 +50,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.37.0",
-    "@eggjs/dal-decorator": "^3.37.0",
-    "@eggjs/dal-runtime": "^3.37.0",
-    "@eggjs/tegg": "^3.37.0",
-    "@eggjs/tegg-common-util": "^3.37.0",
-    "@eggjs/tegg-lifecycle": "^3.37.0"
+    "@eggjs/dal-runtime": "^3.37.0"
   },
   "devDependencies": {
     "@eggjs/tegg-config": "^3.37.0",

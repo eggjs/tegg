@@ -5,7 +5,7 @@ import {
   ColumnTypeParams,
   IndexModel, IndexType,
   TableModel,
-} from '@eggjs/dal-decorator';
+} from '@eggjs/tegg/dal';
 
 // TODO diff 实现
 export class SqlGenerator {

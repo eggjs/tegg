@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { TableModel, SqlMap } from '@eggjs/dal-decorator';
+import { TableModel, SqlMap } from '@eggjs/tegg/dal';
 import { Logger } from '@eggjs/tegg';
 import { BaseSqlMapGenerator } from './BaseSqlMap';
 import { TableSqlMap } from './TableSqlMap';
