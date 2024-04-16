@@ -9,7 +9,7 @@ import {
   ObjectInitType,
   LifecycleInit,
 } from '@eggjs/tegg';
-import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { ModuleConfigUtil, LoaderUtil, EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
 import {
   DataSourceInjectName,
   DataSourceQualifierAttribute,
@@ -17,11 +17,9 @@ import {
   DataSource as IDataSource, TableModel, PaginateData,
 } from '@eggjs/tegg/dal';
 import { DataSource } from '@eggjs/dal-runtime';
-import { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
 import { TableModelManager } from './TableModelManager';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 import { SqlMapManager } from './SqlMapManager';
-import { LoaderUtil } from '@eggjs/tegg/helper';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,

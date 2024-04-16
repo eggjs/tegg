@@ -1,7 +1,6 @@
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 import path from 'node:path';
-import { LifecycleHook } from '@eggjs/tegg-lifecycle';
-import { ModuleConfigHolder } from '@eggjs/tegg-common-util';
+import { LifecycleHook, ModuleConfigHolder } from '@eggjs/tegg';
 import { DatabaseForker, DataSourceOptions } from '@eggjs/dal-runtime';
 import { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
 
