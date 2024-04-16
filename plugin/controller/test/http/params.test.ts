@@ -1,6 +1,6 @@
+import path from 'node:path';
+import { strict as assert } from 'node:assert';
 import mm from 'egg-mock';
-import path from 'path';
-import assert from 'assert';
 
 describe('plugin/controller/test/http/params.test.ts', () => {
   let app;
@@ -41,6 +41,23 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .expect(res => {
         assert(res.body.success === true);
         assert(res.body.traceId);
+      });
+  });
+
+  it('headers param should work', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .post('/apps')
+      .set('x-session-id', 'mock-session-id')
+      .send({
+        name: 'foo',
+        desc: 'mock-desc',
+      })
+      .expect(200)
+      .expect(res => {
+        assert.equal(res.body.success, true);
+        assert(res.body.traceId);
+        assert.equal(res.body.sessionId, 'mock-session-id');
       });
   });
 

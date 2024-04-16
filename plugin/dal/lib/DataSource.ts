@@ -21,6 +21,7 @@ import { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
 import { TableModelManager } from './TableModelManager';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 import { SqlMapManager } from './SqlMapManager';
+import { LoaderUtil } from '@eggjs/tegg/helper';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -36,8 +37,7 @@ import { SqlMapManager } from './SqlMapManager';
     } catch {
       return [];
     }
-
-    const daos = dirents.filter(t => t.endsWith('DAO.ts'));
+    const daos = dirents.filter(t => t.endsWith(`DAO${LoaderUtil.extension}`));
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const daoClazzList = daos.map(t => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires

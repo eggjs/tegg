@@ -12,6 +12,7 @@ import {
   BodyParamMeta,
   ControllerMetaBuilderFactory,
   ParamMeta,
+  HeadersParamMeta,
   PathParamMeta,
   QueriesParamMeta,
   QueryParamMeta,
@@ -19,7 +20,7 @@ import {
 import { ControllerType, HTTPControllerMeta, HTTPMethodEnum } from '../../src/model';
 import { PriorityController, TooLongController } from '../fixtures/HTTPPriorityController';
 
-describe('test/http/HTTPMeta.test.ts', () => {
+describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
   it('should work', () => {
     const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(FooController, ControllerType.HTTP)!;
     const fooControllerMetaData = builder.build()! as HTTPControllerMeta;
@@ -82,6 +83,7 @@ describe('test/http/HTTPMeta.test.ts', () => {
       const controllerMeta = builder.build()! as HTTPControllerMeta;
       const methodMeta = controllerMeta.methods[0];
       const expectParamTypeMap = new Map<number, ParamMeta>([
+        [ 3, new HeadersParamMeta() ],
         [ 2, new PathParamMeta('fooId') ],
         [ 1, new PathParamMeta('id') ],
       ]);

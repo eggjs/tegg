@@ -1,8 +1,8 @@
-import assert from 'assert';
-import { HTTPParamType } from '../../model';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
+import assert from 'node:assert';
 import { EggProtoImplClass } from '@eggjs/core-decorator';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
+import { HTTPParamType } from '../../model';
+import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 
 // TODO url params
 // /foo/:id
@@ -15,6 +15,16 @@ export function HTTPBody() {
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.BODY, parameterIndex, controllerClazz, methodName);
+  };
+}
+
+export function HTTPHeaders() {
+  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
+    assert(typeof propertyKey === 'string',
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
+    const methodName = propertyKey as string;
+    const controllerClazz = target.constructor as EggProtoImplClass;
+    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.HEADERS, parameterIndex, controllerClazz, methodName);
   };
 }
 

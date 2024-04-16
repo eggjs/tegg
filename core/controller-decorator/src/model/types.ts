@@ -1,8 +1,9 @@
-import { Context } from 'egg';
+import type { Context } from 'egg';
 
 export type EggContext = Context;
 export type Next = () => Promise<void>;
 export type MiddlewareFunc = (ctx: Context, next: Next) => Promise<void>;
+export type { IncomingHttpHeaders } from 'node:http';
 
 export enum ControllerType {
   HTTP = 'HTTP',
@@ -42,4 +43,5 @@ export enum HTTPParamType {
   BODY = 'BODY',
   PARAM = 'PARAM',
   REQUEST = 'REQUEST',
+  HEADERS = 'HEADERS',
 }

@@ -89,6 +89,10 @@ export class HTTPMethodRegister {
             args[index] = ctx.queries[queryParam.name];
             break;
           }
+          case HTTPParamType.HEADERS: {
+            args[index] = ctx.request.headers;
+            break;
+          }
           case HTTPParamType.REQUEST: {
             args[index] = new HTTPRequest(ctx);
             break;

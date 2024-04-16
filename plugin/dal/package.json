@@ -10,7 +10,7 @@
   "eggModule": {
     "name": "teggDal"
   },
-  "version": "3.36.0",
+  "version": "3.36.3",
   "description": "dal plugin for egg",
   "keywords": [
     "egg",
@@ -58,8 +58,8 @@
     "@eggjs/tegg-common-util": "^3.36.3"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^3.36.0",
-    "@eggjs/tegg-plugin": "^3.36.0",
+    "@eggjs/tegg-config": "^3.36.3",
+    "@eggjs/tegg-plugin": "^3.36.3",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
