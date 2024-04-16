@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.37.0](https://github.com/eggjs/tegg/compare/v3.36.3...v3.37.0) (2024-04-16)
+
+
+### Features
+
+* add HTTPHeaders decorator ([#208](https://github.com/eggjs/tegg/issues/208)) ([4678c45](https://github.com/eggjs/tegg/commit/4678c450d8b3c632bbdbe2b49b9c02e99f16733c))
+
+
+
+
+
 ## [3.36.3](https://github.com/eggjs/tegg/compare/v3.36.2...v3.36.3) (2024-04-10)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
