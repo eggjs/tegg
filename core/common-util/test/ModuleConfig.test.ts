@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { ModuleConfigUtil } from '../src/ModuleConfig';
 
@@ -115,6 +115,30 @@ describe('test/ModuleConfig.test.ts', () => {
         path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
         name: 'a',
       }]);
+    });
+  });
+
+  describe('load/loadSync', () => {
+    beforeEach(() => {
+      ModuleConfigUtil.setConfigNames(undefined);
+    });
+
+    it('should work', async () => {
+      ModuleConfigUtil.setConfigNames([ 'module.default', 'module.dev' ]);
+      const config = await ModuleConfigUtil.load(path.join(__dirname, './fixtures/modules/dev-module-config'));
+      const configSync = ModuleConfigUtil.loadSync(path.join(__dirname, './fixtures/modules/dev-module-config'));
+      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
+      assert.deepStrictEqual(configSync, { mysql: { host: '127.0.0.1', port: 11306 } });
+    });
+
+    it('should throw error without initialization', async () => {
+      await assert.rejects(async () => {
+        await ModuleConfigUtil.load(path.join(__dirname, './fixtures/modules/dev-module-config'));
+      }, /should setConfigNames before load module config/);
+
+      assert.throws(() => {
+        ModuleConfigUtil.loadSync(path.join(__dirname, './fixtures/modules/dev-module-config'));
+      }, /should setConfigNames before load module config/);
     });
   });
 });
