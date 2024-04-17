@@ -11,6 +11,7 @@ export enum ControllerType {
   MGW_RPC = 'MGW_RPC',
   MESSAGE = 'MESSAGE',
   SCHEDULE = 'SCHEDULE',
+  HEADERS = 'HEADERS',
 }
 
 export type HostType = string | string [];

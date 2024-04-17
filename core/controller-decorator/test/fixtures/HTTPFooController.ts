@@ -1,11 +1,10 @@
 import { HTTPMethodEnum } from '@eggjs/tegg-types'
-import type { EggContext, Next } from '@eggjs/tegg-types';
+import type { EggContext, Next, IncomingHttpHeaders } from '@eggjs/tegg-types';
 import { HTTPController } from '../../src/decorator/http/HTTPController';
 import { Context } from '../../src/decorator/Context';
 import { Middleware } from '../../src/decorator/Middleware';
 import { HTTPBody, HTTPParam, HTTPQueries, HTTPQuery, HTTPHeaders } from '../../src/decorator/http/HTTPParam';
 import { HTTPMethod } from '../../src/decorator/http/HTTPMethod';
-import { IncomingHttpHeaders } from '../../src/model';
 
 async function middleware1(ctx: EggContext, next: Next) {
   console.log(ctx, next);
