@@ -8,8 +8,6 @@ const Module = module.constructor.length > 1
   /* istanbul ignore next */
   : BuiltinModule;
 
-const EXTENSION = Object.keys((Module as any)._extensions).find(t => t === '.ts') ? '.ts' : '.js';
-
 interface LoaderUtilConfig {
   extraFilePattern?: string[];
 }
@@ -20,7 +18,9 @@ export class LoaderUtil {
     this.config = config;
   }
 
-  static extension = EXTENSION;
+  static get extension() {
+    return Object.keys((Module as any)._extensions).find(t => t === '.ts') ? '.ts' : '.js';
+  }
 
   static filePattern(): string[] {
     const extensions = Object.keys((Module as any)._extensions);
