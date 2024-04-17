@@ -1,5 +1,6 @@
 import { ICache, CacheValue } from './Cache';
-import { ObjectInitType, ContextProto, InitTypeQualifier, Inject } from '@eggjs/core-decorator';
+import { ObjectInitType } from '@eggjs/tegg-types';
+import { ContextProto, InitTypeQualifier, Inject } from '@eggjs/core-decorator';
 
 @ContextProto()
 export default class CacheService {

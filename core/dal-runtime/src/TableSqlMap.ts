@@ -2,7 +2,8 @@
 import { Template } from 'nunjucks';
 import { NunjucksUtils } from './NunjucksUtil';
 import { TemplateUtil } from './TemplateUtil';
-import { SqlMap, SqlType } from '@eggjs/tegg/dal';
+import { SqlType } from '@eggjs/tegg-types';
+import type { SqlMap } from '@eggjs/tegg-types';
 
 export interface SqlGenerator {
   type: SqlType;

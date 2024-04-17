@@ -1,10 +1,4 @@
-import { ModuleConfig, ModuleReference } from './ModuleConfig';
-
-export interface ModuleConfigHolder {
-  name: string;
-  config: ModuleConfig;
-  reference: ModuleReference;
-}
+import type { ModuleConfig, ModuleConfigHolder } from '@eggjs/tegg-types';
 
 export class ModuleConfigs {
   constructor(readonly inner: Record<string, ModuleConfigHolder>) {

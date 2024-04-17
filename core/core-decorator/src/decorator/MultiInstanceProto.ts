@@ -1,13 +1,12 @@
-import { ObjectInitType, ObjectInitTypeLike } from '../enum/ObjectInitType';
-import { AccessLevel } from '../enum/AccessLevel';
-import { DEFAULT_PROTO_IMPL_TYPE } from './Prototype';
-import {
+import { ObjectInitType, AccessLevel, DEFAULT_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
+import type {
   EggMultiInstanceCallbackPrototypeInfo,
   EggMultiInstancePrototypeInfo,
-  MultiInstancePrototypeGetObjectsContext,
-  ObjectInfo,
-} from '../model/EggMultiInstancePrototypeInfo';
-import { EggProtoImplClass } from '../model/EggPrototypeInfo';
+  EggProtoImplClass,
+  MultiInstancePrototypeParams,
+  MultiInstancePrototypeStaticParams,
+  MultiInstancePrototypeCallbackParams,
+} from '@eggjs/tegg-types';
 import { PrototypeUtil } from '../util/PrototypeUtil';
 import { StackUtil } from '@eggjs/tegg-common-util';
 
@@ -16,34 +15,6 @@ const DEFAULT_PARAMS = {
   accessLevel: AccessLevel.PRIVATE,
   protoImplType: DEFAULT_PROTO_IMPL_TYPE,
 };
-
-export interface BaseMultiInstancePrototypeCallbackParams {
-  /**
-   * obj init type
-   */
-  initType?: ObjectInitTypeLike;
-  /**
-   * access level
-   */
-  accessLevel?: AccessLevel;
-  /**
-   * EggPrototype implement type
-   */
-  protoImplType?: string;
-}
-
-export interface MultiInstancePrototypeCallbackParams extends BaseMultiInstancePrototypeCallbackParams {
-  getObjects(ctx: MultiInstancePrototypeGetObjectsContext): ObjectInfo[];
-}
-
-export interface MultiInstancePrototypeStaticParams extends BaseMultiInstancePrototypeCallbackParams {
-  /**
-   * object info list
-   */
-  objects: ObjectInfo[];
-}
-
-export type MultiInstancePrototypeParams = MultiInstancePrototypeCallbackParams | MultiInstancePrototypeStaticParams;
 
 export function MultiInstanceProto(param: MultiInstancePrototypeParams) {
   return function(clazz: EggProtoImplClass) {

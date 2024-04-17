@@ -1,7 +1,7 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import { PropagationType } from '@eggjs/tegg-types';
 import { TransactionMetadataUtil } from '../../src/util/TransactionMetadataUtil';
 import { TransactionMetaBuilder } from '../../src/builder/TransactionMetaBuilder';
-import { PropagationType } from '../../src/Common';
 import { Foo, Bar, FooBar, BarFoo } from '../fixtures/transaction';
 import { Transactional } from '../../src/decorator/Transactional';
 

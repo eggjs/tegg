@@ -1,19 +1,19 @@
-import { EggPrototype, EggPrototypeFactory } from '@eggjs/tegg-metadata';
-import { EggContainer } from '../model/EggContainer';
-import { LifecycleContext } from '@eggjs/tegg-lifecycle';
-import {
+import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import type {
+  ContainerGetMethod,
+  EggContainer,
+  EggObject,
   EggObjectName,
-  ObjectInitTypeLike,
-  PrototypeUtil,
   EggProtoImplClass,
+  EggPrototype,
+  LifecycleContext,
+  ObjectInitTypeLike,
   QualifierInfo,
-} from '@eggjs/core-decorator';
-import { EggObject } from '../model/EggObject';
+} from '@eggjs/tegg-types';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { ContextHandler } from '../model/ContextHandler';
 import { ContextInitiator } from '../impl/ContextInitiator';
 import { NameUtil } from '@eggjs/tegg-common-util';
-
-export type ContainerGetMethod = (proto: EggPrototype) => EggContainer<LifecycleContext>;
 
 export class EggContainerFactory {
   private static containerGetMethodMap: Map<ObjectInitTypeLike, ContainerGetMethod> = new Map();

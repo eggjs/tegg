@@ -1,28 +1,18 @@
-import assert from 'assert';
-import yaml from 'js-yaml';
-import fs, { promises as fsPromise } from 'fs';
-import path from 'path';
-import globby from 'globby';
-import { FSUtil } from './FSUtil';
+import assert from 'node:assert';
+import fs, { promises as fsPromise } from 'node:fs';
+import path from 'node:path';
 import extend from 'extend2';
-
-export interface ModuleReference {
-  name: string;
-  path: string;
-  optional?: boolean;
-}
-
-export interface InlineModuleReferenceConfig {
-  path: string;
-  optional?: boolean;
-}
-
-export interface NpmModuleReferenceConfig {
-  package: string;
-  optional?: boolean;
-}
-
-export type ModuleReferenceConfig = InlineModuleReferenceConfig | NpmModuleReferenceConfig;
+import globby from 'globby';
+import yaml from 'js-yaml';
+import type {
+  InlineModuleReferenceConfig,
+  ModuleConfig,
+  ModuleReference,
+  ModuleReferenceConfig,
+  NpmModuleReferenceConfig,
+  ReadModuleReferenceOptions,
+} from '@eggjs/tegg-types';
+import { FSUtil } from './FSUtil';
 
 export class ModuleReferenceConfigHelp {
   static isInlineModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is InlineModuleReferenceConfig {
@@ -32,17 +22,6 @@ export class ModuleReferenceConfigHelp {
   static isNpmModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is NpmModuleReferenceConfig {
     return !!(moduleReference as NpmModuleReferenceConfig).package;
   }
-}
-
-export interface ModuleConfig {
-}
-
-export interface ReadModuleReferenceOptions {
-  // module dir deep for globby when use auto scan module
-  // default is 10
-  deep?: number;
-  cwd?: string;
-  extraFilePattern?: string[];
 }
 
 const DEFAULT_READ_MODULE_REF_OPTS = {

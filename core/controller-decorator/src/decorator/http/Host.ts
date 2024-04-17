@@ -1,8 +1,7 @@
+import assert from 'node:assert';
+import type { EggProtoImplClass, HostType } from '@eggjs/tegg-types';
 import ControllerInfoUtil from '../../util/ControllerInfoUtil';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
 import MethodInfoUtil from '../../util/MethodInfoUtil';
-import assert from 'assert';
-import { HostType } from '../../model';
 
 export function Host(host: HostType) {
 

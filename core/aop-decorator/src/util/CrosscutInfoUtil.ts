@@ -1,15 +1,6 @@
-import { AdviceInfo } from '../model/Aspect';
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { IAdvice } from '../decorator/Advice';
-import { PointcutInfo } from '../model/PointcutInfo';
-
-export const CROSSCUT_INFO_LIST = Symbol.for('EggPrototype#crosscutInfoList');
-export const IS_CROSSCUT_ADVICE = Symbol.for('EggPrototype#isCrosscutAdvice');
-
-export interface CrosscutInfo {
-  pointcutInfo: PointcutInfo;
-  adviceInfo: AdviceInfo;
-}
+import { MetadataUtil } from '@eggjs/core-decorator';
+import { IS_CROSSCUT_ADVICE, CROSSCUT_INFO_LIST } from '@eggjs/tegg-types';
+import type { CrosscutInfo, EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
 
 export class CrosscutInfoUtil {
   static setIsCrosscutAdvice(isCrosscutAdvice: boolean, clazz: EggProtoImplClass<IAdvice>) {

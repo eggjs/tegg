@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { TableModel, SqlMap } from '@eggjs/tegg/dal';
-import { Logger } from '@eggjs/tegg';
+import { TableModel } from '@eggjs/tegg/dal';
+import type { Logger, SqlMap } from '@eggjs/tegg-types';
 import { BaseSqlMapGenerator } from './BaseSqlMap';
 import { TableSqlMap } from './TableSqlMap';
 import { LoaderUtil } from '@eggjs/tegg/helper';

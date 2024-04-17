@@ -5,10 +5,15 @@ import {
   GeometryCollection,
   Index,
   IndexType,
-  Line, MultiLine, MultiPoint, MultiPolygon, Point, Polygon,
+  IndexStoreType,
+  Line,
+  MultiLine,
+  MultiPoint,
+  MultiPolygon,
+  Point,
+  Polygon,
   Table,
 } from '@eggjs/dal-decorator';
-import { IndexStoreType } from '@eggjs/dal-decorator/src/enum/IndexStoreType';
 
 @Table({
   name: 'egg_foo',

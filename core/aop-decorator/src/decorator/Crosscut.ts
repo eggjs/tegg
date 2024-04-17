@@ -1,44 +1,11 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { IAdvice } from './Advice';
-import { CrosscutInfo, CrosscutInfoUtil } from '../util/CrosscutInfoUtil';
-import {
-  ClassPointInfo,
-  CustomPointcutCallback,
-  CustomPointInfo,
-  NamePointInfo,
-  PointcutType,
-} from '../model/PointcutInfo';
-
-export interface CrosscutOptions {
-  // 默认值 100
-  order?: number;
-  adviceParams?: any;
-}
+import { PointcutType } from '@eggjs/tegg-types';
+import type { CrosscutInfo, EggProtoImplClass, IAdvice, CrosscutParam, CrosscutOptions } from '@eggjs/tegg-types';
+import { CrosscutInfoUtil } from '../util/CrosscutInfoUtil';
+import { ClassPointInfo, CustomPointInfo, NamePointInfo } from '../model/PointcutInfo';
 
 const defaultCrossOptions = {
   order: 100,
 };
-
-// TODO type check for methodName
-export interface ClassCrosscutParam {
-  type: PointcutType.CLASS;
-  clazz: EggProtoImplClass;
-  methodName: PropertyKey;
-}
-
-export interface NameCrosscutParam {
-  type: PointcutType.NAME;
-  className: RegExp;
-  methodName: RegExp;
-}
-
-
-export interface CustomCrosscutParam {
-  type: PointcutType.CUSTOM;
-  callback: CustomPointcutCallback;
-}
-
-export type CrosscutParam = ClassCrosscutParam | NameCrosscutParam | CustomCrosscutParam;
 
 export function Crosscut(param: CrosscutParam, options?: CrosscutOptions) {
   return function(constructor: EggProtoImplClass<IAdvice>) {

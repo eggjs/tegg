@@ -1,4 +1,5 @@
-import { DataSource as IDataSource, PaginateData, SqlType, TableModel } from '@eggjs/tegg/dal';
+import { TableModel } from '@eggjs/tegg/dal';
+import type { DataSource as IDataSource, PaginateData, SqlType } from '@eggjs/tegg-types';
 import { MysqlDataSource } from './MySqlDataSource';
 import { TableSqlMap } from './TableSqlMap';
 import { TableModelInstanceBuilder } from './TableModelInstanceBuilder';

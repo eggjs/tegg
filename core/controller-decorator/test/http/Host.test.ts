@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { HostController } from '../fixtures/HostController';
 import ControllerInfoUtil from '../../src/util/ControllerInfoUtil';
 import MethodInfoUtil from '../../src/util/MethodInfoUtil';

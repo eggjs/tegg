@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import { Foo } from './fixtures/modules/dal/Foo';
-import { ColumnInfoUtil, ColumnType, IndexInfoUtil, IndexType, TableInfoUtil } from '..';
+import { ColumnType, IndexType } from '@eggjs/tegg-types';
+import { ColumnInfoUtil, IndexInfoUtil, TableInfoUtil } from '..';
 import { TableModel } from '../src/model/TableModel';
 
 describe('test/dal/index.test.ts', () => {

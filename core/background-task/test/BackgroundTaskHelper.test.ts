@@ -1,6 +1,6 @@
-import { BackgroundTaskHelper } from '../src/BackgroundTaskHelper';
+import assert from 'node:assert';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import assert from 'assert';
+import { BackgroundTaskHelper } from '../src/BackgroundTaskHelper';
 
 describe('test/BackgroundTaskHelper.test.ts', () => {
   let helper: BackgroundTaskHelper;

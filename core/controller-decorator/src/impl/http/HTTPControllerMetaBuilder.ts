@@ -1,14 +1,16 @@
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import assert from 'assert';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
-import ControllerInfoUtil from '../../util/ControllerInfoUtil';
-import { ControllerType, HTTPControllerMeta, HTTPMethodMeta } from '../../model';
-import { ControllerValidator } from '../../util/validator/ControllerValidator';
+import assert from 'node:assert';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder';
 import { ClassUtil } from '@eggjs/tegg-metadata';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import { ControllerType } from '@eggjs/tegg-types';
 import { ControllerMetaBuilderFactory } from '../../builder/ControllerMetaBuilderFactory';
+import { HTTPControllerMeta, HTTPMethodMeta } from '../../model';
+import ControllerInfoUtil from '../../util/ControllerInfoUtil';
 import { ControllerMetadataUtil } from '../../util/ControllerMetadataUtil';
+import HTTPInfoUtil from '../../util/HTTPInfoUtil';
+import { ControllerValidator } from '../../util/validator/ControllerValidator';
+import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder';
 
 export class HTTPControllerMetaBuilder {
   private readonly clazz: EggProtoImplClass;

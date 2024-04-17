@@ -1,14 +1,13 @@
-import { LoadUnit, LoadUnitLifecycleContext, LoadUnitLifecycleUtil } from '../model/LoadUnit';
-import { EggLoadUnitTypeLike } from '../enum/EggLoadUnitType';
-import { Id } from '@eggjs/tegg-lifecycle';
-import { Loader } from '../model/Loader';
-
-export type LoadUnitCreator = (ctx: LoadUnitLifecycleContext) => LoadUnit;
-
-interface LoadUnitPair {
-  loadUnit: LoadUnit;
-  ctx: LoadUnitLifecycleContext;
-}
+import type {
+  EggLoadUnitTypeLike,
+  Id,
+  LoadUnit,
+  LoadUnitLifecycleContext,
+  Loader,
+  LoadUnitCreator,
+  LoadUnitPair,
+} from '@eggjs/tegg-types';
+import { LoadUnitLifecycleUtil } from '../model/LoadUnit';
 
 export class LoadUnitFactory {
   private static loadUnitCreatorMap: Map<EggLoadUnitTypeLike, LoadUnitCreator> = new Map();

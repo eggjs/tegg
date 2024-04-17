@@ -1,19 +1,6 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import type { AttributeOptions, EggProtoImplClass } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/ModelInfoUtil';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-
-export interface AttributeOptions {
-  // field name, default is property name
-  name?: string;
-  // allow null, default is true
-  allowNull?: boolean;
-  // auto increment, default is false
-  autoIncrement?: boolean;
-  // primary field, default is false
-  primary?: boolean;
-  // unique field, default is false
-  unique?: boolean;
-}
 
 export function Attribute(dataType: string, options?: AttributeOptions) {
   return function(target: any, propertyKey: PropertyKey) {

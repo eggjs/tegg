@@ -47,7 +47,8 @@
     "@eggjs/tegg-dynamic-inject": "^3.37.1",
     "@eggjs/tegg-lifecycle": "^3.37.1",
     "@eggjs/tegg-metadata": "^3.37.1",
-    "@eggjs/tegg-runtime": "^3.37.1"
+    "@eggjs/tegg-runtime": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.37.1",

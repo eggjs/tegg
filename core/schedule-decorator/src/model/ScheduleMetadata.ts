@@ -1,9 +1,4 @@
-export enum ScheduleType {
-  WORKER = 'worker',
-  ALL = 'all',
-}
-
-export type ScheduleTypeLike = ScheduleType | string;
+import type { ScheduleTypeLike } from '@eggjs/tegg-types';
 
 export class ScheduleMetadata<T> {
   type: ScheduleTypeLike;

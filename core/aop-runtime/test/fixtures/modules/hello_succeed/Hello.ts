@@ -1,6 +1,7 @@
+import assert from 'node:assert';
 import { ContextProto, Inject, SingletonProto } from '@eggjs/core-decorator';
-import { Advice, AdviceContext, Crosscut, IAdvice, Pointcut, PointcutType } from '@eggjs/aop-decorator';
-import assert from 'assert';
+import { Advice, Crosscut, Pointcut } from '@eggjs/aop-decorator';
+import { AdviceContext, IAdvice, PointcutType } from '@eggjs/tegg-types';
 
 export interface CallTraceMsg {
   className: string;
@@ -70,7 +71,7 @@ export class PointcutAdvice implements IAdvice<Hello> {
       name: ctx.args[0],
       result: error.message,
       adviceParams: ctx.adviceParams,
-    }); 
+    });
   }
 
   async afterFinally(ctx: AdviceContext<Hello>): Promise<void> {

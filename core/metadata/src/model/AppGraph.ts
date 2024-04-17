@@ -1,17 +1,9 @@
 import assert from 'node:assert';
 import util from 'node:util';
-import { Graph, GraphNode, GraphNodeObj, ModuleConfigUtil, ModuleReference } from '@eggjs/tegg-common-util';
-import {
-  AccessLevel,
-  EggProtoImplClass,
-  EggPrototypeName,
-  INIT_TYPE_TRY_ORDER,
-  InitTypeQualifierAttribute,
-  LoadUnitNameQualifierAttribute,
-  PrototypeUtil,
-  QualifierInfo,
-  QualifierUtil,
-} from '@eggjs/core-decorator';
+import { Graph, GraphNode, ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
+import { AccessLevel, INIT_TYPE_TRY_ORDER, InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, EggPrototypeName, GraphNodeObj, ModuleReference, QualifierInfo } from '@eggjs/tegg-types';
 
 export interface InstanceClazzMeta {
   name: PropertyKey;

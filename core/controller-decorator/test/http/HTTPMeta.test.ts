@@ -1,3 +1,5 @@
+import assert from 'node:assert';
+import { ControllerType, HTTPMethodEnum } from '@eggjs/tegg-types';
 import {
   ControllerWithParam,
   DefaultValueController,
@@ -7,7 +9,6 @@ import {
   FoxController,
   FxxController,
 } from '../fixtures/HTTPFooController';
-import assert from 'assert';
 import {
   BodyParamMeta,
   ControllerMetaBuilderFactory,
@@ -17,7 +18,7 @@ import {
   QueriesParamMeta,
   QueryParamMeta,
 } from '../..';
-import { ControllerType, HTTPControllerMeta, HTTPMethodEnum } from '../../src/model';
+import { HTTPControllerMeta } from '../../src/model';
 import { PriorityController, TooLongController } from '../fixtures/HTTPPriorityController';
 
 describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {

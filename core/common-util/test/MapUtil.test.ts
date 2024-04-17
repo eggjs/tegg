@@ -1,5 +1,5 @@
+import assert from 'node:assert';
 import { MapUtil } from '..';
-import assert from 'assert';
 
 describe('test/MapUtil.test.ts', () => {
   it('should set value if key not exists', () => {

@@ -1,4 +1,5 @@
-import { AccessLevel, SingletonProto } from '../../..';
+import { AccessLevel } from '@eggjs/tegg-types';
+import { SingletonProto } from '../../..';
 import { ICache } from './ICache';
 
 @SingletonProto({

@@ -1,7 +1,6 @@
-import { AccessLevel, ObjectInitType, MultiInstanceProto, QualifierValue } from '@eggjs/core-decorator';
+import { AccessLevel, ObjectInitType, QualifierValue, EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-types';
+import { MultiInstanceProto } from '@eggjs/core-decorator';
 import { LifecycleInit } from '@eggjs/tegg-lifecycle';
-import { EggObject, EggObjectLifeCycleContext } from '../../../../src/model/EggObject';
-
 
 export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
 

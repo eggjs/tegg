@@ -1,4 +1,5 @@
-import { ContextProto, InitTypeQualifier, Inject, ModuleQualifier, ObjectInitType } from '../../..';
+import { ObjectInitType } from '@eggjs/tegg-types';
+import { ContextProto, InitTypeQualifier, Inject, ModuleQualifier } from '../../..';
 import { ICache } from './ICache';
 
 @ContextProto()

@@ -1,4 +1,4 @@
-import { EggContext, Next } from '../../src/model';
+import type { EggContext, Next } from '@eggjs/tegg-types';
 import { Middleware } from '../../src/decorator/Middleware';
 
 async function middleware1(ctx: EggContext, next: Next) {

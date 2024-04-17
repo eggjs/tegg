@@ -1,7 +1,6 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-import { IndexParams } from '../decorator/Index';
-
-export const DAL_INDEX_LIST = Symbol('EggPrototype#dalIndexList');
+import { DAL_INDEX_LIST } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, IndexParams } from '@eggjs/tegg-types';
+import { MetadataUtil } from '@eggjs/core-decorator';
 
 export class IndexInfoUtil {
   static addIndex(clazz: EggProtoImplClass, index: IndexParams) {

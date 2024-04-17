@@ -1,25 +1,5 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-
-export enum PointcutType {
-  /**
-   * use class type to match
-   */
-  CLASS = 'CLASS',
-  /**
-   * use regexp to match className and methodName
-   */
-  NAME = 'NAME',
-  /**
-   * use custom function to match
-   */
-  CUSTOM = 'CUSTOM',
-}
-
-export interface PointcutInfo {
-  type: PointcutType;
-
-  match(clazz: EggProtoImplClass, method: PropertyKey): boolean;
-}
+import { PointcutType } from '@eggjs/tegg-types';
+import type { CustomPointcutCallback, EggProtoImplClass, PointcutInfo } from '@eggjs/tegg-types';
 
 export class ClassPointInfo implements PointcutInfo {
   readonly type = PointcutType.CLASS;
@@ -55,8 +35,6 @@ export class NamePointInfo implements PointcutInfo {
     return this.className.test(clazz.name) && this.methodName.test(String(method));
   }
 }
-
-export type CustomPointcutCallback = (clazz: EggProtoImplClass, method: PropertyKey) => boolean;
 
 export class CustomPointInfo implements PointcutInfo {
   readonly type = PointcutType.CUSTOM;

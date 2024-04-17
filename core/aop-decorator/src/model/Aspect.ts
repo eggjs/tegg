@@ -1,17 +1,4 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { IAdvice } from '../decorator/Advice';
-
-export interface AdviceInfo {
-  clazz: EggProtoImplClass<IAdvice>;
-  order: number;
-  adviceParams: any;
-}
-
-export interface AspectAdvice {
-  name: string;
-  clazz: EggProtoImplClass<IAdvice>;
-  adviceParams: any;
-}
+import type { AdviceInfo, AspectAdvice, EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
 
 export class Aspect {
   readonly clazz: EggProtoImplClass;

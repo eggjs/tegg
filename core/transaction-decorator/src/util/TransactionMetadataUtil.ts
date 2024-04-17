@@ -1,8 +1,6 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/tegg';
-import { TransactionMetadata } from '../model/TransactionMetadata';
-
-export const TRANSACTION_META_DATA = Symbol.for('EggPrototype#transaction#metaData');
-export const IS_TRANSACTION_CLAZZ = Symbol.for('EggPrototype#IS_TRANSACTION_CLAZZ');
+import { MetadataUtil } from '@eggjs/tegg';
+import { IS_TRANSACTION_CLAZZ, TRANSACTION_META_DATA, TransactionMetadata } from '@eggjs/tegg-types';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 export class TransactionMetadataUtil {
 
@@ -22,5 +20,4 @@ export class TransactionMetadataUtil {
   static getTransactionMetadataList(clazz: EggProtoImplClass): TransactionMetadata[] {
     return MetadataUtil.getArrayMetaData<TransactionMetadata>(TRANSACTION_META_DATA, clazz);
   }
-
 }

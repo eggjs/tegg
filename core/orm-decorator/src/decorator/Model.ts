@@ -1,12 +1,7 @@
-import { AccessLevel, EggProtoImplClass, SingletonProto } from '@eggjs/core-decorator';
+import { SingletonProto } from '@eggjs/core-decorator';
+import { AccessLevel, MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, ModelParams } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/ModelInfoUtil';
-
-export interface ModelParams {
-  tableName?: string;
-  dataSource?: string;
-}
-
-export const MODEL_PROTO_IMPL_TYPE = 'MODEL_PROTO';
 
 export function Model(param?: ModelParams) {
   return function(clazz: EggProtoImplClass) {

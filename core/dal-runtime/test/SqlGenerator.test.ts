@@ -1,7 +1,7 @@
 import assert from 'node:assert';
+import { TableModel } from '@eggjs/dal-decorator';
 import { Foo } from './fixtures/modules/dal/Foo';
 import { SqlGenerator } from '../src/SqlGenerator';
-import { TableModel } from '@eggjs/dal-decorator';
 import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime';
 
 describe('test/SqlGenerator.test.ts', () => {

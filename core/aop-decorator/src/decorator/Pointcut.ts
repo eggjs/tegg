@@ -1,14 +1,7 @@
-import { IAdvice } from './Advice';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, IAdvice, PointcutOptions } from '@eggjs/tegg-types';
 import { PointcutAdviceInfoUtil } from '../util/PointcutAdviceInfoUtil';
 import assert from 'assert';
 import { AdviceInfoUtil } from '../util/AdviceInfoUtil';
-
-export interface PointcutOptions<K = any> {
-  // default is 1000
-  order?: number;
-  adviceParams?: K;
-}
 
 const defaultPointcutOptions = {
   order: 1000,

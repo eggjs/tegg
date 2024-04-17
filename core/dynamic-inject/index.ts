@@ -1,4 +1,3 @@
-export * from './src/EggObjectFactory';
+export * from '@eggjs/tegg-types/dynamic-inject';
 export * from './src/QualifierImplUtil';
-export * from './src/typing';
 export * from './src/QualifierImplDecoratorUtil';

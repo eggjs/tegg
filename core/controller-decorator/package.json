@@ -40,6 +40,7 @@
     "@eggjs/core-decorator": "^3.37.1",
     "@eggjs/tegg-common-util": "^3.37.1",
     "@eggjs/tegg-metadata": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1",
     "path-to-regexp": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "undici": "^5.26.5"

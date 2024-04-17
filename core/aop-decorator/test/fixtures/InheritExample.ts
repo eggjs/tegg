@@ -1,8 +1,9 @@
 import { ContextProto } from '@eggjs/core-decorator';
-import { Advice, AdviceContext, IAdvice } from '../../src/decorator/Advice';
+import { PointcutType } from '@eggjs/tegg-types';
+import type { AdviceContext, IAdvice } from '@eggjs/tegg-types';
+import { Advice } from '../../src/decorator/Advice';
 import { Pointcut } from '../../src/decorator/Pointcut';
 import { Crosscut } from '../../src/decorator/Crosscut';
-import { PointcutType } from '../../src/model/PointcutInfo';
 
 @Advice()
 export class PointcutAdviceNoOverwriteParentExample implements IAdvice {

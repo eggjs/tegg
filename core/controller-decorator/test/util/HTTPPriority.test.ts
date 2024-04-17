@@ -1,5 +1,5 @@
+import assert from 'node:assert';
 import { HTTPPriorityUtil } from '../../src/util/HTTPPriorityUtil';
-import assert from 'assert';
 
 describe('test/util/HTTPPriority.test.ts', () => {
   describe('path has no regexp', () => {

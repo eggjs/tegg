@@ -1,8 +1,6 @@
-import { EggProtoImplClass, MetadataUtil, QualifierValue } from '@eggjs/core-decorator';
-
-import { EggAbstractClazz } from './typing';
-
-export const QUALIFIER_IMPL_MAP = Symbol.for('EggPrototype#qualifierImplMap');
+import { MetadataUtil } from '@eggjs/core-decorator';
+import { QUALIFIER_IMPL_MAP } from '@eggjs/tegg-types';
+import type { EggAbstractClazz, EggProtoImplClass, QualifierValue } from '@eggjs/tegg-types';
 
 export class QualifierImplUtil {
   static addQualifierImpl(abstractClazz: EggAbstractClazz, qualifierValue: QualifierValue, implClazz: EggProtoImplClass) {

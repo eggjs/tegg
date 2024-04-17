@@ -1,16 +1,15 @@
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggContext } from '../model/EggContext';
-import { EggObject } from '../model/EggObject';
+import type { EggRuntimeContext, EggObject } from '@eggjs/tegg-types';
 import { ContextObjectGraph } from './ContextObjectGraph';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 
 const CONTEXT_INITIATOR = Symbol('EggContext#ContextInitiator');
 
 export class ContextInitiator {
-  private readonly eggContext: EggContext;
+  private readonly eggContext: EggRuntimeContext;
   private readonly eggObjectInitRecorder: WeakMap<EggObject, boolean>;
 
-  constructor(eggContext: EggContext) {
+  constructor(eggContext: EggRuntimeContext) {
     this.eggContext = eggContext;
     this.eggObjectInitRecorder = new WeakMap();
     this.eggContext.set(CONTEXT_INITIATOR, this);
@@ -32,7 +31,7 @@ export class ContextInitiator {
     }));
   }
 
-  static createContextInitiator(context: EggContext): ContextInitiator {
+  static createContextInitiator(context: EggRuntimeContext): ContextInitiator {
     let initiator = context.get(CONTEXT_INITIATOR);
     if (!initiator) {
       initiator = new ContextInitiator(context);

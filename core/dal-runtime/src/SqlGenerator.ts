@@ -1,11 +1,10 @@
 import {
-  BaseSpatialParams,
   ColumnModel,
-  ColumnType,
-  ColumnTypeParams,
-  IndexModel, IndexType,
+  IndexModel,
   TableModel,
 } from '@eggjs/tegg/dal';
+import { ColumnType, IndexType } from '@eggjs/tegg-types';
+import type { BaseSpatialParams, ColumnTypeParams } from '@eggjs/tegg-types';
 
 // TODO diff 实现
 export class SqlGenerator {

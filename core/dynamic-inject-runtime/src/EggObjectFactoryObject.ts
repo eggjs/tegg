@@ -1,13 +1,15 @@
 import {
   EggContainerFactory,
-  EggContext,
-  EggObject,
   EggObjectFactory as TEggObjectFactory,
 } from '@eggjs/tegg-runtime';
 import { EggObjectFactoryPrototype } from './EggObjectFactoryPrototype';
-import { EggObjectName } from '@eggjs/core-decorator';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import type {
+  EggRuntimeContext,
+  EggObject,
+  EggObjectName,
+  EggPrototype,
+} from '@eggjs/tegg-types';
 import { EggObjectFactory } from './EggObjectFactory';
 
 const OBJ = Symbol('EggObjectFactoryObject#obj');
@@ -15,7 +17,7 @@ const OBJ = Symbol('EggObjectFactoryObject#obj');
 export class EggObjectFactoryObject implements EggObject {
   readonly proto: EggObjectFactoryPrototype;
   readonly name: EggObjectName;
-  readonly ctx?: EggContext;
+  readonly ctx?: EggRuntimeContext;
   readonly id: string;
   private [OBJ]: EggObjectFactory;
 

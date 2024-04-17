@@ -1,7 +1,8 @@
-import { FooController, ParentController, ChildController } from '../fixtures/HTTPFooController';
-import { CONTROLLER_META_DATA, ControllerMetadataUtil } from '../../src/util/ControllerMetadataUtil';
+import assert from 'node:assert';
 import { MetadataUtil } from '@eggjs/core-decorator';
-import assert from 'assert';
+import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
+import { FooController, ParentController, ChildController } from '../fixtures/HTTPFooController';
+import { ControllerMetadataUtil } from '../../src/util/ControllerMetadataUtil';
 import '../../src/impl/http/HTTPControllerMetaBuilder';
 
 describe('test/util/ControllerMetadataUtil.test.ts', () => {
