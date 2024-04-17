@@ -268,5 +268,7 @@ export class Runner {
     MysqlDataSourceManager.instance.clear();
     SqlMapManager.instance.clear();
     TableModelManager.instance.clear();
+    // clear configNames
+    ModuleConfigUtil.setConfigNames(undefined);
   }
 }
