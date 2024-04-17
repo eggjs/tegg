@@ -10,8 +10,8 @@
   ],
   "main": "./index.js",
   "files": [
-    "*.js",
-    "*.d.ts"
+    "**/*.js",
+    "**/*.d.ts"
   ],
   "typings": "index.d.ts",
   "scripts": {
