@@ -1,10 +1,7 @@
-import { MetadataUtil } from './MetadataUtil';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { EggProtoImplClass } from '../model/EggPrototypeInfo';
-import { QualifierAttribute, QualifierInfo, QualifierValue } from '../model/QualifierInfo';
-
-const QUALIFIER_META_DATA = Symbol.for('EggPrototype#qualifier');
-const PROPERTY_QUALIFIER_META_DATA = Symbol.for('EggPrototype#propertyQualifier');
+import { PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierValue } from '@eggjs/tegg-types';
+import { MetadataUtil } from './MetadataUtil';
 
 export class QualifierUtil {
   static addProtoQualifier(clazz: EggProtoImplClass, attribute: QualifierAttribute, value: QualifierValue) {

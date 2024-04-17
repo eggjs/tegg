@@ -1,3 +1,4 @@
+export * from '@eggjs/tegg-types/orm';
 export * from './src/model/ModelMetadata';
 export * from './src/model/AttributeMeta';
 export * from './src/model/IndexMeta';
@@ -10,4 +11,3 @@ export * from './src/decorator/Attribute';
 export * from './src/decorator/DataSource';
 export * from './src/util/ModelInfoUtil';
 export * from './src/util/ModelMetadataUtil';
-

@@ -1,25 +1,14 @@
-import nunjucks, { type Environment } from 'nunjucks';
+import fs from 'node:fs/promises';
 import path from 'node:path';
+import { js_beautify } from 'js-beautify';
 import _ from 'lodash';
-import { TemplateUtil } from './TemplateUtil';
+import nunjucks, { type Environment } from 'nunjucks';
+import { Templates } from '@eggjs/tegg-types';
+import type { CodeGeneratorOptions } from '@eggjs/tegg-types';
 import { ColumnModel, TableModel } from '@eggjs/tegg/dal';
 import { PrototypeUtil } from '@eggjs/tegg';
-import fs from 'node:fs/promises';
-import { js_beautify } from 'js-beautify';
 import { SqlGenerator } from './SqlGenerator';
-
-export interface CodeGeneratorOptions {
-  moduleDir: string;
-  moduleName: string;
-  teggPkg?: string;
-  dalPkg?: string;
-}
-
-export enum Templates {
-  BASE_DAO = 'base_dao',
-  DAO = 'dao',
-  EXTENSION = 'extension',
-}
+import { TemplateUtil } from './TemplateUtil';
 
 export class CodeGenerator {
   private readonly moduleDir: string;

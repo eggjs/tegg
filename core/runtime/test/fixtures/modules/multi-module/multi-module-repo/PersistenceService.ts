@@ -1,4 +1,5 @@
-import { AccessLevel, ObjectInitType, Prototype } from '@eggjs/core-decorator';
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
+import { Prototype } from '@eggjs/core-decorator';
 
 @Prototype({
   initType: ObjectInitType.SINGLETON,

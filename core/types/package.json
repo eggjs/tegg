@@ -1,0 +1,48 @@
+{
+  "name": "@eggjs/tegg-types",
+  "version": "3.37.1",
+  "description": "tegg types",
+  "keywords": [
+    "egg",
+    "typescript",
+    "tegg",
+    "types"
+  ],
+  "main": "./index.js",
+  "files": [
+    "*.js",
+    "*.d.ts"
+  ],
+  "typings": "index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub"
+  },
+  "author": "gxkl <gxkl203@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/types"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}

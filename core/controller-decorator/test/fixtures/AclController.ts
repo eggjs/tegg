@@ -1,7 +1,7 @@
+import { HTTPMethodEnum } from '@eggjs/tegg-types';
 import { Acl } from '../../src/decorator/Acl';
 import { HTTPController } from '../../src/decorator/http/HTTPController';
 import { HTTPMethod } from '../../src/decorator/http/HTTPMethod';
-import { HTTPMethodEnum } from '../../src/model';
 
 @Acl('mock1')
 @HTTPController()

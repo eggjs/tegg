@@ -1,7 +1,7 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
+import { MetadataUtil } from '@eggjs/core-decorator';
+import { SCHEDULE_METADATA } from '@eggjs/tegg-types';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ScheduleMetadata } from '../model/ScheduleMetadata';
-
-export const SCHEDULE_METADATA = Symbol.for('EggPrototype#schedule#metadata');
 
 export class ScheduleMetadataUtil {
   static setScheduleMetadata(clazz: EggProtoImplClass, metaData: ScheduleMetadata<object>) {

@@ -1,10 +1,10 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import mm from 'mm';
+import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import TestUtil from './util';
 import { EggTestContext } from './fixtures/EggTestContext';
 import CacheService from './fixtures/modules/init-type-qualifier-module/CacheService';
-import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '..';
-import mm from 'mm';
 import { ContextHandler } from '../src/model/ContextHandler';
 
 describe('test/LoadUnit/QualifierLoadUnitInstance.test.ts', () => {

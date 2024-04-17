@@ -7,7 +7,8 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPQuery,
-  HTTPHeaders, IncomingHttpHeaders,
+  HTTPHeaders,
+  IncomingHttpHeaders,
   Middleware,
   Inject,
 } from '@eggjs/tegg';

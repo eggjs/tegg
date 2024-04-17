@@ -1,8 +1,8 @@
 import assert from 'node:assert';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { HTTPParamType } from '../../model';
+import { HTTPParamType } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, HTTPParamParams, HTTPQueriesParams, HTTPQueryParams } from '@eggjs/tegg-types';
 import HTTPInfoUtil from '../../util/HTTPInfoUtil';
+import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 // TODO url params
 // /foo/:id
@@ -26,14 +26,6 @@ export function HTTPHeaders() {
     const controllerClazz = target.constructor as EggProtoImplClass;
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.HEADERS, parameterIndex, controllerClazz, methodName);
   };
-}
-
-export interface HTTPQueryParams {
-  name?: string;
-}
-
-export interface HTTPQueriesParams {
-  name?: string;
 }
 
 export function HTTPQuery(param?: HTTPQueryParams) {
@@ -60,10 +52,6 @@ export function HTTPQueries(param?: HTTPQueriesParams) {
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERIES, parameterIndex, controllerClazz, methodName);
     HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
   };
-}
-
-export interface HTTPParamParams {
-  name?: string;
 }
 
 export function HTTPParam(param?: HTTPParamParams) {

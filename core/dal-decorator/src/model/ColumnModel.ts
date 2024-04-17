@@ -1,6 +1,5 @@
-import { ColumnFormat } from '../enum/ColumnFormat';
-import { ColumnParams, ColumnTypeParams } from '../decorator/Column';
 import snakecase from 'lodash.snakecase';
+import type { ColumnFormat, ColumnParams, ColumnTypeParams } from '@eggjs/tegg-types';
 
 export class ColumnModel {
   columnName: string;

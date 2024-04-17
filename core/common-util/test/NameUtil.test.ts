@@ -1,5 +1,5 @@
+import assert from 'node:assert';
 import { NameUtil } from '..';
-import assert from 'assert';
 
 describe('test/NameUtil.test.ts', () => {
   it('should work', () => {

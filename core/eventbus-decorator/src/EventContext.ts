@@ -1,11 +1,11 @@
 // use @eggjs/tegg as namespace
 // eslint-disable-next-line import/no-unresolved
 import type { Events } from '@eggjs/tegg';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import assert from 'assert';
+import assert from 'node:assert';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { EventInfoUtil } from './EventInfoUtil';
 
-export interface IEventContext{
+export interface IEventContext {
   eventName: keyof Events
 }
 

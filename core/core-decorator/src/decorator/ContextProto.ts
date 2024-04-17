@@ -1,12 +1,6 @@
 import { Prototype } from './Prototype';
-import { ObjectInitType } from '../enum/ObjectInitType';
-import { AccessLevel } from '../enum/AccessLevel';
-
-export interface ContextProtoParams {
-  name?: string;
-  accessLevel?: AccessLevel;
-  protoImplType?: string;
-}
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
+import type { ContextProtoParams } from '@eggjs/tegg-types';
 
 export function ContextProto(params?: ContextProtoParams) {
   return Prototype({

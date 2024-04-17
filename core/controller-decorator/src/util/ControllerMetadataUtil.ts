@@ -1,8 +1,7 @@
-import { ControllerMetadata } from '../model/ControllerMetadata';
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
+import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
+import type { ControllerMetadata, EggProtoImplClass } from '@eggjs/tegg-types';
+import { MetadataUtil } from '@eggjs/core-decorator';
 import { ControllerMetaBuilderFactory } from '../builder/ControllerMetaBuilderFactory';
-
-export const CONTROLLER_META_DATA = Symbol.for('EggPrototype#controller#metaData');
 
 export class ControllerMetadataUtil {
   static setControllerMetadata(clazz: EggProtoImplClass, metaData: ControllerMetadata) {

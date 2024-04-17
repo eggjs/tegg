@@ -1,10 +1,13 @@
-import { MetadataUtil } from './MetadataUtil';
-import { EggProtoImplClass, EggPrototypeInfo, EggPrototypeName } from '../model/EggPrototypeInfo';
-import { InjectObjectInfo } from '../model/InjectObjectInfo';
-import {
+import type {
   EggMultiInstanceCallbackPrototypeInfo,
-  EggMultiInstancePrototypeInfo, MultiInstancePrototypeGetObjectsContext,
-} from '../model/EggMultiInstancePrototypeInfo';
+  EggMultiInstancePrototypeInfo,
+  EggProtoImplClass,
+  EggPrototypeInfo,
+  EggPrototypeName,
+  InjectObjectInfo,
+  MultiInstancePrototypeGetObjectsContext,
+} from '@eggjs/tegg-types';
+import { MetadataUtil } from './MetadataUtil';
 
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE = Symbol.for('EggPrototype#isEggPrototype');

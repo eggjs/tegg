@@ -51,7 +51,8 @@
     "@eggjs/tegg-orm-decorator": "^3.37.1",
     "@eggjs/tegg-runtime": "^3.37.1",
     "@eggjs/tegg-schedule-decorator": "^3.37.1",
-    "@eggjs/tegg-transaction-decorator": "^3.37.1"
+    "@eggjs/tegg-transaction-decorator": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1"
   },
   "publishConfig": {
     "access": "public"

@@ -1,11 +1,5 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, IndexOptions } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/ModelInfoUtil';
-
-export interface IndexOptions {
-  unique?: boolean;
-  primary?: boolean;
-  name?: string;
-}
 
 export function Index(fields: string[], params?: IndexOptions) {
   return function(clazz: EggProtoImplClass) {

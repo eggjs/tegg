@@ -1,5 +1,6 @@
-import assert from 'assert';
-import { GraphNode, Graph, GraphNodeObj } from '../src/Graph';
+import assert from 'node:assert';
+import type { GraphNodeObj } from '@eggjs/tegg-types';
+import { GraphNode, Graph } from '../src/Graph';
 
 describe('test/LoadUnit/Graph.test.ts', () => {
   class GraphNodeVal implements GraphNodeObj {

@@ -1,13 +1,16 @@
-import { EggPrototype, InjectObjectProto } from '../model/EggPrototype';
-import {
+import { MetadataUtil } from '@eggjs/core-decorator';
+import type {
   AccessLevel,
+  EggPrototype,
   EggProtoImplClass,
-  EggPrototypeName, MetaDataKey, MetadataUtil,
+  EggPrototypeName,
+  MetaDataKey,
   ObjectInitTypeLike,
-  QualifierInfo, QualifierValue,
-} from '@eggjs/core-decorator';
-import { Id } from '@eggjs/tegg-lifecycle';
-
+  QualifierInfo,
+  QualifierValue,
+  Id,
+  InjectObjectProto,
+} from '@eggjs/tegg-types';
 
 export class EggPrototypeImpl implements EggPrototype {
   private readonly clazz: EggProtoImplClass;

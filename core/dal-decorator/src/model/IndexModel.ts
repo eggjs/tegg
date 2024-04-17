@@ -1,6 +1,5 @@
-import { IndexType } from '../enum/IndexType';
-import { IndexStoreType } from '../enum/IndexStoreType';
-import { IndexParams } from '../decorator/Index';
+import { IndexType } from '@eggjs/tegg-types';
+import type { IndexParams, IndexStoreType } from '@eggjs/tegg-types';
 import { ColumnModel } from './ColumnModel';
 
 export interface IndexKey {

@@ -1,6 +1,6 @@
-import { LifecycleHook } from '@eggjs/tegg-lifecycle';
-import { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
-import { Aspect, ASPECT_LIST } from '@eggjs/aop-decorator';
+import { ASPECT_LIST } from '@eggjs/tegg-types';
+import type { EggObject, EggObjectLifeCycleContext, LifecycleHook } from '@eggjs/tegg-types';
+import { Aspect } from '@eggjs/aop-decorator';
 import { AspectExecutor } from './AspectExecutor';
 
 export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext, EggObject> {

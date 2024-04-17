@@ -1,6 +1,5 @@
-import { MiddlewareFunc } from '../model';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import assert from 'assert';
+import assert from 'node:assert';
+import type { EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 import ControllerInfoUtil from '../util/ControllerInfoUtil';
 import MethodInfoUtil from '../util/MethodInfoUtil';
 

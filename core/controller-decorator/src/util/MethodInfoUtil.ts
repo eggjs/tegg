@@ -1,12 +1,13 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
+import { MetadataUtil } from '@eggjs/core-decorator';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { ControllerTypeLike, MiddlewareFunc } from '../model';
-
-const METHOD_CONTROLLER_TYPE_MAP = Symbol.for('EggPrototype#controller#mthods');
-const METHOD_CONTROLLER_HOST = Symbol.for('EggPrototype#controller#mthods#host');
-const METHOD_CONTEXT_INDEX = Symbol.for('EggPrototype#controller#method#context');
-const METHOD_MIDDLEWARES = Symbol.for('EggPrototype#method#middlewares');
-const METHOD_ACL = Symbol.for('EggPrototype#method#acl');
+import {
+  METHOD_ACL,
+  METHOD_CONTEXT_INDEX,
+  METHOD_CONTROLLER_HOST,
+  METHOD_CONTROLLER_TYPE_MAP,
+  METHOD_MIDDLEWARES,
+} from '@eggjs/tegg-types';
+import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 
 type METHOD_MAP = Map<string, ControllerTypeLike | string[]>;
 type MethodContextIndexMap = Map<string, number>;

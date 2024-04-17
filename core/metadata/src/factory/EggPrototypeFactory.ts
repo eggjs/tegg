@@ -1,14 +1,8 @@
-import {
-  AccessLevel,
-  EggPrototypeName,
-  QualifierInfo,
-} from '@eggjs/core-decorator';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { EggPrototype } from '../model/EggPrototype';
-import { LoadUnit } from '../model/LoadUnit';
+import { AccessLevel } from '@eggjs/tegg-types';
+import type { EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
 import { FrameworkErrorFormater } from 'egg-errors';
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors';
-
 
 export class EggPrototypeFactory {
   public static instance = new EggPrototypeFactory();

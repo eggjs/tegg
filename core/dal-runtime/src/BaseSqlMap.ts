@@ -1,13 +1,8 @@
 import _ from 'lodash';
-import { ColumnType, IndexType, SqlType, SqlMap, TableModel } from '@eggjs/tegg/dal';
-import { Logger } from '@eggjs/tegg';
+import { TableModel } from '@eggjs/tegg/dal';
+import { ColumnType, IndexType, SqlType, SqlMap } from '@eggjs/tegg-types';
+import type { Logger, GenerateSqlMap } from '@eggjs/tegg-types';
 import { TemplateUtil } from './TemplateUtil';
-
-export interface GenerateSqlMap {
-  name: string;
-  type: SqlType.DELETE | SqlType.UPDATE | SqlType.INSERT | SqlType.SELECT;
-  sql: string;
-}
 
 export class BaseSqlMapGenerator {
   private readonly tableModel: TableModel;

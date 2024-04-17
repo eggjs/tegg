@@ -1,5 +1,5 @@
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from './CrosscutAdviceFactory';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
 import { Aspect, AspectBuilder } from './model/Aspect';
 import { PointcutAdviceInfoUtil } from './util/PointcutAdviceInfoUtil';
 

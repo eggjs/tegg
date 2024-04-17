@@ -1,5 +1,5 @@
+import assert from 'node:assert';
 import { ContextController } from './fixtures/ContextController';
-import assert from 'assert';
 import MethodInfoUtil from '../src/util/MethodInfoUtil';
 
 describe('test/Context.test.ts', () => {

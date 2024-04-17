@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1",
     "reflect-metadata": "^0.1.13"
   },
   "publishConfig": {

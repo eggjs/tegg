@@ -1,8 +1,13 @@
-import { EggProtoImplClass, EggPrototypeInfo, PrototypeUtil } from '@eggjs/core-decorator';
-import { LoadUnit } from '../model/LoadUnit';
-import { EggPrototype, EggPrototypeLifecycleContext, EggPrototypeLifecycleUtil } from '../model/EggPrototype';
-
-export type EggPrototypeCreator = (ctx: EggPrototypeLifecycleContext) => EggPrototype;
+import { PrototypeUtil } from '@eggjs/core-decorator';
+import type {
+  EggProtoImplClass,
+  EggPrototypeInfo,
+  EggPrototypeCreator,
+  LoadUnit,
+  EggPrototype,
+  EggPrototypeLifecycleContext,
+} from '@eggjs/tegg-types';
+import { EggPrototypeLifecycleUtil } from '../model/EggPrototype';
 
 export class EggPrototypeCreatorFactory {
   private static creatorMap = new Map<string, EggPrototypeCreator>();

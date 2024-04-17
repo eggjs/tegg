@@ -1,6 +1,6 @@
-import ControllerInfoUtil from '../ControllerInfoUtil';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ClassUtil } from '@eggjs/tegg-metadata';
+import ControllerInfoUtil from '../ControllerInfoUtil';
 
 export class ControllerValidator {
   // should throw error

@@ -1,6 +1,6 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import MethodInfoUtil from '../MethodInfoUtil';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ClassUtil } from '@eggjs/tegg-metadata';
+import MethodInfoUtil from '../MethodInfoUtil';
 import ControllerInfoUtil from '../ControllerInfoUtil';
 
 export class MethodValidator {

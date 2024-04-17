@@ -1,14 +1,9 @@
-import { AccessLevel, EggProtoImplClass, PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
+import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
+import type { EggProtoImplClass, HTTPControllerParams } from '@eggjs/tegg-types';
+import { AccessLevel, ControllerType } from '@eggjs/tegg-types';
 import ControllerInfoUtil from '../../util/ControllerInfoUtil';
-import { ControllerType } from '../../model';
-
-export interface HTTPControllerParams {
-  protoName?: string;
-  controllerName?: string;
-  path?: string;
-}
+import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 
 export function HTTPController(param?: HTTPControllerParams) {
   return function(constructor: EggProtoImplClass) {

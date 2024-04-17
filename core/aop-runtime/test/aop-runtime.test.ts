@@ -1,12 +1,12 @@
-import path from 'path';
+import assert from 'node:assert';
+import path from 'node:path';
 import mm from 'mm';
-import assert from 'assert';
-import { EggObjectLifecycleUtil, LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
+import type { LoadUnitInstance } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
-import { EggTestContext } from '../../test-util';
+import { CoreTestHelper, EggTestContext } from '../../test-util';
 import { CallTrace, Hello, crosscutAdviceParams, pointcutAdviceParams } from './fixtures/modules/hello_succeed/Hello';
-import { CoreTestHelper } from '../../test-util/CoreTestHelper';
 import { EggObjectAopHook } from '../src/EggObjectAopHook';
 import { LoadUnitAopHook } from '../src/LoadUnitAopHook';
 import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook';

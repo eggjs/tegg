@@ -1,20 +1,26 @@
+import { EggPrototypeCreatorFactory } from '@eggjs/tegg-metadata';
 import {
-  EggPrototype,
-  EggPrototypeCreatorFactory,
-  EggPrototypeLifecycleContext,
-  InjectObjectProto, LoadUnit,
-} from '@eggjs/tegg-metadata';
-import {
-  AccessLevel, EggProtoImplClass, EggPrototypeInfo, EggPrototypeName,
-  MetaDataKey,
   MetadataUtil,
-  ObjectInitTypeLike,
-  QualifierInfo,
-  QualifierUtil, QualifierValue,
+  QualifierUtil,
 } from '@eggjs/core-decorator';
 import { NameUtil } from '@eggjs/tegg-common-util';
-import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import type {
+  AccessLevel,
+  EggObjectFactory,
+  EggPrototype,
+  EggProtoImplClass,
+  EggPrototypeInfo,
+  EggPrototypeLifecycleContext,
+  EggPrototypeName,
+  InjectObjectProto,
+  LoadUnit,
+  MetaDataKey,
+  ObjectInitTypeLike,
+  QualifierInfo,
+  QualifierValue,
+  Id,
+} from '@eggjs/tegg-types';
 
 export const EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE = 'EGG_OBJECT_FACTORY_PROTOTYPE';
 

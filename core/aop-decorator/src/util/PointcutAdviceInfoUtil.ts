@@ -1,9 +1,6 @@
-import {
-  EggProtoImplClass, MetadataUtil,
-} from '@eggjs/core-decorator';
-import { AdviceInfo } from '../model/Aspect';
-
-export const POINTCUT_ADVICE_INFO_LIAR = Symbol.for('EggPrototype#pointcutAdviceInfoList');
+import { MetadataUtil } from '@eggjs/core-decorator';
+import { POINTCUT_ADVICE_INFO_LIAR } from '@eggjs/tegg-types';
+import type { AdviceInfo, EggProtoImplClass } from '@eggjs/tegg-types';
 
 interface PointcutAdviceInfo {
   method: PropertyKey;

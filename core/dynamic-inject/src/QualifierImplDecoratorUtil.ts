@@ -1,12 +1,6 @@
-import { EggAbstractClazz } from './typing';
+import type { EggAbstractClazz, EggProtoImplClass, ImplDecorator, ImplTypeEnum, QualifierAttribute } from '@eggjs/tegg-types';
+import { QualifierUtil } from '@eggjs/core-decorator';
 import { QualifierImplUtil } from './QualifierImplUtil';
-import { EggProtoImplClass, QualifierAttribute, QualifierUtil, QualifierValue } from '@eggjs/core-decorator';
-
-export type ImplTypeEnum = {
-  [id: string]: QualifierValue;
-};
-
-export type ImplDecorator<T extends object, Enum extends ImplTypeEnum> = (type: Enum[keyof Enum]) => ((clazz: EggProtoImplClass<T>) => void);
 
 export class QualifierImplDecoratorUtil {
   static generatorDecorator<T extends object, Enum extends ImplTypeEnum>(abstractClazz: EggAbstractClazz<T>, attribute: QualifierAttribute): ImplDecorator<T, Enum> {

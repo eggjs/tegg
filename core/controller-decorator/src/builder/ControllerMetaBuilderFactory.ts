@@ -1,9 +1,10 @@
-import { ControllerTypeLike } from '../model';
-import { ControllerMetaBuilder } from './ControllerMetaBuilder';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type {
+  ControllerMetaBuilder,
+  ControllerMetaBuilderCreator,
+  ControllerTypeLike,
+  EggProtoImplClass,
+} from '@eggjs/tegg-types';
 import ControllerInfoUtil from '../util/ControllerInfoUtil';
-
-export type ControllerMetaBuilderCreator = (clazz: EggProtoImplClass) => ControllerMetaBuilder;
 
 export class ControllerMetaBuilderFactory {
   private static builderCreatorMap: Map<ControllerTypeLike, ControllerMetaBuilderCreator> = new Map();

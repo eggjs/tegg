@@ -38,6 +38,7 @@
     "@eggjs/core-decorator": "^3.37.1",
     "@eggjs/tegg-common-util": "^3.37.1",
     "@eggjs/tegg-metadata": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1",
     "cron-parser": "^2.18.0"
   },
   "devDependencies": {

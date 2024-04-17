@@ -1,4 +1,5 @@
-import { Table, Index, Column, ColumnType, IndexType } from '../../../..';
+import { ColumnType, IndexType } from '@eggjs/tegg-types';
+import { Table, Index, Column } from '../../../..';
 
 @Table({
   comment: 'foo table',

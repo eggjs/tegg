@@ -1,11 +1,11 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import mm from 'mm';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggTestContext } from './fixtures/EggTestContext';
 import TestUtil from './util';
 import { EggContainerFactory } from '..';
 import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object';
 import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base';
-import mm from 'mm';
 import { ContextHandler } from '../src/model/ContextHandler';
 import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object';
 

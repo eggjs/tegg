@@ -1,35 +1,27 @@
-import assert from 'assert';
+import assert from 'node:assert';
+import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import {
+  ObjectInitType,
+  InitTypeQualifierAttribute,
+  DEFAULT_PROTO_IMPL_TYPE,
+} from '@eggjs/tegg-types';
+import type {
   AccessLevel,
   EggProtoImplClass,
-  EggPrototypeName, InitTypeQualifierAttribute,
-  ObjectInitTypeLike, PrototypeUtil,
-  QualifierInfo, QualifierUtil,
-  DEFAULT_PROTO_IMPL_TYPE, ObjectInitType,
-} from '@eggjs/core-decorator';
-import { LoadUnit } from '../model/LoadUnit';
-import { EggPrototype, EggPrototypeLifecycleContext, InjectObjectProto } from '../model/EggPrototype';
+  EggPrototype,
+  EggPrototypeLifecycleContext,
+  EggPrototypeName,
+  InjectObject,
+  InjectObjectProto,
+  LoadUnit,
+  ObjectInitTypeLike,
+  QualifierInfo,
+} from '@eggjs/tegg-types';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggPrototypeImpl } from '../impl/EggPrototypeImpl';
+import { EggPrototypeImpl } from './EggPrototypeImpl';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors';
-
-export interface InjectObject {
-  /**
-   * property name obj inject to
-   */
-  refName: PropertyKey;
-  /**
-   * obj's name will be injected
-   */
-  objName: PropertyKey;
-  /**
-   * obj's initType will be injected
-   * if null same as current obj
-   */
-  initType?: ObjectInitTypeLike;
-}
 
 export class EggPrototypeBuilder {
   private clazz: EggProtoImplClass;

@@ -1,8 +1,8 @@
-import { DataSourceOptions } from './MySqlDataSource';
-import { RDSClient } from '@eggjs/rds';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import assert from 'node:assert';
+import { RDSClient } from '@eggjs/rds';
+import { DataSourceOptions } from './MySqlDataSource';
 
 export class DatabaseForker {
   private readonly env: string;

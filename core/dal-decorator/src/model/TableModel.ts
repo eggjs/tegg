@@ -1,16 +1,13 @@
 import assert from 'node:assert';
-import { CompressionType } from '../enum/CompressionType';
-import { InsertMethod } from '../enum/InsertMethod';
-import { RowFormat } from '../enum/RowFormat';
-import { ColumnModel } from './ColumnModel';
-import { IndexModel } from './IndexModel';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { TableInfoUtil } from '../util/TableInfoUtil';
 import pluralize from 'pluralize';
 import snakecase from 'lodash.snakecase';
+import { IndexType } from '@eggjs/tegg-types';
+import type { CompressionType, EggProtoImplClass, InsertMethod, RowFormat } from '@eggjs/tegg-types';
+import { ColumnModel } from './ColumnModel';
+import { IndexModel } from './IndexModel';
+import { TableInfoUtil } from '../util/TableInfoUtil';
 import { ColumnInfoUtil } from '../util/ColumnInfoUtil';
 import { IndexInfoUtil } from '../util/IndexInfoUtil';
-import { IndexType } from '../enum/IndexType';
 
 export class TableModel<T=object> {
   clazz: EggProtoImplClass<T>;

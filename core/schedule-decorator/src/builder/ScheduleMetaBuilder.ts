@@ -1,7 +1,6 @@
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, ScheduleOptions } from '@eggjs/tegg-types';
 import { ScheduleMetadata } from '../model/ScheduleMetadata';
 import { ScheduleInfoUtil } from '../util/ScheduleInfoUtil';
-import { ScheduleOptions } from '../decorator/Schedule';
 
 const DEFAULT_SCHEDULE_OPTIONS: ScheduleOptions = {
   immediate: false,

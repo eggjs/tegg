@@ -1,4 +1,5 @@
-export * from './src/model/EggContainer';
+export * from '@eggjs/tegg-types/runtime';
+export { EggRuntimeContext as EggContext } from '@eggjs/tegg-types/runtime';
 export * from './src/model/EggContext';
 export * from './src/model/AbstractEggContext';
 export * from './src/model/LoadUnitInstance';

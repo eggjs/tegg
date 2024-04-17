@@ -1,5 +1,5 @@
-import { EggProtoImplClass } from '@eggjs/tegg';
-import { TransactionalParams, PropagationType } from '../Common';
+import { PropagationType } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, TransactionalParams } from '@eggjs/tegg-types';
 import { TransactionMetadataUtil } from '../util/TransactionMetadataUtil';
 
 export function Transactional(params?: TransactionalParams) {

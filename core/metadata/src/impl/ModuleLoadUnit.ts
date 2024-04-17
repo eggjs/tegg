@@ -1,23 +1,25 @@
-import assert from 'assert';
-import path from 'path';
-
-import { Graph, GraphNode, GraphNodeObj, MapUtil } from '@eggjs/tegg-common-util';
+import assert from 'node:assert';
+import path from 'node:path';
 import {
-  EggProtoImplClass,
-  EggPrototypeName,
+  EggLoadUnitType,
   InitTypeQualifierAttribute,
   LoadUnitNameQualifierAttribute,
+} from '@eggjs/tegg-types';
+import type {
+  EggProtoImplClass,
+  GraphNodeObj,
+  EggPrototype,
+  EggPrototypeName,
+  Loader,
+  LoadUnit,
+  LoadUnitLifecycleContext,
   ObjectInitTypeLike,
-  PrototypeUtil,
   QualifierInfo,
-  QualifierUtil,
-} from '@eggjs/core-decorator';
+} from '@eggjs/tegg-types';
+import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
+import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import { FrameworkErrorFormater } from 'egg-errors';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { LoadUnit, LoadUnitLifecycleContext } from '../model/LoadUnit';
-import { Loader } from '../model/Loader';
-import { EggPrototype } from '../model/EggPrototype';
-import { EggLoadUnitType } from '../enum/EggLoadUnitType';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { LoadUnitFactory } from '../factory/LoadUnitFactory';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';

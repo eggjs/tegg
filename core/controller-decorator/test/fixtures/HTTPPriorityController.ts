@@ -1,5 +1,6 @@
+import { HTTPMethodEnum } from '@eggjs/tegg-types';
 import { HTTPController } from '../../src/decorator/http/HTTPController';
-import { HTTPMethod, HTTPMethodEnum } from '../..';
+import { HTTPMethod } from '../..';
 
 @HTTPController({
   path: '/foo',

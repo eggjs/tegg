@@ -1,5 +1,5 @@
-import assert from 'assert';
-import { EggProtoImplClass } from '@eggjs/core-decorator';
+import assert from 'node:assert';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import ControllerInfoUtil from '../util/ControllerInfoUtil';
 import MethodInfoUtil from '../util/MethodInfoUtil';
 

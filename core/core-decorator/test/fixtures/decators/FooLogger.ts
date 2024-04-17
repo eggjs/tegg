@@ -1,6 +1,5 @@
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import { MultiInstanceProto } from '../../../src/decorator/MultiInstanceProto';
-import { AccessLevel } from '../../../src/enum/AccessLevel';
-import { ObjectInitType } from '../../../src/enum/ObjectInitType';
 
 export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
 

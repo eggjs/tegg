@@ -1,7 +1,8 @@
-import { AccessLevel, SingletonProto } from '@eggjs/core-decorator';
-import { EggContext } from '@eggjs/tegg-runtime';
+import { SingletonProto } from '@eggjs/core-decorator';
+import { AccessLevel } from '@eggjs/tegg-types';
+import type { EggRuntimeContext } from '@eggjs/tegg-types';
 
-export type ContextCreator = (parentContext?: EggContext) => EggContext;
+export type ContextCreator = (parentContext?: EggRuntimeContext) => EggRuntimeContext;
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -9,7 +10,7 @@ export type ContextCreator = (parentContext?: EggContext) => EggContext;
 export class EventContextFactory {
   private creator: ContextCreator;
 
-  createContext(parentContext?: EggContext): EggContext {
+  createContext(parentContext?: EggRuntimeContext): EggRuntimeContext {
     return this.creator(parentContext);
   }
 

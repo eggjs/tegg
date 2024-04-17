@@ -1,5 +1,7 @@
-import { ContextProto, EggProtoImplClass } from '@eggjs/core-decorator';
-import { Advice, Crosscut, IAdvice, PointcutType } from '../..';
+import { ContextProto } from '@eggjs/core-decorator';
+import { PointcutType } from '@eggjs/tegg-types';
+import type { EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
+import { Advice, Crosscut } from '../..';
 
 @ContextProto()
 export class CrosscutExample {

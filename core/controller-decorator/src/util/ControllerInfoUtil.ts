@@ -1,11 +1,12 @@
-import { ControllerTypeLike, MiddlewareFunc } from '../model';
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
-
-export const CONTROLLER_TYPE = Symbol.for('EggPrototype#controllerType');
-export const CONTROLLER_NAME = Symbol.for('EggPrototype#controllerName');
-export const CONTROLLER_HOST = Symbol.for('EggPrototype#controllerHost');
-export const CONTROLLER_MIDDLEWARES = Symbol.for('EggPrototype#controller#middlewares');
-export const CONTROLLER_ACL = Symbol.for('EggPrototype#controller#acl');
+import {
+  CONTROLLER_ACL,
+  CONTROLLER_HOST,
+  CONTROLLER_MIDDLEWARES,
+  CONTROLLER_NAME,
+  CONTROLLER_TYPE,
+} from '@eggjs/tegg-types';
+import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
+import { MetadataUtil } from '@eggjs/core-decorator';
 
 export default class ControllerInfoUtil {
   static addControllerMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass) {

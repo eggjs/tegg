@@ -1,7 +1,8 @@
-import { EggObject, EggObjectLifeCycleContext, EggObjectLifecycleUtil, EggObjectStatus } from '../model/EggObject';
-import { EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggObjectName, ObjectInitType } from '@eggjs/core-decorator';
-import { IdenticalUtil, EggObjectLifecycle } from '@eggjs/tegg-lifecycle';
+import { LoadUnitFactory } from '@eggjs/tegg-metadata';
+import { ObjectInitType, EggObjectStatus } from '@eggjs/tegg-types';
+import type { EggObject, EggObjectName, EggObjectLifecycle, EggObjectLifeCycleContext, EggPrototype } from '@eggjs/tegg-types';
+import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { EggObjectLifecycleUtil } from '../model/EggObject';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 import { EggObjectUtil } from './EggObjectUtil';
 import { ContextHandler } from '../model/ContextHandler';

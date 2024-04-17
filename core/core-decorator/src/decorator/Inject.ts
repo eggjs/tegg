@@ -1,11 +1,5 @@
-import { InjectObjectInfo } from '../model/InjectObjectInfo';
+import type { EggProtoImplClass, InjectObjectInfo, InjectParams } from '@eggjs/tegg-types';
 import { PrototypeUtil } from '../util/PrototypeUtil';
-import { EggProtoImplClass } from '../model/EggPrototypeInfo';
-
-export interface InjectParams {
-  // obj instance name, default is property name
-  name?: string;
-}
 
 export function Inject(param?: InjectParams | string) {
   return function(target: any, propertyKey: PropertyKey) {

@@ -1,4 +1,5 @@
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/core-decorator';
+import { MetadataUtil } from '@eggjs/core-decorator';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ModelMetadata } from '../model/ModelMetadata';
 
 export const MODEL_METADATA = Symbol.for('EggPrototype#model#metadata');

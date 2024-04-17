@@ -41,6 +41,7 @@
     "@eggjs/eventbus-decorator": "^3.37.1",
     "@eggjs/tegg-common-util": "^3.37.1",
     "@eggjs/tegg-runtime": "^3.37.1",
+    "@eggjs/tegg-types": "^3.37.1",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0"
   },
