@@ -7,7 +7,7 @@
       "schedule"
     ]
   },
-  "version": "3.37.2",
+  "version": "3.37.3",
   "description": "schedule decorator for egg",
   "keywords": [
     "egg",
@@ -49,19 +49,19 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.37.2",
-    "@eggjs/tegg": "^3.37.2",
-    "@eggjs/tegg-common-util": "^3.37.2",
-    "@eggjs/tegg-lifecycle": "^3.37.2",
-    "@eggjs/tegg-loader": "^3.37.2",
-    "@eggjs/tegg-metadata": "^3.37.2",
-    "@eggjs/tegg-runtime": "^3.37.2",
-    "@eggjs/tegg-schedule-decorator": "^3.37.2"
+    "@eggjs/egg-module-common": "^3.37.3",
+    "@eggjs/tegg": "^3.37.3",
+    "@eggjs/tegg-common-util": "^3.37.3",
+    "@eggjs/tegg-lifecycle": "^3.37.3",
+    "@eggjs/tegg-loader": "^3.37.3",
+    "@eggjs/tegg-metadata": "^3.37.3",
+    "@eggjs/tegg-runtime": "^3.37.3",
+    "@eggjs/tegg-schedule-decorator": "^3.37.3"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.37.2",
-    "@eggjs/tegg-config": "^3.37.2",
-    "@eggjs/tegg-plugin": "^3.37.2",
+    "@eggjs/module-test-util": "^3.37.3",
+    "@eggjs/tegg-config": "^3.37.3",
+    "@eggjs/tegg-plugin": "^3.37.3",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
