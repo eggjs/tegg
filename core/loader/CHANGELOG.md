@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.2](https://github.com/eggjs/tegg/compare/v3.37.1...v3.37.2) (2024-04-17)
+
+
+### Bug Fixes
+
+* always get extension from Module._extensions ([#211](https://github.com/eggjs/tegg/issues/211)) ([62e9c06](https://github.com/eggjs/tegg/commit/62e9c06f3cbde28d17d0e43797d4080279d7b9fa))
+
+
+
+
+
 ## [3.37.1](https://github.com/eggjs/tegg/compare/v3.37.0...v3.37.1) (2024-04-16)
 
 **Note:** Version bump only for package @eggjs/tegg-loader
