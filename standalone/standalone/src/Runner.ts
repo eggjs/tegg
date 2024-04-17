@@ -1,13 +1,17 @@
 import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
-  EggPrototype, EggPrototypeLifecycleUtil,
+  EggPrototype,
+  EggPrototypeLifecycleUtil,
   LoadUnit,
   LoadUnitFactory,
-  LoadUnitLifecycleUtil, LoadUnitMultiInstanceProtoHook,
+  LoadUnitLifecycleUtil,
+  LoadUnitMultiInstanceProtoHook,
 } from '@eggjs/tegg-metadata';
 import {
   ContextHandler,
-  EggContainerFactory, EggContext, EggObjectLifecycleUtil,
+  EggContainerFactory,
+  EggContext,
+  EggObjectLifecycleUtil,
   LoadUnitInstance,
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
@@ -102,6 +106,10 @@ export class Runner {
       obj: runtimeConfig,
     }];
 
+    // load module.yml and module.env.yml by default
+    if (!ModuleConfigUtil.configNames) {
+      ModuleConfigUtil.configNames = [ 'module.default', `module.${this.env}` ];
+    }
     for (const reference of this.moduleReferences) {
       const absoluteRef = {
         path: ModuleConfigUtil.resolveModuleDir(reference.path, this.cwd),
@@ -112,7 +120,7 @@ export class Runner {
       this.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path, undefined, this.env) || {},
+        config: ModuleConfigUtil.loadSync(absoluteRef.path, undefined),
       };
     }
     for (const moduleConfig of Object.values(this.moduleConfigs)) {
