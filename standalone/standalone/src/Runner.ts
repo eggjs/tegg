@@ -35,6 +35,7 @@ import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadU
 import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSourceManager';
 import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
 import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
+import { TransactionPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/TransactionPrototypeHook';
 
 export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;
@@ -64,6 +65,7 @@ export class Runner {
   private loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
   private dalTableEggPrototypeHook: DalTableEggPrototypeHook;
   private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
+  private transactionPrototypeHook: TransactionPrototypeHook;
 
   private readonly loadUnitInnerClassHook: LoadUnitInnerClassHook;
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
@@ -156,9 +158,11 @@ export class Runner {
 
     this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.env ?? '', this.moduleConfigs);
     const loggerInnerObject = this.innerObjects.logger && this.innerObjects.logger[0];
-    const logger = loggerInnerObject?.obj || console;
-    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(logger as Logger);
+    const logger = (loggerInnerObject?.obj || console) as Logger;
+    this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(logger);
+    this.transactionPrototypeHook = new TransactionPrototypeHook(this.moduleConfigs, logger);
     EggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
+    EggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
     LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }
 
@@ -256,6 +260,9 @@ export class Runner {
     }
     if (this.dalModuleLoadUnitHook) {
       LoadUnitLifecycleUtil.deleteLifecycle(this.dalModuleLoadUnitHook);
+    }
+    if (this.transactionPrototypeHook) {
+      EggPrototypeLifecycleUtil.deleteLifecycle(this.transactionPrototypeHook);
     }
     MysqlDataSourceManager.instance.clear();
     SqlMapManager.instance.clear();
