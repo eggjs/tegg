@@ -233,9 +233,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
       // insert_succeed_transaction_2
       assert.equal(foo[1].length, 1);
       // insert_failed_transaction_1
-      assert.equal(foo[0].length, 0);
+      assert.equal(foo[2].length, 0);
       // insert_failed_transaction_2
-      assert.equal(foo[1].length, 0);
+      assert.equal(foo[3].length, 0);
     });
   });
 
