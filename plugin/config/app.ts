@@ -30,7 +30,7 @@ export default class App implements IBoot {
       this.app.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadSync(absoluteRef.path),
+        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
       };
     }
   }

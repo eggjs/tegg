@@ -35,20 +35,6 @@ export class ModuleConfigUtil {
     ModuleConfigUtil.configNames = configNames;
   }
 
-  public static moduleYamlPath(modulePath: string, env?: string): string {
-    if (env) {
-      return path.join(modulePath, `module.${env}.yml`);
-    }
-    return path.join(modulePath, 'module.yml');
-  }
-
-  public static moduleJsonPath(modulePath: string, env?: string): string {
-    if (env) {
-      return path.join(modulePath, `module.${env}.json`);
-    }
-    return path.join(modulePath, 'module.json');
-  }
-
   public static readModuleReference(baseDir: string, options?: ReadModuleReferenceOptions): readonly ModuleReference[] {
     // 1. module.json exits use module.json as module reference
     // 1. module.json not exits scan baseDir get package.json to find modules
@@ -211,12 +197,18 @@ export class ModuleConfigUtil {
     return ModuleConfigUtil.getModuleName(pkg);
   }
 
-  public static async load(moduleDir: string, baseDir?: string): Promise<ModuleConfig> {
+  public static async loadModuleConfig(moduleDir: string, baseDir?: string, env?: string): Promise<ModuleConfig> {
     const modulePath = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    assert(ModuleConfigUtil.configNames, 'should setConfigNames before load module config');
+    let configNames: string[];
+    if (env) {
+      configNames = [ 'module', `module.${env}` ];
+    } else {
+      // assert(ModuleConfigUtil.configNames, 'should setConfigNames before load module config');
+      configNames = ModuleConfigUtil.configNames || [ 'module' ];
+    }
 
     const target: ModuleConfig = {};
-    for (const configName of ModuleConfigUtil.configNames) {
+    for (const configName of configNames) {
       let config = await ModuleConfigUtil.#loadOne(modulePath, configName);
       // both module.yml and module.default.yml are ok for default config
       if (configName === 'module.default' && !config) {
@@ -230,24 +222,6 @@ export class ModuleConfigUtil {
     return target;
   }
 
-  // @deprecated use load instead
-  public static async loadModuleConfig(moduleDir: string, baseDir?: string, env?: string): Promise<ModuleConfig | undefined> {
-    moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    let defaultConfig = await ModuleConfigUtil.loadModuleYaml(moduleDir);
-    if (!defaultConfig) {
-      defaultConfig = await ModuleConfigUtil.loadModuleJson(moduleDir);
-    }
-    let envConfig: ModuleConfig | undefined;
-    if (env) {
-      envConfig = await ModuleConfigUtil.loadModuleYaml(moduleDir, env);
-      if (!envConfig) {
-        envConfig = await ModuleConfigUtil.loadModuleJson(moduleDir, env);
-      }
-    }
-    extend(true, defaultConfig, envConfig);
-    return defaultConfig;
-  }
-
   static async #loadOne(moduleDir: string, configName: string): Promise<ModuleConfig | undefined> {
     const yamlConfigPath = path.join(moduleDir, `${configName}.yml`);
     let config = await ModuleConfigUtil.#loadYaml(yamlConfigPath);
@@ -256,11 +230,6 @@ export class ModuleConfigUtil {
       config = await ModuleConfigUtil.#loadJson(jsonConfigPath);
     }
     return config;
-  }
-
-  private static async loadModuleJson(moduleDir: string, env?: string): Promise<ModuleConfig | undefined> {
-    const moduleJsonPath = ModuleConfigUtil.moduleJsonPath(moduleDir, env);
-    return await ModuleConfigUtil.#loadJson(moduleJsonPath);
   }
 
   static async #loadJson(moduleJsonPath: string): Promise<ModuleConfig | undefined> {
@@ -273,11 +242,6 @@ export class ModuleConfigUtil {
     return moduleJson.config;
   }
 
-  private static async loadModuleYaml(moduleDir: string, env?: string): Promise<ModuleConfig | undefined> {
-    const moduleYamlPath = ModuleConfigUtil.moduleYamlPath(moduleDir, env);
-    return await ModuleConfigUtil.#loadYaml(moduleYamlPath);
-  }
-
   static async #loadYaml(moduleYamlPath: string): Promise<ModuleConfig | undefined> {
     const moduleYamlPathExists = await FSUtil.fileExists(moduleYamlPath);
     if (!moduleYamlPathExists) {
@@ -287,12 +251,18 @@ export class ModuleConfigUtil {
     return yaml.safeLoad(moduleYamlContent) as ModuleConfigUtil;
   }
 
-  public static loadSync(moduleDir: string, baseDir?: string): ModuleConfig {
+  public static loadModuleConfigSync(moduleDir: string, baseDir?: string, env?: string): ModuleConfig {
     const modulePath = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    assert(ModuleConfigUtil.configNames, 'should setConfigNames before load module config');
+    let configNames: string[];
+    if (env) {
+      configNames = [ 'module', `module.${env}` ];
+    } else {
+      // assert(ModuleConfigUtil.configNames, 'should setConfigNames before load module config');
+      configNames = ModuleConfigUtil.configNames || [ 'module' ];
+    }
 
     const target: ModuleConfig = {};
-    for (const configName of ModuleConfigUtil.configNames) {
+    for (const configName of configNames) {
       let config = ModuleConfigUtil.#loadOneSync(modulePath, configName);
       // both module.yml and module.default.yml are ok for default config
       if (configName === 'module.default' && !config) {
@@ -306,23 +276,6 @@ export class ModuleConfigUtil {
     return target;
   }
 
-  // @deprecated use loadSync instead
-  public static loadModuleConfigSync(moduleDir: string, baseDir?: string, env?: string): ModuleConfig | undefined {
-    moduleDir = ModuleConfigUtil.resolveModuleDir(moduleDir, baseDir);
-    let defaultConfig = ModuleConfigUtil.loadModuleYamlSync(moduleDir);
-    if (!defaultConfig) {
-      defaultConfig = ModuleConfigUtil.loadModuleJsonSync(moduleDir);
-    }
-    let envConfig: ModuleConfig | undefined;
-    if (env) {
-      envConfig = ModuleConfigUtil.loadModuleYamlSync(moduleDir, env);
-      if (!envConfig) {
-        envConfig = ModuleConfigUtil.loadModuleJsonSync(moduleDir, env);
-      }
-    }
-    return extend(true, defaultConfig, envConfig);
-  }
-
   static #loadOneSync(moduleDir: string, configName: string): ModuleConfig | undefined {
     const yamlConfigPath = path.join(moduleDir, `${configName}.yml`);
     let config = ModuleConfigUtil.#loadYamlSync(yamlConfigPath);
@@ -333,11 +286,6 @@ export class ModuleConfigUtil {
     return config;
   }
 
-  private static loadModuleJsonSync(moduleDir: string, env?: string): ModuleConfig | undefined {
-    const moduleJsonPath = ModuleConfigUtil.moduleJsonPath(moduleDir, env);
-    return ModuleConfigUtil.#loadJsonSync(moduleJsonPath);
-  }
-
   static #loadJsonSync(moduleJsonPath: string): ModuleConfig | undefined {
     const moduleJsonPathExists = fs.existsSync(moduleJsonPath);
     if (!moduleJsonPathExists) {
@@ -346,11 +294,6 @@ export class ModuleConfigUtil {
     const moduleJsonContent = fs.readFileSync(moduleJsonPath, 'utf8');
     const moduleJson = JSON.parse(moduleJsonContent);
     return moduleJson.config;
-  }
-
-  private static loadModuleYamlSync(moduleDir: string, env?: string): ModuleConfig | undefined {
-    const moduleYamlPath = ModuleConfigUtil.moduleYamlPath(moduleDir, env);
-    return ModuleConfigUtil.#loadYamlSync(moduleYamlPath);
   }
 
   static #loadYamlSync(moduleYamlPath: string): ModuleConfig | undefined {

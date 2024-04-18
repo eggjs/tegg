@@ -120,7 +120,7 @@ export class Runner {
       this.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadSync(absoluteRef.path),
+        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
       };
     }
     for (const moduleConfig of Object.values(this.moduleConfigs)) {
