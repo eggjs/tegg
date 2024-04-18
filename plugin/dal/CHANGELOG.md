@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.38.0](https://github.com/eggjs/tegg/compare/v3.37.3...v3.38.0) (2024-04-18)
+
+
+### Features
+
+* impl dal transaction ([#214](https://github.com/eggjs/tegg/issues/214)) ([b8b67dd](https://github.com/eggjs/tegg/commit/b8b67dd7e0fb282d78de7e68e68834ff79d30732))
+
+
+
+
+
 ## [3.37.3](https://github.com/eggjs/tegg/compare/v3.37.2...v3.37.3) (2024-04-17)
 
 **Note:** Version bump only for package @eggjs/tegg-dal-plugin
