@@ -43,4 +43,8 @@ export class MysqlDataSource extends Base {
   async query<T = any>(sql: string): Promise<T> {
     return this.client.query(sql);
   }
+
+  async beginTransactionScope<T>(scope: () => Promise<T>): Promise<T> {
+    return await this.client.beginTransactionScope(scope);
+  }
 }
