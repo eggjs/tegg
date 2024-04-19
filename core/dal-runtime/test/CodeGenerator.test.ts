@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { Foo } from './fixtures/modules/generate_codes/Foo';
 import { MultiPrimaryKey } from './fixtures/modules/generate_codes/MultiPrimaryKey';
 import { TableModel } from '@eggjs/dal-decorator';
@@ -18,5 +19,20 @@ describe('test/CodeGenerator.test.ts', () => {
     const multiPrimaryKeyTableModel = TableModel.build(MultiPrimaryKey);
     await generator.generate(multiPrimaryKeyTableModel);
     assert(fooModel);
+  });
+
+  it('should not overwrite Dao file', async () => {
+    const generator = new CodeGenerator({
+      moduleDir: path.join(__dirname, './fixtures/modules/generate_codes_not_overwrite_dao'),
+      moduleName: 'dal',
+      dalPkg: '@eggjs/dal-decorator',
+    });
+    const fooModel = TableModel.build(Foo);
+    await generator.generate(fooModel);
+
+    const multiPrimaryKeyTableModel = TableModel.build(MultiPrimaryKey);
+    await generator.generate(multiPrimaryKeyTableModel);
+    const daoFile = await fs.readFile(path.join(__dirname, './fixtures/modules/generate_codes_not_overwrite_dao/dal/dao/FooDAO.ts'), 'utf8');
+    assert(/customFind/.test(daoFile));
   });
 });
