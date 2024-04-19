@@ -94,16 +94,19 @@ export class CodeGenerator {
       templates: Templates.BASE_DAO,
       filePath: paths.baseBizDAO,
       beautify: true,
+      overwrite: true,
     }, {
       templates: Templates.DAO,
       filePath: paths.bizDAO,
       beautify: true,
+      overwrite: false,
     }, {
       templates: Templates.EXTENSION,
       filePath: paths.extension,
       beautify: false,
+      overwrite: true,
     }];
-    for (const { templates, filePath, beautify } of codes) {
+    for (const { templates, filePath, beautify, overwrite } of codes) {
       await fs.mkdir(path.dirname(filePath), {
         recursive: true,
       });
@@ -127,6 +130,14 @@ export class CodeGenerator {
         .replace(/Partial( )*<( )*(.+?)( )*>/g, 'Partial<$3>')
         .replace(/DataSource( )*<( )*(.+?)( )*>/g, 'DataSource<$3>')
         .replace(/ \? :/g, '?:');
+      if (overwrite !== true) {
+        try {
+          await fs.access(filePath);
+          continue;
+        } catch {
+          // file not exists
+        }
+      }
       await fs.writeFile(filePath, beautified, 'utf8');
     }
   }
