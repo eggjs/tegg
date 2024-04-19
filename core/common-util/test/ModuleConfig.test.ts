@@ -1,9 +1,13 @@
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { ModuleConfigUtil } from '../src/ModuleConfig';
 
 describe('test/ModuleConfig.test.ts', () => {
   describe('load yaml config', () => {
+    afterEach(() => {
+      ModuleConfigUtil.setConfigNames(undefined);
+    });
+
     it('should work', () => {
       const config = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/foo-yaml'));
       assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1' } });
@@ -13,6 +17,24 @@ describe('test/ModuleConfig.test.ts', () => {
       const config = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/dev-module-config'), undefined, 'dev');
       assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
     });
+
+    it('should load with configNames', async () => {
+      ModuleConfigUtil.setConfigNames([ 'module.default', 'module.dev' ]);
+      const config = await ModuleConfigUtil.loadModuleConfig(path.join(__dirname, './fixtures/modules/dev-module-config'));
+      const configSync = ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/dev-module-config'));
+      assert.deepStrictEqual(config, { mysql: { host: '127.0.0.1', port: 11306 } });
+      assert.deepStrictEqual(configSync, { mysql: { host: '127.0.0.1', port: 11306 } });
+    });
+
+    // it('should throw error without initialization', async () => {
+    //   await assert.rejects(async () => {
+    //     await ModuleConfigUtil.loadModuleConfig(path.join(__dirname, './fixtures/modules/dev-module-config'));
+    //   }, /should setConfigNames before load module config/);
+    //
+    //   assert.throws(() => {
+    //     ModuleConfigUtil.loadModuleConfigSync(path.join(__dirname, './fixtures/modules/dev-module-config'));
+    //   }, /should setConfigNames before load module config/);
+    // });
   });
 
   describe('load module reference', () => {

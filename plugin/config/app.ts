@@ -1,12 +1,15 @@
-import { Application } from 'egg';
-import { ModuleConfigUtil, ModuleReference } from '@eggjs/tegg-common-util';
+import type { Application, IBoot } from 'egg';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import type { ModuleReference } from '@eggjs/tegg-common-util';
 import { ModuleScanner } from './lib/ModuleScanner';
 
-export default class App {
+export default class App implements IBoot {
   private readonly app: Application;
 
   constructor(app: Application) {
     this.app = app;
+    const configNames = this.app.loader.getTypeFiles('module');
+    ModuleConfigUtil.setConfigNames(configNames);
   }
 
   configWillLoad() {
@@ -15,6 +18,7 @@ export default class App {
     this.app.moduleReferences = moduleScanner.loadModuleReferences();
 
     this.app.moduleConfigs = {};
+
     for (const reference of this.app.moduleReferences) {
       const absoluteRef: ModuleReference = {
         path: ModuleConfigUtil.resolveModuleDir(reference.path, this.app.baseDir),
@@ -26,8 +30,12 @@ export default class App {
       this.app.moduleConfigs[moduleName] = {
         name: moduleName,
         reference: absoluteRef,
-        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path, undefined, this.app.config.env) || {},
+        config: ModuleConfigUtil.loadModuleConfigSync(absoluteRef.path),
       };
     }
+  }
+
+  async beforeClose() {
+    ModuleConfigUtil.setConfigNames(undefined);
   }
 }
