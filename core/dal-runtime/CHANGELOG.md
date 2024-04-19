@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.39.0](https://github.com/eggjs/tegg/compare/v3.38.0...v3.39.0) (2024-04-19)
+
+
+### Bug Fixes
+
+* not overwrite dao file ([#215](https://github.com/eggjs/tegg/issues/215)) ([0856bf1](https://github.com/eggjs/tegg/commit/0856bf189b160c7209bc24cf7eb911ec2f5875d1))
+
+
+
+
+
 # [3.38.0](https://github.com/eggjs/tegg/compare/v3.37.3...v3.38.0) (2024-04-18)
 
 

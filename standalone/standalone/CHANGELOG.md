@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.39.0](https://github.com/eggjs/tegg/compare/v3.38.0...v3.39.0) (2024-04-19)
+
+
+### Features
+
+* use app.loader.getTypeFiles to generate module config file names ([#213](https://github.com/eggjs/tegg/issues/213)) ([e0656a4](https://github.com/eggjs/tegg/commit/e0656a4d59beef103a5627461d9b9c87996928e3))
+
+
+
+
+
 # [3.38.0](https://github.com/eggjs/tegg/compare/v3.37.3...v3.38.0) (2024-04-18)
 
 
