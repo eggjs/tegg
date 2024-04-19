@@ -223,6 +223,22 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
+  describe('dal transaction runner', () => {
+    it('should work', async () => {
+      const foo: Array<Array<Foo>> = await main(path.join(__dirname, './fixtures/dal-transaction-module'), {
+        env: 'unittest',
+      });
+      // insert_succeed_transaction_1
+      assert.equal(foo[0].length, 1);
+      // insert_succeed_transaction_2
+      assert.equal(foo[1].length, 1);
+      // insert_failed_transaction_1
+      assert.equal(foo[2].length, 0);
+      // insert_failed_transaction_2
+      assert.equal(foo[3].length, 0);
+    });
+  });
+
   describe('ajv runner', () => {
     it('should throw AjvInvalidParamError', async () => {
       await assert.rejects(async () => {
