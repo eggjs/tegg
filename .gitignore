@@ -19,6 +19,7 @@ yarn.lock
 *clinic-doctor*
 .nyc_output/
 dist
+esm
 
 **/*.js
 **/*.d.ts
@@ -44,4 +45,5 @@ plugin/tegg/test/fixtures/apps/**/*.js
 !standalone/standalone/test/fixtures/**/node_modules/**/*.js
 !plugin/tegg/test/fixtures/**/node_modules
 !plugin/config/test/fixtures/**/node_modules
+!scripts/**/*.js
 .node

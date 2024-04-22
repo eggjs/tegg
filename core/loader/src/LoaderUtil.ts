@@ -44,6 +44,7 @@ export class LoaderUtil {
       '!**/coverage',
       // extra file pattern
       ...(this.config.extraFilePattern || []),
+      ...(typeof require === 'undefined' ? [ '!**/dist' ] : [ '!**/esm' ]),
     ];
 
     return filePattern;

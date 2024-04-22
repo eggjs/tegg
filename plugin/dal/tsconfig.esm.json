@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "ES2020",
+    "target": "ESNext",
+    "outDir": "esm",
+    "baseUrl": "./"
+  },
+  "exclude": [
+    "node_modules",
+    "test",
+    "esm"
+  ]
+}

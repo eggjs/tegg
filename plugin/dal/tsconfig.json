@@ -4,6 +4,7 @@
     "baseUrl": "./"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "esm"
   ]
 }

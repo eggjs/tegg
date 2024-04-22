@@ -27,7 +27,9 @@
     "lib/**/*.d.ts",
     "app/**/*.js",
     "app/**/*.d.ts",
-    "typings/*.d.ts"
+    "typings/*.d.ts",
+    "esm/**/*.js",
+    "esm/**/*.d.ts"
   ],
   "types": "typings/index.d.ts",
   "scripts": {
