@@ -37,13 +37,26 @@ const DIST_EXPORTS_VALUE = {
         default: "./dist/index.js",
       },
     },
+    "./*": {
+      import: {
+        types: "./esm/*.d.ts",
+        default: "./esm/*.js",
+      },
+      require: {
+        types: "./dist/*.d.ts",
+        default: "./dist/*.js",
+      },
+    },
   },
 };
 
 const ROOT_PACKAGE_NAMES = ["@eggjs/tegg"];
 
+const IGNORE_DIR = ["dist", "node_modules", "test", "esm"];
+
 module.exports = {
   ROOT_EXPORTS_VALUE,
   DIST_EXPORTS_VALUE,
   ROOT_PACKAGE_NAMES,
+  IGNORE_DIR,
 };
