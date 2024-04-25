@@ -1,8 +1,10 @@
 {
   "useWorkspaces": true,
-  "version": "3.39.0",
+  "version": "3.39.0-alpha.1",
   "npmClientArgs": [
-    "--package-lock=false"
+    "--package-lock=false",
+    "--tag",
+    "alpha"
   ],
   "lerna": "1.6.4"
 }

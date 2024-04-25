@@ -15,7 +15,7 @@ const getExports = (paths, isRoot) => {
   for (const p of paths) {
     res.exports[isRoot ? `./${p}/*` : `./src/${p}/*`] = {
       import: {
-        types: isRoot ?`./esm/${p}/*.d.ts` : `./esm/src/${p}/*.d.ts`,
+        types: isRoot ? `./esm/${p}/*.d.ts` : `./esm/src/${p}/*.d.ts`,
         default: isRoot ? `./esm/${p}/*.js` : `./esm/src/${p}/*.js`,
       },
       require: {
@@ -29,7 +29,7 @@ const getExports = (paths, isRoot) => {
 };
 
 // get all sub dir
-const traverseFolder = async (directory, arr) => {
+const traverseFolder = async (directory, arr, root) => {
   const res = arr ?? [];
   const files = await fs.readdir(directory);
 
@@ -42,9 +42,9 @@ const traverseFolder = async (directory, arr) => {
     const isDirectory = (await fs.stat(filePath)).isDirectory();
 
     if (isDirectory) {
-      res.push(path.relative(directory, filePath));
+      res.push(path.relative(root ?? directory, filePath));
 
-      await traverseFolder(filePath, res);
+      await traverseFolder(filePath, res, root ?? directory);
     }
   }
 

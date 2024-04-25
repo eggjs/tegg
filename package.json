@@ -19,7 +19,7 @@
     "lint": "eslint . --ext .ts",
     "test": "npm run test --workspaces --if-present",
     "cov": "nyc npm run test",
-    "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
+    "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish --exact 3.39.0-alpha.1",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
     "clean": "lerna run --parallel clean",

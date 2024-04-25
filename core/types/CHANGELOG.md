@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
+
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
+# [3.39.0-alpha.1](https://github.com/eggjs/tegg/compare/v3.39.0...v3.39.0-alpha.1) (2024-04-25)
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
+
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
 # [3.39.0](https://github.com/eggjs/tegg/compare/v3.38.0...v3.39.0) (2024-04-19)
 
 **Note:** Version bump only for package @eggjs/tegg-types

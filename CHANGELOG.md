@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+
+
+**Note:** Version bump only for package tegg
+
+
+
+
+
+
+
+**Note:** Version bump only for package tegg
+
+
+
+
+
+# [3.39.0-alpha.1](https://github.com/eggjs/tegg/compare/v3.39.0...v3.39.0-alpha.1) (2024-04-25)
+
+
+### Features
+
+* add build script ([31c1d87](https://github.com/eggjs/tegg/commit/31c1d877054f7c3d1a38cad907439776a9cb9f9d))
+* add esm version ([933134c](https://github.com/eggjs/tegg/commit/933134cbd873918303e47eeb11e08eba5c735400))
+
+
+
+
+
+
+
+**Note:** Version bump only for package tegg
+
+
+
+
+
 # [3.39.0](https://github.com/eggjs/tegg/compare/v3.38.0...v3.39.0) (2024-04-19)
 
 
