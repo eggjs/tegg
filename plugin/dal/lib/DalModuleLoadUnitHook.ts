@@ -1,5 +1,4 @@
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
-import path from 'node:path';
 import { LifecycleHook, ModuleConfigHolder } from '@eggjs/tegg';
 import { DatabaseForker, DataSourceOptions } from '@eggjs/dal-runtime';
 import { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
@@ -25,7 +24,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
       };
       const forker = new DatabaseForker(this.env, dataSourceOptions);
       if (forker.shouldFork()) {
-        await forker.forkDb(path.join(loadUnit.unitPath, 'dal'));
+        await forker.forkDb(loadUnit.unitPath);
       }
 
       try {

@@ -1,7 +1,13 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/dal-decorator';
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
+import { Inject } from '@eggjs/tegg';
+import { Dao } from '@eggjs/tegg/dal';
 import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '@eggjs/dal-decorator';
 import { MultiPrimaryKey } from '../../../MultiPrimaryKey';
+import MultiPrimaryKeyExtension from '../../extension/MultiPrimaryKeyExtension';
+import Structure from '../../structure/MultiPrimaryKey.json';
+const SQL = Symbol('Dao#sql');
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 /**
@@ -10,11 +16,17 @@ type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
  * @classdesc 该文件由 @eggjs/tegg 自动生成，请**不要**修改它！
  */
 /* istanbul ignore next */
-@SingletonProto({
-  accessLevel: AccessLevel.PUBLIC,
-})
+@Dao()
 export class BaseMultiPrimaryKeyDAO {
   static clazzModel = MultiPrimaryKey;
+  static clazzExtension = MultiPrimaryKeyExtension;
+  static tableStature = Structure;
+  static get tableSql() {
+    if (!this[SQL]) {
+      this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/MultiPrimaryKey.sql'), 'utf8');
+    }
+    return this[SQL];
+  }
   @Inject({
     name: DataSourceInjectName,
   })

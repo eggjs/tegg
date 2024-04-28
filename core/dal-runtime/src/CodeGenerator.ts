@@ -49,6 +49,9 @@ export class CodeGenerator {
       id: tableModel.columns.find(t => t.propertyName === 'id'),
       primaryIndex: tableModel.getPrimary(),
       tableModelPath: TemplateUtil.importPath(tableModelAbsolutePath, path.dirname(filePath)),
+      extensionPath: `../../extension/${tableModel.clazz.name}Extension`,
+      structurePath: `../../structure/${tableModel.clazz.name}.json`,
+      sqlPath: `../../structure/${tableModel.clazz.name}.sql`,
       columnMap: tableModel.columns.reduce<Record<string, ColumnModel>>((p, c) => {
         p[c.propertyName] = c;
         return p;

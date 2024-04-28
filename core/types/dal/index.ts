@@ -13,6 +13,7 @@ export * from './type/ColumnTsType';
 export * from './type/DateSource';
 export * from './type/Spatial';
 export * from './type/SqlMap';
+export * from './type/BaseDao';
 
 export * from './decorator/Column';
 export * from './decorator/DataSourceQualifier';
