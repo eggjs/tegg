@@ -65,7 +65,8 @@ jobs:
         run: brew install mysql@5.7
 
       - name: Start Mysql
-        run: /usr/local/opt/mysql@5.7/bin/mysql.server start
+        ## arm64/x86 homebrew mysql path different
+        run: /usr/local/opt/mysql@5.7/bin/mysql.server start || /opt/homebrew/Cellar/mysql@5.7/5.7.44_1/bin/mysql.server start
 
       - name: Install Npm
         run: npm i -g npm@9
