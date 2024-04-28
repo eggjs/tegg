@@ -28,6 +28,8 @@ plugin/**/dist
 plugin/oneapi/test/fixtures/modules/*/oneapi
 plugin/dal/test/fixtures/modules/*/dal/
 core/dal-runtime/test/fixtures/modules/*/dal
+core/dal-runtime/test/fixtures/modules/*/src/dal/
+!core/dal-runtime/test/fixtures/modules/generate_codes_not_overwrite_dao/dal/extension/FooExtension.ts
 !core/dal-runtime/test/fixtures/modules/generate_codes_not_overwrite_dao/dal/dao/FooDAO.ts
 
 plugin/tegg/test/fixtures/apps/**/*.js
