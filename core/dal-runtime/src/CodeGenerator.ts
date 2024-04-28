@@ -58,7 +58,13 @@ export class CodeGenerator {
   }
 
   async generate(tableModel: TableModel) {
-    const dalDir = path.join(this.moduleDir, 'dal');
+    let dalDir: string;
+    try {
+      await fs.access(path.join(this.moduleDir, 'src'));
+      dalDir = path.join(this.moduleDir, 'src/dal');
+    } catch {
+      dalDir = path.join(this.moduleDir, 'dal');
+    }
 
     // const tableName = tableModel.name;
     // const clazzName = tableModel.clazz.name;
@@ -104,7 +110,7 @@ export class CodeGenerator {
       templates: Templates.EXTENSION,
       filePath: paths.extension,
       beautify: false,
-      overwrite: true,
+      overwrite: false,
     }];
     for (const { templates, filePath, beautify, overwrite } of codes) {
       await fs.mkdir(path.dirname(filePath), {
