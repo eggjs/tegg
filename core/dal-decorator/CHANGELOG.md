@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.3](https://github.com/eggjs/tegg/compare/v3.39.2...v3.39.3) (2024-04-28)
+
+
+### Bug Fixes
+
+* mount clazzExtension/clazzExtension/tableSql to BaseDao ([#220](https://github.com/eggjs/tegg/issues/220)) ([ac322cf](https://github.com/eggjs/tegg/commit/ac322cfc4100841a1483b04b99e04d553af323eb))
+
+
+
+
+
 ## [3.39.2](https://github.com/eggjs/tegg/compare/v3.39.1...v3.39.2) (2024-04-28)
 
 **Note:** Version bump only for package @eggjs/dal-decorator
