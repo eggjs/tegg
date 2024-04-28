@@ -1,20 +1,26 @@
 import assert from 'node:assert';
-import path from 'node:path';
-import fs from 'node:fs';
 import {
   AccessLevel,
+  LifecycleInit,
   MultiInstanceProto,
   MultiInstancePrototypeGetObjectsContext,
   ObjectInfo,
   ObjectInitType,
-  LifecycleInit,
 } from '@eggjs/tegg';
-import { ModuleConfigUtil, LoaderUtil, EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
 import {
+  EggLoadUnitType,
+  EggObject,
+  EggObjectLifeCycleContext,
+  LoaderFactory,
+  ModuleConfigUtil,
+} from '@eggjs/tegg/helper';
+import {
+  DataSource as IDataSource,
   DataSourceInjectName,
   DataSourceQualifierAttribute,
+  PaginateData,
   TableInfoUtil,
-  DataSource as IDataSource, TableModel, PaginateData,
+  TableModel,
 } from '@eggjs/tegg/dal';
 import { DataSource } from '@eggjs/dal-runtime';
 import { TableModelManager } from './TableModelManager';
@@ -28,25 +34,12 @@ import { SqlMapManager } from './SqlMapManager';
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as any | undefined;
     const dataSources = Object.keys(config?.dataSource || {});
     const result: ObjectInfo[] = [];
-    const daoDir = path.join(ctx.unitPath, 'dal/dao');
-    let dirents: string[];
-    try {
-      dirents = fs.readdirSync(daoDir);
-    } catch {
-      return [];
-    }
-    const daos = dirents.filter(t => t.endsWith(`DAO${LoaderUtil.extension}`));
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const daoClazzList = daos.map(t => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      return require(path.join(daoDir, t)).default;
-    });
-    const tableClazzList = daoClazzList.map(t => {
-      // eslint-disable-next-line no-proto
-      return Object.getPrototypeOf(t).clazzModel;
+    const loader = LoaderFactory.createLoader(ctx.unitPath, EggLoadUnitType.MODULE);
+    const clazzList = loader.load();
+    const tableClazzList = clazzList.filter(t => {
+      return TableInfoUtil.getIsTable(t);
     });
     const dataSourceLength = dataSources.length;
-
     for (const dataSource of dataSources) {
       const moduleClazzList = tableClazzList.filter(clazz => {
         const tableParams = TableInfoUtil.getTableParams(clazz);
