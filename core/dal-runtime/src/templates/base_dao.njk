@@ -68,10 +68,18 @@ Optional<{{clazzName}},
 >
 {% endmacro %}
 
+import fs from 'node:fs';
+import path from 'node:path';
 import type { InsertResult, UpdateResult, DeleteResult } from '{{dalPkg}}';
-import { SingletonProto, AccessLevel, Inject } from '{{teggPkg}}';
+import { Inject } from '{{teggPkg}}';
+import { Dao } from '{{teggPkg}}/dal';
 import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '{{dalPkg}}';
 import { {{ clazzName }} } from '{{ tableModelPath }}';
+import {{ clazzName }}Extension from '{{ extensionPath }}';
+import Structure from '{{ structurePath }}';
+
+const SQL = Symbol('Dao#sql');
+
 // empty-line
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 /**
@@ -80,11 +88,17 @@ type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
  * @classdesc 该文件由 {{teggPkg}} 自动生成，请**不要**修改它！
  */
 /* istanbul ignore next */
-@SingletonProto({
-  accessLevel: AccessLevel.PUBLIC,
-})
+@Dao()
 export class Base{{ clazzName }}DAO {
   static clazzModel = {{ clazzName }};
+  static clazzExtension = {{ clazzName }}Extension;
+  static tableStature = Structure;
+  static get tableSql() {
+    if (!this[SQL]) {
+      this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/{{clazzName}}.sql'), 'utf8');
+    }
+    return this[SQL];
+  }
 
   @Inject({
     name: DataSourceInjectName,

@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import { ModuleConfig, ModuleConfigs } from '@eggjs/tegg/helper';
 import { main, StandaloneContext, Runner } from '..';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
-import { Foo } from './fixtures/dal-module/Foo';
+import { Foo } from './fixtures/dal-module/src/Foo';
 
 describe('standalone/standalone/test/index.test.ts', () => {
   describe('simple runner', () => {

@@ -1,7 +1,12 @@
 import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types';
-import { SingletonProto, AccessLevel, Inject, ModuleQualifier } from '@eggjs/tegg';
-import { DataSource, DataSourceInjectName, DataSourceQualifier } from '@eggjs/tegg/dal';
+import { Inject, ModuleQualifier } from '@eggjs/tegg';
+import { Dao, DataSource, DataSourceInjectName, DataSourceQualifier } from '@eggjs/tegg/dal';
 import { Foo } from '../../../../generate_codes/Foo';
+import FooExtension from '../../extension/FooExtension';
+import Structure from '../../structure/Foo.json';
+import fs from 'node:fs';
+import path from 'node:path';
+const SQL = Symbol('Dao#sql');
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 /**
@@ -10,13 +15,20 @@ type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
  * @classdesc 该文件由 @eggjs/tegg 自动生成，请**不要**修改它！
  */
 /* istanbul ignore next */
-@SingletonProto({
-  accessLevel: AccessLevel.PUBLIC,
-})
+@Dao()
 export class BaseFooDAO {
   @Inject({
     name: DataSourceInjectName,
   })
+  static clazzExtension = FooExtension;
+  static clazzModel = Foo;
+  static tableStature = Structure;
+  static get tableSql() {
+    if (!this[SQL]) {
+      this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/Foo.sql'), 'utf8');
+    }
+    return this[SQL];
+  }
   @ModuleQualifier('dal')
   @DataSourceQualifier('default.Foo')
   protected readonly dataSource: DataSource<Foo> ;

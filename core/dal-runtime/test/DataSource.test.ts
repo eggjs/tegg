@@ -8,6 +8,7 @@ import { Foo } from './fixtures/modules/dal/Foo';
 import { DataSource } from '../src/DataSource';
 import { TableModelInstanceBuilder } from '../src/TableModelInstanceBuilder';
 import { DatabaseForker } from '../src/DatabaseForker';
+import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO';
 
 describe('test/Datasource.test.ts', () => {
   let dataSource: DataSource<Foo>;
@@ -25,12 +26,12 @@ describe('test/Datasource.test.ts', () => {
       forkDb: true,
     };
     forker = new DatabaseForker('unittest', mysqlOptions);
-    await forker.forkDb(path.join(__dirname, './fixtures/modules/dal/dal'));
+    await forker.forkDb(path.join(__dirname, './fixtures/modules/dal'));
     const mysql = new MysqlDataSource(mysqlOptions);
     await mysql.ready();
 
     tableModel = TableModel.build(Foo);
-    const sqlMapLoader = new SqlMapLoader(tableModel, path.join(__dirname, './fixtures/modules/dal'), console as any);
+    const sqlMapLoader = new SqlMapLoader(tableModel, BaseFooDAO, console as any);
     const sqlMap = sqlMapLoader.load();
     dataSource = new DataSource(tableModel, mysql, sqlMap);
   });

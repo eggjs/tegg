@@ -1,22 +1,32 @@
-import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types';
-import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import { DataSource, DataSourceInjectName, DataSourceQualifier } from '@eggjs/tegg/dal';
+import fs from 'node:fs';
+import path from 'node:path';
+import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/dal-decorator';
+import { Inject } from '@eggjs/tegg';
+import { Dao } from '@eggjs/tegg/dal';
+import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '@eggjs/dal-decorator';
 import { Foo } from '../../../Foo';
+import FooExtension from '../../extension/FooExtension';
+import Structure from '../../structure/Foo.json';
+const SQL = Symbol('Dao#sql');
 
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
+type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 /**
  * 自动生成的 FooDAO 基类
  * @class BaseFooDAO
  * @classdesc 该文件由 @eggjs/tegg 自动生成，请**不要**修改它！
  */
-
 /* istanbul ignore next */
-@SingletonProto({
-  accessLevel: AccessLevel.PUBLIC,
-})
+@Dao()
 export class BaseFooDAO {
   static clazzModel = Foo;
-
+  static clazzExtension = FooExtension;
+  static tableStature = Structure;
+  static get tableSql() {
+    if (!this[SQL]) {
+      this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/Foo.sql'), 'utf8');
+    }
+    return this[SQL];
+  }
   @Inject({
     name: DataSourceInjectName,
   })
@@ -230,7 +240,7 @@ export class BaseFooDAO {
     return this.dataSource.executeRawScalar('insert', data);
   }
 
-  public async update(id: number, data: Partial<Foo>): Promise<UpdateResult> {
+  public async update(id: ColumnTsType['INT'], data: Partial<Foo>): Promise<UpdateResult> {
 
     const newData: Record<string, any> = {
       primary: {
@@ -442,51 +452,51 @@ export class BaseFooDAO {
     return this.dataSource.executeRawScalar('update', newData);
   }
 
-  public async delete(id: number): Promise<DeleteResult> {
+  public async delete(id: ColumnTsType['INT']): Promise<DeleteResult> {
     return this.dataSource.executeRawScalar('delete', {
       id,
     });
   }
 
-  public async del(id: number): Promise<DeleteResult> {
+  public async del(id: ColumnTsType['INT']): Promise<DeleteResult> {
     return this.dataSource.executeRawScalar('delete', {
       id,
     });
   }
 
-  public async findByCol1($col1: string): Promise<Foo[]> {
+  public async findByCol1($col1: ColumnTsType['VARCHAR']): Promise<Foo[]> {
     return this.dataSource.execute('findByCol1', {
       $col1,
     });
   }
 
-  public async findOneByCol1($col1: string): Promise<Foo | null> {
+  public async findOneByCol1($col1: ColumnTsType['VARCHAR']): Promise<Foo | null> {
     return this.dataSource.executeScalar('findOneByCol1', {
       $col1,
     });
   }
 
-  public async findByUkNameCol1($name: string, $col1: string): Promise<Foo[]> {
+  public async findByUkNameCol1($name: ColumnTsType['VARCHAR'], $col1: ColumnTsType['VARCHAR']): Promise<Foo[]> {
     return this.dataSource.execute('findByUkNameCol1', {
       $name,
       $col1,
     });
   }
 
-  public async findOneByUkNameCol1($name: string, $col1: string): Promise<Foo | null> {
+  public async findOneByUkNameCol1($name: ColumnTsType['VARCHAR'], $col1: ColumnTsType['VARCHAR']): Promise<Foo | null> {
     return this.dataSource.executeScalar('findOneByUkNameCol1', {
       $name,
       $col1,
     });
   }
 
-  public async findById($id: number): Promise<Foo | null> {
+  public async findById($id: ColumnTsType['INT']): Promise<Foo | null> {
     return this.dataSource.executeScalar('findById', {
       $id,
     });
   }
 
-  public async findByPrimary($id: number): Promise<Foo | null> {
+  public async findByPrimary($id: ColumnTsType['INT']): Promise<Foo | null> {
     return this.dataSource.executeScalar('findById', {
       $id,
     });
