@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dal-runtime",
-  "version": "3.39.1",
+  "version": "3.39.2",
   "description": "tegg dal decorator",
   "keywords": [
     "egg",
@@ -40,8 +40,8 @@
   },
   "dependencies": {
     "@eggjs/rds": "^1.0.0",
-    "@eggjs/tegg": "^3.39.1",
-    "@eggjs/tegg-types": "^3.39.1",
+    "@eggjs/tegg": "^3.39.2",
+    "@eggjs/tegg-types": "^3.39.2",
     "js-beautify": "^1.15.1",
     "lodash": "^4.17.21",
     "nunjucks": "^3.2.4",
