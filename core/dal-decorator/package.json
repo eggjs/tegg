@@ -41,7 +41,7 @@
     "@eggjs/tegg-common-util": "^3.39.3",
     "@eggjs/tegg-types": "^3.39.3",
     "lodash.snakecase": "^4.1.1",
-    "pluralize": "^7.0.0"
+    "pluralize": "^8.0.0"
   },
   "publishConfig": {
     "access": "public"
