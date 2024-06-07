@@ -6,6 +6,9 @@ module.exports = () => {
         ignoreJSON: false,
       },
     },
+    bodyParser: {
+      onProtoPoisoning: 'remove',
+    },
   };
   return config;
 };
