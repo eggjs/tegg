@@ -12,14 +12,18 @@
   "main": "dist/index.js",
   "files": [
     "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "dist/**/*.d.ts",
+    "esm/**/*.js",
+    "esm/**/*.d.ts"
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
-    "clean": "tsc -b --clean",
+    "clean": "tsc -b --clean && npm run clean:esm",
+    "clean:esm": "node ../../scripts/clean-esm.js",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:esm": "npm run clean:esm && node ../../scripts/build-esm.js &&tsc -p ./tsconfig.esm.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json && npm run tsc:esm",
     "prepublishOnly": "npm run tsc:pub"
   },
   "homepage": "https://github.com/eggjs/tegg",

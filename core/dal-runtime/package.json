@@ -13,15 +13,20 @@
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",
-    "dist/**/*.njk"
+    "dist/**/*.njk",
+    "esm/**/*.js",
+    "esm/**/*.d.ts",
+    "esm/**/*.njk"
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
-    "clean": "tsc -b --clean",
+    "clean": "tsc -b --clean && npm run clean:esm",
+    "clean:esm": "node ../../scripts/clean-esm.js",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json && npm run cp:template",
-    "cp:template": "rm -rf dist/src/templates && cp -r src/templates dist/src/templates",
+    "tsc:esm": "npm run clean:esm && node ../../scripts/build-esm.js &&tsc -p ./tsconfig.esm.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json && npm run tsc:esm && npm run cp:template",
+    "cp:template": "rm -rf dist/src/templates && cp -r src/templates dist/src/templates && rm -rf esm/src/templates && cp -r src/templates esm/src/templates",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
