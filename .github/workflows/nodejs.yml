@@ -31,10 +31,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install Npm
-      run: npm i -g npm@9
+      run: npm i -g @cnpmjs/rapid
 
     - name: Install Dependencies
-      run: npm i
+      run: rapid --experimental-local-resolver
 
     - name: Continuous integration
       run: |
