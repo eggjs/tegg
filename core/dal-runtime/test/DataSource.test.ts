@@ -146,5 +146,8 @@ describe('test/Datasource.test.ts', () => {
       $id: insertResult.insertId,
     });
     assert.equal(findRow2, null);
+
+    const res = await dataSource.paginate('findByPrimary', {}, 1, 10);
+    assert(res.total === 0);
   });
 });
