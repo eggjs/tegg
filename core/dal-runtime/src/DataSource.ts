@@ -77,7 +77,7 @@ export class DataSource<T> implements IDataSource<T> {
     ]);
 
     return {
-      total: ret[1],
+      total: Number(ret[1]),
       pageNum: currentPage,
       rows: ret[0].map(t => TableModelInstanceBuilder.buildInstance(this.tableModel, t)),
     };
