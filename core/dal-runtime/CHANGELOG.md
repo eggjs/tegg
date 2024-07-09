@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.4](https://github.com/eggjs/tegg/compare/v3.39.3...v3.39.4) (2024-07-09)
+
+
+### Bug Fixes
+
+* fix total type in paginate ([#228](https://github.com/eggjs/tegg/issues/228)) ([e57b91e](https://github.com/eggjs/tegg/commit/e57b91ee64e89487a3cc1663868d9b819e6e60c0))
+
+
+
+
+
 ## [3.39.3](https://github.com/eggjs/tegg/compare/v3.39.2...v3.39.3) (2024-04-28)
 
 
