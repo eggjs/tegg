@@ -113,7 +113,7 @@ export class TableModel<T=object> {
 
     const indexList = IndexInfoUtil.getIndexList(clazz as EggProtoImplClass);
     for (const index of indexList) {
-      indices.push(IndexModel.build(index, columns));
+      indices.push(IndexModel.build(index, columns, clazz));
     }
 
     return new TableModel({

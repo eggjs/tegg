@@ -55,7 +55,7 @@ async function init() {
 (async () => {
   try {
     // TODO win32 ci not support mysql
-    if (os.platform() === 'win32') {
+    if ([ 'darwin', 'win32' ].includes(os.platform())) {
       return;
     }
     connect();
