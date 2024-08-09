@@ -1,4 +1,4 @@
-import { IndexType } from '@eggjs/tegg-types';
+import { EggProtoImplClass, IndexType } from '@eggjs/tegg-types';
 import type { IndexParams, IndexStoreType } from '@eggjs/tegg-types';
 import { ColumnModel } from './ColumnModel';
 
@@ -43,19 +43,19 @@ export class IndexModel {
     return prefix + keys.join('_');
   }
 
-  static build(params: IndexParams, columns: ColumnModel[]) {
+  static build(params: IndexParams, columns: ColumnModel[], clazz: EggProtoImplClass<unknown>) {
     const type = params.type ?? IndexType.INDEX;
-    const name = params.name ?? IndexModel.buildIndexName(params.keys, type);
     const keys: Array<IndexKey> = params.keys.map(t => {
       const column = columns.find(c => c.propertyName === t);
       if (!column) {
-        throw new Error(`Index "${name}" configuration error: has no property named "${t}"`);
+        throw new Error(`Table ${clazz.name} index configuration error: has no property named "${t}"`);
       }
       return {
         propertyName: column!.propertyName,
         columnName: column!.columnName,
       };
     });
+    const name = params.name ?? IndexModel.buildIndexName(keys.map(t => t.columnName), type);
     return new IndexModel({
       name,
       keys,

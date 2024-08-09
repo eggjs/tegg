@@ -3,6 +3,7 @@ import { TableModel } from '@eggjs/dal-decorator';
 import { Foo } from './fixtures/modules/dal/Foo';
 import { SqlGenerator } from '../src/SqlGenerator';
 import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime';
+import { FooIndexName } from './fixtures/modules/dal/FooIndexName';
 
 describe('test/SqlGenerator.test.ts', () => {
   it('generator should work', () => {
@@ -66,5 +67,21 @@ describe('test/SqlGenerator.test.ts', () => {
       '  date_3 TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL UNIQUE KEY,\n' +
       '  date_4 TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) NOT NULL UNIQUE KEY\n' +
       ') ;');
+  });
+
+  it('generator index name should work', () => {
+    const generator = new SqlGenerator();
+    const fooIndexNameTableModel = TableModel.build(FooIndexName);
+    const sql = generator.generate(fooIndexNameTableModel);
+    assert.equal(sql, 'CREATE TABLE IF NOT EXISTS egg_foo (\n' +
+      '  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT \'the primary key\',\n' +
+      '  name VARCHAR(100) NOT NULL UNIQUE KEY,\n' +
+      '  col1 VARCHAR(100) NOT NULL,\n' +
+      '  bit_column BIT(10) NOT NULL,\n' +
+      '  bool_column BOOL NOT NULL,\n' +
+      '  FULLTEXT KEY idx_col1_bool_column (col1,bool_column) COMMENT \'index comment\\n\',\n' +
+      '  UNIQUE KEY uk_name_col1_bit_column (name,col1,bit_column) USING BTREE COMMENT \'index comment\\n\'\n' +
+      ') DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_unicode_ci, COMMENT=\'foo table\';',
+    );
   });
 });

@@ -62,11 +62,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Mysql
-        run: brew install mysql@5.7
+        run: brew install mysql
 
       - name: Start Mysql
         ## arm64/x86 homebrew mysql path different
-        run: /usr/local/opt/mysql@5.7/bin/mysql.server start || /opt/homebrew/Cellar/mysql@5.7/5.7.44_1/bin/mysql.server start
+        run: brew services start mysql
 
       - name: Install Npm
         run: npm i -g npm@9

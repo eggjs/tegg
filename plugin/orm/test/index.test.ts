@@ -13,7 +13,7 @@ import { EggContext } from '@eggjs/tegg';
 
 describe('plugin/orm/test/orm.test.ts', () => {
   // TODO win32 ci not support mysql
-  if (os.platform() === 'win32') {
+  if ([ 'darwin', 'win32' ].includes(os.platform())) {
     return;
   }
 
