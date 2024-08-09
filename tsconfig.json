@@ -1,8 +1,9 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ESNext",
     "module": "CommonJS",
+    "moduleResolution": "node",
     "strict": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
