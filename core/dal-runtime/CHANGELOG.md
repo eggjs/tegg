@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.39.5](https://github.com/eggjs/tegg/compare/v3.39.4...v3.39.5) (2024-08-09)
+
+
+### Bug Fixes
+
+* generate index name with column name ([#230](https://github.com/eggjs/tegg/issues/230)) ([82ec72d](https://github.com/eggjs/tegg/commit/82ec72d4fb8628c847b32d0ddf23a95119ca6ccf))
+
+
+
+
+
 ## [3.39.4](https://github.com/eggjs/tegg/compare/v3.39.3...v3.39.4) (2024-07-09)
 
 
