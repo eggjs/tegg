@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.40.0](https://github.com/eggjs/tegg/compare/v3.39.5...v3.40.0) (2024-08-22)
+
+
+### Features
+
+* @Middleware support Advice ([#231](https://github.com/eggjs/tegg/issues/231)) ([613a89d](https://github.com/eggjs/tegg/commit/613a89da7ea6dd70d50e34aa9f4152358a622625))
+
+
+
+
+
 ## [3.39.5](https://github.com/eggjs/tegg/compare/v3.39.4...v3.39.5) (2024-08-09)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
