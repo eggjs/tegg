@@ -13,11 +13,7 @@ export class ControllerMetadataUtil {
     if (metadata) {
       return metadata;
     }
-    const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(clazz);
-    if (!builder) {
-      return;
-    }
-    metadata = builder.build();
+    metadata = ControllerMetaBuilderFactory.build(clazz);
     if (metadata) {
       ControllerMetadataUtil.setControllerMetadata(clazz, metadata);
     }

@@ -2,6 +2,7 @@ export const CONTROLLER_TYPE = Symbol.for('EggPrototype#controllerType');
 export const CONTROLLER_NAME = Symbol.for('EggPrototype#controllerName');
 export const CONTROLLER_HOST = Symbol.for('EggPrototype#controllerHost');
 export const CONTROLLER_MIDDLEWARES = Symbol.for('EggPrototype#controller#middlewares');
+export const CONTROLLER_AOP_MIDDLEWARES = Symbol.for('EggPrototype#controller#aopMiddlewares');
 export const CONTROLLER_ACL = Symbol.for('EggPrototype#controller#acl');
 
 export const CONTROLLER_META_DATA = Symbol.for('EggPrototype#controller#metaData');
@@ -17,4 +18,6 @@ export const METHOD_CONTROLLER_TYPE_MAP = Symbol.for('EggPrototype#controller#mt
 export const METHOD_CONTROLLER_HOST = Symbol.for('EggPrototype#controller#mthods#host');
 export const METHOD_CONTEXT_INDEX = Symbol.for('EggPrototype#controller#method#context');
 export const METHOD_MIDDLEWARES = Symbol.for('EggPrototype#method#middlewares');
+export const METHOD_AOP_MIDDLEWARES = Symbol.for('EggPrototype#method#aopMiddlewares');
+export const METHOD_AOP_REGISTER_MAP = Symbol.for('EggPrototype#method#aopMiddlewaresRegister');
 export const METHOD_ACL = Symbol.for('EggPrototype#method#acl');

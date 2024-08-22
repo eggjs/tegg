@@ -1,5 +1,8 @@
 [
   {
+    "path": "../modules/multi-module-common"
+  },
+  {
     "path": "../modules/multi-module-repo"
   },
   {

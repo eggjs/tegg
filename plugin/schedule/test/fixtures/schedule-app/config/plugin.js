@@ -12,7 +12,6 @@ exports.teggConfig = {
   enable: true,
 };
 
-console.log('path: ', path.join(__dirname, '../../../'));
 exports.teggSchedule = {
   path: path.join(__dirname, '../../../..'),
   enable: true,

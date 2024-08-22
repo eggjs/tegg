@@ -38,12 +38,14 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "^3.39.5",
+    "@eggjs/aop-decorator": "^3.39.5",
     "@eggjs/tegg-common-util": "^3.39.5",
     "@eggjs/tegg-metadata": "^3.39.5",
     "@eggjs/tegg-types": "^3.39.5",
     "path-to-regexp": "^1.8.0",
     "reflect-metadata": "^0.1.13",
-    "undici": "^5.26.5"
+    "undici": "^5.26.5",
+    "is-type-of": "^1.2.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",

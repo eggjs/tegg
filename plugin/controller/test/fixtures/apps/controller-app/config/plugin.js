@@ -14,3 +14,8 @@ exports.teggConfig = {
   package: '@eggjs/tegg-config',
   enable: true,
 };
+
+exports.aopModule = {
+  package: '@eggjs/tegg-aop-plugin',
+  enable: true,
+};
