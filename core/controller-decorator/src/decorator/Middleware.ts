@@ -11,7 +11,7 @@ enum MiddlewareType {
 }
 
 function isAop(mw: MiddlewareFunc | EggProtoImplClass<IAdvice>) {
-  return is.class(mw) && AdviceInfoUtil.isAdvice(mw);
+  return is.class(mw) && AdviceInfoUtil.isAdvice(mw as EggProtoImplClass<IAdvice>);
 }
 
 function isAopTypeOrMiddlewareType(middlewares: Array<MiddlewareFunc> | Array<EggProtoImplClass<IAdvice>>): MiddlewareType {
