@@ -7,11 +7,7 @@ import {
 
 export class EggControllerPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   async postCreate(ctx: EggPrototypeLifecycleContext): Promise<void> {
-    const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(ctx.clazz);
-    if (!builder) {
-      return;
-    }
-    const metadata = builder.build();
+    const metadata = ControllerMetaBuilderFactory.build(ctx.clazz);
     if (metadata) {
       ControllerMetadataUtil.setControllerMetadata(ctx.clazz, metadata);
     }

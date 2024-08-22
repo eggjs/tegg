@@ -17,7 +17,7 @@ describe('plugin/controller/test/lib/EggModuleLoader.test.ts', () => {
     const controllerDir = path.join(__dirname, '../fixtures/apps/controller-app/app/controller');
     const loader = new EggControllerLoader(controllerDir);
     const clazzs = loader.load();
-    assert(clazzs.length === 6);
+    assert(clazzs.length === 7);
     const AppController = clazzs[0];
     const metadata = ControllerMetadataUtil.getControllerMetadata(AppController);
     assert(metadata);
