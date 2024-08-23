@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.40.1](https://github.com/eggjs/tegg/compare/v3.40.0...v3.40.1) (2024-08-23)
+
+
+### Bug Fixes
+
+* use symbol.for instead of symbol ([#232](https://github.com/eggjs/tegg/issues/232)) ([4254ce5](https://github.com/eggjs/tegg/commit/4254ce558d22234f9dfff0ea9bc067075e21c654))
+
+
+
+
+
 # [3.40.0](https://github.com/eggjs/tegg/compare/v3.39.5...v3.40.0) (2024-08-22)
 
 
