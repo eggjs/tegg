@@ -12,3 +12,5 @@ export * from './src/decorator/http/Host';
 export * from './src/builder/ControllerMetaBuilderFactory';
 export * from './src/util/ControllerMetadataUtil';
 export * from './src/util/HTTPPriorityUtil';
+
+export { default as ControllerInfoUtil } from './src/util/ControllerInfoUtil';
