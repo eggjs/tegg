@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.41.0](https://github.com/eggjs/tegg/compare/v3.40.1...v3.41.0) (2024-08-26)
+
+
+### Features
+
+* export controller info util for get aop middleware ([#233](https://github.com/eggjs/tegg/issues/233)) ([1d3cca8](https://github.com/eggjs/tegg/commit/1d3cca8fad859ae54fb10c1700dda261e93055b3))
+
+
+
+
+
 ## [3.40.1](https://github.com/eggjs/tegg/compare/v3.40.0...v3.40.1) (2024-08-23)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
