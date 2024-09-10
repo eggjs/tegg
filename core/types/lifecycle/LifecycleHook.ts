@@ -4,6 +4,7 @@ export interface LifecycleContext {
 }
 
 export interface LifecycleObject<T extends LifecycleContext> extends IdenticalObject {
+  preLoad?(): Promise<void>;
   init?(ctx: T): Promise<void>;
   destroy?(ctx: T): Promise<void>;
 }

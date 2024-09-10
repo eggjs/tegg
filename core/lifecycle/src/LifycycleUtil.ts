@@ -98,4 +98,9 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     const LIFECYCLE_HOOK = Symbol.for(`EggPrototype#Lifecycle${hookName}`);
     return proto.getMetaData<string>(LIFECYCLE_HOOK);
   }
+
+  static getStaticLifecycleHook(hookName: LifecycleHookName, clazz: EggProtoImplClass) {
+    const LIFECYCLE_HOOK = Symbol.for(`EggPrototype#Lifecycle${hookName}`);
+    return MetadataUtil.getMetaData<string>(LIFECYCLE_HOOK, clazz);
+  }
 }

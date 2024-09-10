@@ -1,5 +1,14 @@
 import { Runner, RunnerOptions } from './Runner';
 
+export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+  try {
+    await Runner.preLoad(cwd, dependencies);
+  } catch (e) {
+    e.message = `[tegg/standalone] bootstrap standalone preLoad failed: ${e.message}`;
+    throw e;
+  }
+}
+
 export async function main<T = void>(cwd: string, options?: RunnerOptions): Promise<T> {
   const runner = new Runner(cwd, options);
   try {

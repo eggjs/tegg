@@ -5,6 +5,10 @@ import type { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
  */
 export interface EggObjectLifecycle {
   /**
+   * call before project load
+   */
+  preLoad?(ctx: EggObjectLifeCycleContext): Promise<void>;
+  /**
    * call after construct
    */
   postConstruct?(ctx: EggObjectLifeCycleContext, eggObj: EggObject): Promise<void>;

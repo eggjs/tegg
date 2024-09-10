@@ -1,8 +1,8 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert, deepStrictEqual } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { ModuleConfig, ModuleConfigs } from '@eggjs/tegg/helper';
-import { main, StandaloneContext, Runner } from '..';
+import { main, StandaloneContext, Runner, preLoad } from '..';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 import { Foo } from './fixtures/dal-module/src/Foo';
 
@@ -274,6 +274,30 @@ describe('standalone/standalone/test/index.test.ts', () => {
         ],
       });
       assert.equal(result, '{"body":{"fullname":"mock fullname","skipDependencies":true,"registryName":"ok"}}');
+    });
+  });
+
+  describe('lifecycle', () => {
+    const fixturePath = path.join(__dirname, './fixtures/lifecycle');
+    let Foo;
+
+    beforeEach(() => {
+      delete require.cache[require.resolve(path.join(fixturePath, './foo'))];
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      Foo = require(path.join(fixturePath, './foo')).Foo;
+    });
+
+    it('should work', async () => {
+      await preLoad(fixturePath);
+      await main(fixturePath);
+      deepStrictEqual(Foo.staticCalled, [
+        'preLoad',
+        'construct',
+        'postConstruct',
+        'preInject',
+        'postInject',
+        'init',
+      ]);
     });
   });
 });
