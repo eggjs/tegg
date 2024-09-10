@@ -19,7 +19,7 @@ import type {
 import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import { FrameworkErrorFormater } from 'egg-errors';
-import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { IdenticalUtil, LifecycleUtil } from '@eggjs/tegg-lifecycle';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { LoadUnitFactory } from '../factory/LoadUnitFactory';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
@@ -180,6 +180,16 @@ export class ModuleLoadUnit implements LoadUnit {
       });
     }
     return clazzList;
+  }
+
+  async preLoad() {
+    const clazzList = this.loader.load();
+    for (const protoClass of clazzList) {
+      const fnName = LifecycleUtil.getStaticLifecycleHook('preLoad', protoClass);
+      if (fnName) {
+        await protoClass[fnName]?.();
+      }
+    }
   }
 
   async init() {

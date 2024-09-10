@@ -85,11 +85,7 @@ export class Runner {
     this.cwd = cwd;
     this.env = options?.env;
     this.name = options?.name;
-    const moduleDirs = (options?.dependencies || []).concat(this.cwd);
-    this.moduleReferences = moduleDirs.reduce((list, baseDir) => {
-      const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
-      return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
-    }, [] as readonly ModuleReference[]);
+    this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
     this.moduleConfigs = {};
     this.innerObjects = {
       moduleConfigs: [{
@@ -187,6 +183,19 @@ export class Runner {
     });
     const loadUnits = await this.loadUnitLoader.load();
     return [ standaloneLoadUnit, ...loadUnits ];
+  }
+
+  static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+    const moduleDirs = (dependencies || []).concat(cwd);
+    return moduleDirs.reduce((list, baseDir) => {
+      const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
+      return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
+    }, [] as readonly ModuleReference[]);
+  }
+
+  static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+    const moduleReferences = Runner.getModuleReferences(cwd, dependencies);
+    await EggModuleLoader.preLoad(moduleReferences);
   }
 
   async init() {

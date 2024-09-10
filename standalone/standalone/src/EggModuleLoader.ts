@@ -10,9 +10,9 @@ export class EggModuleLoader {
     this.moduleReferences = moduleReferences;
   }
 
-  private buildAppGraph(loaderCache: Map<string, Loader>) {
+  private static generateAppGraph(loaderCache: Map<string, Loader>, moduleReferences: readonly ModuleReference[]) {
     const appGraph = new AppGraph();
-    for (const moduleConfig of this.moduleReferences) {
+    for (const moduleConfig of moduleReferences) {
       const modulePath = moduleConfig.path;
       const moduleNode = new ModuleNode(moduleConfig);
       const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
@@ -27,10 +27,10 @@ export class EggModuleLoader {
     return appGraph;
   }
 
-  async load(): Promise<LoadUnit[]> {
+  private static async generateLoadUnits(moduleReferences: readonly ModuleReference[]) {
     const loadUnits: LoadUnit[] = [];
     const loaderCache = new Map<string, Loader>();
-    const appGraph = this.buildAppGraph(loaderCache);
+    const appGraph = EggModuleLoader.generateAppGraph(loaderCache, moduleReferences);
     appGraph.sort();
     const moduleConfigList = appGraph.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
@@ -40,6 +40,16 @@ export class EggModuleLoader {
       loadUnits.push(loadUnit);
     }
     return loadUnits;
-    // return loadUnits;
+  }
+
+  async load(): Promise<LoadUnit[]> {
+    return await EggModuleLoader.generateLoadUnits(this.moduleReferences);
+  }
+
+  static async preLoad(moduleReferences: readonly ModuleReference[]): Promise<void> {
+    const loads = await EggModuleLoader.generateLoadUnits(moduleReferences);
+    for (const load of loads) {
+      await load.preLoad?.();
+    }
   }
 }
