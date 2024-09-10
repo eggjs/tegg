@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.42.0](https://github.com/eggjs/tegg/compare/v3.41.0...v3.42.0) (2024-09-10)
+
+
+### Features
+
+* add LifecyclePreLoad ([#234](https://github.com/eggjs/tegg/issues/234)) ([2b72163](https://github.com/eggjs/tegg/commit/2b7216387f02cd045952447eaa21baa3a7ee04a3))
+
+
+
+
+
 # [3.41.0](https://github.com/eggjs/tegg/compare/v3.40.1...v3.41.0) (2024-08-26)
 
 **Note:** Version bump only for package @eggjs/tegg-lifecycle
