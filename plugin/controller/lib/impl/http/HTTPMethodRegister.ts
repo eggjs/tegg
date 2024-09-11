@@ -9,6 +9,7 @@ import {
   PathParamMeta,
   QueriesParamMeta,
   QueryParamMeta,
+  HTTPCookies,
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
@@ -95,6 +96,10 @@ export class HTTPMethodRegister {
           }
           case HTTPParamType.REQUEST: {
             args[index] = new HTTPRequest(ctx);
+            break;
+          }
+          case HTTPParamType.COOKIES: {
+            args[index] = new HTTPCookies(ctx, []);
             break;
           }
           default:

@@ -41,11 +41,13 @@ describe('plugin/controller/test/http/request.test.ts', () => {
         .post('/apps/testRequest')
         .send(param)
         .set('test', headerKey)
+        .set('cookie', 'test=foo')
         .expect(200)
         .expect(res => {
           assert(res.body.headers.test === headerKey);
           assert(res.body.method === 'POST');
           assert(res.body.requestBody === JSON.stringify(param));
+          assert(res.body.cookies === 'foo');
         });
     });
   }

@@ -7,6 +7,8 @@ import {
   Middleware,
   Request,
   HTTPRequest,
+  Cookies,
+  HTTPCookies,
 } from '@eggjs/tegg';
 import { countMw } from '../middleware/count_mw';
 
@@ -20,7 +22,8 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '/testRequest',
   })
-  async testRequest(@Context() ctx: EggContext, @Request() request: HTTPRequest) {
+
+  async testRequest(@Context() ctx: EggContext, @Request() request: HTTPRequest, @Cookies() cookies: HTTPCookies) {
     const traceId = await ctx.tracer.traceId;
     return {
       success: true,
@@ -28,6 +31,7 @@ export class AppController {
       headers: Object.fromEntries(request.headers),
       method: request.method,
       requestBody: await request.text(),
+      cookies: cookies.get('test', { signed: false }),
     };
   }
 }

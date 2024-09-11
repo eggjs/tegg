@@ -45,4 +45,5 @@ export enum HTTPParamType {
   PARAM = 'PARAM',
   REQUEST = 'REQUEST',
   HEADERS = 'HEADERS',
+  COOKIES = 'COOKIES',
 }
