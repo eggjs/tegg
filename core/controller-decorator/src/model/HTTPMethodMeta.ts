@@ -78,6 +78,15 @@ export class PathParamMeta extends ParamMeta {
   }
 }
 
+export class CookiesParamMeta extends ParamMeta {
+  type = HTTPParamType.COOKIES;
+
+  validate() {
+    return;
+  }
+}
+
+
 export class HTTPMethodMeta implements MethodMeta {
   public readonly name: string;
   public readonly path: string;
@@ -138,6 +147,9 @@ export class ParamMetaUtil {
       }
       case HTTPParamType.REQUEST: {
         return new RequestParamMeta();
+      }
+      case HTTPParamType.COOKIES: {
+        return new CookiesParamMeta();
       }
       default:
         assert.fail('never arrive');
