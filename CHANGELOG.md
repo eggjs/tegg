@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.43.0](https://github.com/eggjs/tegg/compare/v3.42.0...v3.43.0) (2024-09-13)
+
+
+### Features
+
+* add http cookies ([#235](https://github.com/eggjs/tegg/issues/235)) ([f46efa5](https://github.com/eggjs/tegg/commit/f46efa54b03bad41504bf76f6ed2baa8c48858ce))
+
+
+
+
+
 # [3.42.0](https://github.com/eggjs/tegg/compare/v3.41.0...v3.42.0) (2024-09-10)
 
 
