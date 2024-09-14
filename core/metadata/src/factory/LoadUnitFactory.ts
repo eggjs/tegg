@@ -14,48 +14,60 @@ export class LoadUnitFactory {
   private static loadUnitMap: Map<string, LoadUnitPair> = new Map();
   private static loadUnitIdMap: Map<Id, LoadUnit> = new Map();
 
-  static async createLoadUnit(unitPath: string, type: EggLoadUnitTypeLike, loader: Loader): Promise<LoadUnit> {
-    if (this.loadUnitMap.has(unitPath)) {
-      return this.loadUnitMap.get(unitPath)!.loadUnit;
-    }
-    const creator = this.loadUnitCreatorMap.get(type);
+  protected static async getLoanUnit(ctx: LoadUnitLifecycleContext, type: EggLoadUnitTypeLike) {
+    const creator = LoadUnitFactory.loadUnitCreatorMap.get(type);
     if (!creator) {
       throw new Error(`not find creator for load unit type ${type}`);
+    }
+    return await creator(ctx);
+  }
+
+  static async createLoadUnit(unitPath: string, type: EggLoadUnitTypeLike, loader: Loader): Promise<LoadUnit> {
+    if (LoadUnitFactory.loadUnitMap.has(unitPath)) {
+      return LoadUnitFactory.loadUnitMap.get(unitPath)!.loadUnit;
     }
     const ctx: LoadUnitLifecycleContext = {
       unitPath,
       loader,
     };
-    const loadUnit = await creator(ctx);
+    const loadUnit = await LoadUnitFactory.getLoanUnit(ctx, type);
     await LoadUnitLifecycleUtil.objectPreCreate(ctx, loadUnit);
     if (loadUnit.init) {
       await loadUnit.init(ctx);
     }
     await LoadUnitLifecycleUtil.objectPostCreate(ctx, loadUnit);
-    this.loadUnitMap.set(unitPath, { loadUnit, ctx });
-    this.loadUnitIdMap.set(loadUnit.id, loadUnit);
+    LoadUnitFactory.loadUnitMap.set(unitPath, { loadUnit, ctx });
+    LoadUnitFactory.loadUnitIdMap.set(loadUnit.id, loadUnit);
     return loadUnit;
   }
 
+  static async createPreloadLoadUnit(unitPath: string, type: EggLoadUnitTypeLike, loader: Loader): Promise<LoadUnit> {
+    const ctx: LoadUnitLifecycleContext = {
+      unitPath,
+      loader,
+    };
+    return await LoadUnitFactory.getLoanUnit(ctx, type);
+  }
+
   static async destroyLoadUnit(loadUnit: LoadUnit) {
-    const { ctx } = this.loadUnitMap.get(loadUnit.unitPath)!;
+    const { ctx } = LoadUnitFactory.loadUnitMap.get(loadUnit.unitPath)!;
     try {
       await LoadUnitLifecycleUtil.objectPreDestroy(ctx, loadUnit);
       if (loadUnit.destroy) {
         await loadUnit.destroy(ctx);
       }
     } finally {
-      this.loadUnitMap.delete(loadUnit.unitPath);
-      this.loadUnitIdMap.delete(loadUnit.id);
+      LoadUnitFactory.loadUnitMap.delete(loadUnit.unitPath);
+      LoadUnitFactory.loadUnitIdMap.delete(loadUnit.id);
       LoadUnitLifecycleUtil.clearObjectLifecycle(loadUnit);
     }
   }
 
   static getLoadUnitById(id: Id): LoadUnit | undefined {
-    return this.loadUnitIdMap.get(id);
+    return LoadUnitFactory.loadUnitIdMap.get(id);
   }
 
   static registerLoadUnitCreator(type: EggLoadUnitTypeLike, creator: LoadUnitCreator) {
-    this.loadUnitCreatorMap.set(type, creator);
+    LoadUnitFactory.loadUnitCreatorMap.set(type, creator);
   }
 }
