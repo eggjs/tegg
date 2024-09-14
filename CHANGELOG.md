@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.43.2](https://github.com/eggjs/tegg/compare/v3.43.1...v3.43.2) (2024-09-14)
+
+
+### Bug Fixes
+
+* add preload loadunit ([#236](https://github.com/eggjs/tegg/issues/236)) ([0e28972](https://github.com/eggjs/tegg/commit/0e2897200a9bc3bc6aa1028c8549bdbf45bbaaa3))
+
+
+
+
+
 ## [3.43.1](https://github.com/eggjs/tegg/compare/v3.43.0...v3.43.1) (2024-09-14)
 
 **Note:** Version bump only for package tegg
