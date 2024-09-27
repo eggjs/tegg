@@ -1,5 +1,5 @@
-import { MapUtil } from '@eggjs/tegg-common-util';
-import { PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
+import { MapUtil, ObjectUtils } from '@eggjs/tegg-common-util';
+import { CONSTRUCTOR_QUALIFIER_META_DATA, PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierValue } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
 
@@ -24,6 +24,16 @@ export class QualifierUtil {
     return res;
   }
 
+  static addInjectQualifier(clazz: EggProtoImplClass, property: PropertyKey | undefined, parameterIndex: number | undefined, attribute: QualifierAttribute, value: QualifierValue) {
+    if (typeof parameterIndex === 'number') {
+      const argNames = ObjectUtils.getConstructorArgNameList(clazz);
+      const argName = argNames[parameterIndex];
+      QualifierUtil.addProperQualifier(clazz, argName, attribute, value);
+    } else {
+      QualifierUtil.addProperQualifier((clazz as any).constructor, property!, attribute, value);
+    }
+  }
+
   static addProperQualifier(clazz: EggProtoImplClass, property: PropertyKey, attribute: QualifierAttribute, value: QualifierValue) {
     const properQualifiers = MetadataUtil.initOwnMapMetaData(PROPERTY_QUALIFIER_META_DATA, clazz, new Map<PropertyKey, Map<QualifierAttribute, QualifierValue>>());
     const qualifiers = MapUtil.getOrStore(properQualifiers, property, new Map());
@@ -31,6 +41,11 @@ export class QualifierUtil {
   }
 
   static getProperQualifiers(clazz: EggProtoImplClass, property: PropertyKey): QualifierInfo[] {
+    const constructorQualifiers = MetadataUtil.initOwnMapMetaData(CONSTRUCTOR_QUALIFIER_META_DATA, clazz, new Map<number, Map<QualifierAttribute, QualifierValue>>());
+    if (constructorQualifiers.size) {
+      Array.from(constructorQualifiers.values());
+    }
+
     const properQualifiers: Map<PropertyKey, Map<QualifierAttribute, QualifierValue>> | undefined = MetadataUtil.getMetaData(PROPERTY_QUALIFIER_META_DATA, clazz);
     const qualifiers = properQualifiers?.get(property);
     if (!qualifiers) {

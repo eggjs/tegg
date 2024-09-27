@@ -2,7 +2,7 @@ import {
   AccessLevel,
   EggProtoImplClass,
   EggPrototypeInfo,
-  EggPrototypeName,
+  EggPrototypeName, InjectType,
   MetaDataKey,
   ObjectInitTypeLike,
   QualifierAttribute,
@@ -13,6 +13,29 @@ import { LifecycleContext, LifecycleObject } from '../../lifecycle';
 import { LoadUnit } from './LoadUnit';
 
 export interface InjectObjectProto {
+  /**
+   * property name obj inject to
+   */
+  refName: PropertyKey;
+  /**
+   * obj's name will be injected
+   */
+  objName: PropertyKey;
+  /**
+   * inject qualifiers
+   */
+  qualifiers: QualifierInfo[];
+  /**
+   * inject prototype
+   */
+  proto: EggPrototype;
+}
+
+export interface InjectConstructorProto {
+  /**
+   * inject args index
+   */
+  refIndex: number;
   /**
    * property name obj inject to
    */
@@ -47,6 +70,26 @@ export interface InjectObject {
   initType?: ObjectInitTypeLike;
 }
 
+export interface InjectConstructor {
+  /**
+   * property name obj inject to
+   */
+  refIndex: number;
+  /**
+   * property name obj inject to
+   */
+  refName: PropertyKey;
+  /**
+   * obj's name will be injected
+   */
+  objName: PropertyKey;
+  /**
+   * obj's initType will be injected
+   * if null same as current obj
+   */
+  initType?: ObjectInitTypeLike;
+}
+
 export type EggPrototypeClass = new (...args: any[]) => EggPrototype;
 
 export interface EggPrototypeLifecycleContext extends LifecycleContext {
@@ -63,7 +106,8 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   readonly initType: ObjectInitTypeLike;
   readonly accessLevel: AccessLevel;
   readonly loadUnitId: string;
-  readonly injectObjects: InjectObjectProto[];
+  readonly injectObjects: Array<InjectObjectProto | InjectConstructorProto>;
+  readonly injectType?: InjectType;
   readonly className?: string;
 
   /**
@@ -88,7 +132,7 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   /**
    * construct egg object, not trigger lifecycle method/hook
    */
-  constructEggObject(): object;
+  constructEggObject(...args: any): object;
 }
 
 export interface EggPrototypeWithClazz extends EggPrototype {

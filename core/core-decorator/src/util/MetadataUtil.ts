@@ -32,6 +32,20 @@ export class MetadataUtil {
   }
 
   /**
+   * init array metadata
+   * not inherit parent metadata
+   * return value true means use default value
+   * return value false means use map value
+   */
+  static initArrayMetaData<T>(metadataKey: MetaDataKey, clazz: EggProtoImplClass, defaultValue: Array<T>): Array<T> {
+    const ownMetaData: Array<T> | undefined = this.getOwnMetaData(metadataKey, clazz);
+    if (!ownMetaData) {
+      this.defineMetaData(metadataKey, defaultValue, clazz);
+    }
+    return this.getOwnMetaData<Array<T>>(metadataKey, clazz)!;
+  }
+
+  /**
    * init own array metadata
    * if parent metadata exists, inherit
    * if parent metadata not exits, use default value

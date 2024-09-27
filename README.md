@@ -498,6 +498,25 @@ export class HelloService {
 }
 ```
 
+也可在构造函数中使用 `Inject` 注解。注意 property 和 构造函数两种模式只能选一种，不能混用。
+
+```typescript
+import { EggLogger } from 'egg';
+import { Inject } from '@eggjs/tegg';
+
+@ContextProto()
+export class HelloService {
+  constructor(@Inject() readonly logger: EggLogger) {
+  }
+
+  async hello(user: User): Promise<string> {
+    this.logger.info(`[HelloService] hello ${user.name}`);
+    const echoResponse = await this.echoAdapter.echo({ name: user.name });
+    return `hello, ${echoResponse.name}`;
+  }
+}
+```
+
 ##### 复杂示例
 
 ```typescript

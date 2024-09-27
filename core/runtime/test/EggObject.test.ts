@@ -8,6 +8,7 @@ import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object';
 import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base';
 import { ContextHandler } from '../src/model/ContextHandler';
 import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object';
+import { SingletonConstructorBar } from './fixtures/modules/inject-constructor-context-to-singleton/object';
 
 describe('test/EggObject.test.ts', () => {
   let ctx: EggTestContext;
@@ -106,6 +107,25 @@ describe('test/EggObject.test.ts', () => {
       });
       const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
       const bar = barObj.obj as SingletonBar;
+      const msg = await bar.hello();
+      assert(msg === 'hello from depth2');
+      await TestUtil.destroyLoadUnitInstance(instance);
+      await ctx.destroy({});
+    });
+  });
+
+  describe('constructor inject context to singleton', () => {
+    it('should work', async () => {
+      mm(ContextHandler, 'getContext', () => {
+        return;
+      });
+      const instance = await TestUtil.createLoadUnitInstance('inject-constructor-context-to-singleton');
+      const barProto = EggPrototypeFactory.instance.getPrototype('singletonConstructorBar');
+      mm(ContextHandler, 'getContext', () => {
+        return ctx;
+      });
+      const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
+      const bar = barObj.obj as SingletonConstructorBar;
       const msg = await bar.hello();
       assert(msg === 'hello from depth2');
       await TestUtil.destroyLoadUnitInstance(instance);

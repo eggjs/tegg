@@ -1,15 +1,16 @@
-import { MetadataUtil } from '@eggjs/core-decorator';
+import { InjectType, MetadataUtil } from '@eggjs/core-decorator';
 import type {
   AccessLevel,
-  EggPrototype,
   EggProtoImplClass,
+  EggPrototype,
   EggPrototypeName,
+  Id,
+  InjectConstructorProto,
+  InjectObjectProto,
   MetaDataKey,
   ObjectInitTypeLike,
   QualifierInfo,
   QualifierValue,
-  Id,
-  InjectObjectProto,
 } from '@eggjs/tegg-types';
 
 export class EggPrototypeImpl implements EggPrototype {
@@ -21,7 +22,8 @@ export class EggPrototypeImpl implements EggPrototype {
   readonly name: EggPrototypeName;
   readonly initType: ObjectInitTypeLike;
   readonly accessLevel: AccessLevel;
-  readonly injectObjects: InjectObjectProto[];
+  readonly injectObjects: Array<InjectObjectProto | InjectConstructorProto>;
+  readonly injectType: InjectType;
   readonly loadUnitId: Id;
   readonly className?: string;
 
@@ -32,10 +34,11 @@ export class EggPrototypeImpl implements EggPrototype {
     filepath: string,
     initType: ObjectInitTypeLike,
     accessLevel: AccessLevel,
-    injectObjectMap: InjectObjectProto[],
+    injectObjectMap: Array<InjectObjectProto | InjectConstructorProto>,
     loadUnitId: Id,
     qualifiers: QualifierInfo[],
     className?: string,
+    injectType?: InjectType,
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -47,6 +50,7 @@ export class EggPrototypeImpl implements EggPrototype {
     this.loadUnitId = loadUnitId;
     this.qualifiers = qualifiers;
     this.className = className;
+    this.injectType = injectType || InjectType.PROPERTY;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -67,8 +71,8 @@ export class EggPrototypeImpl implements EggPrototype {
     return this.qualifiers.find(t => t.attribute === attribute)?.value;
   }
 
-  constructEggObject(): object {
-    return Reflect.construct(this.clazz, []);
+  constructEggObject(...args: any): object {
+    return Reflect.construct(this.clazz, args);
   }
 
   getMetaData<T>(metadataKey: MetaDataKey): T | undefined {
