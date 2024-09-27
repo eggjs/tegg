@@ -69,7 +69,7 @@ describe('test/decorator.test.ts', () => {
     });
 
     it('constructor should work', () => {
-      const injectConstructors = PrototypeUtil.getInjectConstructors(ConstructorObject);
+      const injectConstructors = PrototypeUtil.getInjectObjects(ConstructorObject);
       assert.deepStrictEqual(injectConstructors, [
         { refIndex: 1, refName: 'cache', objName: 'cache' },
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
