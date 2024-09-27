@@ -17,13 +17,13 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const fooConstructorLogger = loadUnit.getEggPrototype('fooConstructorLogger', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.CONTEXT }]);
 
       assert.strictEqual(fooConstructor.length, 1);
-      assert.strictEqual(fooConstructor[0].constructorObjects!.length, 1);
-      assert.strictEqual(fooConstructor[0].constructorObjects![0].refName, 'bar');
+      assert.strictEqual(fooConstructor[0].injectObjects!.length, 1);
+      assert.strictEqual(fooConstructor[0].injectObjects![0].refName, 'bar');
 
       assert.strictEqual(fooConstructorLogger.length, 1);
-      assert.strictEqual(fooConstructorLogger[0].constructorObjects!.length, 2);
-      assert.strictEqual(fooConstructorLogger[0].constructorObjects![0].refName, 'bar');
-      assert.strictEqual(fooConstructorLogger[0].constructorObjects![1].refName, 'logger');
+      assert.strictEqual(fooConstructorLogger[0].injectObjects!.length, 2);
+      assert.strictEqual(fooConstructorLogger[0].injectObjects![0].refName, 'bar');
+      assert.strictEqual(fooConstructorLogger[0].injectObjects![1].refName, 'logger');
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
     });
 

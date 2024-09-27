@@ -71,8 +71,8 @@ describe('test/decorator.test.ts', () => {
     it('constructor should work', () => {
       const injectConstructors = PrototypeUtil.getInjectObjects(ConstructorObject);
       assert.deepStrictEqual(injectConstructors, [
-        { refIndex: 1, refName: 'cache', objName: 'cache' },
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
+        { refIndex: 1, refName: 'cache', objName: 'cache' },
       ]);
     });
   });
@@ -105,10 +105,7 @@ describe('test/decorator.test.ts', () => {
         { attribute: Symbol.for('Qualifier.LoadUnitName'), value: 'foo' },
         { attribute: Symbol.for('Qualifier.InitType'), value: ObjectInitType.SINGLETON },
       ]);
-      assert.deepStrictEqual(constructorQualifiers2, [
-        { attribute: Symbol.for('Qualifier.LoadUnitName'), value: 'foo' },
-        { attribute: Symbol.for('Qualifier.InitType'), value: ObjectInitType.SINGLETON },
-      ]);
+      assert.deepStrictEqual(constructorQualifiers2, []);
     });
   });
 

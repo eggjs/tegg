@@ -1,5 +1,5 @@
 import { MapUtil, ObjectUtils } from '@eggjs/tegg-common-util';
-import { CONSTRUCTOR_QUALIFIER_META_DATA, PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
+import { PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierValue } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
 
@@ -41,11 +41,6 @@ export class QualifierUtil {
   }
 
   static getProperQualifiers(clazz: EggProtoImplClass, property: PropertyKey): QualifierInfo[] {
-    const constructorQualifiers = MetadataUtil.initOwnMapMetaData(CONSTRUCTOR_QUALIFIER_META_DATA, clazz, new Map<number, Map<QualifierAttribute, QualifierValue>>());
-    if (constructorQualifiers.size) {
-      Array.from(constructorQualifiers.values());
-    }
-
     const properQualifiers: Map<PropertyKey, Map<QualifierAttribute, QualifierValue>> | undefined = MetadataUtil.getMetaData(PROPERTY_QUALIFIER_META_DATA, clazz);
     const qualifiers = properQualifiers?.get(property);
     if (!qualifiers) {
