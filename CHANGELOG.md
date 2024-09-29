@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.1](https://github.com/eggjs/tegg/compare/v3.44.0...v3.44.1) (2024-09-29)
+
+
+### Bug Fixes
+
+* fix DataSourceQualifier ([#238](https://github.com/eggjs/tegg/issues/238)) ([7b1ebe7](https://github.com/eggjs/tegg/commit/7b1ebe718736d93e548f531bf99c5d2d38b41046))
+
+
+
+
+
 # [3.44.0](https://github.com/eggjs/tegg/compare/v3.43.2...v3.44.0) (2024-09-29)
 
 
