@@ -30,4 +30,8 @@ export interface EggPrototypeInfo {
    * EggPrototype qualifiers
    */
   qualifiers?: QualifierInfo[];
+  /**
+   * EggPrototype properties qualifiers
+   */
+  properQualifiers?: QualifierInfo[];
 }

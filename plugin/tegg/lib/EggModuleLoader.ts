@@ -1,4 +1,11 @@
-import { EggLoadUnitType, Loader, LoadUnitFactory, AppGraph, ModuleNode } from '@eggjs/tegg-metadata';
+import {
+  EggLoadUnitType,
+  Loader,
+  LoadUnitFactory,
+  AppGraph,
+  ModuleNode,
+  LoadUnitMultiInstanceProtoHook,
+} from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggAppLoader } from './EggAppLoader';
 import { Application } from 'egg';
@@ -44,6 +51,7 @@ export class EggModuleLoader {
     const loaderCache = new Map<string, Loader>();
     const appGraph = this.buildAppGraph(loaderCache);
     appGraph.sort();
+    LoadUnitMultiInstanceProtoHook.setAllClassList(appGraph.getClazzList());
     const moduleConfigList = appGraph.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;

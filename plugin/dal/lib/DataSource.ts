@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import {
-  AccessLevel,
+  AccessLevel, Inject,
   LifecycleInit,
   MultiInstanceProto,
   MultiInstancePrototypeGetObjectsContext,
@@ -26,6 +26,7 @@ import { DataSource } from '@eggjs/dal-runtime';
 import { TableModelManager } from './TableModelManager';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 import { SqlMapManager } from './SqlMapManager';
+import { TransactionalAOP } from './TransactionalAOP';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -61,6 +62,14 @@ import { SqlMapManager } from './SqlMapManager';
 })
 export class DataSourceDelegate<T> implements IDataSource<T> {
   private dataSource: DataSource<T>;
+
+  // register aop here let module dependent teggDal
+  @Inject({
+    name: 'transactionalAOP',
+  })
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  private transactionalAOP: TransactionalAOP;
 
   @LifecycleInit()
   async init(_: EggObjectLifeCycleContext, obj: EggObject) {

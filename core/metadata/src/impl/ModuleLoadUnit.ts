@@ -24,6 +24,7 @@ import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { LoadUnitFactory } from '../factory/LoadUnitFactory';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
 import { MultiPrototypeFound } from '../errors';
+import { LoadUnitMultiInstanceProtoHook } from './LoadUnitMultiInstanceProtoHook';
 
 let id = 0;
 
@@ -64,21 +65,77 @@ class ProtoNode implements GraphNodeObj {
   }
 }
 
+class MultiInstanceProtoNode implements GraphNodeObj {
+  readonly clazz: EggProtoImplClass;
+  readonly name: EggPrototypeName;
+  readonly id: string;
+  readonly qualifiers: QualifierInfo[];
+  readonly initType: ObjectInitTypeLike;
+  readonly unitPath: string;
+  readonly moduleName: string;
+
+  constructor(clazz: EggProtoImplClass, objName: EggPrototypeName, unitPath: string, moduleName: string) {
+    this.name = objName;
+    this.id = '' + (id++);
+    this.clazz = clazz;
+    this.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
+    this.initType = PrototypeUtil.getInitType(clazz, {
+      unitPath,
+      moduleName,
+    })!;
+    this.unitPath = unitPath;
+    this.moduleName = moduleName;
+  }
+
+  verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
+    const property = PrototypeUtil.getMultiInstanceProperty(this.clazz, {
+      unitPath: this.unitPath,
+      moduleName: this.moduleName,
+    });
+    if (!property) {
+      return false;
+    }
+    for (const obj of property.objects) {
+      const selfQualifiers = [
+        ...this.qualifiers,
+        ...obj.qualifiers,
+      ];
+      if (this.verifyInstanceQualifiers(selfQualifiers, qualifiers)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  verifyInstanceQualifiers(selfQualifiers: QualifierInfo[], qualifiers: QualifierInfo[]): boolean {
+    for (const qualifier of qualifiers) {
+      if (!selfQualifiers.find(t => t.attribute === qualifier.attribute && t.value === qualifier.value)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  toString(): string {
+    return `${this.clazz.name}@${PrototypeUtil.getFilePath(this.clazz)}`;
+  }
+}
+
 export class ModuleGraph {
-  private graph: Graph<ProtoNode>;
+  private graph: Graph<ProtoNode | MultiInstanceProtoNode>;
   clazzList: EggProtoImplClass[];
   readonly unitPath: string;
   readonly name: string;
 
   constructor(clazzList: EggProtoImplClass[], unitPath: string, name: string) {
     this.clazzList = clazzList;
-    this.graph = new Graph<ProtoNode>();
+    this.graph = new Graph<ProtoNode | MultiInstanceProtoNode>();
     this.unitPath = unitPath;
     this.name = name;
     this.build();
   }
 
-  private findInjectNode(objName: EggPrototypeName, qualifiers: QualifierInfo[], parentInitTye: ObjectInitTypeLike): GraphNode<ProtoNode> | undefined {
+  private findInjectNode(objName: EggPrototypeName, qualifiers: QualifierInfo[], parentInitTye: ObjectInitTypeLike): GraphNode<ProtoNode | MultiInstanceProtoNode> | undefined {
     let nodes = Array.from(this.graph.nodes.values())
       .filter(t => t.val.name === objName)
       .filter(t => t.val.verifyQualifiers(qualifiers));
@@ -94,7 +151,16 @@ export class ModuleGraph {
       value: parentInitTye,
     };
 
-    nodes = nodes.filter(t => t.val.verifyQualifier(initTypeQualifier));
+    nodes = nodes.filter(t => t.val.verifyQualifiers([ initTypeQualifier ]));
+    if (nodes.length === 1) {
+      return nodes[0];
+    }
+
+    const temp: Map<EggProtoImplClass, GraphNode<ProtoNode | MultiInstanceProtoNode>> = new Map();
+    for (const node of nodes) {
+      temp.set(node.val.clazz, node);
+    }
+    nodes = Array.from(temp.values());
     if (nodes.length === 1) {
       return nodes[0];
     }
@@ -104,14 +170,18 @@ export class ModuleGraph {
   }
 
   private build() {
-    const protoGraphNodes: GraphNode<ProtoNode>[] = [];
+    const protoGraphNodes: GraphNode<ProtoNode | MultiInstanceProtoNode>[] = [];
     for (const clazz of this.clazzList) {
       const objNames = PrototypeUtil.getObjNames(clazz, {
         unitPath: this.unitPath,
         moduleName: this.name,
       });
       for (const objName of objNames) {
-        protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, objName, this.unitPath, this.name)));
+        if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+          protoGraphNodes.push(new GraphNode(new MultiInstanceProtoNode(clazz, objName, this.unitPath, this.name)));
+        } else {
+          protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, objName, this.unitPath, this.name)));
+        }
       }
     }
     for (const node of protoGraphNodes) {
@@ -120,13 +190,34 @@ export class ModuleGraph {
       }
     }
     for (const node of protoGraphNodes) {
-      const injectObjects = PrototypeUtil.getInjectObjects(node.val.clazz);
-      for (const injectObject of injectObjects) {
-        const qualifiers = QualifierUtil.getProperQualifiers(node.val.clazz, injectObject.refName);
-        const injectNode = this.findInjectNode(injectObject.objName, qualifiers, node.val.initType);
-        // If not found maybe in other module
-        if (injectNode) {
-          this.graph.addEdge(node, injectNode);
+      if (PrototypeUtil.isEggMultiInstancePrototype(node.val.clazz)) {
+        const property = PrototypeUtil.getMultiInstanceProperty(node.val.clazz, {
+          moduleName: this.name,
+          unitPath: this.unitPath,
+        });
+        for (const objectInfo of property?.objects || []) {
+          const injectObjects = PrototypeUtil.getInjectObjects(node.val.clazz);
+          for (const injectObject of injectObjects) {
+            const qualifiers = [
+              ...QualifierUtil.getProperQualifiers(node.val.clazz, injectObject.refName),
+              ...objectInfo.properQualifiers?.[injectObject.refName] ?? [],
+            ];
+            const injectNode = this.findInjectNode(injectObject.objName, qualifiers, node.val.initType);
+            // If not found maybe in other module
+            if (injectNode) {
+              this.graph.addEdge(node, injectNode);
+            }
+          }
+        }
+      } else {
+        const injectObjects = PrototypeUtil.getInjectObjects(node.val.clazz);
+        for (const injectObject of injectObjects) {
+          const qualifiers = QualifierUtil.getProperQualifiers(node.val.clazz, injectObject.refName);
+          const injectNode = this.findInjectNode(injectObject.objName, qualifiers, node.val.initType);
+          // If not found maybe in other module
+          if (injectNode) {
+            this.graph.addEdge(node, injectNode);
+          }
         }
       }
     }
@@ -162,8 +253,9 @@ export class ModuleLoadUnit implements LoadUnit {
     this.loader = loader;
   }
 
-  private loadClazz(): EggProtoImplClass[] {
+  private doLoadClazz(): EggProtoImplClass[] {
     const clazzList = this.loader.load();
+    const result = clazzList.slice();
     for (const clazz of clazzList) {
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
@@ -179,12 +271,30 @@ export class ModuleLoadUnit implements LoadUnit {
         QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
       });
     }
-    return clazzList;
+    for (const clazz of LoadUnitMultiInstanceProtoHook.multiInstanceClazzSet) {
+      const instanceProperty = PrototypeUtil.getMultiInstanceProperty(clazz, {
+        moduleName: this.name,
+        unitPath: this.unitPath,
+      });
+      if (instanceProperty) {
+        result.push(clazz);
+      }
+    }
+    return result;
+  }
+
+  private loadClazz() {
+    if (!this.clazzList) {
+      const clazzList = this.doLoadClazz();
+      const protoGraph = new ModuleGraph(clazzList, this.unitPath, this.name);
+      protoGraph.sort();
+      this.clazzList = protoGraph.clazzList;
+    }
   }
 
   async preLoad() {
-    const clazzList = this.loader.load();
-    for (const protoClass of clazzList) {
+    this.loadClazz();
+    for (const protoClass of this.clazzList) {
       const fnName = LifecycleUtil.getStaticLifecycleHook('preLoad', protoClass);
       if (fnName) {
         await protoClass[fnName]?.();
@@ -193,10 +303,7 @@ export class ModuleLoadUnit implements LoadUnit {
   }
 
   async init() {
-    const clazzList = this.loadClazz();
-    const protoGraph = new ModuleGraph(clazzList, this.unitPath, this.name);
-    protoGraph.sort();
-    this.clazzList = protoGraph.clazzList;
+    this.loadClazz();
     for (const clazz of this.clazzList) {
       const protos = await EggPrototypeCreatorFactory.createProto(clazz, this);
       for (const proto of protos) {

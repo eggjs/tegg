@@ -1,9 +1,13 @@
 import path from 'path';
 import assert from 'assert';
-import { EggLoadUnitType, LoadUnitFactory } from '..';
+import { AppGraph, EggLoadUnitType, LoadUnitFactory, LoadUnitLifecycleUtil, LoadUnitMultiInstanceProtoHook, ModuleNode } from '..';
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/core-decorator';
 import { TestLoader } from './fixtures/TestLoader';
 import { FOO_ATTRIBUTE } from './fixtures/modules/multi-instance-module/MultiInstance';
+import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App';
+import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App';
+import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager';
+import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret';
 
 
 describe('test/LoadUnit/LoadUnit.test.ts', () => {
@@ -104,6 +108,16 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
   });
 
   describe('MultiInstance proto', () => {
+    let loadUnitMultiInstanceProtoHook: LoadUnitMultiInstanceProtoHook;
+    beforeEach(() => {
+      loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
+      LoadUnitLifecycleUtil.registerLifecycle(loadUnitMultiInstanceProtoHook);
+    });
+
+    afterEach(() => {
+      LoadUnitLifecycleUtil.deleteLifecycle(loadUnitMultiInstanceProtoHook);
+    });
+
     it('should load static work', async () => {
       const multiInstanceModule = path.join(__dirname, './fixtures/modules/multi-instance-module');
       const loader = new TestLoader(multiInstanceModule);
@@ -133,6 +147,58 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       assert(foo2Prototype);
       assert(foo2Prototype.length === 1);
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    });
+
+    it('should multi instance inject multi instance work', async () => {
+      const graph = new AppGraph();
+      const appModuleNode = new ModuleNode({
+        name: 'app',
+        path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app'),
+      });
+      appModuleNode.addClazz(App);
+      graph.addNode(appModuleNode);
+
+      const app2ModuleNode = new ModuleNode({
+        name: 'app2',
+        path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app2'),
+      });
+      app2ModuleNode.addClazz(App2);
+      graph.addNode(app2ModuleNode);
+
+      const barOptionalModuleNode = new ModuleNode({
+        name: 'bar',
+        path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/bar'),
+      });
+      barOptionalModuleNode.addClazz(BizManager);
+      graph.addNode(barOptionalModuleNode);
+      const fooOptionalModuleNode = new ModuleNode({
+        name: 'foo',
+        path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/foo'),
+      });
+      fooOptionalModuleNode.addClazz(Secret);
+      graph.addNode(fooOptionalModuleNode);
+      graph.build();
+      graph.sort();
+
+      LoadUnitMultiInstanceProtoHook.setAllClassList(graph.getClazzList());
+
+      const appInstanceModule = path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app');
+      const app2InstanceModule = path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app2');
+
+      const loader = new TestLoader(appInstanceModule);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(appInstanceModule, EggLoadUnitType.MODULE, loader);
+      const loader2 = new TestLoader(app2InstanceModule);
+      const loadUnit2 = await LoadUnitFactory.createLoadUnit(app2InstanceModule, EggLoadUnitType.MODULE, loader2);
+
+      const app1Prototype = loadUnit.getEggPrototype('app', []);
+      const app2Prototype = loadUnit.getEggPrototype('app2', []);
+
+      assert(app1Prototype);
+      assert(app2Prototype);
+
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+      await LoadUnitFactory.destroyLoadUnit(loadUnit2);
+      LoadUnitMultiInstanceProtoHook.clear();
     });
   });
 });
