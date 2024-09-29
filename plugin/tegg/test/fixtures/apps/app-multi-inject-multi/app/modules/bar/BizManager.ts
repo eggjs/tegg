@@ -11,7 +11,7 @@ import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { EggProtoImplClass, QualifierUtil } from '@eggjs/core-decorator';
 import { Secret, SecretQualifierAttribute } from '../foo/Secret';
 
-export const BizManagerQualifierAttribute = Symbol.for('Qualifier.ChatModel');
+export const BizManagerQualifierAttribute = Symbol.for('Qualifier.BizManager');
 export const BizManagerInjectName = 'bizManager';
 
 export function BizManagerQualifier(chatModelName: string) {

@@ -25,14 +25,15 @@ export function SecretQualifier(chatModelName: string) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as any;
     const keys = config?.secret?.keys;
     if (!keys || keys.length === 0) return [];
-    const name = ModuleConfigUtil.readModuleNameSync(ctx.unitPath);
-    return [{
-      name: SecretInjectName,
-      qualifiers: [{
-        attribute: SecretQualifierAttribute,
-        value: name,
-      }],
-    }];
+    return keys.map(t => {
+      return {
+        name: SecretInjectName,
+        qualifiers: [{
+          attribute: SecretQualifierAttribute,
+          value: t,
+        }],
+      };
+    });
   },
 })
 export class Secret {

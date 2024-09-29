@@ -35,15 +35,17 @@ class ProtoNode implements GraphNodeObj {
   readonly qualifiers: QualifierInfo[];
   readonly initType: ObjectInitTypeLike;
 
-  constructor(clazz: EggProtoImplClass, objName: EggPrototypeName, unitPath: string, moduleName: string) {
+  constructor(
+    clazz: EggProtoImplClass,
+    objName: EggPrototypeName,
+    initType: ObjectInitTypeLike,
+    qualifiers: QualifierInfo[],
+  ) {
     this.name = objName;
     this.id = '' + (id++);
     this.clazz = clazz;
-    this.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
-    this.initType = PrototypeUtil.getInitType(clazz, {
-      unitPath,
-      moduleName,
-    })!;
+    this.qualifiers = qualifiers;
+    this.initType = initType;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -65,77 +67,21 @@ class ProtoNode implements GraphNodeObj {
   }
 }
 
-class MultiInstanceProtoNode implements GraphNodeObj {
-  readonly clazz: EggProtoImplClass;
-  readonly name: EggPrototypeName;
-  readonly id: string;
-  readonly qualifiers: QualifierInfo[];
-  readonly initType: ObjectInitTypeLike;
-  readonly unitPath: string;
-  readonly moduleName: string;
-
-  constructor(clazz: EggProtoImplClass, objName: EggPrototypeName, unitPath: string, moduleName: string) {
-    this.name = objName;
-    this.id = '' + (id++);
-    this.clazz = clazz;
-    this.qualifiers = QualifierUtil.getProtoQualifiers(clazz);
-    this.initType = PrototypeUtil.getInitType(clazz, {
-      unitPath,
-      moduleName,
-    })!;
-    this.unitPath = unitPath;
-    this.moduleName = moduleName;
-  }
-
-  verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
-    const property = PrototypeUtil.getMultiInstanceProperty(this.clazz, {
-      unitPath: this.unitPath,
-      moduleName: this.moduleName,
-    });
-    if (!property) {
-      return false;
-    }
-    for (const obj of property.objects) {
-      const selfQualifiers = [
-        ...this.qualifiers,
-        ...obj.qualifiers,
-      ];
-      if (this.verifyInstanceQualifiers(selfQualifiers, qualifiers)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  verifyInstanceQualifiers(selfQualifiers: QualifierInfo[], qualifiers: QualifierInfo[]): boolean {
-    for (const qualifier of qualifiers) {
-      if (!selfQualifiers.find(t => t.attribute === qualifier.attribute && t.value === qualifier.value)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  toString(): string {
-    return `${this.clazz.name}@${PrototypeUtil.getFilePath(this.clazz)}`;
-  }
-}
-
 export class ModuleGraph {
-  private graph: Graph<ProtoNode | MultiInstanceProtoNode>;
+  private graph: Graph<ProtoNode>;
   clazzList: EggProtoImplClass[];
   readonly unitPath: string;
   readonly name: string;
 
   constructor(clazzList: EggProtoImplClass[], unitPath: string, name: string) {
     this.clazzList = clazzList;
-    this.graph = new Graph<ProtoNode | MultiInstanceProtoNode>();
+    this.graph = new Graph<ProtoNode>();
     this.unitPath = unitPath;
     this.name = name;
     this.build();
   }
 
-  private findInjectNode(objName: EggPrototypeName, qualifiers: QualifierInfo[], parentInitTye: ObjectInitTypeLike): GraphNode<ProtoNode | MultiInstanceProtoNode> | undefined {
+  private findInjectNode(objName: EggPrototypeName, qualifiers: QualifierInfo[], parentInitTye: ObjectInitTypeLike): GraphNode<ProtoNode> | undefined {
     let nodes = Array.from(this.graph.nodes.values())
       .filter(t => t.val.name === objName)
       .filter(t => t.val.verifyQualifiers(qualifiers));
@@ -156,7 +102,7 @@ export class ModuleGraph {
       return nodes[0];
     }
 
-    const temp: Map<EggProtoImplClass, GraphNode<ProtoNode | MultiInstanceProtoNode>> = new Map();
+    const temp: Map<EggProtoImplClass, GraphNode<ProtoNode>> = new Map();
     for (const node of nodes) {
       temp.set(node.val.clazz, node);
     }
@@ -170,17 +116,28 @@ export class ModuleGraph {
   }
 
   private build() {
-    const protoGraphNodes: GraphNode<ProtoNode | MultiInstanceProtoNode>[] = [];
+    const protoGraphNodes: GraphNode<ProtoNode>[] = [];
     for (const clazz of this.clazzList) {
-      const objNames = PrototypeUtil.getObjNames(clazz, {
-        unitPath: this.unitPath,
-        moduleName: this.name,
-      });
-      for (const objName of objNames) {
-        if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
-          protoGraphNodes.push(new GraphNode(new MultiInstanceProtoNode(clazz, objName, this.unitPath, this.name)));
-        } else {
-          protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, objName, this.unitPath, this.name)));
+      if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+        const properties = PrototypeUtil.getMultiInstanceProperty(clazz, {
+          unitPath: this.unitPath,
+          moduleName: this.name,
+        });
+        if (properties) {
+          const qualifiers = QualifierUtil.getProtoQualifiers(clazz);
+          for (const obj of properties.objects || []) {
+            const instanceQualifiers = [
+              ...qualifiers,
+              ...obj.qualifiers,
+            ];
+            protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, obj.name, properties.initType, instanceQualifiers)));
+          }
+        }
+      } else {
+        const qualifiers = QualifierUtil.getProtoQualifiers(clazz);
+        const property = PrototypeUtil.getProperty(clazz);
+        if (property) {
+          protoGraphNodes.push(new GraphNode(new ProtoNode(clazz, property.name, property.initType, qualifiers)));
         }
       }
     }

@@ -1,4 +1,4 @@
-import { PrototypeUtil } from '@eggjs/core-decorator';
+import { InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute, PrototypeUtil } from '@eggjs/core-decorator';
 import type {
   EggProtoImplClass,
   EggPrototypeInfo,
@@ -28,12 +28,29 @@ export class EggPrototypeCreatorFactory {
         moduleName: loadUnit.name,
       })!;
       for (const obj of multiInstanceProtoInfo.objects) {
+        const defaultQualifier = [{
+          attribute: InitTypeQualifierAttribute,
+          value: PrototypeUtil.getInitType(clazz, {
+            unitPath: loadUnit.unitPath,
+            moduleName: loadUnit.name,
+          })!,
+        }, {
+          attribute: LoadUnitNameQualifierAttribute,
+          value: loadUnit.name,
+        }];
+        defaultQualifier.forEach(qualifier => {
+          if (!obj.qualifiers.find(t => t.attribute === qualifier.attribute)) {
+            obj.qualifiers.push(qualifier);
+          }
+        });
+
         properties.push({
           name: obj.name,
           protoImplType: multiInstanceProtoInfo.protoImplType,
           initType: multiInstanceProtoInfo.initType,
           accessLevel: multiInstanceProtoInfo.accessLevel,
           qualifiers: obj.qualifiers,
+          properQualifiers: obj.properQualifiers,
           className: multiInstanceProtoInfo.className,
         });
       }

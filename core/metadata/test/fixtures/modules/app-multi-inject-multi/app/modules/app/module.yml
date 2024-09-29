@@ -1,7 +1,9 @@
 BizManager:
   clients:
-    foo: {}
-    bar: {}
+    foo:
+      secret: '1'
+    bar:
+      secret: '2'
 
 secret:
   keys:

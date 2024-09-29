@@ -3,10 +3,10 @@ import {
   EggMultiInstancePrototypeInfo,
   EggProtoImplClass,
   EggPrototypeInfo,
-  EggPrototypeName,
+  EggPrototypeName, InitTypeQualifierAttribute,
   InjectConstructorInfo,
   InjectObjectInfo,
-  InjectType,
+  InjectType, LoadUnitNameQualifierAttribute,
   MultiInstancePrototypeGetObjectsContext, QualifierAttribute,
 } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
@@ -141,9 +141,24 @@ export class PrototypeUtil {
     }
     const callBackMetadata = MetadataUtil.getMetaData<EggMultiInstanceCallbackPrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
     if (callBackMetadata) {
+      const objects = callBackMetadata.getObjects(ctx);
+      const defaultQualifier = [{
+        attribute: InitTypeQualifierAttribute,
+        value: callBackMetadata.initType,
+      }, {
+        attribute: LoadUnitNameQualifierAttribute,
+        value: ctx.moduleName,
+      }];
+      for (const object of objects) {
+        defaultQualifier.forEach(qualifier => {
+          if (!object.qualifiers.find(t => t.attribute === qualifier.attribute)) {
+            object.qualifiers.push(qualifier);
+          }
+        });
+      }
       return {
         ...callBackMetadata,
-        objects: callBackMetadata.getObjects(ctx),
+        objects,
       };
     }
   }
