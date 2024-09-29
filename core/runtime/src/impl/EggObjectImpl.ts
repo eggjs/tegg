@@ -4,7 +4,7 @@ import type {
   EggObjectLifecycle,
   EggObjectLifeCycleContext,
   EggObjectName,
-  EggPrototype,
+  EggPrototype, ObjectInfo, QualifierInfo,
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
@@ -109,9 +109,9 @@ export default class EggObjectImpl implements EggObject {
           return {
             attribute: t,
             value: this.proto.getQualifier(t),
-          };
-        });
-        const objInfo = {
+          } as QualifierInfo;
+        }) ?? [];
+        const objInfo: ObjectInfo = {
           name: this.proto.name,
           qualifiers,
         };
