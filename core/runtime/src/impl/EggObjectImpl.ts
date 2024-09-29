@@ -105,12 +105,15 @@ export default class EggObjectImpl implements EggObject {
         return EggObjectUtil.eggObjectProxy(injectObj);
       }));
       if (typeof this.proto.multiInstanceConstructorIndex !== 'undefined') {
-        const qualifiers = this.proto.multiInstanceConstructorAttributes?.map(t => {
-          return {
-            attribute: t,
-            value: this.proto.getQualifier(t),
-          } as QualifierInfo;
-        }) ?? [];
+        const qualifiers = this.proto.multiInstanceConstructorAttributes
+          ?.map(t => {
+            return {
+              attribute: t,
+              value: this.proto.getQualifier(t),
+            } as QualifierInfo;
+          })
+          ?.filter(t => typeof t.value !== 'undefined')
+          ?? [];
         const objInfo: ObjectInfo = {
           name: this.proto.name,
           qualifiers,
