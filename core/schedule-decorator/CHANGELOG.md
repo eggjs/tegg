@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.45.0](https://github.com/eggjs/tegg/compare/v3.44.1...v3.45.0) (2024-09-29)
+
+**Note:** Version bump only for package @eggjs/tegg-schedule-decorator
+
+
+
+
+
 ## [3.44.1](https://github.com/eggjs/tegg/compare/v3.44.0...v3.44.1) (2024-09-29)
 
 **Note:** Version bump only for package @eggjs/tegg-schedule-decorator

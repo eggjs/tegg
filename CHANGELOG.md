@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.45.0](https://github.com/eggjs/tegg/compare/v3.44.1...v3.45.0) (2024-09-29)
+
+
+### Features
+
+* impl MultiInstanceInfo decorator ([#239](https://github.com/eggjs/tegg/issues/239)) ([70d4d95](https://github.com/eggjs/tegg/commit/70d4d95bca4a0c3e11d0d7cc4f292b1315e49e81))
+
+
+
+
+
 ## [3.44.1](https://github.com/eggjs/tegg/compare/v3.44.0...v3.44.1) (2024-09-29)
 
 
