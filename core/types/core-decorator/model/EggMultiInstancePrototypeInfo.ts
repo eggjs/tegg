@@ -6,6 +6,7 @@ import { QualifierInfo } from './QualifierInfo';
 export interface ObjectInfo {
   name: EggPrototypeName;
   qualifiers: QualifierInfo[];
+  properQualifiers?: Record<PropertyKey, QualifierInfo[]>;
 }
 
 export interface MultiInstancePrototypeGetObjectsContext {

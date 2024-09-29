@@ -8,6 +8,7 @@ import type { EggProtoImplClass, EggPrototypeName, GraphNodeObj, ModuleReference
 export interface InstanceClazzMeta {
   name: PropertyKey;
   qualifiers: QualifierInfo[];
+  properQualifiers: Record<PropertyKey, QualifierInfo[]>;
   accessLevel: AccessLevel,
   instanceModule: GraphNode<ModuleNode>;
   ownerModule: GraphNode<ModuleNode>;
@@ -65,6 +66,7 @@ export class ClazzMap {
                   ...qualifiers,
                   ...info.qualifiers,
                 ],
+                properQualifiers: info.properQualifiers || {},
                 instanceModule: instanceNode,
                 ownerModule: ownerNode,
               });
@@ -81,6 +83,7 @@ export class ClazzMap {
               moduleName: ownerNode.val.moduleConfig.name,
             }) as AccessLevel,
             qualifiers,
+            properQualifiers: {},
             ownerModule: ownerNode,
             instanceModule: ownerNode,
           });
@@ -153,7 +156,7 @@ export class ClazzMap {
 
     for (const obj of mayObjs) {
       result.add(obj.instanceModule);
-      result.add(obj.ownerModule);
+      // result.add(obj.ownerModule);
     }
     return Array.from(result);
   }
@@ -215,6 +218,16 @@ export class AppGraph {
     }
   }
 
+  getClazzList(): readonly EggProtoImplClass[] {
+    const clazzSet = new Set<EggProtoImplClass>();
+    for (const node of this.graph.nodes.values()) {
+      for (const clazz of node.val.getClazzList()) {
+        clazzSet.add(clazz);
+      }
+    }
+    return Array.from(clazzSet);
+  }
+
   build() {
     this.clazzMap = new ClazzMap(this.graph);
 
@@ -225,13 +238,38 @@ export class AppGraph {
         const injectObjects = PrototypeUtil.getInjectObjects(clazz);
         // 3. iterate all inject objects
         for (const injectObject of injectObjects) {
-          const properQualifiers = QualifierUtil.getProperQualifiers(clazz, injectObject.refName);
-          // 4. find dependency module
-          const dependencyModules = this.clazzMap.findDependencyModule(injectObject.objName, properQualifiers, node);
-          for (const moduleNode of dependencyModules) {
-            // 5. add edge
-            if (node !== moduleNode) {
-              this.graph.addEdge(node, moduleNode);
+          if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+            for (const instanceNode of this.graph.nodes.values()) {
+              const property = PrototypeUtil.getMultiInstanceProperty(clazz, {
+                unitPath: instanceNode.val.moduleConfig.path,
+                moduleName: instanceNode.val.moduleConfig.name,
+              });
+              for (const info of property?.objects || []) {
+                const properQualifiers = [
+                  ...QualifierUtil.getProperQualifiers(clazz, injectObject.refName),
+                  ...info.properQualifiers?.[injectObject.refName] ?? [],
+                ];
+                // 4. find dependency module
+                const dependencyModules = this.clazzMap.findDependencyModule(injectObject.objName, properQualifiers, node);
+                for (const moduleNode of dependencyModules) {
+                  // 5. add edge
+                  if (instanceNode !== moduleNode) {
+                    this.graph.addEdge(instanceNode, moduleNode);
+                  }
+                }
+              }
+            }
+          } else {
+            const properQualifiers = [
+              ...QualifierUtil.getProperQualifiers(clazz, injectObject.refName),
+            ];
+            // 4. find dependency module
+            const dependencyModules = this.clazzMap.findDependencyModule(injectObject.objName, properQualifiers, node);
+            for (const moduleNode of dependencyModules) {
+              // 5. add edge
+              if (node !== moduleNode) {
+                this.graph.addEdge(node, moduleNode);
+              }
             }
           }
         }

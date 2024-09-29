@@ -67,5 +67,6 @@ export default class App {
     if (this.loadUnitMultiInstanceProtoHook) {
       this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitMultiInstanceProtoHook);
     }
+    LoadUnitMultiInstanceProtoHook.clear();
   }
 }
