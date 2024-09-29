@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.46.0](https://github.com/eggjs/tegg/compare/v3.45.0...v3.46.0) (2024-09-29)
+
+
+### Features
+
+* impl MultiInstance inject MultiInstance ([#240](https://github.com/eggjs/tegg/issues/240)) ([08e3b0c](https://github.com/eggjs/tegg/commit/08e3b0cc02f3d2dbba767298a6aec6c00147f9ed))
+
+
+
+
+
 # [3.45.0](https://github.com/eggjs/tegg/compare/v3.44.1...v3.45.0) (2024-09-29)
 
 **Note:** Version bump only for package @eggjs/tegg-dal-plugin
