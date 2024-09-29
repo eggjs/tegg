@@ -1,6 +1,12 @@
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { ObjectInitType, EggObjectStatus } from '@eggjs/tegg-types';
-import type { EggObject, EggObjectName, EggObjectLifecycle, EggObjectLifeCycleContext, EggPrototype } from '@eggjs/tegg-types';
+import type {
+  EggObject,
+  EggObjectLifecycle,
+  EggObjectLifeCycleContext,
+  EggObjectName,
+  EggPrototype,
+} from '@eggjs/tegg-types';
+import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggObjectLifecycleUtil } from '../model/EggObject';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
@@ -22,7 +28,7 @@ export default class EggObjectImpl implements EggObject {
     this.id = IdenticalUtil.createObjectId(this.proto.id, ctx?.id);
   }
 
-  async init(ctx: EggObjectLifeCycleContext) {
+  async initWithInjectProperty(ctx: EggObjectLifeCycleContext) {
     // 1. create obj
     // 2. call obj lifecycle preCreate
     // 3. inject deps
@@ -76,6 +82,71 @@ export default class EggObjectImpl implements EggObject {
     } catch (e) {
       this.status = EggObjectStatus.ERROR;
       throw e;
+    }
+  }
+
+  async initWithInjectConstructor(ctx: EggObjectLifeCycleContext) {
+    // 1. create inject deps
+    // 2. create obj
+    // 3. call obj lifecycle preCreate
+    // 4. call obj lifecycle postCreate
+    // 5. success create
+    try {
+      const constructArgs = await Promise.all(this.proto.injectObjects!.map(async injectObject => {
+        const proto = injectObject.proto;
+        const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
+        if (!loadUnit) {
+          throw new Error(`can not find load unit: ${proto.loadUnitId}`);
+        }
+        if (this.proto.initType !== ObjectInitType.CONTEXT && injectObject.proto.initType === ObjectInitType.CONTEXT) {
+          return EggObjectUtil.contextEggObjectProxy(proto, injectObject.objName);
+        }
+        const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
+        return EggObjectUtil.eggObjectProxy(injectObj);
+      }));
+
+      this._obj = this.proto.constructEggObject(...constructArgs);
+      const objLifecycleHook = this._obj as EggObjectLifecycle;
+
+      // global hook
+      await EggObjectLifecycleUtil.objectPreCreate(ctx, this);
+      // self hook
+      const postConstructMethod = EggObjectLifecycleUtil.getLifecycleHook('postConstruct', this.proto) ?? 'postConstruct';
+      if (objLifecycleHook[postConstructMethod]) {
+        await objLifecycleHook[postConstructMethod](ctx, this);
+      }
+
+      const preInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('preInject', this.proto) ?? 'preInject';
+      if (objLifecycleHook[preInjectMethod]) {
+        await objLifecycleHook[preInjectMethod](ctx, this);
+      }
+
+      // global hook
+      await EggObjectLifecycleUtil.objectPostCreate(ctx, this);
+
+      // self hook
+      const postInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('postInject', this.proto) ?? 'postInject';
+      if (objLifecycleHook[postInjectMethod]) {
+        await objLifecycleHook[postInjectMethod](ctx, this);
+      }
+
+      const initMethod = EggObjectLifecycleUtil.getLifecycleHook('init', this.proto) ?? 'init';
+      if (objLifecycleHook[initMethod]) {
+        await objLifecycleHook[initMethod](ctx, this);
+      }
+
+      this.status = EggObjectStatus.READY;
+    } catch (e) {
+      this.status = EggObjectStatus.ERROR;
+      throw e;
+    }
+  }
+
+  async init(ctx: EggObjectLifeCycleContext) {
+    if (this.proto.injectType === InjectType.CONSTRUCTOR) {
+      await this.initWithInjectConstructor(ctx);
+    } else {
+      await this.initWithInjectProperty(ctx);
     }
   }
 

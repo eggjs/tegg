@@ -1,4 +1,4 @@
-import { MapUtil } from '@eggjs/tegg-common-util';
+import { MapUtil, ObjectUtils } from '@eggjs/tegg-common-util';
 import { PROPERTY_QUALIFIER_META_DATA, QUALIFIER_META_DATA } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierValue } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
@@ -22,6 +22,16 @@ export class QualifierUtil {
       });
     }
     return res;
+  }
+
+  static addInjectQualifier(clazz: EggProtoImplClass, property: PropertyKey | undefined, parameterIndex: number | undefined, attribute: QualifierAttribute, value: QualifierValue) {
+    if (typeof parameterIndex === 'number') {
+      const argNames = ObjectUtils.getConstructorArgNameList(clazz);
+      const argName = argNames[parameterIndex];
+      QualifierUtil.addProperQualifier(clazz, argName, attribute, value);
+    } else {
+      QualifierUtil.addProperQualifier((clazz as any).constructor, property!, attribute, value);
+    }
   }
 
   static addProperQualifier(clazz: EggProtoImplClass, property: PropertyKey, attribute: QualifierAttribute, value: QualifierValue) {

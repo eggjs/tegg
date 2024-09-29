@@ -1,3 +1,5 @@
+import { EggProtoImplClass } from '@eggjs/tegg-types';
+
 export class ObjectUtils {
   static getProperties(obj: object): string[] {
     const properties: string[] = [];
@@ -33,5 +35,20 @@ export class ObjectUtils {
       return arg.replace(/=[\s\S]*/g, '').trim();
     }).filter(arg => arg.length);
     return argNames;
+  }
+
+  static getConstructorArgNameList(clazz: EggProtoImplClass): string[] {
+    if (clazz.length === 0) {
+      return [];
+    }
+    const classString = clazz.toString();
+    const constructorMatch = classString.match(/constructor\s*\(([^)]+)\)/);
+    if (!constructorMatch) {
+      return [];
+    }
+    const params = constructorMatch[1].split(',').map(param => param.trim());
+    return params.map(param => param.match(/(\w+)\s*(?=\s*(?:=|\/\/|\s*$))/))
+      .filter(Boolean)
+      .map(match => match![0].trim());
   }
 }

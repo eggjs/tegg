@@ -1,10 +1,12 @@
-import type {
+import {
   EggMultiInstanceCallbackPrototypeInfo,
   EggMultiInstancePrototypeInfo,
   EggProtoImplClass,
   EggPrototypeInfo,
   EggPrototypeName,
+  InjectConstructorInfo,
   InjectObjectInfo,
+  InjectType,
   MultiInstancePrototypeGetObjectsContext,
 } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
@@ -17,6 +19,8 @@ export class PrototypeUtil {
   static readonly MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY = Symbol.for('EggPrototype.MultiInstanceStaticProperty');
   static readonly MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY = Symbol.for('EggPrototype.MultiInstanceCallbackProperty');
   static readonly INJECT_OBJECT_NAME_SET = Symbol.for('EggPrototype.injectObjectNames');
+  static readonly INJECT_TYPE = Symbol.for('EggPrototype.injectType');
+  static readonly INJECT_CONSTRUCTOR_NAME_SET = Symbol.for('EggPrototype.injectConstructorNames');
   static readonly CLAZZ_PROTO = Symbol.for('EggPrototype.clazzProto');
 
   /**
@@ -24,7 +28,7 @@ export class PrototypeUtil {
    * @param {Function} clazz -
    */
   static setIsEggPrototype(clazz: EggProtoImplClass) {
-    MetadataUtil.defineMetaData(this.IS_EGG_OBJECT_PROTOTYPE, true, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_OBJECT_PROTOTYPE, true, clazz);
   }
 
   /**
@@ -32,7 +36,7 @@ export class PrototypeUtil {
    * @param {Function} clazz -
    */
   static isEggPrototype(clazz: EggProtoImplClass): boolean {
-    return MetadataUtil.getBooleanMetaData(this.IS_EGG_OBJECT_PROTOTYPE, clazz);
+    return MetadataUtil.getBooleanMetaData(PrototypeUtil.IS_EGG_OBJECT_PROTOTYPE, clazz);
   }
 
   /**
@@ -40,7 +44,7 @@ export class PrototypeUtil {
    * @param {Function} clazz -
    */
   static setIsEggMultiInstancePrototype(clazz: EggProtoImplClass) {
-    MetadataUtil.defineMetaData(this.IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE, true, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE, true, clazz);
   }
 
   /**
@@ -48,7 +52,7 @@ export class PrototypeUtil {
    * @param {Function} clazz -
    */
   static isEggMultiInstancePrototype(clazz: EggProtoImplClass): boolean {
-    return MetadataUtil.getBooleanMetaData(this.IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE, clazz);
+    return MetadataUtil.getBooleanMetaData(PrototypeUtil.IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE, clazz);
   }
 
   /**
@@ -57,7 +61,7 @@ export class PrototypeUtil {
    * @param {string} filePath -
    */
   static setFilePath(clazz: EggProtoImplClass, filePath: string) {
-    MetadataUtil.defineMetaData(this.FILE_PATH, filePath, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.FILE_PATH, filePath, clazz);
   }
 
   /**
@@ -65,7 +69,7 @@ export class PrototypeUtil {
    * @param {Function} clazz -
    */
   static getFilePath(clazz: EggProtoImplClass): string | undefined {
-    return MetadataUtil.getMetaData(this.FILE_PATH, clazz);
+    return MetadataUtil.getMetaData(PrototypeUtil.FILE_PATH, clazz);
   }
 
   /**
@@ -74,7 +78,7 @@ export class PrototypeUtil {
    * @param {EggPrototypeInfo} property -
    */
   static setProperty(clazz: EggProtoImplClass, property: EggPrototypeInfo) {
-    MetadataUtil.defineMetaData(this.PROTOTYPE_PROPERTY, property, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.PROTOTYPE_PROPERTY, property, clazz);
   }
 
   /**
@@ -83,25 +87,25 @@ export class PrototypeUtil {
    * @return {EggPrototypeInfo} -
    */
   static getProperty(clazz: EggProtoImplClass): EggPrototypeInfo | undefined {
-    return MetadataUtil.getMetaData(this.PROTOTYPE_PROPERTY, clazz);
+    return MetadataUtil.getMetaData(PrototypeUtil.PROTOTYPE_PROPERTY, clazz);
   }
 
   static getInitType(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): string | undefined {
-    const property = this.getProperty(clazz) ?? this.getMultiInstanceProperty(clazz, ctx);
+    const property = PrototypeUtil.getProperty(clazz) ?? PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
     return property?.initType;
   }
 
   static getAccessLevel(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): string | undefined {
-    const property = this.getProperty(clazz) ?? this.getMultiInstanceProperty(clazz, ctx);
+    const property = PrototypeUtil.getProperty(clazz) ?? PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
     return property?.accessLevel;
   }
 
   static getObjNames(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggPrototypeName[] {
-    const property = this.getProperty(clazz);
+    const property = PrototypeUtil.getProperty(clazz);
     if (property) {
       return [ property.name ];
     }
-    const multiInstanceProperty = this.getMultiInstanceProperty(clazz, ctx);
+    const multiInstanceProperty = PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
     return multiInstanceProperty?.objects.map(t => t.name) || [];
   }
 
@@ -111,7 +115,7 @@ export class PrototypeUtil {
    * @param {EggPrototypeInfo} property -
    */
   static setMultiInstanceStaticProperty(clazz: EggProtoImplClass, property: EggMultiInstancePrototypeInfo) {
-    MetadataUtil.defineMetaData(this.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, property, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, property, clazz);
   }
 
   /**
@@ -120,7 +124,7 @@ export class PrototypeUtil {
    * @param {EggPrototypeInfo} property -
    */
   static setMultiInstanceCallbackProperty(clazz: EggProtoImplClass, property: EggMultiInstanceCallbackPrototypeInfo) {
-    MetadataUtil.defineMetaData(this.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, property, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, property, clazz);
   }
 
   /**
@@ -129,11 +133,11 @@ export class PrototypeUtil {
    * @param {MultiInstancePrototypeGetObjectsContext} ctx -
    */
   static getMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggMultiInstancePrototypeInfo | undefined {
-    const metadata = MetadataUtil.getMetaData<EggMultiInstancePrototypeInfo>(this.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, clazz);
+    const metadata = MetadataUtil.getMetaData<EggMultiInstancePrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, clazz);
     if (metadata) {
       return metadata;
     }
-    const callBackMetadata = MetadataUtil.getMetaData<EggMultiInstanceCallbackPrototypeInfo>(this.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
+    const callBackMetadata = MetadataUtil.getMetaData<EggMultiInstanceCallbackPrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
     if (callBackMetadata) {
       return {
         ...callBackMetadata,
@@ -142,24 +146,61 @@ export class PrototypeUtil {
     }
   }
 
-  static addInjectObject(clazz: EggProtoImplClass, injectObject: InjectObjectInfo) {
-    const objs: InjectObjectInfo[] = MetadataUtil.initOwnArrayMetaData(this.INJECT_OBJECT_NAME_SET, clazz, []);
-    objs.push(injectObject);
-    MetadataUtil.defineMetaData(this.INJECT_OBJECT_NAME_SET, objs, clazz);
+  static setInjectType(clazz: EggProtoImplClass, type: InjectType) {
+    const injectType: InjectType | undefined = MetadataUtil.getMetaData(PrototypeUtil.INJECT_TYPE, clazz);
+    if (!injectType) {
+      MetadataUtil.defineMetaData(PrototypeUtil.INJECT_TYPE, type, clazz);
+    } else if (injectType !== type) {
+      throw new Error(`class ${clazz.name} already use inject type ${injectType} can not use ${type}`);
+    }
   }
 
-  static getInjectObjects(clazz: EggProtoImplClass): Array<InjectObjectInfo> {
-    return MetadataUtil.getArrayMetaData(this.INJECT_OBJECT_NAME_SET, clazz);
+  static addInjectObject(clazz: EggProtoImplClass, injectObject: InjectObjectInfo) {
+    const objs: InjectObjectInfo[] = MetadataUtil.initOwnArrayMetaData(PrototypeUtil.INJECT_OBJECT_NAME_SET, clazz, []);
+    objs.push(injectObject);
+    MetadataUtil.defineMetaData(PrototypeUtil.INJECT_OBJECT_NAME_SET, objs, clazz);
   }
+
+  static addInjectConstructor(clazz: EggProtoImplClass, injectConstructorInfo: InjectConstructorInfo) {
+    const objs: InjectConstructorInfo[] = MetadataUtil.initArrayMetaData(PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET, clazz, []);
+    objs.push(injectConstructorInfo);
+    MetadataUtil.defineMetaData(PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET, objs, clazz);
+  }
+
+  static getInjectType(clazz: EggProtoImplClass): InjectType | undefined {
+    const injectType: InjectType | undefined = MetadataUtil.getMetaData(PrototypeUtil.INJECT_TYPE, clazz);
+    return injectType;
+  }
+
+  static getInjectObjects(clazz: EggProtoImplClass): Array<InjectObjectInfo | InjectConstructorInfo> {
+    const injectType: InjectType | undefined = MetadataUtil.getMetaData(PrototypeUtil.INJECT_TYPE, clazz);
+    if (!injectType) {
+      return [];
+    }
+    if (injectType === InjectType.CONSTRUCTOR) {
+      return MetadataUtil.getArrayMetaData<InjectConstructorInfo>(PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET, clazz)
+        .sort((a, b) => {
+          return a.refIndex - b.refIndex;
+        });
+    }
+    return MetadataUtil.getArrayMetaData(PrototypeUtil.INJECT_OBJECT_NAME_SET, clazz);
+  }
+
+  // static getInjectConstructors(clazz: EggProtoImplClass): Array<InjectConstructorInfo> {
+  //   return MetadataUtil.getArrayMetaData<InjectConstructorInfo>(PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET, clazz)
+  //     .sort((a, b) => {
+  //       return a.refIndex - b.refIndex;
+  //     });
+  // }
 
   // TODO fix proto type
   static getClazzProto(clazz: EggProtoImplClass): object | undefined {
-    return MetadataUtil.getMetaData(this.CLAZZ_PROTO, clazz);
+    return MetadataUtil.getMetaData(PrototypeUtil.CLAZZ_PROTO, clazz);
   }
 
   // TODO fix proto type
   static setClazzProto(clazz: EggProtoImplClass, proto: object) {
-    return MetadataUtil.defineMetaData(this.CLAZZ_PROTO, proto, clazz);
+    return MetadataUtil.defineMetaData(PrototypeUtil.CLAZZ_PROTO, proto, clazz);
   }
 
   static getDesignType(clazz: EggProtoImplClass, propKey?: PropertyKey) {

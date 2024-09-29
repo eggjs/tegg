@@ -15,6 +15,7 @@ import SingletonCache from './fixtures/decators/SingletonCache';
 import { PrototypeUtil, QualifierUtil } from '..';
 import QualifierCacheService from './fixtures/decators/QualifierCacheService';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger';
+import { ConstructorObject } from './fixtures/decators/ConstructorObject';
 
 describe('test/decorator.test.ts', () => {
   describe('ContextProto', () => {
@@ -66,6 +67,14 @@ describe('test/decorator.test.ts', () => {
       }];
       assert.deepStrictEqual(PrototypeUtil.getInjectObjects(CacheService), expectInjectInfo);
     });
+
+    it('constructor should work', () => {
+      const injectConstructors = PrototypeUtil.getInjectObjects(ConstructorObject);
+      assert.deepStrictEqual(injectConstructors, [
+        { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
+        { refIndex: 1, refName: 'cache', objName: 'cache' },
+      ]);
+    });
   });
 
   describe('Qualifier', () => {
@@ -88,6 +97,15 @@ describe('test/decorator.test.ts', () => {
       assert(
         QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.InitType')) === ObjectInitType.SINGLETON,
       );
+    });
+    it('constructor should work', () => {
+      const constructorQualifiers = QualifierUtil.getProperQualifiers(ConstructorObject, 'xCache');
+      const constructorQualifiers2 = QualifierUtil.getProperQualifiers(ConstructorObject, 'cache');
+      assert.deepStrictEqual(constructorQualifiers, [
+        { attribute: Symbol.for('Qualifier.LoadUnitName'), value: 'foo' },
+        { attribute: Symbol.for('Qualifier.InitType'), value: ObjectInitType.SINGLETON },
+      ]);
+      assert.deepStrictEqual(constructorQualifiers2, []);
     });
   });
 

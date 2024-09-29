@@ -1,21 +1,22 @@
 import assert from 'node:assert';
-import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
-import {
-  ObjectInitType,
-  InitTypeQualifierAttribute,
-  DEFAULT_PROTO_IMPL_TYPE,
-} from '@eggjs/tegg-types';
+import { InjectType, PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import type {
   AccessLevel,
   EggProtoImplClass,
   EggPrototype,
   EggPrototypeLifecycleContext,
-  EggPrototypeName,
+  EggPrototypeName, InjectConstructor,
   InjectObject,
   InjectObjectProto,
   LoadUnit,
   ObjectInitTypeLike,
   QualifierInfo,
+} from '@eggjs/tegg-types';
+import {
+  DEFAULT_PROTO_IMPL_TYPE,
+  InitTypeQualifierAttribute,
+  InjectConstructorProto,
+  ObjectInitType,
 } from '@eggjs/tegg-types';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
@@ -29,7 +30,8 @@ export class EggPrototypeBuilder {
   private initType: ObjectInitTypeLike;
   private accessLevel: AccessLevel;
   private filepath: string;
-  private injectObjects: Array<InjectObject> = [];
+  private injectType: InjectType | undefined;
+  private injectObjects: Array<InjectObject | InjectConstructor> = [];
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
   private className?: string;
@@ -45,6 +47,7 @@ export class EggPrototypeBuilder {
     builder.initType = ctx.prototypeInfo.initType;
     builder.accessLevel = ctx.prototypeInfo.accessLevel;
     builder.filepath = filepath!;
+    builder.injectType = PrototypeUtil.getInjectType(clazz);
     builder.injectObjects = PrototypeUtil.getInjectObjects(clazz) || [];
     builder.loadUnit = loadUnit;
     builder.qualifiers = [
@@ -103,16 +106,26 @@ export class EggPrototypeBuilder {
   }
 
   public build(): EggPrototype {
-    const injectObjectProtos: InjectObjectProto[] = [];
+    const injectObjectProtos: Array<InjectObjectProto | InjectConstructorProto> = [];
     for (const injectObject of this.injectObjects) {
       const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
       const proto = this.findInjectObjectPrototype(injectObject);
-      injectObjectProtos.push({
-        refName: injectObject.refName,
-        objName: injectObject.objName,
-        qualifiers: propertyQualifiers,
-        proto,
-      });
+      if (this.injectType === InjectType.PROPERTY) {
+        injectObjectProtos.push({
+          refName: injectObject.refName,
+          objName: injectObject.objName,
+          qualifiers: propertyQualifiers,
+          proto,
+        });
+      } else {
+        injectObjectProtos.push({
+          refIndex: (injectObject as InjectConstructor).refIndex,
+          refName: injectObject.refName,
+          objName: injectObject.objName,
+          qualifiers: propertyQualifiers,
+          proto,
+        });
+      }
     }
     const id = IdenticalUtil.createProtoId(this.loadUnit.id, this.name);
     return new EggPrototypeImpl(
@@ -126,6 +139,7 @@ export class EggPrototypeBuilder {
       this.loadUnit.id,
       this.qualifiers,
       this.className,
+      this.injectType,
     );
   }
 }

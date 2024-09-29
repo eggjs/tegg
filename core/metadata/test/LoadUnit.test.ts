@@ -7,6 +7,27 @@ import { FOO_ATTRIBUTE } from './fixtures/modules/multi-instance-module/MultiIns
 
 
 describe('test/LoadUnit/LoadUnit.test.ts', () => {
+  describe('inject with constructor', () => {
+    it('should not inherit parent class', async () => {
+      const extendsConstructorModule = path.join(__dirname, './fixtures/modules/extends-constructor-module');
+      const loader = new TestLoader(extendsConstructorModule);
+      const loadUnit = await LoadUnitFactory.createLoadUnit(extendsConstructorModule, EggLoadUnitType.MODULE, loader);
+
+      const fooConstructor = loadUnit.getEggPrototype('fooConstructor', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.CONTEXT }]);
+      const fooConstructorLogger = loadUnit.getEggPrototype('fooConstructorLogger', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.CONTEXT }]);
+
+      assert.strictEqual(fooConstructor.length, 1);
+      assert.strictEqual(fooConstructor[0].injectObjects!.length, 1);
+      assert.strictEqual(fooConstructor[0].injectObjects![0].refName, 'bar');
+
+      assert.strictEqual(fooConstructorLogger.length, 1);
+      assert.strictEqual(fooConstructorLogger[0].injectObjects!.length, 2);
+      assert.strictEqual(fooConstructorLogger[0].injectObjects![0].refName, 'bar');
+      assert.strictEqual(fooConstructorLogger[0].injectObjects![1].refName, 'logger');
+      await LoadUnitFactory.destroyLoadUnit(loadUnit);
+    });
+
+  });
   describe('ModuleLoadUnit', () => {
     it('should create success', async () => {
       const repoModulePath = path.join(__dirname, './fixtures/modules/load-unit');

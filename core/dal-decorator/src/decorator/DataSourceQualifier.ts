@@ -3,8 +3,8 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { QualifierUtil } from '@eggjs/core-decorator';
 
 export function DataSourceQualifier(dataSourceName: string) {
-  return function(target: any, propertyKey: PropertyKey) {
-    QualifierUtil.addProperQualifier(target.constructor as EggProtoImplClass,
-      propertyKey, DataSourceQualifierAttribute, dataSourceName);
+  return function(target: any, propertyKey: PropertyKey, parameterIndex?: number) {
+    QualifierUtil.addInjectQualifier(target.constructor as EggProtoImplClass,
+      propertyKey, parameterIndex, DataSourceQualifierAttribute, dataSourceName);
   };
 }

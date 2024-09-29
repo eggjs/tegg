@@ -1,8 +1,9 @@
-import type { EggProtoImplClass, InjectObjectInfo, InjectParams } from '@eggjs/tegg-types';
+import { EggProtoImplClass, InjectObjectInfo, InjectConstructorInfo, InjectParams, InjectType } from '@eggjs/tegg-types';
 import { PrototypeUtil } from '../util/PrototypeUtil';
+import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 export function Inject(param?: InjectParams | string) {
-  return function(target: any, propertyKey: PropertyKey) {
+  function propertyInject(target: any, propertyKey: PropertyKey) {
     let objName: PropertyKey | undefined;
     if (!param) {
       // try to read design:type from proto
@@ -22,6 +23,30 @@ export function Inject(param?: InjectParams | string) {
       objName: objName || propertyKey,
     };
 
+    PrototypeUtil.setInjectType(target.constructor, InjectType.PROPERTY);
     PrototypeUtil.addInjectObject(target.constructor as EggProtoImplClass, injectObject);
+  }
+
+  function constructorInject(target: any, parameterIndex: number) {
+    const argNames = ObjectUtils.getConstructorArgNameList(target);
+    const argName = argNames[parameterIndex];
+    // TODO get objName from design:type
+    const objName = typeof param === 'string' ? param : param?.name;
+    const injectObject: InjectConstructorInfo = {
+      refIndex: parameterIndex,
+      refName: argName,
+      objName: objName || argName,
+    };
+
+    PrototypeUtil.setInjectType(target, InjectType.CONSTRUCTOR);
+    PrototypeUtil.addInjectConstructor(target as EggProtoImplClass, injectObject);
+  }
+
+  return function(target: any, propertyKey?: PropertyKey, parameterIndex?: number) {
+    if (typeof parameterIndex === 'undefined') {
+      propertyInject(target, propertyKey!);
+    } else {
+      constructorInject(target, parameterIndex!);
+    }
   };
 }
