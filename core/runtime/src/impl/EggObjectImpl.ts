@@ -4,7 +4,7 @@ import type {
   EggObjectLifecycle,
   EggObjectLifeCycleContext,
   EggObjectName,
-  EggPrototype,
+  EggPrototype, ObjectInfo, QualifierInfo,
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
@@ -92,7 +92,7 @@ export default class EggObjectImpl implements EggObject {
     // 4. call obj lifecycle postCreate
     // 5. success create
     try {
-      const constructArgs = await Promise.all(this.proto.injectObjects!.map(async injectObject => {
+      const constructArgs: any[] = await Promise.all(this.proto.injectObjects!.map(async injectObject => {
         const proto = injectObject.proto;
         const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
         if (!loadUnit) {
@@ -104,6 +104,22 @@ export default class EggObjectImpl implements EggObject {
         const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
         return EggObjectUtil.eggObjectProxy(injectObj);
       }));
+      if (typeof this.proto.multiInstanceConstructorIndex !== 'undefined') {
+        const qualifiers = this.proto.multiInstanceConstructorAttributes
+          ?.map(t => {
+            return {
+              attribute: t,
+              value: this.proto.getQualifier(t),
+            } as QualifierInfo;
+          })
+          ?.filter(t => typeof t.value !== 'undefined')
+          ?? [];
+        const objInfo: ObjectInfo = {
+          name: this.proto.name,
+          qualifiers,
+        };
+        constructArgs.splice(this.proto.multiInstanceConstructorIndex, 0, objInfo);
+      }
 
       this._obj = this.proto.constructEggObject(...constructArgs);
       const objLifecycleHook = this._obj as EggObjectLifecycle;

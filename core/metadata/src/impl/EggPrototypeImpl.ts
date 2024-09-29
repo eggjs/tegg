@@ -1,4 +1,4 @@
-import { InjectType, MetadataUtil } from '@eggjs/core-decorator';
+import { InjectType, MetadataUtil, QualifierAttribute } from '@eggjs/core-decorator';
 import type {
   AccessLevel,
   EggProtoImplClass,
@@ -26,6 +26,8 @@ export class EggPrototypeImpl implements EggPrototype {
   readonly injectType: InjectType;
   readonly loadUnitId: Id;
   readonly className?: string;
+  readonly multiInstanceConstructorIndex?: number;
+  readonly multiInstanceConstructorAttributes?: QualifierAttribute[];
 
   constructor(
     id: string,
@@ -39,6 +41,8 @@ export class EggPrototypeImpl implements EggPrototype {
     qualifiers: QualifierInfo[],
     className?: string,
     injectType?: InjectType,
+    multiInstanceConstructorIndex?: number,
+    multiInstanceConstructorAttributes?: QualifierAttribute[],
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -51,6 +55,8 @@ export class EggPrototypeImpl implements EggPrototype {
     this.qualifiers = qualifiers;
     this.className = className;
     this.injectType = injectType || InjectType.PROPERTY;
+    this.multiInstanceConstructorIndex = multiInstanceConstructorIndex;
+    this.multiInstanceConstructorAttributes = multiInstanceConstructorAttributes;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {

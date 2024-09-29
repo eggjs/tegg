@@ -109,6 +109,8 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   readonly injectObjects: Array<InjectObjectProto | InjectConstructorProto>;
   readonly injectType?: InjectType;
   readonly className?: string;
+  readonly multiInstanceConstructorIndex?: number;
+  readonly multiInstanceConstructorAttributes?: QualifierAttribute[];
 
   /**
    * get metedata for key

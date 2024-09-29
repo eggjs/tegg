@@ -59,7 +59,7 @@ declare module 'egg' {
     // 兼容现有 module 的定义
     module: EggModule & EggApplicationModule;
 
-    getEggObject<T>(clazz: EggProtoImplClass<T>): Promise<T>;
+    getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
     getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
   }
 
@@ -68,7 +68,7 @@ declare module 'egg' {
     // 兼容现有 module 的定义
     module: EggModule & EggContextModule;
 
-    getEggObject<T>(clazz: EggProtoImplClass<T>): Promise<T>;
+    getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
   }
 
   interface Application extends TEggApplication {

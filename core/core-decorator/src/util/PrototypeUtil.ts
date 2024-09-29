@@ -7,7 +7,7 @@ import {
   InjectConstructorInfo,
   InjectObjectInfo,
   InjectType,
-  MultiInstancePrototypeGetObjectsContext,
+  MultiInstancePrototypeGetObjectsContext, QualifierAttribute,
 } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
 
@@ -22,6 +22,8 @@ export class PrototypeUtil {
   static readonly INJECT_TYPE = Symbol.for('EggPrototype.injectType');
   static readonly INJECT_CONSTRUCTOR_NAME_SET = Symbol.for('EggPrototype.injectConstructorNames');
   static readonly CLAZZ_PROTO = Symbol.for('EggPrototype.clazzProto');
+  static readonly MULTI_INSTANCE_CONSTRUCTOR_INDEX = Symbol.for('EggPrototype#multiInstanceConstructorIndex');
+  static readonly MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES = Symbol.for('EggPrototype#multiInstanceConstructorAttributes');
 
   /**
    * Mark class is egg object prototype
@@ -144,6 +146,22 @@ export class PrototypeUtil {
         objects: callBackMetadata.getObjects(ctx),
       };
     }
+  }
+
+  static setMultiInstanceConstructorAttributes(clazz: EggProtoImplClass, attributes: QualifierAttribute[]) {
+    MetadataUtil.defineMetaData(PrototypeUtil.MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES, attributes, clazz);
+  }
+
+  static getMultiInstanceConstructorAttributes(clazz: EggProtoImplClass): QualifierAttribute[] {
+    return MetadataUtil.getMetaData(PrototypeUtil.MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES, clazz) || [];
+  }
+
+  static setMultiInstanceConstructorIndex(clazz: EggProtoImplClass, index: number) {
+    MetadataUtil.defineMetaData(PrototypeUtil.MULTI_INSTANCE_CONSTRUCTOR_INDEX, index, clazz);
+  }
+
+  static getMultiInstanceConstructorIndex(clazz: EggProtoImplClass): number | undefined {
+    return MetadataUtil.getMetaData(PrototypeUtil.MULTI_INSTANCE_CONSTRUCTOR_INDEX, clazz);
   }
 
   static setInjectType(clazz: EggProtoImplClass, type: InjectType) {
