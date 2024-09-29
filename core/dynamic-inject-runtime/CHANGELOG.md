@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.44.0](https://github.com/eggjs/tegg/compare/v3.43.2...v3.44.0) (2024-09-29)
+
+**Note:** Version bump only for package @eggjs/tegg-dynamic-inject-runtime
+
+
+
+
+
 ## [3.43.2](https://github.com/eggjs/tegg/compare/v3.43.1...v3.43.2) (2024-09-14)
 
 **Note:** Version bump only for package @eggjs/tegg-dynamic-inject-runtime

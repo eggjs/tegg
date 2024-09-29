@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.44.0](https://github.com/eggjs/tegg/compare/v3.43.2...v3.44.0) (2024-09-29)
+
+
+### Features
+
+* support inject in constructor ([#237](https://github.com/eggjs/tegg/issues/237)) ([e68b1ed](https://github.com/eggjs/tegg/commit/e68b1ed6a90432f1cb35a6f562914b7b04cb5114))
+
+
+
+
+
 ## [3.43.2](https://github.com/eggjs/tegg/compare/v3.43.1...v3.43.2) (2024-09-14)
 
 **Note:** Version bump only for package @eggjs/dal-decorator
