@@ -7,6 +7,7 @@ export * from './src/decorator/ContextProto';
 export * from './src/decorator/SingletonProto';
 export * from './src/decorator/EggQualifier';
 export * from './src/decorator/MultiInstanceProto';
+export * from './src/decorator/MultiInstanceInfo';
 export * from './src/decorator/ConfigSource';
 
 export * from './src/util/MetadataUtil';

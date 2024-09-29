@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { InjectType, PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
+import { InjectType, PrototypeUtil, QualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
 import type {
   AccessLevel,
   EggProtoImplClass,
@@ -35,6 +35,8 @@ export class EggPrototypeBuilder {
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
   private className?: string;
+  private multiInstanceConstructorIndex?: number;
+  private multiInstanceConstructorAttributes?: QualifierAttribute[];
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
     const { clazz, loadUnit } = ctx;
@@ -54,6 +56,8 @@ export class EggPrototypeBuilder {
       ...QualifierUtil.getProtoQualifiers(clazz),
       ...(ctx.prototypeInfo.qualifiers ?? []),
     ];
+    builder.multiInstanceConstructorIndex = PrototypeUtil.getMultiInstanceConstructorIndex(clazz);
+    builder.multiInstanceConstructorAttributes = PrototypeUtil.getMultiInstanceConstructorAttributes(clazz);
     return builder.build();
   }
 
@@ -140,6 +144,8 @@ export class EggPrototypeBuilder {
       this.qualifiers,
       this.className,
       this.injectType,
+      this.multiInstanceConstructorIndex,
+      this.multiInstanceConstructorAttributes,
     );
   }
 }
