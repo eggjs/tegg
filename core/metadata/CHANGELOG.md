@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.46.1](https://github.com/eggjs/tegg/compare/v3.46.0...v3.46.1) (2024-09-30)
+
+
+### Bug Fixes
+
+* fix miss MultiInstance proper qualifiers ([#241](https://github.com/eggjs/tegg/issues/241)) ([15666d3](https://github.com/eggjs/tegg/commit/15666d36c18b99eccc4f1a11d8e7702503694ee1))
+
+
+
+
+
 # [3.46.0](https://github.com/eggjs/tegg/compare/v3.45.0...v3.46.0) (2024-09-29)
 
 
