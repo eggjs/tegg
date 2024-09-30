@@ -1,9 +1,10 @@
-import { Inject, SingletonProto } from '@eggjs/core-decorator';
+import { Inject, ModuleQualifier, SingletonProto } from '@eggjs/core-decorator';
 import { Secret, SecretQualifier } from '../foo/Secret';
 
 @SingletonProto()
 export class App2 {
   @Inject()
-  @SecretQualifier('app2')
+  @ModuleQualifier('app2')
+  @SecretQualifier('1')
   secret: Secret;
 }

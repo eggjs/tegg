@@ -55,6 +55,10 @@ export class ClazzMap {
             });
             assert(property, `multi instance property not found for ${clazz.name}`);
             for (const info of property.objects) {
+              const instanceQualifiers = [
+                ...qualifiers,
+                ...info.qualifiers,
+              ];
               clazzMap[info.name] = clazzMap[info.name] || [];
               clazzMap[info.name].push({
                 name: info.name,
@@ -62,10 +66,7 @@ export class ClazzMap {
                   unitPath: instanceNode.val.moduleConfig.path,
                   moduleName: instanceNode.val.moduleConfig.name,
                 }) as AccessLevel,
-                qualifiers: [
-                  ...qualifiers,
-                  ...info.qualifiers,
-                ],
+                qualifiers: instanceQualifiers,
                 properQualifiers: info.properQualifiers || {},
                 instanceModule: instanceNode,
                 ownerModule: ownerNode,
@@ -179,18 +180,20 @@ export class ModuleNode implements GraphNodeObj {
     if (!this.clazzList.includes(clazz)) {
       this.clazzList.push(clazz);
     }
-    const defaultQualifier = [{
-      attribute: InitTypeQualifierAttribute,
-      value: PrototypeUtil.getInitType(clazz, {
-        unitPath: this.moduleConfig.path,
-        moduleName: this.moduleConfig.name,
-      })!,
-    }, {
-      attribute: LoadUnitNameQualifierAttribute,
-      value: this.name,
-    }];
-    for (const qualifier of defaultQualifier) {
-      QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
+    if (!PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+      const defaultQualifier = [{
+        attribute: InitTypeQualifierAttribute,
+        value: PrototypeUtil.getInitType(clazz, {
+          unitPath: this.moduleConfig.path,
+          moduleName: this.moduleConfig.name,
+        })!,
+      }, {
+        attribute: LoadUnitNameQualifierAttribute,
+        value: this.name,
+      }];
+      for (const qualifier of defaultQualifier) {
+        QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
+      }
     }
   }
 

@@ -33,5 +33,5 @@ export interface EggPrototypeInfo {
   /**
    * EggPrototype properties qualifiers
    */
-  properQualifiers?: QualifierInfo[];
+  properQualifiers?: Record<string, QualifierInfo[]>;
 }

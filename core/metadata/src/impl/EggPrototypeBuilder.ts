@@ -34,6 +34,7 @@ export class EggPrototypeBuilder {
   private injectObjects: Array<InjectObject | InjectConstructor> = [];
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
+  private properQualifiers: Record<string, QualifierInfo[]> = {};
   private className?: string;
   private multiInstanceConstructorIndex?: number;
   private multiInstanceConstructorAttributes?: QualifierAttribute[];
@@ -56,6 +57,8 @@ export class EggPrototypeBuilder {
       ...QualifierUtil.getProtoQualifiers(clazz),
       ...(ctx.prototypeInfo.qualifiers ?? []),
     ];
+    console.log('proto: ', ctx.prototypeInfo.properQualifiers);
+    builder.properQualifiers = ctx.prototypeInfo.properQualifiers ?? {};
     builder.multiInstanceConstructorIndex = PrototypeUtil.getMultiInstanceConstructorIndex(clazz);
     builder.multiInstanceConstructorAttributes = PrototypeUtil.getMultiInstanceConstructorAttributes(clazz);
     return builder.build();
@@ -63,31 +66,38 @@ export class EggPrototypeBuilder {
 
   private tryFindDefaultPrototype(injectObject: InjectObject): EggPrototype {
     const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
-    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+    const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
+    console.log('multi instance: ', this.properQualifiers, injectObject.refName);
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, [
+      ...propertyQualifiers,
+      ...multiInstancePropertyQualifiers,
+    ]);
   }
 
   private tryFindContextPrototype(injectObject: InjectObject): EggPrototype {
-    let propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
-    propertyQualifiers = [
+    const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, [
       ...propertyQualifiers,
+      ...multiInstancePropertyQualifiers,
       {
         attribute: InitTypeQualifierAttribute,
         value: ObjectInitType.CONTEXT,
       },
-    ];
-    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+    ]);
   }
 
   private tryFindSelfInitTypePrototype(injectObject: InjectObject): EggPrototype {
-    let propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
-    propertyQualifiers = [
+    const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
+    const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
+    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, [
       ...propertyQualifiers,
+      ...multiInstancePropertyQualifiers,
       {
         attribute: InitTypeQualifierAttribute,
         value: this.initType,
       },
-    ];
-    return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, propertyQualifiers);
+    ]);
   }
 
   private findInjectObjectPrototype(injectObject: InjectObject): EggPrototype {
