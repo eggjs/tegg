@@ -3,6 +3,7 @@ export * from './enum/EggType';
 export * from './enum/ObjectInitType';
 export * from './enum/Qualifier';
 export * from './enum/InjectType';
+export * from './enum/MultiInstanceType';
 
 export * from './model/EggPrototypeInfo';
 export * from './model/InjectObjectInfo';

@@ -1,60 +1,63 @@
 import {
   EggLoadUnitType,
+  GlobalGraph,
   Loader,
   LoadUnit,
   LoadUnitFactory,
-  LoadUnitMultiInstanceProtoHook,
+  ModuleDescriptorDumper,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { AppGraph, ModuleNode } from '@eggjs/tegg/helper';
 import { ModuleReference } from '@eggjs/tegg-common-util';
+import { Logger } from '@eggjs/tegg';
+
+export interface EggModuleLoaderOptions {
+  logger: Logger;
+  baseDir: string;
+}
 
 export class EggModuleLoader {
   private moduleReferences: readonly ModuleReference[];
+  private globalGraph: GlobalGraph;
 
-  constructor(moduleReferences: readonly ModuleReference[]) {
+  constructor(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
     this.moduleReferences = moduleReferences;
+    GlobalGraph.instance = this.globalGraph = EggModuleLoader.generateAppGraph(this.moduleReferences, options);
   }
 
-  private static generateAppGraph(loaderCache: Map<string, Loader>, moduleReferences: readonly ModuleReference[]) {
-    const appGraph = new AppGraph();
-    for (const moduleConfig of moduleReferences) {
-      const modulePath = moduleConfig.path;
-      const moduleNode = new ModuleNode(moduleConfig);
-      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
-      loaderCache.set(modulePath, loader);
-      const clazzList = loader.load();
-      for (const clazz of clazzList) {
-        moduleNode.addClazz(clazz);
-      }
-      appGraph.addNode(moduleNode);
+  private static generateAppGraph(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
+    const moduleDescriptors = LoaderFactory.loadApp(moduleReferences);
+    for (const moduleDescriptor of moduleDescriptors) {
+      ModuleDescriptorDumper.dump(moduleDescriptor, {
+        dumpDir: options.baseDir,
+      }).catch(e => {
+        e.message = 'dump module descriptor failed: ' + e.message;
+        options.logger.warn(e);
+      });
     }
-    appGraph.build();
-    return appGraph;
+    const globalGraph = GlobalGraph.create(moduleDescriptors);
+    globalGraph.build();
+    return globalGraph;
   }
 
   async load(): Promise<LoadUnit[]> {
     const loadUnits: LoadUnit[] = [];
-    const loaderCache = new Map<string, Loader>();
-    const appGraph = EggModuleLoader.generateAppGraph(loaderCache, this.moduleReferences);
-    appGraph.sort();
-    LoadUnitMultiInstanceProtoHook.setAllClassList(appGraph.getClazzList());
-    const moduleConfigList = appGraph.moduleConfigList;
+    this.globalGraph.sort();
+    const moduleConfigList = GlobalGraph.instance!.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
-      const loader = loaderCache.get(modulePath)!;
+      const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
       const loadUnit = await LoadUnitFactory.createLoadUnit(modulePath, EggLoadUnitType.MODULE, loader);
       loadUnits.push(loadUnit);
     }
     return loadUnits;
   }
 
-  static async preLoad(moduleReferences: readonly ModuleReference[]): Promise<void> {
+  static async preLoad(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions): Promise<void> {
     const loadUnits: LoadUnit[] = [];
     const loaderCache = new Map<string, Loader>();
-    const appGraph = EggModuleLoader.generateAppGraph(loaderCache, moduleReferences);
-    appGraph.sort();
-    const moduleConfigList = appGraph.moduleConfigList;
+    const globalGraph = GlobalGraph.instance = EggModuleLoader.generateAppGraph(moduleReferences, options);
+    globalGraph.sort();
+    const moduleConfigList = globalGraph.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
       const modulePath = moduleConfig.path;
       const loader = loaderCache.get(modulePath)!;

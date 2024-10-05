@@ -8,6 +8,7 @@ import type {
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-types';
 import { EggPrototypeLifecycleUtil } from '../model/EggPrototype';
+import { ClassProtoDescriptor } from '../model/ProtoDescriptor/ClassProtoDescriptor';
 
 export class EggPrototypeCreatorFactory {
   private static creatorMap = new Map<string, EggPrototypeCreator>();
@@ -80,5 +81,25 @@ export class EggPrototypeCreatorFactory {
     }
     return protos;
 
+  }
+
+  static async createProtoByDescriptor(protoDescriptor: ClassProtoDescriptor, loadUnit: LoadUnit): Promise<EggPrototype> {
+    const creator = this.getPrototypeCreator(protoDescriptor.protoImplType);
+    if (!creator) {
+      throw new Error(`not found proto creator for type: ${protoDescriptor.protoImplType}`);
+    }
+    const ctx: EggPrototypeLifecycleContext = {
+      clazz: protoDescriptor.clazz,
+      loadUnit,
+      prototypeInfo: protoDescriptor,
+    };
+    const proto = creator(ctx);
+    await EggPrototypeLifecycleUtil.objectPreCreate(ctx, proto);
+    if (proto.init) {
+      await proto.init(ctx);
+    }
+    await EggPrototypeLifecycleUtil.objectPostCreate(ctx, proto);
+    PrototypeUtil.setClazzProto(protoDescriptor.clazz, proto);
+    return proto;
   }
 }

@@ -10,6 +10,7 @@ export interface ObjectInfo {
 }
 
 export interface MultiInstancePrototypeGetObjectsContext {
+  // instance module, multi instance proto used in
   moduleName: string;
   unitPath: string;
 }

@@ -9,6 +9,7 @@ import { EggLoadUnitType, EggPrototype, LoadUnitFactory } from '@eggjs/tegg-meta
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { AsyncLocalStorage } from 'async_hooks';
+import { LoaderUtil } from './LoaderUtil';
 
 export class EggContextStorage {
   static storage = new AsyncLocalStorage<EggContext>();
@@ -32,6 +33,7 @@ export class CoreTestHelper {
     return await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
   static async prepareModules(moduleDirs: string[]): Promise<Array<LoadUnitInstance>> {
+    LoaderUtil.buildGlobalGraph(moduleDirs);
     EggContextStorage.register();
     const instances: Array<LoadUnitInstance> = [];
     for (const moduleDir of moduleDirs) {

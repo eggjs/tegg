@@ -12,6 +12,8 @@ import { ContextHandler } from '../src/model/ContextHandler';
 import { EggContextStorage } from './fixtures/EggContextStorage';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance';
 import { FooLoggerConstructor } from './fixtures/modules/multi-instance-module/MultiInstanceConstructor';
+import path from 'node:path';
+import { LoaderUtil } from '@eggjs/module-test-util';
 
 describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
   describe('ModuleLoadUnitInstance', () => {
@@ -148,9 +150,14 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
 
     before(async () => {
       EggContextStorage.register();
-      commonInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-common');
-      repoInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-repo');
-      serviceInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-service');
+      LoaderUtil.buildGlobalGraph([
+        path.join(__dirname, 'fixtures/modules/multi-module/multi-module-common'),
+        path.join(__dirname, 'fixtures/modules/multi-module/multi-module-repo'),
+        path.join(__dirname, 'fixtures/modules/multi-module/multi-module-service'),
+      ]);
+      commonInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-common', false);
+      repoInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-repo', false);
+      serviceInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-service', false);
     });
 
     after(async () => {

@@ -139,7 +139,10 @@ export class Runner {
     } else if (options?.innerObjectHandlers) {
       Object.assign(this.innerObjects, options.innerObjectHandlers);
     }
-    this.loadUnitLoader = new EggModuleLoader(this.moduleReferences);
+    this.loadUnitLoader = new EggModuleLoader(this.moduleReferences, {
+      logger: ((this.innerObjects.logger && this.innerObjects.logger[0])?.obj as Logger) || console,
+      baseDir: this.cwd,
+    });
     const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
     LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
 
@@ -195,7 +198,10 @@ export class Runner {
 
   static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
     const moduleReferences = Runner.getModuleReferences(cwd, dependencies);
-    await EggModuleLoader.preLoad(moduleReferences);
+    await EggModuleLoader.preLoad(moduleReferences, {
+      baseDir: cwd,
+      logger: console,
+    });
   }
 
   async init() {

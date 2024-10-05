@@ -66,4 +66,18 @@ export class QualifierUtil {
     const qualifiers = properQualifiers?.get(property);
     return qualifiers?.get(attribute);
   }
+
+  static matchQualifiers(clazzQualifiers: QualifierInfo[], requestQualifiers: QualifierInfo[]): boolean {
+    for (const request of requestQualifiers) {
+      if (!clazzQualifiers.find(t => t.attribute === request.attribute && t.value === request.value)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static equalQualifiers(clazzQualifiers: QualifierInfo[], requestQualifiers: QualifierInfo[]): boolean {
+    if (clazzQualifiers.length !== requestQualifiers.length) return false;
+    return QualifierUtil.matchQualifiers(clazzQualifiers, requestQualifiers);
+  }
 }
