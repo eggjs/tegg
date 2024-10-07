@@ -5,4 +5,6 @@ import { EggProtoImplClass } from '../../core-decorator';
  */
 export interface Loader {
   load(): EggProtoImplClass[];
+  // TODO impl loadProto
+  // loadProto(): ProtoDescriptor[];
 }

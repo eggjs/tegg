@@ -2,38 +2,39 @@ import assert from 'node:assert';
 import path from 'node:path';
 import {
   EggLoadUnitType,
+  GraphNodeObj,
   InitTypeQualifierAttribute,
-  LoadUnitNameQualifierAttribute,
+  ObjectInitTypeLike,
 } from '@eggjs/tegg-types';
 import type {
   EggProtoImplClass,
-  GraphNodeObj,
   EggPrototype,
   EggPrototypeName,
-  Loader,
   LoadUnit,
   LoadUnitLifecycleContext,
-  ObjectInitTypeLike,
   QualifierInfo,
 } from '@eggjs/tegg-types';
 import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
-import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
-import { FrameworkErrorFormater } from 'egg-errors';
 import { IdenticalUtil, LifecycleUtil } from '@eggjs/tegg-lifecycle';
 import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { LoadUnitFactory } from '../factory/LoadUnitFactory';
 import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
 import { MultiPrototypeFound } from '../errors';
-import { LoadUnitMultiInstanceProtoHook } from './LoadUnitMultiInstanceProtoHook';
+import { FrameworkErrorFormater } from 'egg-errors';
+import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
+import { ClassProtoDescriptor } from '../model/ProtoDescriptor/ClassProtoDescriptor';
+import { GlobalGraph } from '../model/graph/GlobalGraph';
 
 let id = 0;
 
+// TODO del ModuleGraph in next major version
 class ProtoNode implements GraphNodeObj {
   readonly clazz: EggProtoImplClass;
   readonly name: EggPrototypeName;
   readonly id: string;
   readonly qualifiers: QualifierInfo[];
   readonly initType: ObjectInitTypeLike;
+  private PrototypeUtil: any;
 
   constructor(
     clazz: EggProtoImplClass,
@@ -63,7 +64,7 @@ class ProtoNode implements GraphNodeObj {
   }
 
   toString(): string {
-    return `${this.clazz.name}@${PrototypeUtil.getFilePath(this.clazz)}`;
+    return `${this.clazz.name}@${this.PrototypeUtil.getFilePath(this.clazz)}`;
   }
 }
 
@@ -194,8 +195,9 @@ export class ModuleGraph {
 }
 
 export class ModuleLoadUnit implements LoadUnit {
-  private loader: Loader;
+  // private loader: Loader;
   private protoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
+  private protos: ClassProtoDescriptor[];
   private clazzList: EggProtoImplClass[];
 
   readonly id: string;
@@ -203,55 +205,39 @@ export class ModuleLoadUnit implements LoadUnit {
   readonly unitPath: string;
   readonly type = EggLoadUnitType.MODULE;
 
-  constructor(name: string, unitPath: string, loader: Loader) {
+  get globalGraph(): GlobalGraph {
+    return GlobalGraph.instance!;
+  }
+
+  constructor(name: string, unitPath: string) {
     this.id = IdenticalUtil.createLoadUnitId(name);
     this.name = name;
     this.unitPath = unitPath;
-    this.loader = loader;
   }
 
-  private doLoadClazz(): EggProtoImplClass[] {
-    const clazzList = this.loader.load();
-    const result = clazzList.slice();
-    for (const clazz of clazzList) {
-      const defaultQualifier = [{
-        attribute: InitTypeQualifierAttribute,
-        value: PrototypeUtil.getInitType(clazz, {
-          unitPath: this.unitPath,
-          moduleName: this.name,
-        })!,
-      }, {
-        attribute: LoadUnitNameQualifierAttribute,
-        value: this.name,
-      }];
-      defaultQualifier.forEach(qualifier => {
-        QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
-      });
+  private doLoadClazz() {
+    const protos = this.globalGraph.moduleProtoDescriptorMap.get(this.name);
+    if (protos) {
+      // TODO ModuleLoadUnit should support all proto descriptor
+      this.protos = protos!.filter(t => ClassProtoDescriptor.isClassProtoDescriptor(t));
+      this.clazzList = this.protos.map(t => t.clazz);
+    } else {
+      this.protos = [];
+      this.clazzList = [];
     }
-    for (const clazz of LoadUnitMultiInstanceProtoHook.multiInstanceClazzSet) {
-      const instanceProperty = PrototypeUtil.getMultiInstanceProperty(clazz, {
-        moduleName: this.name,
-        unitPath: this.unitPath,
-      });
-      if (instanceProperty) {
-        result.push(clazz);
-      }
-    }
-    return result;
   }
 
   private loadClazz() {
     if (!this.clazzList) {
-      const clazzList = this.doLoadClazz();
-      const protoGraph = new ModuleGraph(clazzList, this.unitPath, this.name);
-      protoGraph.sort();
-      this.clazzList = protoGraph.clazzList;
+      this.doLoadClazz();
     }
   }
 
   async preLoad() {
     this.loadClazz();
     for (const protoClass of this.clazzList) {
+      // TODO refactor lifecycle hook to ProtoDescriptor or EggPrototype
+      // ModuleLoadUnit should not use clazz list
       const fnName = LifecycleUtil.getStaticLifecycleHook('preLoad', protoClass);
       if (fnName) {
         await protoClass[fnName]?.();
@@ -261,11 +247,9 @@ export class ModuleLoadUnit implements LoadUnit {
 
   async init() {
     this.loadClazz();
-    for (const clazz of this.clazzList) {
-      const protos = await EggPrototypeCreatorFactory.createProto(clazz, this);
-      for (const proto of protos) {
-        EggPrototypeFactory.instance.registerPrototype(proto, this);
-      }
+    for (const protoDescriptor of this.protos) {
+      const proto = await EggPrototypeCreatorFactory.createProtoByDescriptor(protoDescriptor, this);
+      EggPrototypeFactory.instance.registerPrototype(proto, this);
     }
   }
 
@@ -317,7 +301,7 @@ export class ModuleLoadUnit implements LoadUnit {
     const pkg = require(pkgPath);
     assert(pkg.eggModule, `module config not found in package ${pkgPath}`);
     const { name } = pkg.eggModule;
-    return new ModuleLoadUnit(name, ctx.unitPath, ctx.loader);
+    return new ModuleLoadUnit(name, ctx.unitPath);
   }
 }
 

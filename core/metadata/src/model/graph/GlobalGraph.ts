@@ -1,0 +1,247 @@
+import { Graph, GraphNode, ModuleReference } from '@eggjs/tegg-common-util';
+import {
+  InitTypeQualifierAttribute,
+  InjectObjectDescriptor, LoadUnitNameQualifierAttribute,
+  ObjectInitType,
+  ProtoDescriptor,
+  QualifierInfo,
+} from '@eggjs/tegg-types';
+import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode';
+import { ProtoDependencyMeta, ProtoNode } from './ProtoNode';
+import { FrameworkErrorFormater } from 'egg-errors';
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors';
+import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder';
+import { ModuleDescriptor } from '../ModuleDescriptor';
+
+export interface GlobalGraphOptions {
+  // TODO next major version refactor to force strict
+  // all proto should be load before build global graph
+  strict?: boolean;
+}
+
+/**
+ * Sort all prototypes and modules in app.
+ * - 1. LoaderFactory.loadApp: get ModuleDescriptors
+ * - 2. GlobalGraph.create: create global graph instance
+ * - 3. graph.build:
+ *   - check duplicated prototypes exits
+ *   - check inject object exists (only in strict mode,
+ *   can register proto in hooks now, in next major version,
+ *   should use load to create dynamic ProtoDescriptor and delete
+ *   strict false options
+ *   )
+ * - 4. graph.sort: build moduleConfigList and moduleProtoDescriptorMap
+ */
+export class GlobalGraph {
+  /**
+   * Vertex: ModuleNode, collect prototypes in module
+   * Edge: ModuleDependencyMeta, prototype and it's inject object
+   * @private
+   */
+  private moduleGraph: Graph<GlobalModuleNode, ModuleDependencyMeta>;
+  /**
+   * Vertex: ProtoNode, collect all prototypes in app
+   * Edge: ProtoDependencyMeta, inject object
+   * @private
+   */
+  private protoGraph: Graph<ProtoNode, ProtoDependencyMeta>;
+  /**
+   * The order of the moduleConfigList is the order in which they are instantiated
+   */
+  moduleConfigList: readonly ModuleReference[];
+  /**
+   * key: module name
+   * value: ProtoDescriptor in module, the order is the order in which they are instantiated
+   */
+  moduleProtoDescriptorMap: Map<string, ProtoDescriptor[]>;
+  strict: boolean;
+
+  /**
+   * The global instance used in ModuleLoadUnit
+   */
+  static instance?: GlobalGraph;
+
+  constructor(options?: GlobalGraphOptions) {
+    this.moduleGraph = new Graph<GlobalModuleNode, ModuleDependencyMeta>();
+    this.protoGraph = new Graph<ProtoNode, ProtoDependencyMeta>();
+    this.strict = options?.strict ?? false;
+    this.moduleProtoDescriptorMap = new Map();
+  }
+
+  addModuleNode(moduleNode: GlobalModuleNode) {
+    if (!this.moduleGraph.addVertex(new GraphNode<GlobalModuleNode, ModuleDependencyMeta>(moduleNode))) {
+      throw new Error(`duplicate module: ${moduleNode}`);
+    }
+    for (const protoNode of moduleNode.protos) {
+      if (!this.protoGraph.addVertex(protoNode)) {
+        throw new Error(`duplicate proto: ${protoNode.val}`);
+      }
+    }
+  }
+
+  build() {
+    for (const moduleNode of this.moduleGraph.nodes.values()) {
+      for (const protoNode of moduleNode.val.protos) {
+        for (const injectObj of protoNode.val.proto.injectObjects) {
+          const injectProto = this.#findDependencyProtoNode(protoNode.val.proto, injectObj);
+          if (!injectProto) {
+            if (!this.strict) {
+              continue;
+            }
+            throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(injectObj.objName, protoNode.val.proto.instanceModuleName));
+          }
+          this.protoGraph.addEdge(protoNode, injectProto, new ProtoDependencyMeta({
+            injectObj: injectObj.objName,
+          }));
+          const injectModule = this.#findModuleNode(injectProto.val.proto.instanceModuleName);
+          if (!injectModule) {
+            if (!this.strict) {
+              continue;
+            }
+            throw new Error(`not found module ${injectProto.val.proto.instanceModuleName}`);
+          }
+          if (moduleNode.val.id !== injectModule.val.id) {
+            this.moduleGraph.addEdge(moduleNode, injectModule, new ModuleDependencyMeta(protoNode.val.proto, injectObj.objName));
+          }
+        }
+      }
+    }
+  }
+
+  findInjectProto(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): ProtoDescriptor | undefined {
+    const edge = this.protoGraph.findToNode(ProtoNode.createProtoId(proto), new ProtoDependencyMeta({
+      injectObj: injectObject.objName,
+    }));
+    return edge?.val.proto;
+  }
+
+  #findDependencyProtoWithDefaultQualifiers(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor, qualifiers: QualifierInfo[]): GraphNode<ProtoNode, ProtoDependencyMeta>[] {
+    // TODO perf O(n(proto count)*m(inject count)*n)
+    const result: GraphNode<ProtoNode, ProtoDependencyMeta>[] = [];
+    for (const node of this.protoGraph.nodes.values()) {
+      if (node.val.selectProto({
+        name: injectObject.objName,
+        qualifiers: [
+          ...injectObject.qualifiers,
+          ...qualifiers,
+        ],
+        moduleName: proto.instanceModuleName,
+      })) {
+        result.push(node);
+      }
+    }
+    return result;
+  }
+
+  #findDependencyProtoNode(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): GraphNode<ProtoNode, ProtoDependencyMeta> | undefined {
+    // 1. find proto with request
+    // 2. try to add Context qualifier to find
+    // 3. try to add self init type qualifier to find
+    const protos = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, []);
+    if (protos.length === 0) {
+      return;
+      // throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(injectObject.objName, proto.instanceModuleName));
+    }
+    if (protos.length === 1) {
+      return protos[0];
+    }
+
+    const protoWithContext = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, [{
+      attribute: InitTypeQualifierAttribute,
+      value: ObjectInitType.CONTEXT,
+    }]);
+    if (protoWithContext.length === 1) {
+      return protoWithContext[0];
+    }
+
+    const protoWithSelfInitType = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, [{
+      attribute: InitTypeQualifierAttribute,
+      value: proto.initType,
+    }]);
+    if (protoWithSelfInitType.length === 1) {
+      return protoWithSelfInitType[0];
+    }
+    const loadUnitQualifier = injectObject.qualifiers.find(t => t.attribute === LoadUnitNameQualifierAttribute);
+    if (!loadUnitQualifier) {
+      return this.#findDependencyProtoNode(proto, {
+        ...injectObject,
+        qualifiers: [
+          ...injectObject.qualifiers,
+          {
+            attribute: LoadUnitNameQualifierAttribute,
+            value: proto.instanceModuleName,
+          },
+        ],
+      });
+    }
+    throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));
+  }
+
+  #findModuleNode(moduleName: string) {
+    for (const node of this.moduleGraph.nodes.values()) {
+      if (node.val.name === moduleName) {
+        return node;
+      }
+    }
+  }
+
+  #sortModule() {
+    const loopPath = this.moduleGraph.loopPath();
+    if (loopPath) {
+      throw new Error('module has recursive deps: ' + loopPath);
+    }
+    this.moduleConfigList = this.moduleGraph.sort()
+      .filter(t => {
+        return t.val.optional !== true || t.fromNodeMap.size > 0;
+      })
+      .map(t => {
+        return {
+          name: t.val.name,
+          path: t.val.unitPath,
+          optional: t.val.optional,
+        };
+      });
+  }
+
+  #sortClazz() {
+    const loopPath = this.protoGraph.loopPath();
+    if (loopPath) {
+      throw new Error('proto has recursive deps: ' + loopPath);
+    }
+    for (const proto of this.protoGraph.sort()) {
+      // // ignore the proto has no dependent
+      // if (proto.fromNodeMap.size === 0) continue;
+      const instanceModuleName = proto.val.proto.instanceModuleName;
+      let moduleProtoList = this.moduleProtoDescriptorMap.get(instanceModuleName);
+      if (!moduleProtoList) {
+        moduleProtoList = [];
+        this.moduleProtoDescriptorMap.set(instanceModuleName, moduleProtoList);
+      }
+      moduleProtoList.push(proto.val.proto);
+    }
+  }
+
+  sort() {
+    this.#sortModule();
+    this.#sortClazz();
+  }
+
+  static create(moduleDescriptors: ModuleDescriptor[], options?: GlobalGraphOptions): GlobalGraph {
+    const graph = new GlobalGraph(options);
+    for (const moduleDescriptor of moduleDescriptors) {
+      const moduleNodeBuilder = new GlobalModuleNodeBuilder({
+        name: moduleDescriptor.name,
+        unitPath: moduleDescriptor.unitPath,
+        optional: moduleDescriptor.optional ?? false,
+      });
+      for (const clazz of moduleDescriptor.clazzList) {
+        moduleNodeBuilder.addClazz(clazz);
+      }
+      for (const clazz of moduleDescriptor.multiInstanceClazzList) {
+        moduleNodeBuilder.addMultiInstanceClazz(clazz, moduleDescriptor.name, moduleDescriptor.unitPath);
+      }
+      graph.addModuleNode(moduleNodeBuilder.build());
+    }
+    return graph;
+  }
+}

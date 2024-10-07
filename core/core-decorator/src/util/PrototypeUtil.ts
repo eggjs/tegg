@@ -7,7 +7,9 @@ import {
   InjectConstructorInfo,
   InjectObjectInfo,
   InjectType, LoadUnitNameQualifierAttribute,
-  MultiInstancePrototypeGetObjectsContext, QualifierAttribute,
+  MultiInstancePrototypeGetObjectsContext,
+  MultiInstanceType,
+  QualifierAttribute,
 } from '@eggjs/tegg-types';
 import { MetadataUtil } from './MetadataUtil';
 
@@ -55,6 +57,21 @@ export class PrototypeUtil {
    */
   static isEggMultiInstancePrototype(clazz: EggProtoImplClass): boolean {
     return MetadataUtil.getBooleanMetaData(PrototypeUtil.IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE, clazz);
+  }
+
+  /**
+   * Get the type of the egg multi-instance prototype.
+   * @param {Function} clazz -
+   */
+  static getEggMultiInstancePrototypeType(clazz: EggProtoImplClass): MultiInstanceType | undefined {
+    if (!PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+      return;
+    }
+    const metadata = MetadataUtil.getMetaData<EggMultiInstancePrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, clazz);
+    if (metadata) {
+      return MultiInstanceType.STATIC;
+    }
+    return MultiInstanceType.DYNAMIC;
   }
 
   /**
@@ -130,6 +147,33 @@ export class PrototypeUtil {
   }
 
   /**
+   * Get instance property of Static multi-instance prototype.
+   * @param {EggProtoImplClass} clazz -
+   */
+  static getStaticMultiInstanceProperty(clazz: EggProtoImplClass): EggMultiInstancePrototypeInfo | undefined {
+    const metadata = MetadataUtil.getMetaData<EggMultiInstancePrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, clazz);
+    if (metadata) {
+      return metadata;
+    }
+  }
+
+  /**
+   * Get instance property of Dynamic multi-instance prototype.
+   * @param {EggProtoImplClass} clazz -
+   * @param {MultiInstancePrototypeGetObjectsContext} ctx -
+   */
+  static getDynamicMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggMultiInstancePrototypeInfo | undefined {
+    const callBackMetadata = MetadataUtil.getMetaData<EggMultiInstanceCallbackPrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
+    if (callBackMetadata) {
+      const objects = callBackMetadata.getObjects(ctx);
+      return {
+        ...callBackMetadata,
+        objects,
+      };
+    }
+  }
+
+  /**
    * get class property
    * @param {EggProtoImplClass} clazz -
    * @param {MultiInstancePrototypeGetObjectsContext} ctx -
@@ -142,6 +186,7 @@ export class PrototypeUtil {
     const callBackMetadata = MetadataUtil.getMetaData<EggMultiInstanceCallbackPrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
     if (callBackMetadata) {
       const objects = callBackMetadata.getObjects(ctx);
+      // TODO delete in next major version, default qualifier be added in ProtoDescriptorHelper.addDefaultQualifier
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
         value: callBackMetadata.initType,

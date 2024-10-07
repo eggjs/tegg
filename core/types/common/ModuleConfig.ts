@@ -2,6 +2,7 @@ export interface ModuleReference {
   name: string;
   path: string;
   optional?: boolean;
+  loaderType?: string;
 }
 
 export interface InlineModuleReferenceConfig {

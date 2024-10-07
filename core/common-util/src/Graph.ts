@@ -2,10 +2,15 @@ import type { GraphNodeObj } from '@eggjs/tegg-types';
 
 const inspect = Symbol.for('nodejs.util.inspect.custom');
 
-export class GraphNode<T extends GraphNodeObj> {
+export interface EdgeMeta {
+  equal(meta: EdgeMeta): boolean;
+  toString(): string;
+}
+
+export class GraphNode<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
   val: T;
-  toNodeMap: Map<string, GraphNode<T>> = new Map();
-  fromNodeMap: Map<string, GraphNode<T>> = new Map();
+  toNodeMap: Map<string, {node: GraphNode<T, M>, meta?: M}> = new Map();
+  fromNodeMap: Map<string, {node: GraphNode<T, M>, meta?: M}> = new Map();
 
   constructor(val: T) {
     this.val = val;
@@ -15,19 +20,19 @@ export class GraphNode<T extends GraphNodeObj> {
     return this.val.id;
   }
 
-  addToVertex(node: GraphNode<T>) {
+  addToVertex(node: GraphNode<T, M>, meta?: M) {
     if (this.toNodeMap.has(node.id)) {
       return false;
     }
-    this.toNodeMap.set(node.id, node);
+    this.toNodeMap.set(node.id, { node, meta });
     return true;
   }
 
-  addFromVertex(node: GraphNode<T>) {
+  addFromVertex(node: GraphNode<T, M>, meta?: M) {
     if (this.fromNodeMap.has(node.id)) {
       return false;
     }
-    this.fromNodeMap.set(node.id, node);
+    this.fromNodeMap.set(node.id, { node, meta });
     return true;
   }
 
@@ -48,31 +53,38 @@ export class GraphNode<T extends GraphNodeObj> {
   }
 }
 
-export class GraphPath<T extends GraphNodeObj> {
+export class GraphPath<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
   nodeIdMap: Map<string, number> = new Map();
-  nodes: Array<GraphNode<T>> = [];
+  nodes: Array<{ node: GraphNode<T, M>, meta?: M }> = [];
 
-  pushVertex(node: GraphNode<T>): boolean {
+  pushVertex(node: GraphNode<T, M>, meta?: M): boolean {
     const val = this.nodeIdMap.get(node.id) || 0;
     this.nodeIdMap.set(node.id, val + 1);
-    this.nodes.push(node);
+    this.nodes.push({ node, meta });
     return val === 0;
   }
 
   popVertex() {
-    const node = this.nodes.pop();
-    if (node) {
-      const val = this.nodeIdMap.get(node.id)!;
-      this.nodeIdMap.set(node.id, val - 1);
+    const nodeHandler = this.nodes.pop();
+    if (nodeHandler) {
+      const val = this.nodeIdMap.get(nodeHandler.node.id)!;
+      this.nodeIdMap.set(nodeHandler.node.id, val - 1);
     }
   }
 
   toString() {
     const res = this.nodes.reduce((p, c) => {
-      p.push(c.val.toString());
+      let msg = '';
+      if (c.meta) {
+        msg += ` ${c.meta.toString()} -> `;
+      } else if (p.length) {
+        msg += ' -> ';
+      }
+      msg += c.node.val.toString();
+      p.push(msg);
       return p;
     }, new Array<string>());
-    return res.join(' -> ');
+    return res.join('');
   }
 
   [inspect]() {
@@ -80,10 +92,10 @@ export class GraphPath<T extends GraphNodeObj> {
   }
 }
 
-export class Graph<T extends GraphNodeObj> {
-  nodes: Map<string, GraphNode<T>> = new Map();
+export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
+  nodes: Map<string, GraphNode<T, M>> = new Map();
 
-  addVertex(node: GraphNode<T>): boolean {
+  addVertex(node: GraphNode<T, M>): boolean {
     if (this.nodes.has(node.id)) {
       return false;
     }
@@ -91,17 +103,28 @@ export class Graph<T extends GraphNodeObj> {
     return true;
   }
 
-  addEdge(from: GraphNode<T>, to: GraphNode<T>): boolean {
-    to.addFromVertex(from);
-    return from.addToVertex(to);
+  addEdge(from: GraphNode<T, M>, to: GraphNode<T, M>, meta?: M): boolean {
+    to.addFromVertex(from, meta);
+    return from.addToVertex(to, meta);
   }
 
-  appendVertexToPath(node: GraphNode<T>, accessPath: GraphPath<T>): boolean {
-    if (!accessPath.pushVertex(node)) {
+  findToNode(id: string, meta: M): GraphNode<T, M> | undefined {
+    const node = this.nodes.get(id);
+    if (!node) return undefined;
+    for (const { node: toNode, meta: edgeMeta } of node.toNodeMap.values()) {
+      if (edgeMeta && meta.equal(edgeMeta)) {
+        return toNode;
+      }
+    }
+    return undefined;
+  }
+
+  appendVertexToPath(node: GraphNode<T, M>, accessPath: GraphPath<T, M>, meta?: M): boolean {
+    if (!accessPath.pushVertex(node, meta)) {
       return false;
     }
     for (const toNode of node.toNodeMap.values()) {
-      if (!this.appendVertexToPath(toNode, accessPath)) {
+      if (!this.appendVertexToPath(toNode.node, accessPath, toNode.meta)) {
         return false;
       }
     }
@@ -109,8 +132,8 @@ export class Graph<T extends GraphNodeObj> {
     return true;
   }
 
-  loopPath(): GraphPath<T> | undefined {
-    const accessPath = new GraphPath<T>();
+  loopPath(): GraphPath<T, M> | undefined {
+    const accessPath = new GraphPath<T, M>();
     const nodes = Array.from(this.nodes.values());
     for (const node of nodes) {
       if (!this.appendVertexToPath(node, accessPath)) {
@@ -120,7 +143,7 @@ export class Graph<T extends GraphNodeObj> {
     return;
   }
 
-  accessNode(node: GraphNode<T>, nodes: Array<GraphNode<T>>, accessed: boolean[], res: Array<GraphNode<T>>) {
+  accessNode(node: GraphNode<T, M>, nodes: Array<GraphNode<T, M>>, accessed: boolean[], res: Array<GraphNode<T, M>>) {
     const index = nodes.indexOf(node);
     if (accessed[index]) {
       return;
@@ -131,7 +154,7 @@ export class Graph<T extends GraphNodeObj> {
       return;
     }
     for (const toNode of node.toNodeMap.values()) {
-      this.accessNode(toNode, nodes, accessed, res);
+      this.accessNode(toNode.node, nodes, accessed, res);
     }
     accessed[nodes.indexOf(node)] = true;
     res.push(node);
@@ -145,8 +168,8 @@ export class Graph<T extends GraphNodeObj> {
   // notice:
   // 1. sort result is not stable
   // 2. graph with loop can not be sort
-  sort(): Array<GraphNode<T>> {
-    const res: Array<GraphNode<T>> = [];
+  sort(): Array<GraphNode<T, M>> {
+    const res: Array<GraphNode<T, M>> = [];
     const nodes = Array.from(this.nodes.values());
     const accessed: boolean[] = [];
     for (let i = 0; i < nodes.length; ++i) {

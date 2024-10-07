@@ -34,7 +34,7 @@ export class EggPrototypeBuilder {
   private injectObjects: Array<InjectObject | InjectConstructor> = [];
   private loadUnit: LoadUnit;
   private qualifiers: QualifierInfo[] = [];
-  private properQualifiers: Record<string, QualifierInfo[]> = {};
+  private properQualifiers: Record<PropertyKey, QualifierInfo[]> = {};
   private className?: string;
   private multiInstanceConstructorIndex?: number;
   private multiInstanceConstructorAttributes?: QualifierAttribute[];
@@ -57,7 +57,6 @@ export class EggPrototypeBuilder {
       ...QualifierUtil.getProtoQualifiers(clazz),
       ...(ctx.prototypeInfo.qualifiers ?? []),
     ];
-    console.log('proto: ', ctx.prototypeInfo.properQualifiers);
     builder.properQualifiers = ctx.prototypeInfo.properQualifiers ?? {};
     builder.multiInstanceConstructorIndex = PrototypeUtil.getMultiInstanceConstructorIndex(clazz);
     builder.multiInstanceConstructorAttributes = PrototypeUtil.getMultiInstanceConstructorAttributes(clazz);
@@ -67,7 +66,6 @@ export class EggPrototypeBuilder {
   private tryFindDefaultPrototype(injectObject: InjectObject): EggPrototype {
     const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
     const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
-    console.log('multi instance: ', this.properQualifiers, injectObject.refName);
     return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, [
       ...propertyQualifiers,
       ...multiInstancePropertyQualifiers,
