@@ -162,7 +162,7 @@ describe('test/decorator.test.ts', () => {
       assert(PrototypeUtil.getProperty(ParentSingletonProto));
       assert(PrototypeUtil.getFilePath(ParentSingletonProto));
 
-      assert.strictEqual(PrototypeUtil.isEggPrototype(ChildSingletonProto), undefined);
+      assert.strictEqual(PrototypeUtil.isEggPrototype(ChildSingletonProto), false);
       assert.strictEqual(PrototypeUtil.getProperty(ChildSingletonProto), undefined);
       assert.strictEqual(PrototypeUtil.getFilePath(ChildSingletonProto), undefined);
     });
@@ -177,7 +177,7 @@ describe('test/decorator.test.ts', () => {
       assert(PrototypeUtil.getMultiInstanceProperty(ParentStaticMultiInstanceProto, fakeCtx));
       assert(PrototypeUtil.getFilePath(ParentStaticMultiInstanceProto));
 
-      assert.strictEqual(PrototypeUtil.isEggMultiInstancePrototype(ChildStaticMultiInstanceProto), undefined);
+      assert.strictEqual(PrototypeUtil.isEggMultiInstancePrototype(ChildStaticMultiInstanceProto), false);
       assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildStaticMultiInstanceProto), undefined);
       assert.strictEqual(PrototypeUtil.getStaticMultiInstanceProperty(ChildStaticMultiInstanceProto), undefined);
       assert.strictEqual(PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx), undefined);
