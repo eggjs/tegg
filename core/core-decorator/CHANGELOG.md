@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.46.3](https://github.com/eggjs/tegg/compare/v3.46.2...v3.46.3) (2024-10-08)
+
+
+### Bug Fixes
+
+* Prototype should not be inherited ([#243](https://github.com/eggjs/tegg/issues/243)) ([6e7017a](https://github.com/eggjs/tegg/commit/6e7017a48d395fba6525e0b31c848a257eb171ef))
+
+
+
+
+
 ## [3.46.2](https://github.com/eggjs/tegg/compare/v3.46.1...v3.46.2) (2024-10-07)
 
 **Note:** Version bump only for package @eggjs/core-decorator
