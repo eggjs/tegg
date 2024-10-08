@@ -5,6 +5,7 @@ import {
   LoadUnitNameQualifierAttribute,
   InitTypeQualifierAttribute,
   DEFAULT_PROTO_IMPL_TYPE,
+  MultiInstanceType,
 } from '@eggjs/tegg-types';
 import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
 
@@ -16,6 +17,14 @@ import { PrototypeUtil, QualifierUtil } from '..';
 import QualifierCacheService from './fixtures/decators/QualifierCacheService';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger';
 import { ConstructorObject } from './fixtures/decators/ConstructorObject';
+import {
+  ChildDynamicMultiInstanceProto,
+  ChildSingletonProto,
+  ChildStaticMultiInstanceProto,
+  ParentDynamicMultiInstanceProto,
+  ParentSingletonProto,
+  ParentStaticMultiInstanceProto,
+} from './fixtures/decators/ChildService';
 
 describe('test/decorator.test.ts', () => {
   describe('ContextProto', () => {
@@ -140,5 +149,52 @@ describe('test/decorator.test.ts', () => {
 
   it('should get the right file path', () => {
     assert(PrototypeUtil.getFilePath(CacheService) === CacheService.fileName);
+  });
+
+  describe('inherited', () => {
+    const fakeCtx = {
+      unitPath: 'foo',
+      moduleName: '',
+    };
+
+    it('Prototype should not be inherited', () => {
+      assert(PrototypeUtil.isEggPrototype(ParentSingletonProto));
+      assert(PrototypeUtil.getProperty(ParentSingletonProto));
+      assert(PrototypeUtil.getFilePath(ParentSingletonProto));
+
+      assert.strictEqual(PrototypeUtil.isEggPrototype(ChildSingletonProto), false);
+      assert.strictEqual(PrototypeUtil.getProperty(ChildSingletonProto), undefined);
+      assert.strictEqual(PrototypeUtil.getFilePath(ChildSingletonProto), undefined);
+    });
+
+    it('static multiInstanceProto should not be inherited', () => {
+      assert(PrototypeUtil.isEggMultiInstancePrototype(ParentStaticMultiInstanceProto));
+      assert.strictEqual(
+        PrototypeUtil.getEggMultiInstancePrototypeType(ParentStaticMultiInstanceProto),
+        MultiInstanceType.STATIC,
+      );
+      assert(PrototypeUtil.getStaticMultiInstanceProperty(ParentStaticMultiInstanceProto));
+      assert(PrototypeUtil.getMultiInstanceProperty(ParentStaticMultiInstanceProto, fakeCtx));
+      assert(PrototypeUtil.getFilePath(ParentStaticMultiInstanceProto));
+
+      assert.strictEqual(PrototypeUtil.isEggMultiInstancePrototype(ChildStaticMultiInstanceProto), false);
+      assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildStaticMultiInstanceProto), undefined);
+      assert.strictEqual(PrototypeUtil.getStaticMultiInstanceProperty(ChildStaticMultiInstanceProto), undefined);
+      assert.strictEqual(PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(PrototypeUtil.getFilePath(ChildStaticMultiInstanceProto), undefined);
+    });
+
+    it('dynamic multipleInstanceProto should not be inherited', () => {
+      assert.strictEqual(
+        PrototypeUtil.getEggMultiInstancePrototypeType(ParentDynamicMultiInstanceProto),
+        MultiInstanceType.DYNAMIC,
+      );
+      assert(PrototypeUtil.getDynamicMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
+      assert(PrototypeUtil.getMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
+
+      assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildDynamicMultiInstanceProto), undefined);
+      assert.strictEqual(PrototypeUtil.getDynamicMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
+    });
   });
 });

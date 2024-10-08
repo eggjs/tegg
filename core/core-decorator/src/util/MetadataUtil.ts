@@ -27,6 +27,10 @@ export class MetadataUtil {
     return !!this.getMetaData(metadataKey, clazz);
   }
 
+  static getOwnBooleanMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass): boolean {
+    return !!this.getOwnMetaData(metadataKey, clazz);
+  }
+
   static getArrayMetaData<T>(metadataKey: MetaDataKey, clazz: EggProtoImplClass): Array<T> {
     return this.getMetaData(metadataKey, clazz) || [];
   }
