@@ -23,7 +23,12 @@ export class DataSource<T> implements IDataSource<T> {
     this.sqlMap = sqlMap;
   }
 
-  private generateSql(sqlName: string, data: object): ExecuteSql {
+  /**
+   * public for aop execute to implement sql hint append
+   * @param sqlName
+   * @param data
+   */
+  generateSql(sqlName: string, data: object): ExecuteSql {
     const sql = this.sqlMap.generate(sqlName, data, this.mysqlDataSource.timezone!);
     const sqlType = this.sqlMap.getType(sqlName);
     const template = this.sqlMap.getTemplateString(sqlName);

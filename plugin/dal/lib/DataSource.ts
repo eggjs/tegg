@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import {
-  AccessLevel, Inject,
-  LifecycleInit,
+  AccessLevel, Inject, LoadUnitNameQualifierAttribute,
+  MultiInstanceInfo,
   MultiInstanceProto,
   MultiInstancePrototypeGetObjectsContext,
   ObjectInfo,
@@ -9,16 +9,12 @@ import {
 } from '@eggjs/tegg';
 import {
   EggLoadUnitType,
-  EggObject,
-  EggObjectLifeCycleContext,
   LoaderFactory,
   ModuleConfigUtil,
 } from '@eggjs/tegg/helper';
 import {
-  DataSource as IDataSource,
   DataSourceInjectName,
   DataSourceQualifierAttribute,
-  PaginateData,
   TableInfoUtil,
   TableModel,
 } from '@eggjs/tegg/dal';
@@ -60,20 +56,17 @@ import { TransactionalAOP } from './TransactionalAOP';
     return result;
   },
 })
-export class DataSourceDelegate<T> implements IDataSource<T> {
-  private dataSource: DataSource<T>;
-
-  // register aop here let module dependent teggDal
-  @Inject({
-    name: 'transactionalAOP',
-  })
+export class DataSourceDelegate<T> extends DataSource<T> {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private transactionalAOP: TransactionalAOP;
+  objInfo: ObjectInfo;
 
-  @LifecycleInit()
-  async init(_: EggObjectLifeCycleContext, obj: EggObject) {
-    const dataSourceQualifierValue = obj.proto.getQualifier(DataSourceQualifierAttribute);
+  constructor(
+    @Inject({ name: 'transactionalAOP' }) transactionalAOP: TransactionalAOP,
+    @MultiInstanceInfo([ DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute ]) objInfo: ObjectInfo) {
+    const dataSourceQualifierValue = objInfo.qualifiers.find(t => t.attribute === DataSourceQualifierAttribute)?.value;
+    assert(dataSourceQualifierValue);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ moduleName, dataSource, clazzName ] = (dataSourceQualifierValue as string).split('.');
     const tableModel = TableModelManager.instance.get(moduleName, clazzName);
@@ -83,30 +76,8 @@ export class DataSourceDelegate<T> implements IDataSource<T> {
     const sqlMap = SqlMapManager.instance.get(moduleName, clazzName);
     assert(sqlMap, `not found SqlMap ${clazzName} in module ${moduleName}`);
 
-    this.dataSource = new DataSource<T>(tableModel as TableModel<T>, mysqlDataSource, sqlMap);
-  }
-
-  async execute(sqlName: string, data?: any): Promise<T[]> {
-    return this.dataSource.execute(sqlName, data);
-  }
-
-  async executeScalar(sqlName: string, data?: any): Promise<T | null> {
-    return this.dataSource.executeScalar(sqlName, data);
-  }
-
-  async executeRaw(sqlName: string, data?: any): Promise<any[]> {
-    return this.dataSource.executeRaw(sqlName, data);
-  }
-
-  async executeRawScalar(sqlName: string, data?: any): Promise<any> {
-    return this.dataSource.executeRawScalar(sqlName, data);
-  }
-
-  async paginate(sqlName: string, data: any, currentPage: number, perPageCount: number): Promise<PaginateData<T>> {
-    return this.dataSource.paginate(sqlName, data, currentPage, perPageCount);
-  }
-
-  async count(sqlName: string, data?: any): Promise<number> {
-    return this.dataSource.count(sqlName, data);
+    super(tableModel as TableModel<T>, mysqlDataSource, sqlMap);
+    this.transactionalAOP = transactionalAOP;
+    this.objInfo = objInfo;
   }
 }
