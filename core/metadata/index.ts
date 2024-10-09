@@ -17,6 +17,7 @@ export * from './src/model/graph/ProtoSelector';
 export * from './src/model/ProtoDescriptor/AbstractProtoDescriptor';
 export * from './src/model/ProtoDescriptor/ClassProtoDescriptor';
 export * from './src/model/ModuleDescriptor';
+export * from './src/model/ProtoDescriptorHelper';
 
 import './src/impl/ModuleLoadUnit';
 import './src/impl/EggPrototypeBuilder';
