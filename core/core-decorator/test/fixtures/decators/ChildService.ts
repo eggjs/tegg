@@ -11,7 +11,7 @@ export class ChildSingletonProto extends ParentSingletonProto {}
 })
 export class ParentStaticMultiInstanceProto {}
 
-export class ChildStaticMultiInstanceProto extends ParentSingletonProto {}
+export class ChildStaticMultiInstanceProto extends ParentStaticMultiInstanceProto {}
 
 
 @MultiInstanceProto({
