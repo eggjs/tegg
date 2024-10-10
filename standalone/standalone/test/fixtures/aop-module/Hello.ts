@@ -131,7 +131,7 @@ export const crosscutAdviceParams = {
   methodName: 'hello',
 }, { adviceParams: crosscutAdviceParams })
 @Advice()
-export class CrosscutAdvice implements IAdvice<Hello, String> {
+export class CrosscutAdvice implements IAdvice<Hello, string> {
   @Inject()
   callTrace: CallTrace;
 

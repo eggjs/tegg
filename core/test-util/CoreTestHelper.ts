@@ -5,7 +5,13 @@ import {
   LoadUnitInstance,
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
-import { EggLoadUnitType, EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
+import {
+  EggLoadUnitType,
+  EggPrototype,
+  GlobalGraph,
+  GlobalGraphBuildHook,
+  LoadUnitFactory,
+} from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { AsyncLocalStorage } from 'async_hooks';
@@ -32,12 +38,12 @@ export class CoreTestHelper {
     const loadUnit = await LoadUnitFactory.createLoadUnit(moduleDir, EggLoadUnitType.MODULE, loader);
     return await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
-  static async prepareModules(moduleDirs: string[]): Promise<Array<LoadUnitInstance>> {
-    LoaderUtil.buildGlobalGraph(moduleDirs);
+  static async prepareModules(moduleDirs: string[], hooks?: GlobalGraphBuildHook[]): Promise<Array<LoadUnitInstance>> {
+    LoaderUtil.buildGlobalGraph(moduleDirs, hooks);
     EggContextStorage.register();
     const instances: Array<LoadUnitInstance> = [];
-    for (const moduleDir of moduleDirs) {
-      instances.push(await CoreTestHelper.getLoadUnitInstance(moduleDir));
+    for (const { path } of GlobalGraph.instance!.moduleConfigList) {
+      instances.push(await CoreTestHelper.getLoadUnitInstance(path));
     }
     return instances;
   }
