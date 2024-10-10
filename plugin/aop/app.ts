@@ -1,7 +1,14 @@
 import { Application } from 'egg';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
-import { EggObjectAopHook, EggPrototypeCrossCutHook, LoadUnitAopHook } from '@eggjs/tegg-aop-runtime';
+import {
+  crossCutGraphHook,
+  EggObjectAopHook,
+  EggPrototypeCrossCutHook,
+  LoadUnitAopHook,
+  pointCutGraphHook,
+} from '@eggjs/tegg-aop-runtime';
 import { AopContextHook } from './lib/AopContextHook';
+import { GlobalGraph } from '@eggjs/tegg-metadata';
 
 export default class AopAppHook {
   private readonly app: Application;
@@ -24,6 +31,8 @@ export default class AopAppHook {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
+    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
+    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
   }
 
   async didLoad() {

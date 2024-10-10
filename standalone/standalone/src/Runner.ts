@@ -1,7 +1,7 @@
 import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
   EggPrototype,
-  EggPrototypeLifecycleUtil,
+  EggPrototypeLifecycleUtil, GlobalGraph,
   LoadUnit,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
@@ -26,7 +26,12 @@ import {
 } from '@eggjs/tegg';
 import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
-import { EggObjectAopHook, EggPrototypeCrossCutHook, LoadUnitAopHook } from '@eggjs/tegg-aop-runtime';
+import {
+  crossCutGraphHook,
+  EggObjectAopHook,
+  EggPrototypeCrossCutHook,
+  LoadUnitAopHook, pointCutGraphHook,
+} from '@eggjs/tegg-aop-runtime';
 
 import { EggModuleLoader } from './EggModuleLoader';
 import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
@@ -143,6 +148,8 @@ export class Runner {
       logger: ((this.innerObjects.logger && this.innerObjects.logger[0])?.obj as Logger) || console,
       baseDir: this.cwd,
     });
+    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
+    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
     const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
     LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
 

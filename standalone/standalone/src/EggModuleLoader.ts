@@ -35,12 +35,12 @@ export class EggModuleLoader {
       });
     }
     const globalGraph = GlobalGraph.create(moduleDescriptors);
-    globalGraph.build();
     return globalGraph;
   }
 
   async load(): Promise<LoadUnit[]> {
     const loadUnits: LoadUnit[] = [];
+    this.globalGraph.build();
     this.globalGraph.sort();
     const moduleConfigList = GlobalGraph.instance!.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {

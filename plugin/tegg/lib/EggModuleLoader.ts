@@ -40,12 +40,11 @@ export class EggModuleLoader {
       });
     }
     const graph = GlobalGraph.create(moduleDescriptors);
-    graph.build();
     return graph;
   }
 
   private async loadModule() {
-    this.buildAppGraph();
+    this.globalGraph.build();
     this.globalGraph.sort();
     const moduleConfigList = this.globalGraph.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {
