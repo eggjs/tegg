@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.47.1](https://github.com/eggjs/tegg/compare/v3.47.0...v3.47.1) (2024-10-10)
+
+
+### Bug Fixes
+
+* fix aop in constructor inject type ([#247](https://github.com/eggjs/tegg/issues/247)) ([d169bb2](https://github.com/eggjs/tegg/commit/d169bb2fbbc86335315619866b4134a25296f552))
+
+
+
+
+
 # [3.47.0](https://github.com/eggjs/tegg/compare/v3.46.4...v3.47.0) (2024-10-10)
 
 
