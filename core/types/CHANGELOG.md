@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.48.0](https://github.com/eggjs/tegg/compare/v3.47.2...v3.48.0) (2024-10-10)
+
+
+### Features
+
+* add rpc stream type ([#249](https://github.com/eggjs/tegg/issues/249)) ([7f3d40b](https://github.com/eggjs/tegg/commit/7f3d40b95d7939534f245b08d9d06a9b10bac350))
+
+
+
+
+
 ## [3.47.2](https://github.com/eggjs/tegg/compare/v3.47.1...v3.47.2) (2024-10-10)
 
 **Note:** Version bump only for package @eggjs/tegg-types
