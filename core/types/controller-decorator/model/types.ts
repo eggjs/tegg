@@ -8,6 +8,7 @@ export type { IncomingHttpHeaders } from 'node:http';
 export enum ControllerType {
   HTTP = 'HTTP',
   SOFA_RPC = 'SOFA_RPC',
+  SOFA_RPC_STREAM = 'SOFA_RPC_STREAM',
   MGW_RPC = 'MGW_RPC',
   MESSAGE = 'MESSAGE',
   SCHEDULE = 'SCHEDULE',
@@ -21,6 +22,7 @@ export type ControllerTypeLike = ControllerType | string;
 export enum MethodType {
   HTTP = 'HTTP',
   SOFA_RPC = 'SOFA_RPC',
+  SOFA_RPC_STREAM = 'SOFA_RPC_STREAM',
   MGW_RPC = 'MGW_RPC',
   MESSAGE = 'MESSAGE',
   SCHEDULE = 'SCHEDULE',
