@@ -1,0 +1,6 @@
+{
+  "name": "hello-cross-cut",
+  "eggModule": {
+    "name": "helloCrossCut"
+  }
+}

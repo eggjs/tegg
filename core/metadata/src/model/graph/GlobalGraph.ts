@@ -19,6 +19,8 @@ export interface GlobalGraphOptions {
   strict?: boolean;
 }
 
+export type GlobalGraphBuildHook = (globalGraph: GlobalGraph) => void;
+
 /**
  * Sort all prototypes and modules in app.
  * - 1. LoaderFactory.loadApp: get ModuleDescriptors
@@ -38,13 +40,13 @@ export class GlobalGraph {
    * Edge: ModuleDependencyMeta, prototype and it's inject object
    * @private
    */
-  private moduleGraph: Graph<GlobalModuleNode, ModuleDependencyMeta>;
+  moduleGraph: Graph<GlobalModuleNode, ModuleDependencyMeta>;
   /**
    * Vertex: ProtoNode, collect all prototypes in app
    * Edge: ProtoDependencyMeta, inject object
    * @private
    */
-  private protoGraph: Graph<ProtoNode, ProtoDependencyMeta>;
+  protoGraph: Graph<ProtoNode, ProtoDependencyMeta>;
   /**
    * The order of the moduleConfigList is the order in which they are instantiated
    */
@@ -55,6 +57,7 @@ export class GlobalGraph {
    */
   moduleProtoDescriptorMap: Map<string, ProtoDescriptor[]>;
   strict: boolean;
+  private buildHooks: GlobalGraphBuildHook[];
 
   /**
    * The global instance used in ModuleLoadUnit
@@ -66,6 +69,11 @@ export class GlobalGraph {
     this.protoGraph = new Graph<ProtoNode, ProtoDependencyMeta>();
     this.strict = options?.strict ?? false;
     this.moduleProtoDescriptorMap = new Map();
+    this.buildHooks = [];
+  }
+
+  registerBuildHook(hook: GlobalGraphBuildHook) {
+    this.buildHooks.push(hook);
   }
 
   addModuleNode(moduleNode: GlobalModuleNode) {
@@ -83,28 +91,44 @@ export class GlobalGraph {
     for (const moduleNode of this.moduleGraph.nodes.values()) {
       for (const protoNode of moduleNode.val.protos) {
         for (const injectObj of protoNode.val.proto.injectObjects) {
-          const injectProto = this.#findDependencyProtoNode(protoNode.val.proto, injectObj);
-          if (!injectProto) {
-            if (!this.strict) {
-              continue;
-            }
-            throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(injectObj.objName, protoNode.val.proto.instanceModuleName));
-          }
-          this.protoGraph.addEdge(protoNode, injectProto, new ProtoDependencyMeta({
-            injectObj: injectObj.objName,
-          }));
-          const injectModule = this.#findModuleNode(injectProto.val.proto.instanceModuleName);
-          if (!injectModule) {
-            if (!this.strict) {
-              continue;
-            }
-            throw new Error(`not found module ${injectProto.val.proto.instanceModuleName}`);
-          }
-          if (moduleNode.val.id !== injectModule.val.id) {
-            this.moduleGraph.addEdge(moduleNode, injectModule, new ModuleDependencyMeta(protoNode.val.proto, injectObj.objName));
-          }
+          this.buildInjectEdge(moduleNode, protoNode, injectObj);
         }
       }
+    }
+    for (const buildHook of this.buildHooks) {
+      buildHook(this);
+    }
+  }
+
+  buildInjectEdge(moduleNode: GraphNode<GlobalModuleNode, ModuleDependencyMeta>, protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>, injectObj: InjectObjectDescriptor) {
+    const injectProto = this.findDependencyProtoNode(protoNode.val.proto, injectObj);
+    if (!injectProto) {
+      if (!this.strict) {
+        return;
+      }
+      throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(injectObj.objName, protoNode.val.proto.instanceModuleName));
+    }
+    this.addInject(moduleNode, protoNode, injectProto, injectObj.objName);
+  }
+
+  addInject(
+    moduleNode: GraphNode<GlobalModuleNode, ModuleDependencyMeta>,
+    protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
+    injectNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
+    injectName: PropertyKey,
+  ) {
+    this.protoGraph.addEdge(protoNode, injectNode, new ProtoDependencyMeta({
+      injectObj: injectName,
+    }));
+    const injectModule = this.findModuleNode(injectNode.val.proto.instanceModuleName);
+    if (!injectModule) {
+      if (!this.strict) {
+        return;
+      }
+      throw new Error(`not found module ${injectNode.val.proto.instanceModuleName}`);
+    }
+    if (moduleNode.val.id !== injectModule.val.id) {
+      this.moduleGraph.addEdge(moduleNode, injectModule, new ModuleDependencyMeta(protoNode.val.proto, injectName));
     }
   }
 
@@ -133,7 +157,7 @@ export class GlobalGraph {
     return result;
   }
 
-  #findDependencyProtoNode(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): GraphNode<ProtoNode, ProtoDependencyMeta> | undefined {
+  findDependencyProtoNode(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): GraphNode<ProtoNode, ProtoDependencyMeta> | undefined {
     // 1. find proto with request
     // 2. try to add Context qualifier to find
     // 3. try to add self init type qualifier to find
@@ -163,7 +187,7 @@ export class GlobalGraph {
     }
     const loadUnitQualifier = injectObject.qualifiers.find(t => t.attribute === LoadUnitNameQualifierAttribute);
     if (!loadUnitQualifier) {
-      return this.#findDependencyProtoNode(proto, {
+      return this.findDependencyProtoNode(proto, {
         ...injectObject,
         qualifiers: [
           ...injectObject.qualifiers,
@@ -177,7 +201,7 @@ export class GlobalGraph {
     throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));
   }
 
-  #findModuleNode(moduleName: string) {
+  findModuleNode(moduleName: string) {
     for (const node of this.moduleGraph.nodes.values()) {
       if (node.val.name === moduleName) {
         return node;

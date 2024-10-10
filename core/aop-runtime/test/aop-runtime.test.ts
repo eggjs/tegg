@@ -6,10 +6,15 @@ import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } fro
 import type { LoadUnitInstance } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { CoreTestHelper, EggTestContext } from '../../test-util';
-import { CallTrace, Hello, crosscutAdviceParams, pointcutAdviceParams } from './fixtures/modules/hello_succeed/Hello';
+import { Hello } from './fixtures/modules/hello_succeed/Hello';
+import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut';
+import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HellloPointCut';
 import { EggObjectAopHook } from '../src/EggObjectAopHook';
 import { LoadUnitAopHook } from '../src/LoadUnitAopHook';
 import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook';
+import { crossCutGraphHook } from '../src/CrossCutGraphHook';
+import { pointCutGraphHook } from '../src/PointCutGraphHook';
+import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace';
 
 describe('test/aop-runtime.test.ts', () => {
   describe('succeed call', () => {
@@ -31,6 +36,11 @@ describe('test/aop-runtime.test.ts', () => {
       modules = await CoreTestHelper.prepareModules([
         path.join(__dirname, '..'),
         path.join(__dirname, 'fixtures/modules/hello_succeed'),
+        path.join(__dirname, 'fixtures/modules/hello_point_cut'),
+        path.join(__dirname, 'fixtures/modules/hello_cross_cut'),
+      ], [
+        crossCutGraphHook,
+        pointCutGraphHook,
       ]);
     });
 

@@ -26,7 +26,7 @@ export class AspectMetaBuilder {
     return aspectList;
   }
 
-  private static getAllMethods(clazz): PropertyKey[] {
+  static getAllMethods(clazz): PropertyKey[] {
     const methodSet = new Set<string>();
     function getMethods(obj) {
       if (obj) {
