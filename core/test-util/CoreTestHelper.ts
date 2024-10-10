@@ -10,7 +10,7 @@ import {
   EggPrototype,
   GlobalGraph,
   GlobalGraphBuildHook,
-  LoadUnitFactory
+  LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
