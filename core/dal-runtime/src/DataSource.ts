@@ -28,7 +28,7 @@ export class DataSource<T> implements IDataSource<T> {
    * @param sqlName
    * @param data
    */
-  generateSql(sqlName: string, data: object): ExecuteSql {
+  async generateSql(sqlName: string, data: object): Promise<ExecuteSql> {
     const sql = this.sqlMap.generate(sqlName, data, this.mysqlDataSource.timezone!);
     const sqlType = this.sqlMap.getType(sqlName);
     const template = this.sqlMap.getTemplateString(sqlName);
@@ -41,12 +41,12 @@ export class DataSource<T> implements IDataSource<T> {
 
   async count(sqlName: string, data?: any): Promise<number> {
     const newData = Object.assign({ $$count: true }, data);
-    const executeSql = this.generateSql(sqlName, newData);
+    const executeSql = await this.generateSql(sqlName, newData);
     return await this.#paginateCount(executeSql.sql);
   }
 
   async execute(sqlName: string, data?: any): Promise<Array<T>> {
-    const executeSql = this.generateSql(sqlName, data);
+    const executeSql = await this.generateSql(sqlName, data);
     const rows = await this.mysqlDataSource.query(executeSql.sql);
     return rows.map(t => {
       return TableModelInstanceBuilder.buildInstance(this.tableModel, t);
@@ -54,7 +54,7 @@ export class DataSource<T> implements IDataSource<T> {
   }
 
   async executeRaw(sqlName: string, data?: any): Promise<Array<any>> {
-    const executeSql = this.generateSql(sqlName, data);
+    const executeSql = await this.generateSql(sqlName, data);
     return await this.mysqlDataSource.query(executeSql.sql);
   }
 
@@ -72,8 +72,8 @@ export class DataSource<T> implements IDataSource<T> {
 
   async paginate(sqlName: string, data: any, currentPage: number, perPageCount: number): Promise<PaginateData<T>> {
     const limit = `LIMIT ${(currentPage - 1) * perPageCount}, ${perPageCount}`;
-    const sql = this.generateSql(sqlName, data).sql + ' ' + limit;
-    const countSql = this.generateSql(sqlName, Object.assign({ $$count: true }, data)).sql;
+    const sql = (await this.generateSql(sqlName, data)).sql + ' ' + limit;
+    const countSql = (await this.generateSql(sqlName, Object.assign({ $$count: true }, data))).sql;
 
 
     const ret = await Promise.all([
