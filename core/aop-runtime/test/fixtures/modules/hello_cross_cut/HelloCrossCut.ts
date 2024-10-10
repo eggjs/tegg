@@ -18,7 +18,7 @@ export const crosscutAdviceParams = {
 @Advice({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class CrosscutAdvice implements IAdvice<Hello, String> {
+export class CrosscutAdvice implements IAdvice<Hello, string> {
   @Inject()
   callTrace: CallTrace;
 

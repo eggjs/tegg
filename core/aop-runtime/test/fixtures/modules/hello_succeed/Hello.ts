@@ -1,6 +1,6 @@
 import { ContextProto } from '@eggjs/core-decorator';
 import { Pointcut } from '@eggjs/aop-decorator';
-import { PointcutAdvice, pointcutAdviceParams } from '../hello_point_cut/HellloPointCut';
+import { PointcutAdvice, pointcutAdviceParams } from '../hello_point_cut/HelloPointCut';
 
 @ContextProto()
 export class Hello {

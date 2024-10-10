@@ -8,7 +8,7 @@ import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
 import { CoreTestHelper, EggTestContext } from '../../test-util';
 import { Hello } from './fixtures/modules/hello_succeed/Hello';
 import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut';
-import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HellloPointCut';
+import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut';
 import { EggObjectAopHook } from '../src/EggObjectAopHook';
 import { LoadUnitAopHook } from '../src/LoadUnitAopHook';
 import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook';
