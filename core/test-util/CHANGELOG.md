@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.47.0](https://github.com/eggjs/tegg/compare/v3.46.4...v3.47.0) (2024-10-10)
+
+
+### Features
+
+* impl GlobalGraph build hook ([#246](https://github.com/eggjs/tegg/issues/246)) ([48fce45](https://github.com/eggjs/tegg/commit/48fce4512e99259ec26a9b032bfcc9f4046ad235))
+
+
+
+
+
 ## [3.46.4](https://github.com/eggjs/tegg/compare/v3.46.3...v3.46.4) (2024-10-09)
 
 **Note:** Version bump only for package @eggjs/module-test-util

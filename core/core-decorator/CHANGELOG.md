@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.47.0](https://github.com/eggjs/tegg/compare/v3.46.4...v3.47.0) (2024-10-10)
+
+
+### Features
+
+* export ProtoDescriptorHelper ([#245](https://github.com/eggjs/tegg/issues/245)) ([f01fb63](https://github.com/eggjs/tegg/commit/f01fb639b153a907fd9c951d4b1e40ba101b43d0))
+
+
+
+
+
 ## [3.46.4](https://github.com/eggjs/tegg/compare/v3.46.3...v3.46.4) (2024-10-09)
 
 **Note:** Version bump only for package @eggjs/core-decorator
