@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.48.1](https://github.com/eggjs/tegg/compare/v3.48.0...v3.48.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* fix merge qualifier ([#250](https://github.com/eggjs/tegg/issues/250)) ([d5a8a93](https://github.com/eggjs/tegg/commit/d5a8a93abad570f69881f9fa42f39d7b5cd436be))
+
+
+
+
+
 # [3.48.0](https://github.com/eggjs/tegg/compare/v3.47.2...v3.48.0) (2024-10-10)
 
 
