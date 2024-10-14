@@ -12,6 +12,7 @@ import { FrameworkErrorFormater } from 'egg-errors';
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors';
 import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder';
 import { ModuleDescriptor } from '../ModuleDescriptor';
+import { QualifierUtil } from '@eggjs/core-decorator';
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict
@@ -145,10 +146,10 @@ export class GlobalGraph {
     for (const node of this.protoGraph.nodes.values()) {
       if (node.val.selectProto({
         name: injectObject.objName,
-        qualifiers: [
-          ...injectObject.qualifiers,
-          ...qualifiers,
-        ],
+        qualifiers: QualifierUtil.mergeQualifiers(
+          injectObject.qualifiers,
+          qualifiers,
+        ),
         moduleName: proto.instanceModuleName,
       })) {
         result.push(node);
@@ -189,13 +190,13 @@ export class GlobalGraph {
     if (!loadUnitQualifier) {
       return this.findDependencyProtoNode(proto, {
         ...injectObject,
-        qualifiers: [
-          ...injectObject.qualifiers,
-          {
+        qualifiers: QualifierUtil.mergeQualifiers(
+          injectObject.qualifiers,
+          [{
             attribute: LoadUnitNameQualifierAttribute,
             value: proto.instanceModuleName,
-          },
-        ],
+          }],
+        ),
       });
     }
     throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));

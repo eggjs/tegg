@@ -79,10 +79,10 @@ export class EggCompatibleProtoImpl implements EggPrototype {
     const name = ctx.prototypeInfo.name;
     const id = IdenticalUtil.createProtoId(loadUnit.id, name);
     const proto = new EggCompatibleProtoImpl(
-      id, name, clazz, ctx.prototypeInfo.initType, loadUnit.id, [
-        ...QualifierUtil.getProtoQualifiers(clazz),
-        ...(ctx.prototypeInfo.qualifiers ?? []),
-      ],
+      id, name, clazz, ctx.prototypeInfo.initType, loadUnit.id, QualifierUtil.mergeQualifiers(
+        QualifierUtil.getProtoQualifiers(clazz),
+        (ctx.prototypeInfo.qualifiers ?? []),
+      ),
     );
     return proto;
   }

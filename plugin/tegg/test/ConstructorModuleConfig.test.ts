@@ -1,6 +1,7 @@
 import mm from 'egg-mock';
 import assert from 'assert';
 import path from 'path';
+import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo';
 
 describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
   let app;
@@ -36,5 +37,10 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
           bar: 'foo',
         });
       });
+  });
+
+  it('construct proxy should work', async () => {
+    const foo: Foo = await app.getEggObject(Foo);
+    foo.log();
   });
 });

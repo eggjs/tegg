@@ -96,10 +96,10 @@ export class ProtoDescriptorHelper {
     const res: ProtoDescriptor[] = [];
 
     for (const obj of instanceProperty.objects) {
-      let qualifiers = [
-        ...QualifierUtil.getProtoQualifiers(clazz),
-        ...obj.qualifiers,
-      ];
+      let qualifiers = QualifierUtil.mergeQualifiers(
+        QualifierUtil.getProtoQualifiers(clazz),
+        obj.qualifiers,
+      );
       qualifiers = ProtoDescriptorHelper.addDefaultQualifier(qualifiers, instanceProperty.initType, options.instanceModuleName);
       const injectObjects: InjectObjectDescriptor[] = PrototypeUtil.getInjectObjects(clazz)
         .map(t => {
@@ -107,10 +107,10 @@ export class ProtoDescriptorHelper {
           const instanceQualifier = obj.properQualifiers?.[t.refName] ?? [];
           return {
             ...t,
-            qualifiers: [
-              ...qualifiers,
-              ...instanceQualifier,
-            ],
+            qualifiers: QualifierUtil.mergeQualifiers(
+              qualifiers,
+              instanceQualifier,
+            ),
           };
         });
       res.push(new ClassProtoDescriptor({

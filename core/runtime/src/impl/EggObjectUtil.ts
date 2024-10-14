@@ -54,7 +54,11 @@ export class EggObjectUtil {
           return target[p];
         }
         const obj = getObj();
-        return obj[p];
+        const val = obj[p];
+        if (typeof val === 'function') {
+          return val.bind(obj);
+        }
+        return val;
       },
       getOwnPropertyDescriptor(_target: {}, p: string | symbol): PropertyDescriptor | undefined {
         const obj = getObj();

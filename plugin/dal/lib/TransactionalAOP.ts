@@ -1,7 +1,6 @@
 import { Advice, AdviceContext, IAdvice } from '@eggjs/tegg/aop';
 import { AccessLevel, EggProtoImplClass, ObjectInitType } from '@eggjs/tegg';
 import { PropagationType } from '@eggjs/tegg/transaction';
-import assert from 'node:assert';
 import { MysqlDataSource } from '@eggjs/dal-runtime';
 
 export interface TransactionalParams {
@@ -17,7 +16,10 @@ export class TransactionalAOP implements IAdvice<EggProtoImplClass, Transactiona
   public async around(ctx: AdviceContext<EggProtoImplClass, TransactionalParams>, next: () => Promise<any>): Promise<void> {
     const { propagation, dataSourceGetter } = ctx.adviceParams!;
     const dataSource = dataSourceGetter();
-    assert(propagation === PropagationType.REQUIRED, '事务注解目前只支持 REQUIRED 机制');
+    if (propagation === PropagationType.ALWAYS_NEW) {
+      return await dataSource.beginTransactionScope(next, {
+      });
+    }
     return await dataSource.beginTransactionScope(next);
   }
 }
