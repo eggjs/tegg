@@ -17,8 +17,7 @@ export class TransactionalAOP implements IAdvice<EggProtoImplClass, Transactiona
     const { propagation, dataSourceGetter } = ctx.adviceParams!;
     const dataSource = dataSourceGetter();
     if (propagation === PropagationType.ALWAYS_NEW) {
-      return await dataSource.beginTransactionScope(next, {
-      });
+      return await dataSource.beginTransactionScope(next);
     }
     return await dataSource.beginTransactionScope(next);
   }
