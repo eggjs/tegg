@@ -36,10 +36,10 @@ export class EggObjectFactoryPrototype implements EggPrototype {
 
   constructor(clazz: EggProtoImplClass<EggObjectFactory>, loadUnit: LoadUnit, prototypeInfo: EggPrototypeInfo) {
     this.clazz = clazz;
-    this.qualifiers = [
-      ...QualifierUtil.getProtoQualifiers(clazz),
-      ...(prototypeInfo.qualifiers ?? []),
-    ];
+    this.qualifiers = QualifierUtil.mergeQualifiers(
+      QualifierUtil.getProtoQualifiers(clazz),
+      (prototypeInfo.qualifiers ?? []),
+    );
     this.id = IdenticalUtil.createProtoId(loadUnit.id, NameUtil.getClassName(this.clazz));
     this.initType = prototypeInfo.initType;
     this.accessLevel = prototypeInfo.accessLevel;

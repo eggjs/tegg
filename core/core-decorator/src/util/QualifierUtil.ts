@@ -80,4 +80,21 @@ export class QualifierUtil {
     if (clazzQualifiers.length !== requestQualifiers.length) return false;
     return QualifierUtil.matchQualifiers(clazzQualifiers, requestQualifiers);
   }
+
+  static mergeQualifiers(...qualifiers: QualifierInfo[][]): QualifierInfo[] {
+    const result: QualifierInfo[] = [];
+    const temp: Record<QualifierAttribute, QualifierValue> = {};
+    for (const qualifierList of qualifiers) {
+      for (const { attribute, value } of qualifierList) {
+        temp[attribute] = value;
+      }
+    }
+    for (const key of Reflect.ownKeys(temp)) {
+      result.push({
+        attribute: key,
+        value: temp[key],
+      });
+    }
+    return result;
+  }
 }

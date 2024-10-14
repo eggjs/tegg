@@ -40,10 +40,10 @@ function findPointCutAdvice(globalGraph: GlobalGraph, protoNode: GraphNode<Proto
       const injectProto = globalGraph.findDependencyProtoNode(protoNode.val.proto, {
         objName: property.name,
         refName: property.name,
-        qualifiers: [
-          ...property?.qualifiers ?? [],
-          ...QualifierUtil.getProtoQualifiers(clazz),
-        ],
+        qualifiers: QualifierUtil.mergeQualifiers(
+          property?.qualifiers ?? [],
+          QualifierUtil.getProtoQualifiers(clazz),
+        ),
       });
       if (injectProto) {
         result.add(injectProto);
