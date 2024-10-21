@@ -25,7 +25,7 @@ export class AppLoadUnitControllerHook implements LifecycleHook<LoadUnitLifecycl
         throw new Error(`not find controller implement for ${String(proto.name)} which type is ${metadata.type}`);
       }
       ControllerMetadataManager.instance.addController(metadata);
-      await register.register(this.rootProtoManager);
+      await register.register(this.rootProtoManager, obj);
     }
   }
 }
