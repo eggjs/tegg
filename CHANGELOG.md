@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.49.0](https://github.com/eggjs/tegg/compare/v3.48.1...v3.49.0) (2024-10-21)
+
+
+### Features
+
+* expand register add loadUnit ([#251](https://github.com/eggjs/tegg/issues/251)) ([8a1649d](https://github.com/eggjs/tegg/commit/8a1649d5ea539d22c7cfd8881595247a07e3fbd7))
+
+
+
+
+
 ## [3.48.1](https://github.com/eggjs/tegg/compare/v3.48.0...v3.48.1) (2024-10-14)
 
 
