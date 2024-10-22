@@ -13,6 +13,7 @@ import { Logger } from '@eggjs/tegg';
 export interface EggModuleLoaderOptions {
   logger: Logger;
   baseDir: string;
+  dump?: boolean;
 }
 
 export class EggModuleLoader {
@@ -26,13 +27,15 @@ export class EggModuleLoader {
 
   private static generateAppGraph(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
     const moduleDescriptors = LoaderFactory.loadApp(moduleReferences);
-    for (const moduleDescriptor of moduleDescriptors) {
-      ModuleDescriptorDumper.dump(moduleDescriptor, {
-        dumpDir: options.baseDir,
-      }).catch(e => {
-        e.message = 'dump module descriptor failed: ' + e.message;
-        options.logger.warn(e);
-      });
+    if (options.dump) {
+      for (const moduleDescriptor of moduleDescriptors) {
+        ModuleDescriptorDumper.dump(moduleDescriptor, {
+          dumpDir: options.baseDir,
+        }).catch(e => {
+          e.message = 'dump module descriptor failed: ' + e.message;
+          options.logger.warn(e);
+        });
+      }
     }
     const globalGraph = GlobalGraph.create(moduleDescriptors);
     return globalGraph;
