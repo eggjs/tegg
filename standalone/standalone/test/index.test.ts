@@ -1,16 +1,33 @@
 import { strict as assert, deepStrictEqual } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { ModuleConfig, ModuleConfigs } from '@eggjs/tegg/helper';
+import { setTimeout as sleep } from 'node:timers/promises';
+import mm from 'mm';
+import { ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { main, StandaloneContext, Runner, preLoad } from '..';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 import { Foo } from './fixtures/dal-module/src/Foo';
 
 describe('standalone/standalone/test/index.test.ts', () => {
   describe('simple runner', () => {
+    const fixture = path.join(__dirname, './fixtures/simple');
+
+    beforeEach(() => {
+      mm.restore();
+      mm.spy(ModuleDescriptorDumper, 'dump');
+    });
+
     it('should work', async () => {
-      const msg: string = await main(path.join(__dirname, './fixtures/simple'));
+      const msg: string = await main(fixture);
       assert(msg === 'hello!hello from ctx');
+      await sleep(500);
+      assert.equal((ModuleDescriptorDumper.dump as any).called, 1);
+    });
+
+    it('should not dump', async () => {
+      await main(fixture, { dump: false });
+      await sleep(500);
+      assert.equal((ModuleDescriptorDumper.dump as any).called, undefined);
     });
   });
 
