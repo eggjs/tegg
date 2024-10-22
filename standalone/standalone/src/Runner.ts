@@ -148,7 +148,7 @@ export class Runner {
     this.loadUnitLoader = new EggModuleLoader(this.moduleReferences, {
       logger: ((this.innerObjects.logger && this.innerObjects.logger[0])?.obj as Logger) || console,
       baseDir: this.cwd,
-      dump: options?.dump ?? true,
+      dump: options?.dump,
     });
     GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
     GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);

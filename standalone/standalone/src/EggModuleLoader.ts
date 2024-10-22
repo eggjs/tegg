@@ -27,7 +27,7 @@ export class EggModuleLoader {
 
   private static generateAppGraph(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
     const moduleDescriptors = LoaderFactory.loadApp(moduleReferences);
-    if (options.dump) {
+    if (options.dump !== false) {
       for (const moduleDescriptor of moduleDescriptors) {
         ModuleDescriptorDumper.dump(moduleDescriptor, {
           dumpDir: options.baseDir,
