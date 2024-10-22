@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.50.0](https://github.com/eggjs/tegg/compare/v3.49.0...v3.50.0) (2024-10-22)
+
+
+### Features
+
+* add dump switcher ([#252](https://github.com/eggjs/tegg/issues/252)) ([80c312f](https://github.com/eggjs/tegg/commit/80c312f7862b4021180f3e587f63c6b0dd87202c))
+
+
+
+
+
 # [3.49.0](https://github.com/eggjs/tegg/compare/v3.48.1...v3.49.0) (2024-10-21)
 
 **Note:** Version bump only for package @eggjs/tegg-standalone
