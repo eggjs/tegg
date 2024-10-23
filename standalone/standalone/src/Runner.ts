@@ -210,6 +210,7 @@ export class Runner {
     await EggModuleLoader.preLoad(moduleReferences, {
       baseDir: cwd,
       logger: console,
+      dump: false,
     });
   }
 
