@@ -299,6 +299,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
     let Foo;
 
     beforeEach(() => {
+      mm.restore();
+      mm.spy(ModuleDescriptorDumper, 'dump');
+
       delete require.cache[require.resolve(path.join(fixturePath, './foo'))];
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       Foo = require(path.join(fixturePath, './foo')).Foo;
@@ -315,6 +318,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
         'postInject',
         'init',
       ]);
+      assert.equal((ModuleDescriptorDumper.dump as any).called, 1);
     });
   });
 });
