@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.50.1](https://github.com/eggjs/tegg/compare/v3.50.0...v3.50.1) (2024-10-23)
+
+
+### Bug Fixes
+
+* disable dump in preload ([#253](https://github.com/eggjs/tegg/issues/253)) ([081912b](https://github.com/eggjs/tegg/commit/081912beb9cb945c863c73d91ef5be112c2940d9))
+
+
+
+
+
 # [3.50.0](https://github.com/eggjs/tegg/compare/v3.49.0...v3.50.0) (2024-10-22)
 
 

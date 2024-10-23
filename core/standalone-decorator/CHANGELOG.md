@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.50.1](https://github.com/eggjs/tegg/compare/v3.50.0...v3.50.1) (2024-10-23)
+
+**Note:** Version bump only for package @eggjs/standalone-decorator
+
+
+
+
+
 # [3.50.0](https://github.com/eggjs/tegg/compare/v3.49.0...v3.50.0) (2024-10-22)
 
 **Note:** Version bump only for package @eggjs/standalone-decorator
