@@ -98,7 +98,7 @@ export class EggPrototypeBuilder {
     ));
   }
 
-  private findInjectObjectPrototype(injectObject: InjectObject): EggPrototype {
+  private findInjectObjectPrototype(injectObject: InjectObject | InjectConstructor): EggPrototype {
     const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
     try {
       return this.tryFindDefaultPrototype(injectObject);
@@ -121,22 +121,34 @@ export class EggPrototypeBuilder {
     const injectObjectProtos: Array<InjectObjectProto | InjectConstructorProto> = [];
     for (const injectObject of this.injectObjects) {
       const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
-      const proto = this.findInjectObjectPrototype(injectObject);
-      if (this.injectType === InjectType.PROPERTY) {
-        injectObjectProtos.push({
-          refName: injectObject.refName,
-          objName: injectObject.objName,
-          qualifiers: propertyQualifiers,
-          proto,
-        });
-      } else {
-        injectObjectProtos.push({
-          refIndex: (injectObject as InjectConstructor).refIndex,
-          refName: injectObject.refName,
-          objName: injectObject.objName,
-          qualifiers: propertyQualifiers,
-          proto,
-        });
+      try {
+        const proto = this.findInjectObjectPrototype(injectObject);
+        let injectObjectProto: InjectObjectProto | InjectConstructorProto;
+        if (this.injectType === InjectType.PROPERTY) {
+          injectObjectProto = {
+            refName: injectObject.refName,
+            objName: injectObject.objName,
+            qualifiers: propertyQualifiers,
+            proto,
+          };
+        } else {
+          injectObjectProto = {
+            refIndex: (injectObject as InjectConstructor).refIndex,
+            refName: injectObject.refName,
+            objName: injectObject.objName,
+            qualifiers: propertyQualifiers,
+            proto,
+          };
+        }
+        if (injectObject.optional) {
+          injectObject.optional = true;
+        }
+        injectObjectProtos.push(injectObjectProto);
+      } catch (e) {
+        if (e instanceof EggPrototypeNotFound && injectObject.optional) {
+          continue;
+        }
+        throw e;
       }
     }
     const id = IdenticalUtil.createProtoId(this.loadUnit.id, this.name);

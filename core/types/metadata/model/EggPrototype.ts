@@ -26,6 +26,10 @@ export interface InjectObjectProto {
    */
   qualifiers: QualifierInfo[];
   /**
+   * optional inject
+   */
+  optional?: boolean;
+  /**
    * inject prototype
    */
   proto: EggPrototype;
@@ -49,6 +53,10 @@ export interface InjectConstructorProto {
    */
   qualifiers: QualifierInfo[];
   /**
+   * optional inject
+   */
+  optional?: boolean;
+  /**
    * inject prototype
    */
   proto: EggPrototype;
@@ -68,6 +76,10 @@ export interface InjectObject {
    * if null same as current obj
    */
   initType?: ObjectInitTypeLike;
+  /**
+   * optional inject
+   */
+  optional?: boolean;
 }
 
 export interface InjectConstructor {
@@ -88,6 +100,10 @@ export interface InjectConstructor {
    * if null same as current obj
    */
   initType?: ObjectInitTypeLike;
+  /**
+   * optional inject
+   */
+  optional?: boolean;
 }
 
 export type EggPrototypeClass = new (...args: any[]) => EggPrototype;

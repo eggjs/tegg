@@ -3,9 +3,11 @@ import { PrototypeUtil } from '../util/PrototypeUtil';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 export function Inject(param?: InjectParams | string) {
+  const injectParam = typeof param === 'string' ? { name: param } : param;
+
   function propertyInject(target: any, propertyKey: PropertyKey) {
     let objName: PropertyKey | undefined;
-    if (!param) {
+    if (!injectParam) {
       // try to read design:type from proto
       const proto = PrototypeUtil.getDesignType(target, propertyKey);
       if (typeof proto === 'function' && proto !== Object) {
@@ -15,13 +17,17 @@ export function Inject(param?: InjectParams | string) {
       }
     } else {
       // params allow string or object
-      objName = typeof param === 'string' ? param : param?.name;
+      objName = injectParam?.name;
     }
 
     const injectObject: InjectObjectInfo = {
       refName: propertyKey,
       objName: objName || propertyKey,
     };
+
+    if (injectParam?.optional) {
+      injectObject.optional = true;
+    }
 
     PrototypeUtil.setInjectType(target.constructor, InjectType.PROPERTY);
     PrototypeUtil.addInjectObject(target.constructor as EggProtoImplClass, injectObject);
@@ -49,4 +55,13 @@ export function Inject(param?: InjectParams | string) {
       constructorInject(target, parameterIndex!);
     }
   };
+}
+
+export function InjectOptional(param?: Omit<InjectParams, 'optional'> | string) {
+  const injectParam = typeof param === 'string' ? { name: param } : param;
+
+  return Inject({
+    ...injectParam,
+    optional: true,
+  });
 }

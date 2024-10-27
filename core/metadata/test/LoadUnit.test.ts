@@ -75,6 +75,18 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
     });
   });
 
+  describe('optional inject', () => {
+    it('should success', async () => {
+      const optionalInjectModulePath = path.join(__dirname, './fixtures/modules/optional-inject-module');
+      const loader = new TestLoader(optionalInjectModulePath);
+      buildGlobalGraph([ optionalInjectModulePath ], [ loader ]);
+
+      const loadUnit = await LoadUnitFactory.createLoadUnit(optionalInjectModulePath, EggLoadUnitType.MODULE, loader);
+      const optionalInjectServiceProto = loadUnit.getEggPrototype('optionalInjectService', [{ attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON }]);
+      assert.deepStrictEqual(optionalInjectServiceProto[0].injectObjects, []);
+    });
+  });
+
   describe('invalidate load unit', () => {
     it('should init failed', async () => {
       const invalidateModulePath = path.join(__dirname, './fixtures/modules/invalidate-module');

@@ -1,6 +1,6 @@
 import { SingletonProto } from '../../../src/decorator/SingletonProto';
 import { ICache } from './ICache';
-import { Inject } from '../../../src/decorator/Inject';
+import { Inject, InjectOptional } from '../../../src/decorator/Inject';
 import { InitTypeQualifier } from '../../../src/decorator/InitTypeQualifier';
 import { ObjectInitType } from '@eggjs/tegg-types';
 import { ModuleQualifier } from '../../../src/decorator/ModuleQualifier';
@@ -12,6 +12,8 @@ export class ConstructorObject {
       @ModuleQualifier('foo')
       @Inject({ name: 'fooCache'}) readonly xCache: ICache,
       @Inject() readonly cache: ICache,
+      @Inject({ optional: true }) readonly optional1?: ICache,
+      @InjectOptional() readonly optional2?: ICache,
     ) {
     }
 }

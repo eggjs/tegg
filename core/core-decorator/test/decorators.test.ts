@@ -73,6 +73,14 @@ describe('test/decorator.test.ts', () => {
       }, {
         objName: 'testService4',
         refName: 'testService4',
+      }, {
+        objName: 'optionalService1',
+        refName: 'optionalService1',
+        optional: true,
+      }, {
+        objName: 'optionalService2',
+        refName: 'optionalService2',
+        optional: true,
       }];
       assert.deepStrictEqual(PrototypeUtil.getInjectObjects(CacheService), expectInjectInfo);
     });
@@ -82,6 +90,8 @@ describe('test/decorator.test.ts', () => {
       assert.deepStrictEqual(injectConstructors, [
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
         { refIndex: 1, refName: 'cache', objName: 'cache' },
+        { refIndex: 2, refName: 'optional1', objName: 'optional1' },
+        { refIndex: 3, refName: 'optional2', objName: 'optional2' },
       ]);
     });
   });

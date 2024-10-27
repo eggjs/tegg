@@ -1,4 +1,5 @@
-import { ContextProto, Inject } from '../../..';
+import { ContextProto } from '../../../src/decorator/ContextProto';
+import { Inject, InjectOptional } from '../../../src/decorator/Inject';
 import { ICache } from './ICache';
 import { TestService, TestService2 } from './OtherService';
 
@@ -37,4 +38,10 @@ export default class CacheService {
 
   @Inject()
   testService4: any;
+
+  @Inject({ optional: true })
+  optionalService1?: any;
+
+  @InjectOptional()
+  optionalService2?: any;
 }
