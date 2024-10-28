@@ -196,7 +196,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const fixturePath = path.join(__dirname, './fixtures/invalid-inject');
       await assert.rejects(
         main<boolean>(fixturePath),
-        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
+        /EggPrototypeNotFound: \[tegg\/standalone\] bootstrap tegg failed: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
       );
     });
   });
