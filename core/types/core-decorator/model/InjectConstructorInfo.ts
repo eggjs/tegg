@@ -13,4 +13,8 @@ export interface InjectConstructorInfo {
    * obj's name will be injected
    */
   objName: EggObjectName;
+  /**
+   * optional inject
+   */
+  optional?: boolean;
 }

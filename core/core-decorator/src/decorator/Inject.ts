@@ -36,13 +36,16 @@ export function Inject(param?: InjectParams | string) {
   function constructorInject(target: any, parameterIndex: number) {
     const argNames = ObjectUtils.getConstructorArgNameList(target);
     const argName = argNames[parameterIndex];
-    // TODO get objName from design:type
-    const objName = typeof param === 'string' ? param : param?.name;
     const injectObject: InjectConstructorInfo = {
       refIndex: parameterIndex,
       refName: argName,
-      objName: objName || argName,
+      // TODO get objName from design:type
+      objName: injectParam?.name || argName,
     };
+
+    if (injectParam?.optional) {
+      injectObject.optional = true;
+    }
 
     PrototypeUtil.setInjectType(target, InjectType.CONSTRUCTOR);
     PrototypeUtil.addInjectConstructor(target as EggProtoImplClass, injectObject);
