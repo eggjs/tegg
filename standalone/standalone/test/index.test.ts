@@ -194,10 +194,12 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should throw error if no proto found', async () => {
       const fixturePath = path.join(__dirname, './fixtures/invalid-inject');
+      const runner = new Runner(fixturePath);
       await assert.rejects(
-        main<boolean>(fixturePath),
-        /EggPrototypeNotFound: \[tegg\/standalone\] bootstrap tegg failed: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
+        runner.init(),
+        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
       );
+      await runner.destroy();
     });
   });
 
