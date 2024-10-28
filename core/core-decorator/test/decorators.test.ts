@@ -16,7 +16,7 @@ import SingletonCache from './fixtures/decators/SingletonCache';
 import { PrototypeUtil, QualifierUtil } from '..';
 import QualifierCacheService from './fixtures/decators/QualifierCacheService';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger';
-import { ConstructorObject } from './fixtures/decators/ConstructorObject';
+import { ConstructorObject, ConstructorQualifierObject } from './fixtures/decators/ConstructorObject';
 import {
   ChildDynamicMultiInstanceProto,
   ChildSingletonProto,
@@ -90,8 +90,9 @@ describe('test/decorator.test.ts', () => {
       assert.deepStrictEqual(injectConstructors, [
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
         { refIndex: 1, refName: 'cache', objName: 'cache' },
-        { refIndex: 2, refName: 'optional1', objName: 'optional1', optional: true },
-        { refIndex: 3, refName: 'optional2', objName: 'optional2', optional: true },
+        { refIndex: 2, refName: 'otherCache', objName: 'cacheService' },
+        { refIndex: 3, refName: 'optional1', objName: 'optional1', optional: true },
+        { refIndex: 4, refName: 'optional2', objName: 'optional2', optional: true },
       ]);
     });
   });
@@ -107,6 +108,23 @@ describe('test/decorator.test.ts', () => {
         QualifierUtil.getProperQualifier(QualifierCacheService, property, InitTypeQualifierAttribute) === ObjectInitType.SINGLETON,
       );
     });
+
+    it('should set default initType in inject', () => {
+      const properties = [
+        { property: 'interfaceService', expected: undefined },
+        { property: 'testContextService', expected: ObjectInitType.CONTEXT },
+        { property: 'testSingletonService', expected: ObjectInitType.SINGLETON },
+        { property: 'customNameService', expected: undefined },
+        { property: 'customQualifierService1', expected: ObjectInitType.CONTEXT },
+        { property: 'customQualifierService2', expected: ObjectInitType.CONTEXT },
+      ];
+
+      for (const { property, expected } of properties) {
+        const qualifier = QualifierUtil.getProperQualifier(QualifierCacheService, property, InitTypeQualifierAttribute);
+        assert.strictEqual(qualifier, expected, `expect initType for ${property} to be ${expected}`);
+      }
+    });
+
     it('should work use Symbol.for', () => {
       assert(PrototypeUtil.isEggPrototype(QualifierCacheService));
       const property = 'cache';
@@ -117,6 +135,7 @@ describe('test/decorator.test.ts', () => {
         QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.InitType')) === ObjectInitType.SINGLETON,
       );
     });
+
     it('constructor should work', () => {
       const constructorQualifiers = QualifierUtil.getProperQualifiers(ConstructorObject, 'xCache');
       const constructorQualifiers2 = QualifierUtil.getProperQualifiers(ConstructorObject, 'cache');
@@ -125,6 +144,22 @@ describe('test/decorator.test.ts', () => {
         { attribute: Symbol.for('Qualifier.InitType'), value: ObjectInitType.SINGLETON },
       ]);
       assert.deepStrictEqual(constructorQualifiers2, []);
+    });
+
+    it('should set default initType in constructor inject', () => {
+      const properties = [
+        { property: 'xCache', expected: undefined },
+        { property: 'cache', expected: ObjectInitType.SINGLETON },
+        { property: 'ContextCache', expected: ObjectInitType.CONTEXT },
+        { property: 'customNameCache', expected: undefined },
+        { property: 'customQualifierCache1', expected: ObjectInitType.CONTEXT },
+        { property: 'customQualifierCache2', expected: ObjectInitType.CONTEXT },
+      ];
+
+      for (const { property, expected } of properties) {
+        const qualifier = QualifierUtil.getProperQualifier(ConstructorQualifierObject, property, InitTypeQualifierAttribute);
+        assert.strictEqual(qualifier, expected, `expect initType for ${property} to be ${expected}`);
+      }
     });
   });
 
