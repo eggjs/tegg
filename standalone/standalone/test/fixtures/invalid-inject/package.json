@@ -1,0 +1,6 @@
+{
+  "name": "invalid-inject",
+  "eggModule": {
+    "name": "invalidInject"
+  }
+}

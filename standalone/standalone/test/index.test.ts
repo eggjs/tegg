@@ -185,6 +185,24 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
+  describe('inject', () => {
+    it('should optional work', async () => {
+      const fixturePath = path.join(__dirname, './fixtures/optional-inject');
+      const nil = await main<boolean>(fixturePath);
+      assert.equal(nil, true);
+    });
+
+    it('should throw error if no proto found', async () => {
+      const fixturePath = path.join(__dirname, './fixtures/invalid-inject');
+      const runner = new Runner(fixturePath);
+      await assert.rejects(
+        runner.init(),
+        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
+      );
+      await runner.destroy();
+    });
+  });
+
   describe('aop runtime', () => {
     const fixturePath = path.join(__dirname, './fixtures/aop-module');
 
