@@ -63,7 +63,7 @@ export class EggPrototypeBuilder {
     return builder.build();
   }
 
-  private tryFindDefaultPrototype(injectObject: InjectObject): EggPrototype {
+  private tryFindDefaultPrototype(injectObject: InjectObject | InjectConstructor): EggPrototype {
     const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
     const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
     return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, QualifierUtil.mergeQualifiers(
@@ -72,7 +72,7 @@ export class EggPrototypeBuilder {
     ));
   }
 
-  private tryFindContextPrototype(injectObject: InjectObject): EggPrototype {
+  private tryFindContextPrototype(injectObject: InjectObject | InjectConstructor): EggPrototype {
     const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
     const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
     return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, QualifierUtil.mergeQualifiers(
@@ -85,7 +85,7 @@ export class EggPrototypeBuilder {
     ));
   }
 
-  private tryFindSelfInitTypePrototype(injectObject: InjectObject): EggPrototype {
+  private tryFindSelfInitTypePrototype(injectObject: InjectObject | InjectConstructor): EggPrototype {
     const propertyQualifiers = QualifierUtil.getProperQualifiers(this.clazz, injectObject.refName);
     const multiInstancePropertyQualifiers = this.properQualifiers[injectObject.refName as string] ?? [];
     return EggPrototypeFactory.instance.getPrototype(injectObject.objName, this.loadUnit, QualifierUtil.mergeQualifiers(
