@@ -90,8 +90,8 @@ describe('test/decorator.test.ts', () => {
       assert.deepStrictEqual(injectConstructors, [
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
         { refIndex: 1, refName: 'cache', objName: 'cache' },
-        { refIndex: 2, refName: 'optional1', objName: 'optional1' },
-        { refIndex: 3, refName: 'optional2', objName: 'optional2' },
+        { refIndex: 2, refName: 'optional1', objName: 'optional1', optional: true },
+        { refIndex: 3, refName: 'optional2', objName: 'optional2', optional: true },
       ]);
     });
   });
