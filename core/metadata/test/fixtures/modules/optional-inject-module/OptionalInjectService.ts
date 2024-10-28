@@ -6,8 +6,8 @@ interface PersistenceService {
 @SingletonProto()
 export default class OptionalInjectService {
   @Inject({ optional: true })
-  persistenceService: PersistenceService;
+  persistenceService?: PersistenceService;
 
   @InjectOptional()
-  persistenceService2: PersistenceService;
+  persistenceService2?: PersistenceService;
 }

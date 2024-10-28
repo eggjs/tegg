@@ -3,10 +3,10 @@ import { SingletonProto, Inject, InjectOptional } from '@eggjs/tegg';
 @SingletonProto()
 export class BarService {
   @Inject({ optional: true })
-  doesNotExist1: object;
+  doesNotExist1?: object;
 
   @InjectOptional()
-  doesNotExist2: object;
+  doesNotExist2?: object;
 
   bar() {
     return {

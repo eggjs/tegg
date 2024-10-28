@@ -3,8 +3,8 @@ import { SingletonProto, Inject, InjectOptional } from '@eggjs/tegg';
 @SingletonProto()
 export class FooService {
   constructor(
-    @Inject({ optional: true }) readonly doesNotExist1: object,
-    @InjectOptional() readonly doesNotExist2: object,
+    @Inject({ optional: true }) readonly doesNotExist1?: object,
+    @InjectOptional() readonly doesNotExist2?: object,
   ) {}
 
   foo() {
