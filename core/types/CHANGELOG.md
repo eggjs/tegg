@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.51.0](https://github.com/eggjs/tegg/compare/v3.50.1...v3.51.0) (2024-10-30)
+
+
+### Features
+
+* support optional inject ([#254](https://github.com/eggjs/tegg/issues/254)) ([260470b](https://github.com/eggjs/tegg/commit/260470b766d5fdb323c1bd72cc6260a90468a161))
+
+
+
+
+
 ## [3.50.1](https://github.com/eggjs/tegg/compare/v3.50.0...v3.50.1) (2024-10-23)
 
 **Note:** Version bump only for package @eggjs/tegg-types
