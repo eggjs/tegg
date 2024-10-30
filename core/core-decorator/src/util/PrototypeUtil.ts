@@ -284,4 +284,8 @@ export class PrototypeUtil {
   static getDesignType(clazz: EggProtoImplClass, propKey?: PropertyKey) {
     return MetadataUtil.getMetaData('design:type', clazz, propKey);
   }
+
+  static getDesignParamtypes(clazz: EggProtoImplClass, propKey?: PropertyKey) {
+    return MetadataUtil.getMetaData<unknown[]>('design:paramtypes', clazz, propKey);
+  }
 }

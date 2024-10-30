@@ -23,22 +23,23 @@ export class EggPrototypeCreatorFactory {
 
   static async createProto(clazz: EggProtoImplClass, loadUnit: LoadUnit): Promise<EggPrototype[]> {
     let properties: EggPrototypeInfo[] = [];
+    const defaultQualifier = [{
+      attribute: InitTypeQualifierAttribute,
+      value: PrototypeUtil.getInitType(clazz, {
+        unitPath: loadUnit.unitPath,
+        moduleName: loadUnit.name,
+      })!,
+    }, {
+      attribute: LoadUnitNameQualifierAttribute,
+      value: loadUnit.name,
+    }];
+
     if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
       const multiInstanceProtoInfo = PrototypeUtil.getMultiInstanceProperty(clazz, {
         unitPath: loadUnit.unitPath,
         moduleName: loadUnit.name,
       })!;
       for (const obj of multiInstanceProtoInfo.objects) {
-        const defaultQualifier = [{
-          attribute: InitTypeQualifierAttribute,
-          value: PrototypeUtil.getInitType(clazz, {
-            unitPath: loadUnit.unitPath,
-            moduleName: loadUnit.name,
-          })!,
-        }, {
-          attribute: LoadUnitNameQualifierAttribute,
-          value: loadUnit.name,
-        }];
         defaultQualifier.forEach(qualifier => {
           if (!obj.qualifiers.find(t => t.attribute === qualifier.attribute)) {
             obj.qualifiers.push(qualifier);
@@ -56,7 +57,16 @@ export class EggPrototypeCreatorFactory {
         });
       }
     } else {
-      properties = [ PrototypeUtil.getProperty(clazz)! ];
+      const property = PrototypeUtil.getProperty(clazz)!;
+      if (!property.qualifiers) {
+        property.qualifiers = [];
+      }
+      defaultQualifier.forEach(qualifier => {
+        if (!property.qualifiers!.find(t => t.attribute === qualifier.attribute)) {
+          property.qualifiers!.push(qualifier);
+        }
+      });
+      properties = [ property ];
     }
     const protos: EggPrototype[] = [];
     for (const property of properties) {
