@@ -38,7 +38,6 @@ import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './Stand
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
-import { LoadUnitInnerClassHook } from './LoadUnitInnerClassHook';
 import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
 import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
 import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSourceManager';
@@ -77,7 +76,6 @@ export class Runner {
   private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
   private transactionPrototypeHook: TransactionPrototypeHook;
 
-  private readonly loadUnitInnerClassHook: LoadUnitInnerClassHook;
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
   private readonly loadUnitAopHook: LoadUnitAopHook;
   private readonly eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
@@ -154,9 +152,6 @@ export class Runner {
     GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
     const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
     LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
-
-    this.loadUnitInnerClassHook = new LoadUnitInnerClassHook();
-    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitInnerClassHook);
 
     // TODO refactor with egg module
     // aop runtime
@@ -268,10 +263,6 @@ export class Runner {
     }
     if (this.configSourceEggPrototypeHook) {
       LoadUnitLifecycleUtil.deleteLifecycle(this.configSourceEggPrototypeHook);
-    }
-
-    if (this.loadUnitInnerClassHook) {
-      LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitInnerClassHook);
     }
 
     if (this.eggPrototypeCrossCutHook) {

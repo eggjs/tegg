@@ -175,7 +175,11 @@ describe('standalone/standalone/test/index.test.ts', () => {
     const fixturePath = path.join(__dirname, './fixtures/dynamic-inject-module');
 
     it('should work', async () => {
-      const msgs = await main(fixturePath);
+      const msgs = await main(fixturePath, {
+        dependencies: [
+          { baseDir: path.join(__dirname, '..'), extraFilePattern: [ '!**/test' ] },
+        ],
+      });
       assert.deepEqual(msgs, [
         'hello, foo(context:0)',
         'hello, bar(context:0)',
