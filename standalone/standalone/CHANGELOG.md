@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.51.1](https://github.com/eggjs/tegg/compare/v3.51.0...v3.51.1) (2024-11-06)
+
+
+### Bug Fixes
+
+* remove inner class hook ([#257](https://github.com/eggjs/tegg/issues/257)) ([faffd34](https://github.com/eggjs/tegg/commit/faffd3492f9edd411213034651d6863fb3f1a24d))
+
+
+
+
+
 # [3.51.0](https://github.com/eggjs/tegg/compare/v3.50.1...v3.51.0) (2024-10-30)
 
 
