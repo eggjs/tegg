@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.51.2](https://github.com/eggjs/tegg/compare/v3.51.1...v3.51.2) (2024-12-09)
+
+
+### Features
+
+* add mgw stream types ([#259](https://github.com/eggjs/tegg/issues/259)) ([1379d38](https://github.com/eggjs/tegg/commit/1379d382635c6bc575ce4acf3d3a7b5168487a3d))
+
+
+
+
+
 ## [3.51.1](https://github.com/eggjs/tegg/compare/v3.51.0...v3.51.1) (2024-11-06)
 
 **Note:** Version bump only for package @eggjs/tegg-types
