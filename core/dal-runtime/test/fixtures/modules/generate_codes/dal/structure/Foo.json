@@ -1,6 +1,5 @@
 {
   "name": "egg_foo",
-  "dataSourceName": "default",
   "columns": [
     {
       "columnName": "id",
@@ -415,6 +414,7 @@
       "comment": "index comment\n"
     }
   ],
+  "dataSourceName": "default",
   "comment": "foo table",
   "characterSet": "utf8mb4",
   "collate": "utf8mb4_unicode_ci"
