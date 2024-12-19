@@ -57,6 +57,7 @@
     "@types/node": "^20.2.4",
     "@types/nunjucks": "^3.2.6",
     "cross-env": "^7.0.3",
+    "mm": "^3.2.1",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
