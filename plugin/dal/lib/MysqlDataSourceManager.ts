@@ -21,14 +21,15 @@ export class MysqlDataSourceManager {
   }
 
   async createDataSource(moduleName: string, dataSourceName: string, config: DataSourceOptions) {
+    const { logger, ...dsConfig } = config || {};
     const dataSourceConfig = {
-      ...config,
+      ...dsConfig,
       name: dataSourceName,
     };
     const index = MysqlDataSourceManager.createDataSourceKey(dataSourceConfig);
     let dataSource = this.dataSources.get(index);
     if (!dataSource) {
-      dataSource = new MysqlDataSource(dataSourceConfig);
+      dataSource = new MysqlDataSource({ ...dataSourceConfig, logger });
       this.dataSources.set(index, dataSource);
     }
     let moduledataSourceIndices = this.dataSourceIndices.get(moduleName);
