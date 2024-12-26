@@ -1,15 +1,17 @@
 import { MysqlDataSourceManager } from './MysqlDataSourceManager';
-import { LifecycleHook, ModuleConfigHolder } from '@eggjs/tegg';
+import { LifecycleHook, Logger, ModuleConfigHolder } from '@eggjs/tegg';
 import { DatabaseForker, DataSourceOptions } from '@eggjs/dal-runtime';
 import { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
 
 export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   private readonly env: string;
+  private readonly logger?: Logger;
 
-  constructor(env: string, moduleConfigs: Record<string, ModuleConfigHolder>) {
+  constructor(env: string, moduleConfigs: Record<string, ModuleConfigHolder>, logger?: Logger) {
     this.env = env;
     this.moduleConfigs = moduleConfigs;
+    this.logger = logger;
   }
 
   async preCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
@@ -21,6 +23,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
       const dataSourceOptions = {
         ...config,
         name,
+        logger: this.logger,
       };
       const forker = new DatabaseForker(this.env, dataSourceOptions);
       if (forker.shouldFork()) {
