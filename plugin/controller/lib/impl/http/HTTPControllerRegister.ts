@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { Application, Router } from 'egg';
 import {
   CONTROLLER_META_DATA,

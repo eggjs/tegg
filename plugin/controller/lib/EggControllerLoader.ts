@@ -1,5 +1,5 @@
 import globby from 'globby';
-import path from 'path';
+import path from 'node:path';
 import { LoaderUtil } from '@eggjs/tegg-loader';
 import { EggProtoImplClass } from '@eggjs/tegg';
 

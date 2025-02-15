@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import { RootProto } from './fixtures/apps/optional-module/app/modules/root/Root';
 import { UsedProto } from './fixtures/apps/optional-module/node_modules/used/Used';
 import { UnusedProto } from './fixtures/apps/optional-module/node_modules/unused/Unused';

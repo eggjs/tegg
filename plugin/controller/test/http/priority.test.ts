@@ -1,5 +1,5 @@
 import mm from 'egg-mock';
-import path from 'path';
+import path from 'node:path';
 
 describe('plugin/controller/test/http/priority.test.ts', () => {
   let app;

@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
 import { Application } from 'egg';
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';

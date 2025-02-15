@@ -1,6 +1,6 @@
-import assert from 'assert';
-import path from 'path';
-import fs from 'fs';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import fs from 'node:fs';
 import mm from 'egg-mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';

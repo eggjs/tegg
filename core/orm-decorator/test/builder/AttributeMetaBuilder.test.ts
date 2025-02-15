@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { AttributeMetaBuilder } from '../../src/builder/AttributeMetaBuilder';
 import { DefaultAttributeModel } from '../fixtures/DefaultAttributeModel';
 import { AttributeModel } from '../fixtures/AttributeModel';

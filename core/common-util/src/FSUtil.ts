@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import fs from 'node:fs/promises';
 
 export class FSUtil {
   static async fileExists(filePath: string): Promise<boolean> {

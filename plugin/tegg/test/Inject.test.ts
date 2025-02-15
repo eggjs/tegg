@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import path from 'path';
-import assert from 'assert';
 import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService';
 import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService';
 import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1';

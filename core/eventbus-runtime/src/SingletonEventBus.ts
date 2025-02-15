@@ -7,7 +7,7 @@ import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggRuntimeContext } from '@eggjs/tegg-types';
 import { EventContextFactory } from './EventContextFactory';
 import { EventHandlerFactory } from './EventHandlerFactory';
-import { EventEmitter } from 'events';
+import EventEmitter from 'node:events';
 import awaitEvent from 'await-event';
 import awaitFirst from 'await-first';
 

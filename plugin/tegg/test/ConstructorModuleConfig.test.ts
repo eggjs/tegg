@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo';
 
 describe('plugin/tegg/test/ModuleConfig.test.ts', () => {

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { IdenticalUtil } from '../src/IdenticalObject';
 
 describe('test/IdenticalObject.test.ts', () => {

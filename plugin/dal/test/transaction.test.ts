@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm, { MockApplication } from 'egg-mock';
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO';
 import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService';

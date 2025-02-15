@@ -1,6 +1,6 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import KoaRouter from '@eggjs/router';
-import path from 'path';
+import path from 'node:path';
 import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,

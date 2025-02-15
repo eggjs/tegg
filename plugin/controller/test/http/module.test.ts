@@ -1,6 +1,6 @@
 import mm from 'egg-mock';
-import path from 'path';
-import assert from 'assert';
+import path from 'node:path';
+import assert from 'node:assert/strict';
 
 describe('plugin/controller/test/http/module.test.ts', () => {
   let app;

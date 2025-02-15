@@ -14,7 +14,7 @@ import {
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import { AsyncLocalStorage } from 'async_hooks';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { LoaderUtil } from './LoaderUtil';
 
 export class EggContextStorage {

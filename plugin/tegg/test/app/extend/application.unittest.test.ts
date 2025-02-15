@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import path from 'path';
-import assert from 'assert';
 
 describe('test/app/extend/application.unittest.test.ts', () => {
   let app;
