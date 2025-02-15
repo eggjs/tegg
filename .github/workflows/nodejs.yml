@@ -26,7 +26,7 @@ jobs:
       uses: actions/checkout@master
 
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -39,7 +39,7 @@ jobs:
         npm run tsc:pub
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
   Runner-macos:
@@ -54,7 +54,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -72,7 +72,7 @@ jobs:
         run: npm run ci
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 # GitHub mysql service not support windows
@@ -88,7 +88,7 @@ jobs:
 #        uses: actions/checkout@master
 #
 #      - name: Setup Node.js
-#        uses: actions/setup-node@v1
+#        uses: actions/setup-node@v4
 #        with:
 #          node-version: ${{ matrix.node-version }}
 #
@@ -99,6 +99,6 @@ jobs:
 #        run: npm run ci
 #
 #      - name: Code Coverage
-#        uses: codecov/codecov-action@v1
+#        uses: codecov/codecov-action@v5
 #        with:
 #          token: ${{ secrets.CODECOV_TOKEN }}
