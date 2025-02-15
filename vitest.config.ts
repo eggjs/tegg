@@ -27,7 +27,9 @@ export default defineConfig({
         'html',
       ],
       exclude: [
-        '*/*/test/**',
+        '*/*/test',
+        'benchmark',
+        '**/*/typings',
       ],
     },
   },
