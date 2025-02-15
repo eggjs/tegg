@@ -1,6 +1,6 @@
 import { EggPrototypeName, QualifierInfo } from '../../core-decorator/index.js';
 import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
-import { EggPrototype } from './EggPrototype.js';
+import type { EggPrototype } from './EggPrototype.js';
 import { Loader } from './Loader.js';
 
 export enum EggLoadUnitType {

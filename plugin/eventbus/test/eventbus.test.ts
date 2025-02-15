@@ -119,7 +119,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       helloCalled++;
     });
     await Promise.all([
-      await app.mockModuleContextScope(async ctx => {
+      app.mockModuleContextScope(async ctx => {
         const helloService = await ctx.getEggObject(HelloService);
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
@@ -128,7 +128,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),
-      await app.mockModuleContextScope(async ctx => {
+      app.mockModuleContextScope(async ctx => {
         const helloService = await ctx.getEggObject(HelloService);
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();

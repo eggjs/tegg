@@ -10,8 +10,14 @@
   ],
   "type": "module",
   "exports": {
-    "types": "./index.d.ts",
-    "default": "./index.js"
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./aop": {
+      "types": "./aop/index.d.ts",
+      "default": "./aop/index.js"
+    }
   },
   "files": [
     "**/*.js",

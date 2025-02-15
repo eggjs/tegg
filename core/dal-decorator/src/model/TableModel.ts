@@ -106,7 +106,7 @@ export class TableModel<T=object> {
     assert(columnTypeMap, `${name} has no columns`);
     const columns: Array<ColumnModel> = [];
     const indices: Array<IndexModel> = [];
-    for (const [ property, columnType ] of columnTypeMap?.entries()) {
+    for (const [ property, columnType ] of columnTypeMap?.entries() ?? []) {
       const columnParam = columnInfoMap?.get(property);
       columns.push(ColumnModel.build(property, columnType, columnParam));
     }

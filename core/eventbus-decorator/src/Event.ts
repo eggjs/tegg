@@ -1,6 +1,6 @@
 import { AccessLevel, PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
-import { EventHandler } from '../index';
+import { EventHandler } from './EventBus';
 import { EventInfoUtil } from './EventInfoUtil';
 // use @eggjs/tegg as namespace
 // eslint-disable-next-line import/no-unresolved

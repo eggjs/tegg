@@ -40,6 +40,7 @@ export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext
     // process the lazy getter
     if (propertyDesc?.get) {
       let obj;
+      // eslint-disable-next-line
       const self = this;
       Object.defineProperty(eggObject, 'obj', {
         ...propertyDesc,

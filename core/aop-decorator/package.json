@@ -32,10 +32,20 @@
     "access": "public"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "license": "MIT",
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./aop": {
+      "types": "./aop/index.d.ts",
+      "default": "./aop/index.js"
+    }
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts"
