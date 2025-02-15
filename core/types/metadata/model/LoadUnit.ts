@@ -23,7 +23,7 @@ export interface LoadUnit extends LifecycleObject<LoadUnitLifecycleContext> {
 
   iterateEggPrototype(): IterableIterator<EggPrototype>;
   registerEggPrototype(proto: EggPrototype): void;
-  deletePrototype(proto: EggPrototype);
+  deletePrototype(proto: EggPrototype): void;
   getEggPrototype(name: EggPrototypeName, qualifiers: QualifierInfo[]): EggPrototype[];
   containPrototype(proto: EggPrototype): boolean;
 }

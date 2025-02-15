@@ -24,5 +24,5 @@ export interface EggObject extends LifecycleObject<EggObjectLifeCycleContext> {
   readonly name: EggPrototypeName;
   readonly ctx?: EggRuntimeContext;
 
-  injectProperty(name: string, descriptor: PropertyDescriptor);
+  injectProperty(name: string, descriptor: PropertyDescriptor): void;
 }

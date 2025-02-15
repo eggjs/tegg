@@ -7,8 +7,8 @@ export interface EggContainer<T extends LifecycleContext> extends LifecycleObjec
   // Call this method in LifecycleHook.preCreate
   // To help container decide which proto should be create
   iterateProtoToCreate(): IterableIterator<[ EggObjectName, EggPrototype ]>;
-  addProtoToCreate(name: EggPrototypeName, proto: EggPrototype);
-  deleteProtoToCreate(name: EggPrototypeName);
+  addProtoToCreate(name: EggPrototypeName, proto: EggPrototype): void;
+  deleteProtoToCreate(name: EggPrototypeName): void;
 
   // async method for get or create object
   getOrCreateEggObject(name: EggPrototypeName, proto: EggPrototype): Promise<EggObject>;

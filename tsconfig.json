@@ -1,30 +1,10 @@
 {
-  "compileOnSave": true,
+  "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "CommonJS",
     "strict": true,
-    "noImplicitAny": false,
-    "esModuleInterop": true,
-    "useUnknownInCatchVariables": false,
-    "allowJs": false,
-    "pretty": true,
-    "noEmitOnError": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "strictPropertyInitialization": false,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "inlineSourceMap": true,
-    "declaration": true,
-    "resolveJsonModule": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
-  },
-  "ts-node": {
-    "files": true
+    "noImplicitAny": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   }
 }
