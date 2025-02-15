@@ -1,19 +1,19 @@
 import assert from 'node:assert';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { CrosscutAdviceFactory } from '../src/CrosscutAdviceFactory';
+import { CrosscutAdviceFactory } from '../src/CrosscutAdviceFactory.js';
 import {
   CrosscutClassAdviceExample,
   CrosscutCustomAdviceExample,
   CrosscutExample,
   CrosscutNameAdviceExample,
-} from './fixtures/CrosscutExample';
+} from './fixtures/CrosscutExample.js';
 import {
   GetterExample,
   PointcutAdviceAfterReturnExample,
   PointcutAdviceBeforeCallExample,
   PointcutExample,
-} from './fixtures/PointcutExample';
-import { AspectMetaBuilder } from '../src/AspectMetaBuilder';
+} from './fixtures/PointcutExample.js';
+import { AspectMetaBuilder } from '../src/AspectMetaBuilder.js';
 import {
   ChildExample,
   CrosscutNoOverwriteParentExample,

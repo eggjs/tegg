@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import type { EggProtoImplClass, MetaDataKey } from '@eggjs/tegg-types';
 
-
 export class MetadataUtil {
   static deleteMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass) {
     Reflect.deleteMetadata(metadataKey, clazz);

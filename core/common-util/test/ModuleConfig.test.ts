@@ -1,6 +1,7 @@
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import path from 'node:path';
-import { ModuleConfigUtil } from '../src/ModuleConfig';
+import { describe, it, afterEach } from 'vitest';
+import { ModuleConfigUtil } from '../src/ModuleConfig.js';
 
 describe('test/ModuleConfig.test.ts', () => {
   describe('load yaml config', () => {

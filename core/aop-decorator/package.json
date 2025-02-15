@@ -22,7 +22,8 @@
     "@eggjs/tegg-types": "^3.52.0"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "pretest": "npm run clean",
+    "test": "vitest",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
@@ -40,10 +41,6 @@
     ".": {
       "types": "./index.d.ts",
       "default": "./index.js"
-    },
-    "./aop": {
-      "types": "./aop/index.d.ts",
-      "default": "./aop/index.js"
     }
   },
   "files": [
@@ -54,11 +51,9 @@
     "url": "https://github.com/eggjs/tegg/issues"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "cross-env": "7",
+    "ts-node": "10",
+    "typescript": "5"
   }
 }

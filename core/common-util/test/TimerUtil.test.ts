@@ -1,4 +1,5 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'vitest';
 import { TimerUtil } from '..';
 
 describe('test/TimerUtil.test.ts', () => {

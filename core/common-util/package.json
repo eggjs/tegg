@@ -8,14 +8,20 @@
     "collection",
     "tegg"
   ],
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts"
   ],
-  "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "pretest": "npm run clean",
+    "test": "vitest",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
@@ -37,7 +43,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-types": "^3.52.0",
-    "extend2": "^1.0.0",
+    "extend2": "^4.0.0",
     "globby": "^11.1.0",
     "js-yaml": "^3.14.0"
   },
@@ -45,11 +51,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "ts-node": "10",
+    "typescript": "5"
   }
 }

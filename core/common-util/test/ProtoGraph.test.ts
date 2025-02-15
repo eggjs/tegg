@@ -1,6 +1,7 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'vitest';
 import type { GraphNodeObj } from '@eggjs/tegg-types';
-import { GraphNode, Graph } from '../src/Graph';
+import { GraphNode, Graph } from '../src/Graph.js';
 
 describe('test/LoadUnit/Graph.test.ts', () => {
   class GraphNodeVal implements GraphNodeObj {
