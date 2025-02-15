@@ -1,1 +1,1 @@
-export default ['core/*', 'plugin/*', 'standalone/*']
+export default [ 'core/*', 'plugin/*', 'standalone/*' ];
