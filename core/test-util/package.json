@@ -9,15 +9,20 @@
     "metadata",
     "tegg"
   ],
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "*.js",
+    "*.d.ts"
   ],
-  "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.json",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
@@ -44,11 +49,8 @@
     "mm": "^3.2.1"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "ts-node": "10",
+    "typescript": "5"
   }
 }

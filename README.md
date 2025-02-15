@@ -1,5 +1,10 @@
 # `@eggjs/tegg`
 
+## Required
+
+- Node.js >= 20.0.0
+- egg >= 4.0.0
+
 ## Install
 
 ```shell
