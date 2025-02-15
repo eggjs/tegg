@@ -10,3 +10,7 @@ export interface IndexParams {
   secondaryEngineAttribute?: string;
   parser?: string;
 }
+
+export * from './Column.js';
+export * from './DataSourceQualifier.js';
+export * from './Table.js';

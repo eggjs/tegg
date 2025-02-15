@@ -1,4 +1,4 @@
-import { EggProtoImplClass } from '../../core-decorator';
+import { EggProtoImplClass } from '../../core-decorator/index.js';
 
 /**
  * Loader to load class list in module

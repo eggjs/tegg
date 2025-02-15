@@ -1,5 +1,5 @@
-import { AccessLevel, EggPrototypeInfo, ObjectInitTypeLike, QualifierInfo } from '../../core-decorator';
-import { ProtoDescriptorType } from '../enum/ProtoDescriptorType';
+import { AccessLevel, EggPrototypeInfo, ObjectInitTypeLike, QualifierInfo } from '../../core-decorator/index.js';
+import { ProtoDescriptorType } from '../enum/index.js';
 
 export type ProtoDescriptorTypeLike = ProtoDescriptorType | string;
 

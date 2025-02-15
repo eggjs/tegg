@@ -8,9 +8,9 @@ import {
   QualifierAttribute,
   QualifierInfo,
   QualifierValue,
-} from '../../core-decorator';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle';
-import { LoadUnit } from './LoadUnit';
+} from '../../core-decorator/index.js';
+import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
+import { LoadUnit } from './LoadUnit.js';
 
 export interface InjectObjectProto {
   /**

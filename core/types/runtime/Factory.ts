@@ -1,8 +1,7 @@
-import type { EggObjectName } from '../core-decorator';
-import type { LifecycleContext } from '../lifecycle';
-import type { EggPrototype } from '../metadata';
-import type { EggContainer } from './model/EggContainer';
-import type { EggObject, EggObjectLifeCycleContext } from './model/EggObject';
+import type { EggObjectName } from '../core-decorator/index.js';
+import type { LifecycleContext } from '../lifecycle/index.js';
+import type { EggPrototype } from '../metadata/index.js';
+import type { EggContainer, EggObject, EggObjectLifeCycleContext } from './model/index.js';
 
 export type ContainerGetMethod = (proto: EggPrototype) => EggContainer<LifecycleContext>;
 

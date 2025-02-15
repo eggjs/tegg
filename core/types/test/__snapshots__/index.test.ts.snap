@@ -204,6 +204,9 @@ exports[`should export stable 1`] = `
     "ALWAYS_NEW": "ALWAYS_NEW",
     "REQUIRED": "REQUIRED",
   },
+  "ProtoDescriptorType": {
+    "CLASS": "CLASS",
+  },
   "QUALIFIER_IMPL_MAP": Symbol(EggPrototype#qualifierImplMap),
   "QUALIFIER_META_DATA": Symbol(EggPrototype#qualifier),
   "RowFormat": {

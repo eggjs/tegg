@@ -1,7 +1,7 @@
-import { EggObjectName, EggPrototypeName } from '../../core-decorator';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle';
-import { EggPrototype } from '../../metadata';
-import { EggObject } from './EggObject';
+import { EggObjectName, EggPrototypeName } from '../../core-decorator/index.js';
+import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
+import { EggPrototype } from '../../metadata/index.js';
+import { EggObject } from './EggObject.js';
 
 export interface EggContainer<T extends LifecycleContext> extends LifecycleObject<T> {
   // Call this method in LifecycleHook.preCreate
