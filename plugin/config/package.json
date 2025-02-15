@@ -3,6 +3,9 @@
   "eggPlugin": {
     "name": "teggConfig"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "3.52.0",
   "description": "module config plugin for egg",
   "keywords": [
@@ -40,7 +43,7 @@
     "directory": "plugin/config"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.19.0"
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "^3.52.0"
@@ -53,8 +56,5 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

@@ -6,6 +6,6 @@ extension:
   - ts
 require:
   - ts-node/register
-  - source-map-support/register
+  - source-map-support/register.js
 full-trace: true
 exit: true

@@ -11,8 +11,10 @@ run
 .DS_Store
 .tmp
 .vscode
+.eslintcache
 
 package-lock.json
+.package-lock.json
 yarn.lock
 .editorconfig
 *clinic-flame*
@@ -48,3 +50,5 @@ plugin/tegg/test/fixtures/apps/**/*.js
 !plugin/config/test/fixtures/**/node_modules
 .node
 .egg
+
+!**/*/__snapshots__/**/*.js

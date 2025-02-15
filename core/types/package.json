@@ -1,6 +1,9 @@
 {
   "name": "@eggjs/tegg-types",
   "version": "3.52.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "tegg types",
   "keywords": [
     "egg",
@@ -8,17 +11,6 @@
     "tegg",
     "types"
   ],
-  "main": "./index.js",
-  "files": [
-    "**/*.js",
-    "**/*.d.ts"
-  ],
-  "typings": "index.d.ts",
-  "scripts": {
-    "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
-  },
   "author": "gxkl <gxkl203@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/eggjs/tegg",
@@ -31,17 +23,55 @@
     "directory": "core/types"
   },
   "engines": {
-    "node": ">=14.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
+    "node": ">=18.19.0"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
-  }
+    "@arethetypeswrong/cli": "^0.17.1",
+    "@eggjs/bin": "7",
+    "@eggjs/tsconfig": "1",
+    "@types/mocha": "10",
+    "@types/node": "22",
+    "eslint": "8",
+    "eslint-config-egg": "14",
+    "rimraf": "6",
+    "snap-shot-it": "^7.9.10",
+    "tshy": "3",
+    "tshy-after": "1",
+    "typescript": "5"
+  },
+  "scripts": {
+    "pretest": "npm run clean",
+    "test": "egg-bin test",
+    "preci": "npm run clean",
+    "ci": "egg-bin cov",
+    "postci": "npm run prepublishOnly && npm run clean",
+    "clean": "rimraf dist",
+    "prepublishOnly": "tshy && tshy-after && attw --pack"
+  },
+  "type": "module",
+  "tshy": {
+    "exports": {
+      ".": "./src/index.ts",
+      "./package.json": "./package.json"
+    }
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "types": "./dist/commonjs/index.d.ts",
+  "main": "./dist/commonjs/index.js"
 }

@@ -208,6 +208,7 @@ export class HelloService {
 ##### 示例
 
 首先定义一个自定义 Qualifier 注解
+
 ```ts
 import {
   QualifierUtil,
@@ -296,7 +297,8 @@ export class DynamicLogger {
 }
 ```
 
-使用 DynamicLogger.
+使用 DynamicLogger
+
 ```ts
 @SingletonProto()
 export class Foo {
@@ -319,8 +321,6 @@ export class Foo {
   }
 }
 ```
-
-
 
 #### 生命周期 hook
 
