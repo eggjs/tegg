@@ -34,7 +34,7 @@
     "coverage": "vitest run --coverage core/types core/core-decorator core/common-util",
     "preci": "npm run lint",
     "ci": "npm run coverage",
-    "postci": "npm run prepublishOnly --workspaces --if-present || echo \"skip error temp\""
+    "postci-skip": "npm run prepublishOnly --workspaces --if-present"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
