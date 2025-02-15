@@ -24,8 +24,8 @@
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "publishConfig": {
     "access": "public"
@@ -37,20 +37,19 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "src/**/*.js",
+    "src/**/*.d.ts"
   ],
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
   "devDependencies": {
     "@types/node": "22",
-    "cross-env": "7",
     "ts-node": "10",
     "typescript": "5"
   }
