@@ -1,6 +1,5 @@
-import { EggProtoImplClass } from '../../core-decorator';
-import { SqlMap } from './SqlMap';
-
+import { EggProtoImplClass } from '../../core-decorator/index.js';
+import { SqlMap } from './SqlMap.js';
 
 export interface BaseDaoType {
   new(...args: any[]): object;

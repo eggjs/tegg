@@ -1,4 +1,4 @@
-import { MiddlewareFunc } from './types';
+import { MiddlewareFunc } from './types.js';
 
 export interface MethodMeta {
   readonly name: string;

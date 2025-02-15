@@ -1,5 +1,4 @@
-import { ColumnType } from '../enum/ColumnType';
-import { ColumnFormat } from '../enum/ColumnFormat';
+import type { ColumnFormat, ColumnType } from '../enum/index.js';
 
 export interface ColumnParams {
   name?: string;

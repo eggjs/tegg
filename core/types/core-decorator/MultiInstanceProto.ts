@@ -1,6 +1,5 @@
-import type { AccessLevel } from './enum/AccessLevel';
-import type { ObjectInitTypeLike } from './enum/ObjectInitType';
-import type { MultiInstancePrototypeGetObjectsContext, ObjectInfo } from './model/EggMultiInstancePrototypeInfo';
+import type { AccessLevel, ObjectInitTypeLike } from './enum/index.js';
+import type { MultiInstancePrototypeGetObjectsContext, ObjectInfo } from './model/index.js';
 
 export interface BaseMultiInstancePrototypeCallbackParams {
   /**
