@@ -19,4 +19,16 @@ export default defineConfig({
       },
     }),
   ],
+  test: {
+    coverage: {
+      reporter: [
+        'json',
+        'text-summary',
+        'html',
+      ],
+      exclude: [
+        '*/*/test/**',
+      ],
+    },
+  },
 });
