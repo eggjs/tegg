@@ -7,8 +7,8 @@ import type {
   MultiInstancePrototypeStaticParams,
   MultiInstancePrototypeCallbackParams,
 } from '@eggjs/tegg-types';
-import { PrototypeUtil } from '../util/PrototypeUtil';
 import { StackUtil } from '@eggjs/tegg-common-util';
+import { PrototypeUtil } from '../util/index.js';
 
 const DEFAULT_PARAMS = {
   initType: ObjectInitType.SINGLETON,

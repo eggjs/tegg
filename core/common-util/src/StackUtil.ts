@@ -1,3 +1,7 @@
+import { debuglog } from 'node:util';
+
+const debug = debuglog('@eggjs/tegg-common-util/StackUtil');
+
 /**
  * Capture call site stack from v8.
  * https://github.com/v8/v8/wiki/Stack-Trace-API
@@ -9,7 +13,7 @@ function prepareObjectStackTrace(_: Error, stack: NodeJS.CallSite[]) {
 
 export class StackUtil {
   // from egg-core/utils
-  // https://github.com/eggjs/egg-core/blob/master/lib/utils/index.js#L51
+  // https://github.com/eggjs/core/blob/5.x/lib/utils/index.js#L51
   static getCalleeFromStack(withLine: boolean, stackIndex?: number) {
     stackIndex = stackIndex === undefined ? 2 : stackIndex;
     const limit = Error.stackTraceLimit;
@@ -23,6 +27,9 @@ export class StackUtil {
       stack: [],
     };
     Error.captureStackTrace(obj);
+    if (debug.enabled) {
+      debug('call stack: %o', obj.stack.map(callSite => callSite.getFileName() ?? '<anonymous>').join('\n'));
+    }
     const callSite = obj.stack[stackIndex];
     let fileName;
     /* istanbul ignore else */

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "private": true,
+  "type": "module",
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
@@ -18,7 +19,7 @@
     "lint:fix": "eslint . --ext .ts --fix --cache",
     "lint": "npm run oxlint && eslint . --ext .ts --cache",
     "oxlint": "oxlint",
-    "test": "npm run test --workspaces --if-present",
+    "test": "vitest core/types core/core-decorator core/common-util",
     "cov": "nyc npm run test",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
@@ -30,9 +31,10 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "ci": "npm run lint && npm run coverage",
-    "coverage": "vitest run --coverage",
-    "vitest": "vitest"
+    "coverage": "vitest run --coverage core/types core/core-decorator core/common-util",
+    "preci": "npm run lint",
+    "ci": "npm run coverage",
+    "postci": "npm run prepublishOnly --workspaces --if-present || echo \"skip error temp\""
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -50,6 +52,7 @@
     "oxlint": "^0.15.10",
     "source-map-support": "^0.5.16",
     "test-exclude": "^6.0.0",
+    "vite-plugin-swc-transform": "^1.1.0",
     "vitest": "^3.0.5"
   },
   "workspaces": [

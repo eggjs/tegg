@@ -1,6 +1,6 @@
 import { ObjectInitType } from '@eggjs/tegg-types';
-import { ContextProto, InitTypeQualifier, Inject, ModuleQualifier, SingletonProto } from '../../..';
-import { ICache } from './ICache';
+import { ContextProto, InitTypeQualifier, Inject, ModuleQualifier, SingletonProto } from '../../../src/index.js';
+import { ICache } from './ICache.js';
 
 @ContextProto()
 export class TestContextService {}

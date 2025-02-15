@@ -20,8 +20,6 @@
     "src/**/*.d.ts"
   ],
   "scripts": {
-    "pretest": "npm run clean",
-    "test": "vitest",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run tsc",

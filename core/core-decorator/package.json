@@ -11,21 +11,19 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "src/**/*.js",
+    "src/**/*.d.ts"
   ],
   "scripts": {
-    "pretest": "npm run clean",
-    "test": "vitest",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",

@@ -3,7 +3,7 @@ import fs, { promises as fsPromise } from 'node:fs';
 import path from 'node:path';
 import extend from 'extend2';
 import globby from 'globby';
-import yaml from 'js-yaml';
+import { load as yamlLoad } from 'js-yaml';
 import type {
   InlineModuleReferenceConfig,
   ModuleConfig,
@@ -248,7 +248,7 @@ export class ModuleConfigUtil {
       return;
     }
     const moduleYamlContent = await fsPromise.readFile(moduleYamlPath, 'utf8');
-    return yaml.load(moduleYamlContent) as ModuleConfigUtil;
+    return yamlLoad(moduleYamlContent) as ModuleConfig;
   }
 
   public static loadModuleConfigSync(moduleDir: string, baseDir?: string, env?: string): ModuleConfig {
@@ -302,6 +302,6 @@ export class ModuleConfigUtil {
       return;
     }
     const moduleYamlContent = fs.readFileSync(moduleYamlPath, 'utf8');
-    return yaml.load(moduleYamlContent) as ModuleConfig;
+    return yamlLoad(moduleYamlContent) as ModuleConfig;
   }
 }

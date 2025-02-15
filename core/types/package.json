@@ -68,10 +68,8 @@
     "**/*.d.ts"
   ],
   "scripts": {
-    "pretest": "npm run clean",
-    "test": "vitest",
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.json",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "gxkl <gxkl203@gmail.com>",
@@ -92,10 +90,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/mocha": "10",
     "@types/node": "22",
-    "cross-env": "7",
-    "mocha": "10",
     "ts-node": "10",
     "typescript": "5"
   }
