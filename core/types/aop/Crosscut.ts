@@ -1,6 +1,6 @@
-import type { EggProtoImplClass } from '../core-decorator';
-import type { AdviceInfo } from './Aspect';
-import type { CustomPointcutCallback, PointcutInfo, PointcutType } from './Pointcut';
+import type { EggProtoImplClass } from '../core-decorator/index.js';
+import type { AdviceInfo } from './Aspect.js';
+import type { CustomPointcutCallback, PointcutInfo, PointcutType } from './Pointcut.js';
 
 export interface CrosscutOptions {
   // 默认值 100

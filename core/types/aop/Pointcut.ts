@@ -1,4 +1,4 @@
-import { EggProtoImplClass } from '../core-decorator';
+import type { EggProtoImplClass } from '../core-decorator/index.js';
 
 export interface PointcutOptions<K = any> {
   // default is 1000
