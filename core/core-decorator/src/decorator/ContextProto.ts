@@ -1,6 +1,6 @@
-import { Prototype } from './Prototype';
 import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import type { ContextProtoParams } from '@eggjs/tegg-types';
+import { Prototype } from './Prototype.js';
 
 export function ContextProto(params?: ContextProtoParams) {
   return Prototype({

@@ -1,6 +1,6 @@
 import { EggQualifierAttribute } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, EggType } from '@eggjs/tegg-types';
-import { QualifierUtil } from '../util/QualifierUtil';
+import { QualifierUtil } from '../util/index.js';
 
 export function EggQualifier(eggType: EggType) {
   return function(target: any, propertyKey?: PropertyKey, parameterIndex?: number) {

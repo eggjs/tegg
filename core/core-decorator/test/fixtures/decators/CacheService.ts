@@ -1,7 +1,7 @@
-import { ContextProto } from '../../../src/decorator/ContextProto';
-import { Inject, InjectOptional } from '../../../src/decorator/Inject';
-import { ICache } from './ICache';
-import { TestService, TestService2 } from './OtherService';
+import { ContextProto } from '../../../src/index.js';
+import { Inject, InjectOptional } from '../../../src/index.js';
+import { ICache } from './ICache.js';
+import { TestService, TestService2 } from './OtherService.js';
 
 @ContextProto()
 export class TestService3 {

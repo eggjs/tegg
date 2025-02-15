@@ -1,10 +1,10 @@
 import { ObjectInitType } from '@eggjs/tegg-types';
-import { SingletonProto } from '../../../src/decorator/SingletonProto';
-import { Inject, InjectOptional } from '../../../src/decorator/Inject';
-import { InitTypeQualifier } from '../../../src/decorator/InitTypeQualifier';
-import { ModuleQualifier } from '../../../src/decorator/ModuleQualifier';
-import { ContextProto } from '../../../src/decorator/ContextProto';
-import { ICache } from './ICache';
+import { SingletonProto } from '../../../src/index.js';
+import { Inject, InjectOptional } from '../../../src/index.js';
+import { InitTypeQualifier } from '../../../src/index.js';
+import { ModuleQualifier } from '../../../src/index.js';
+import { ContextProto } from '../../../src/index.js';
+import { ICache } from './ICache.js';
 
 @SingletonProto()
 export class CacheService {}

@@ -1,4 +1,4 @@
-import { MultiInstanceProto, SingletonProto } from '../../..';
+import { MultiInstanceProto, SingletonProto } from '../../../src/index.js';
 
 @SingletonProto()
 export class ParentSingletonProto {}

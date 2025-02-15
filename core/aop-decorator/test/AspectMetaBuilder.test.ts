@@ -1,19 +1,19 @@
 import assert from 'node:assert';
+import { describe, it } from 'vitest';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { CrosscutAdviceFactory } from '../src/CrosscutAdviceFactory';
+import { CrosscutAdviceFactory, AspectMetaBuilder } from '../src/index.js';
 import {
   CrosscutClassAdviceExample,
   CrosscutCustomAdviceExample,
   CrosscutExample,
   CrosscutNameAdviceExample,
-} from './fixtures/CrosscutExample';
+} from './fixtures/CrosscutExample.js';
 import {
   GetterExample,
   PointcutAdviceAfterReturnExample,
   PointcutAdviceBeforeCallExample,
   PointcutExample,
-} from './fixtures/PointcutExample';
-import { AspectMetaBuilder } from '../src/AspectMetaBuilder';
+} from './fixtures/PointcutExample.js';
 import {
   ChildExample,
   CrosscutNoOverwriteParentExample,
@@ -22,7 +22,7 @@ import {
   PointcutAdviceNoOverwriteParentExample,
   PointcutAdviceOverwriteChildExample,
   PointcutAdviceOverwriteParentExample,
-} from './fixtures/InheritExample';
+} from './fixtures/InheritExample.js';
 
 describe('test/AspectMetaBuild.test.ts', () => {
   const crosscutAdviceFactory = new CrosscutAdviceFactory();
@@ -138,6 +138,6 @@ describe('test/AspectMetaBuild.test.ts', () => {
 
   it('should has right file path', () => {
     const filePath = PrototypeUtil.getFilePath(CrosscutClassAdviceExample);
-    assert(filePath === require.resolve('./fixtures/CrosscutExample'));
+    assert.equal(filePath, require.resolve('./fixtures/CrosscutExample.ts'));
   });
 });

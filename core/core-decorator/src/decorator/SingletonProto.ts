@@ -1,6 +1,6 @@
 import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import type { SingletonProtoParams } from '@eggjs/tegg-types';
-import { Prototype } from './Prototype';
+import { Prototype } from './Prototype.js';
 
 export function SingletonProto(params?: SingletonProtoParams) {
   return Prototype({

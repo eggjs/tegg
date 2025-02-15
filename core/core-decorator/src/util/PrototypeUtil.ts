@@ -11,7 +11,7 @@ import {
   MultiInstanceType,
   QualifierAttribute,
 } from '@eggjs/tegg-types';
-import { MetadataUtil } from './MetadataUtil';
+import { MetadataUtil } from './MetadataUtil.js';
 
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE = Symbol.for('EggPrototype#isEggPrototype');

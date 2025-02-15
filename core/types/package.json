@@ -17,6 +17,50 @@
     "./aop": {
       "types": "./aop/index.d.ts",
       "default": "./aop/index.js"
+    },
+    "./common": {
+      "types": "./common/index.d.ts",
+      "default": "./common/index.js"
+    },
+    "./controller-decorator": {
+      "types": "./controller-decorator/index.d.ts",
+      "default": "./controller-decorator/index.js"
+    },
+    "./core-decorator": {
+      "types": "./core-decorator/index.d.ts",
+      "default": "./core-decorator/index.js"
+    },
+    "./dal": {
+      "types": "./dal/index.d.ts",
+      "default": "./dal/index.js"
+    },
+    "./lifecycle": {
+      "types": "./lifecycle/index.d.ts",
+      "default": "./lifecycle/index.js"
+    },
+    "./metadata": {
+      "types": "./metadata/index.d.ts",
+      "default": "./metadata/index.js"
+    },
+    "./runtime": {
+      "types": "./runtime/index.d.ts",
+      "default": "./runtime/index.js"
+    },
+    "./dynamic-inject": {
+      "types": "./dynamic-inject.d.ts",
+      "default": "./dynamic-inject.js"
+    },
+    "./orm": {
+      "types": "./orm.d.ts",
+      "default": "./orm.js"
+    },
+    "./schedule": {
+      "types": "./schedule.d.ts",
+      "default": "./schedule.js"
+    },
+    "./transaction": {
+      "types": "./transaction.d.ts",
+      "default": "./transaction.js"
     }
   },
   "files": [
@@ -24,10 +68,8 @@
     "**/*.d.ts"
   ],
   "scripts": {
-    "pretest": "npm run clean",
-    "test": "vitest",
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.json",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "gxkl <gxkl203@gmail.com>",
@@ -48,10 +90,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/mocha": "10",
     "@types/node": "22",
-    "cross-env": "7",
-    "mocha": "10",
     "ts-node": "10",
     "typescript": "5"
   }
