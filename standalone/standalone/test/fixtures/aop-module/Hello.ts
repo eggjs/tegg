@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import {
   ContextProto,
   Inject,
@@ -11,7 +12,6 @@ import {
   Pointcut,
   PointcutType,
 } from '@eggjs/tegg/aop';
-import assert from 'assert';
 
 export interface CallTraceMsg {
   className: string;

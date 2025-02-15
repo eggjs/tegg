@@ -1,5 +1,3 @@
-/// <reference path='./typings/index.d.ts'/>
-
 import { Application } from 'egg';
 import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook';
 import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager';

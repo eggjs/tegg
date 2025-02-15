@@ -1,4 +1,4 @@
-import type { AccessLevel } from './enum/AccessLevel';
+import type { AccessLevel } from './enum/index.js';
 
 export interface SingletonProtoParams {
   name?: string;

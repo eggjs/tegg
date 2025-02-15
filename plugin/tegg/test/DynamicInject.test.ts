@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import path from 'path';
-import assert from 'assert';
 
 describe('plugin/tegg/test/DynamicInject.test.ts', () => {
   let app;

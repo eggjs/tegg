@@ -1,4 +1,4 @@
-import { AccessLevel } from './enum/AccessLevel';
+import { AccessLevel } from './enum/index.js';
 
 export interface ContextProtoParams {
   name?: string;

@@ -2,7 +2,8 @@
   "extends": [
     "eslint-config-egg/typescript",
     "plugin:import/recommended",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
+    "plugin:oxlint/recommended"
   ],
   "parserOptions": {
     "project": "./tsconfig.json"
@@ -16,10 +17,12 @@
       "files": [
         "core/*/test/**/*",
         "plugin/*/test/**/*",
-        "standalone/*/test/**/*"
+        "standalone/*/test/**/*",
+        "core/types/**/*"
       ],
       "rules": {
-        "import/no-relative-packages": "off"
+        "import/no-relative-packages": "off",
+        "import/no-unresolved": "off"
       }
     }
   ]

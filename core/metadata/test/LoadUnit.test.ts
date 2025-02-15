@@ -1,5 +1,5 @@
-import path from 'path';
-import assert from 'assert';
+import path from 'node:path';
+import assert from 'node:assert/strict';
 import {
   EggLoadUnitType,
   GlobalGraph,

@@ -318,7 +318,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
   describe('lifecycle', () => {
     const fixturePath = path.join(__dirname, './fixtures/lifecycle');
-    let Foo;
+    let Foo: any;
 
     beforeEach(() => {
       mm.restore();

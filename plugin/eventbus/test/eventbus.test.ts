@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm, { MockApplication } from 'egg-mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService';
@@ -119,7 +119,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       helloCalled++;
     });
     await Promise.all([
-      await app.mockModuleContextScope(async ctx => {
+      app.mockModuleContextScope(async ctx => {
         const helloService = await ctx.getEggObject(HelloService);
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
@@ -128,7 +128,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),
-      await app.mockModuleContextScope(async ctx => {
+      app.mockModuleContextScope(async ctx => {
         const helloService = await ctx.getEggObject(HelloService);
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();

@@ -1,8 +1,4 @@
-'use strict';
-
-const path = require('path');
-
-module.exports = function(appInfo) {
+module.exports = function() {
   const config = {
     keys: 'test key',
     security: {

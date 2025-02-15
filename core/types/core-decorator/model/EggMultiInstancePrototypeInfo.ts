@@ -1,7 +1,6 @@
-import { ObjectInitTypeLike } from '../enum/ObjectInitType';
-import { AccessLevel } from '../enum/AccessLevel';
-import { EggPrototypeName } from './EggPrototypeInfo';
-import { QualifierInfo } from './QualifierInfo';
+import { ObjectInitTypeLike, AccessLevel } from '../enum/index.js';
+import { EggPrototypeName } from './EggPrototypeInfo.js';
+import { QualifierInfo } from './QualifierInfo.js';
 
 export interface ObjectInfo {
   name: EggPrototypeName;

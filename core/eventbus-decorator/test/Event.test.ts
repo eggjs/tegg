@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import coffee from 'coffee';
 import { FooHandler } from './fixtures/right-event-handle';
 import { MultiHandler } from './fixtures/multiple-events-handle';

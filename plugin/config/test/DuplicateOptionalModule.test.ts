@@ -1,6 +1,6 @@
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 
 describe('plugin/config/test/DuplicateOptionalModule.test.ts', () => {
   let app;

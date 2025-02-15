@@ -1,4 +1,4 @@
-import type { EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-runtime';
+import type { EggObject, EggObjectLifeCycleContext } from '../runtime/index.js';
 
 /**
  * lifecycle hook interface for egg object

@@ -1,9 +1,9 @@
 name: Continuous integration
 on:
   push:
-    branches: [ master ]
+    branches: [ master, next ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, next ]
 jobs:
   Runner-ubuntu:
     runs-on: ubuntu-latest
@@ -20,18 +20,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 16, 18, 20, 22 ]
+        node-version: [ 20, 22 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
 
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Install Npm
-      run: npm i -g npm@9
 
     - name: Install Dependencies
       run: npm i
@@ -42,7 +39,7 @@ jobs:
         npm run tsc:pub
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
   Runner-macos:
@@ -51,13 +48,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 16, 18, 20 ]
+        node-version: [ 20, 22 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -68,9 +65,6 @@ jobs:
         ## arm64/x86 homebrew mysql path different
         run: brew services start mysql
 
-      - name: Install Npm
-        run: npm i -g npm@9
-
       - name: Install Dependencies
         run: npm i
 
@@ -78,7 +72,7 @@ jobs:
         run: npm run ci
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 # GitHub mysql service not support windows
@@ -88,18 +82,15 @@ jobs:
 #    strategy:
 #      fail-fast: false
 #      matrix:
-#        node-version: [ 16, 18, 20 ]
+#        node-version: [ 20, 22 ]
 #    steps:
 #      - name: Checkout Git Source
 #        uses: actions/checkout@master
 #
 #      - name: Setup Node.js
-#        uses: actions/setup-node@v1
+#        uses: actions/setup-node@v4
 #        with:
 #          node-version: ${{ matrix.node-version }}
-#
-#      - name: Install Npm
-#        run: npm i -g npm@8
 #
 #      - name: Install Dependencies
 #        run: npm i
@@ -108,6 +99,6 @@ jobs:
 #        run: npm run ci
 #
 #      - name: Code Coverage
-#        uses: codecov/codecov-action@v1
+#        uses: codecov/codecov-action@v5
 #        with:
 #          token: ${{ secrets.CODECOV_TOKEN }}

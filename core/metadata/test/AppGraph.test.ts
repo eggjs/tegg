@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import { AppGraph, ModuleNode } from '../src/model/AppGraph';
 import { RootProto } from './fixtures/modules/app-graph-modules/root/Root';
 import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used';

@@ -1,5 +1,5 @@
 import globby from 'globby';
-import path from 'path';
+import path from 'node:path';
 import { LoaderUtil } from '@eggjs/tegg-loader';
 import { EggProtoImplClass } from '@eggjs/tegg';
 
@@ -17,7 +17,7 @@ export class EggControllerLoader {
       const httpControllers = globby.sync(filePattern, { cwd: this.controllerDir })
         .map(file => path.join(this.controllerDir, file));
       files = httpControllers;
-    } catch (_) {
+    } catch {
       files = [];
       // app/controller dir not exists
     }

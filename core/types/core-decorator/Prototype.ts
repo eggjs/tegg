@@ -1,5 +1,4 @@
-import { AccessLevel } from './enum/AccessLevel';
-import { ObjectInitTypeLike } from './enum/ObjectInitType';
+import type { AccessLevel, ObjectInitTypeLike } from './enum/index.js';
 
 export interface PrototypeParams {
   name?: string;

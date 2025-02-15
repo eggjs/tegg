@@ -12,11 +12,12 @@
     "url": "git@github.com:eggjs/tegg.git"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
-    "lint:fix": "eslint . --ext .ts --fix",
-    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix --cache",
+    "lint": "npm run oxlint && eslint . --ext .ts --cache",
+    "oxlint": "oxlint",
     "test": "npm run test --workspaces --if-present",
     "cov": "nyc npm run test",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
@@ -29,7 +30,8 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "ci": "npm run prepare-test && npm run lint && npm run cov"
+    "ci": "npm run prepare-test && npm run lint && npm run cov",
+    "vitest": "vitest"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -38,12 +40,15 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "ajv": "^8.12.0",
     "eslint": "^8.0.0",
-    "eslint-config-egg": "^12.0.0",
+    "eslint-config-egg": "^14.0.0",
     "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-oxlint": "^0.15.10",
     "lerna": "^6.1.0",
     "nyc": "^15.1.0",
+    "oxlint": "^0.15.10",
     "source-map-support": "^0.5.16",
-    "test-exclude": "^6.0.0"
+    "test-exclude": "^6.0.0",
+    "vitest": "^3.0.5"
   },
   "workspaces": [
     "core/*",

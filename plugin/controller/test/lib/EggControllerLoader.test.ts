@@ -1,6 +1,6 @@
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import { EggControllerLoader } from '../../lib/EggControllerLoader';
 import { ControllerMetadataUtil } from '@eggjs/tegg';
 

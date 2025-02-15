@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import AppService from './fixtures/apps/schedule-app/modules/multi-module-service/AppService';
 
 describe('plugin/tegg/test/Subscription.test.ts', () => {

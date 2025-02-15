@@ -1,8 +1,8 @@
-import { EggPrototypeName } from '../../core-decorator';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle';
-import { EggPrototype, LoadUnit } from '../../metadata';
-import { EggRuntimeContext } from './EggContext';
-import { LoadUnitInstance } from './LoadUnitInstance';
+import { EggPrototypeName } from '../../core-decorator/index.js';
+import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
+import { EggPrototype, LoadUnit } from '../../metadata/index.js';
+import type { EggRuntimeContext } from './EggContext.js';
+import type { LoadUnitInstance } from './LoadUnitInstance.js';
 
 export enum EggObjectStatus {
   PENDING = 'PENDING',
@@ -24,5 +24,5 @@ export interface EggObject extends LifecycleObject<EggObjectLifeCycleContext> {
   readonly name: EggPrototypeName;
   readonly ctx?: EggRuntimeContext;
 
-  injectProperty(name: string, descriptor: PropertyDescriptor);
+  injectProperty(name: string, descriptor: PropertyDescriptor): void;
 }

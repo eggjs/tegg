@@ -1,5 +1,5 @@
 import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
-import path from 'path';
+import path from 'node:path';
 
 export class ModuleScanner {
   private readonly baseDir: string;

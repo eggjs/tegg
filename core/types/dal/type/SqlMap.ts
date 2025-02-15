@@ -1,4 +1,4 @@
-import type { SqlType } from '../enum/SqlType';
+import type { SqlType } from '../enum/index.js';
 
 export interface BaseSqlMap {
   type?: SqlType;

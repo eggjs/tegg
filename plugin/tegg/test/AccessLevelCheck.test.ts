@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService';
 
 describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {

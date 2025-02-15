@@ -1,5 +1,5 @@
-import type { EggProtoImplClass } from '../core-decorator';
-import type { IAdvice } from './Advice';
+import type { EggProtoImplClass } from '../core-decorator/index.js';
+import type { IAdvice } from './Advice.js';
 
 export interface AdviceInfo {
   clazz: EggProtoImplClass<IAdvice>;

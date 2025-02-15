@@ -1,6 +1,6 @@
-import type { EggPrototypeName } from '@eggjs/tegg-types';
-import { ControllerTypeLike, MiddlewareFunc } from './types';
-import { MethodMeta } from './MethodMeta';
+import type { EggPrototypeName } from '../../core-decorator/index.js';
+import { ControllerTypeLike, MiddlewareFunc } from './types.js';
+import { MethodMeta } from './MethodMeta.js';
 
 export interface ControllerMetadata {
   readonly protoName: EggPrototypeName;

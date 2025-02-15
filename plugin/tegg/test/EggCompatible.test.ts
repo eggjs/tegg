@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService';
 import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService';
 

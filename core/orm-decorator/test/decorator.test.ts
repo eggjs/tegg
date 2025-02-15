@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { Foo } from './fixtures/Foo';
 import { ModelInfoUtil } from '../src/util/ModelInfoUtil';
 

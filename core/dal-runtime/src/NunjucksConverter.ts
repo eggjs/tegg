@@ -45,7 +45,7 @@ export class NunjucksConverter {
     // 进行逐一处理
     const ternaryAfter = ternaryBefore.map(str => {
       return str.replace(
-        /([\?:])runtime\.contextOrFrameLookup\((.+?),(.*?),\W*?"(.+?)"\)/g,
+        /([?:])runtime\.contextOrFrameLookup\((.+?),(.*?),\W*?"(.+?)"\)/g,
         '$1runtime.escapeSQL.call(this, "$4", runtime.contextOrFrameLookup($2, $3, "$4"))',
       )
         .replace(

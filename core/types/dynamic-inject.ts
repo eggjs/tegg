@@ -1,4 +1,4 @@
-import { EggProtoImplClass, QualifierValue } from './core-decorator';
+import { EggProtoImplClass, QualifierValue } from './core-decorator/index.js';
 
 export type EggAbstractClazz<T extends object = object> = Function & {prototype: T};
 export type ImplTypeEnum = {

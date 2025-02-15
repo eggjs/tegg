@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import { BarService } from './fixtures/apps/same-name-protos/app/modules/module-a/BarService';
 
 describe('plugin/tegg/test/SameProtoName.test.ts', () => {

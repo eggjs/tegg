@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { Context, Router } from 'egg';
 import {
   EggContext,
@@ -54,6 +54,7 @@ export class HTTPMethodRegister {
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
     const methodArgsLength = argsLength + (hasContext ? 1 : 0);
+    // eslint-disable-next-line
     const self = this;
     return async function(ctx: Context, next: Next) {
       // if hosts is not empty and host is not matched, not execute
@@ -65,7 +66,7 @@ export class HTTPMethodRegister {
       const eggObj = await self.eggContainerFactory.getOrCreateEggObject(self.proto, self.proto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[methodMeta.name];
-      const args: Array<object | string | string[]> = new Array(methodArgsLength);
+      const args: Array<object | string | string[]> = Array.from({ length: methodArgsLength });
       if (hasContext) {
         args[contextIndex!] = ctx;
       }
@@ -113,7 +114,7 @@ export class HTTPMethodRegister {
 
       if (
         // has body
-        body != null ||
+        (body !== null && body !== undefined) ||
         // status is not set and has no body
         // code should by 204
         // https://github.com/koajs/koa/blob/master/lib/response.js#L140

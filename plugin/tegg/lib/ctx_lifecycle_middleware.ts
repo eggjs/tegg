@@ -1,4 +1,4 @@
-import { TEggPluginContext } from '../app/extend/context';
+import type { TEggPluginContext } from '../app/extend/context';
 import { EggContextImpl } from './EggContextImpl';
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 

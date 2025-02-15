@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { LifecycleHook, ModuleConfigHolder, Logger } from '@eggjs/tegg';
 import { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 import { PropagationType, TransactionMetaBuilder } from '@eggjs/tegg/transaction';

@@ -1,4 +1,4 @@
-export * from './EggObjectLifecycle';
-export * from './IdenticalObject';
-export * from './LifecycleHook';
+export * from './EggObjectLifecycle.js';
+export * from './IdenticalObject.js';
+export * from './LifecycleHook.js';
 

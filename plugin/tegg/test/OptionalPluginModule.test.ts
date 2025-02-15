@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used';
 
 describe('plugin/tegg/test/OptionalPluginModule.test.ts', () => {

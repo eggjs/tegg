@@ -1,5 +1,5 @@
-import assert from 'node:assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import { TestLoader } from './fixtures/TestLoader';
 import { ModuleGraph } from '../src/impl/ModuleLoadUnit';
 

@@ -98,7 +98,7 @@ export class ModuleConfigUtil {
       let realPkgPath;
       try {
         realPkgPath = fs.realpathSync(absolutePkgPath);
-      } catch (_) {
+      } catch {
         continue;
       }
 
@@ -113,7 +113,7 @@ export class ModuleConfigUtil {
       let name: string;
       try {
         name = this.readModuleNameSync(moduleDir);
-      } catch (_) {
+      } catch {
         continue;
       }
       ref.push({
@@ -142,7 +142,7 @@ export class ModuleConfigUtil {
     let pkgContent: string;
     try {
       pkgContent = fs.readFileSync(path.join(baseDir, 'package.json'), 'utf8');
-    } catch (_) {
+    } catch {
       return [];
     }
     const pkg = JSON.parse(pkgContent);
@@ -152,7 +152,7 @@ export class ModuleConfigUtil {
         // https://nodejs.org/api/packages.html#package-entry-points
         // ignore cases where the package entry is exports but package.json is not exported
         packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths: [ baseDir ] });
-      } catch (_) {
+      } catch {
         continue;
       }
       const absolutePkgPath = path.dirname(packageJsonPath);
@@ -163,7 +163,7 @@ export class ModuleConfigUtil {
           path: realPkgPath,
           name,
         });
-      } catch (_) {
+      } catch {
         continue;
       }
     }

@@ -8,7 +8,7 @@ export class LoaderUtil {
     let clazz;
     try {
       clazz = require(filePath);
-    } catch (_) {
+    } catch {
       return null;
     }
     clazz = clazz.__esModule && 'default' in clazz ? clazz.default : clazz;

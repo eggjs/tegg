@@ -1,14 +1,14 @@
-import { EggObjectName, EggPrototypeName } from '../../core-decorator';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle';
-import { EggPrototype } from '../../metadata';
-import { EggObject } from './EggObject';
+import { EggObjectName, EggPrototypeName } from '../../core-decorator/index.js';
+import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
+import { EggPrototype } from '../../metadata/index.js';
+import { EggObject } from './EggObject.js';
 
 export interface EggContainer<T extends LifecycleContext> extends LifecycleObject<T> {
   // Call this method in LifecycleHook.preCreate
   // To help container decide which proto should be create
   iterateProtoToCreate(): IterableIterator<[ EggObjectName, EggPrototype ]>;
-  addProtoToCreate(name: EggPrototypeName, proto: EggPrototype);
-  deleteProtoToCreate(name: EggPrototypeName);
+  addProtoToCreate(name: EggPrototypeName, proto: EggPrototype): void;
+  deleteProtoToCreate(name: EggPrototypeName): void;
 
   // async method for get or create object
   getOrCreateEggObject(name: EggPrototypeName, proto: EggPrototype): Promise<EggObject>;

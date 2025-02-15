@@ -9,7 +9,7 @@ interface InternalAdviceContext<T = object> {
 }
 
 export class AspectExecutor {
-  obj: Object;
+  obj: object;
   method: PropertyKey;
   aspectAdviceList: readonly AspectAdvice[];
 

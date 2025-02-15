@@ -1,6 +1,6 @@
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import mm from 'egg-mock';
-import assert from 'assert';
-import path from 'path';
 
 describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
   let app;

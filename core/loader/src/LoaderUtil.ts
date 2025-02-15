@@ -1,6 +1,6 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import BuiltinModule from 'module';
+import BuiltinModule from 'node:module';
 import is from 'is-type-of';
 
 // Guard against poorly mocked module constructors.

@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 import { LoaderFactory, LoaderUtil } from '..';
 import { EggLoadUnitType } from '@eggjs/tegg-metadata';
 

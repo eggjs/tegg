@@ -1,6 +1,6 @@
-import path from 'path';
+import path from 'node:path';
 import mm from 'mm';
-import assert from 'assert';
+import assert from 'node:assert/strict';
 import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
 import { TimerUtil } from '@eggjs/tegg-common-util';

@@ -48,3 +48,4 @@ plugin/tegg/test/fixtures/apps/**/*.js
 !plugin/config/test/fixtures/**/node_modules
 .node
 .egg
+.eslintcache

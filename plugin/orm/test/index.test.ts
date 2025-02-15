@@ -1,10 +1,10 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert/strict';
+import path from 'node:path';
 // @ts-expect-error: the library definition is wrong
 import { Logger } from 'leoric';
 import mm, { MockApplication } from 'egg-mock';
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
-import os from 'os';
+import os from 'node:os';
 import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService';
 import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg';
 import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App';

@@ -1,7 +1,7 @@
-import { EggPrototypeName, QualifierInfo } from '../../core-decorator';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle';
-import { EggPrototype } from './EggPrototype';
-import { Loader } from './Loader';
+import { EggPrototypeName, QualifierInfo } from '../../core-decorator/index.js';
+import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
+import type { EggPrototype } from './EggPrototype.js';
+import { Loader } from './Loader.js';
 
 export enum EggLoadUnitType {
   MODULE = 'MODULE',
@@ -23,7 +23,7 @@ export interface LoadUnit extends LifecycleObject<LoadUnitLifecycleContext> {
 
   iterateEggPrototype(): IterableIterator<EggPrototype>;
   registerEggPrototype(proto: EggPrototype): void;
-  deletePrototype(proto: EggPrototype);
+  deletePrototype(proto: EggPrototype): void;
   getEggPrototype(name: EggPrototypeName, qualifiers: QualifierInfo[]): EggPrototype[];
   containPrototype(proto: EggPrototype): boolean;
 }

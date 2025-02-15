@@ -12,11 +12,12 @@ import type {
 } from '@eggjs/tegg-types';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { ContextHandler } from '../model/ContextHandler';
-import { ContextInitiator } from '../impl/ContextInitiator';
+import type { ContextInitiator as ContextInitiatorType } from '../impl/ContextInitiator';
 import { NameUtil } from '@eggjs/tegg-common-util';
 
 export class EggContainerFactory {
   private static containerGetMethodMap: Map<ObjectInitTypeLike, ContainerGetMethod> = new Map();
+  private static ContextInitiatorClass: typeof ContextInitiatorType;
 
   static registerContainerGetMethod(initType: ObjectInitTypeLike, method: ContainerGetMethod) {
     this.containerGetMethodMap.set(initType, method);
@@ -41,7 +42,12 @@ export class EggContainerFactory {
     const obj = await container.getOrCreateEggObject(name, proto);
     const ctx = ContextHandler.getContext();
     if (ctx) {
-      const initiator = ContextInitiator.createContextInitiator(ctx);
+      if (!EggContainerFactory.ContextInitiatorClass) {
+        // Dependency cycle between ContextInitiator and EggContainerFactory
+        const { ContextInitiator } = await import('../impl/ContextInitiator.js');
+        EggContainerFactory.ContextInitiatorClass = ContextInitiator;
+      }
+      const initiator = EggContainerFactory.ContextInitiatorClass.createContextInitiator(ctx);
       await initiator.init(obj);
     }
     return obj;

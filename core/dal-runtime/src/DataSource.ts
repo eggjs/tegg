@@ -25,8 +25,8 @@ export class DataSource<T> implements IDataSource<T> {
 
   /**
    * public for aop execute to implement sql hint append
-   * @param sqlName
-   * @param data
+   * @param sqlName - sql name
+   * @param data - sql data
    */
   async generateSql(sqlName: string, data: object): Promise<ExecuteSql> {
     const sql = this.sqlMap.generate(sqlName, data, this.mysqlDataSource.timezone!);
