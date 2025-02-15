@@ -29,7 +29,8 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "ci": "npm run prepare-test && npm run lint && npm run cov"
+    "ci": "npm run prepare-test && npm run lint && npm run cov",
+    "vitest": "vitest"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -43,7 +44,8 @@
     "lerna": "^6.1.0",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.16",
-    "test-exclude": "^6.0.0"
+    "test-exclude": "^6.0.0",
+    "vitest": "^3.0.5"
   },
   "workspaces": [
     "core/*",

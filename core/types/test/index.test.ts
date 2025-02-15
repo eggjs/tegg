@@ -1,8 +1,6 @@
-import snapshot from 'snap-shot-it';
-import * as types from '..';
+import { expect, it } from 'vitest'
+import * as types from '../index.js';
 
-describe('test/index.test.ts', () => {
-  it('should export stable', async () => {
-    snapshot(types);
-  });
+it('should export stable', async () => {
+  expect(types).toMatchSnapshot();
 });
