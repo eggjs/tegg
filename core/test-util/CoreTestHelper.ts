@@ -15,7 +15,7 @@ import {
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { LoaderUtil } from './LoaderUtil';
+import { LoaderUtil } from './LoaderUtil.js';
 
 export class EggContextStorage {
   static storage = new AsyncLocalStorage<EggContext>();

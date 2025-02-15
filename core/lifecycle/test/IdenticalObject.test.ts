@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { IdenticalUtil } from '../src/IdenticalObject';
+import { describe, it } from 'vitest';
+import { IdenticalUtil } from '../src/index.js';
 
 describe('test/IdenticalObject.test.ts', () => {
   it('should generate unique ctx id', () => {

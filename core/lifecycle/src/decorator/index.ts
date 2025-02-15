@@ -1,5 +1,5 @@
 import type { EggProtoImplClass, LifecycleHookName } from '@eggjs/tegg-types';
-import { LifecycleUtil } from '../LifycycleUtil';
+import { LifecycleUtil } from '../LifycycleUtil.js';
 
 function createLifecycle(hookName: LifecycleHookName) {
   return () => {
