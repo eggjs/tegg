@@ -30,7 +30,8 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "ci": "npm run prepare-test && npm run lint && npm run cov",
+    "ci": "npm run lint && npm run coverage",
+    "coverage": "vitest run --coverage",
     "vitest": "vitest"
   },
   "author": "killagu <killa123@126.com>",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "@eggjs/tsconfig": "^1.0.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@vitest/coverage-v8": "^3.0.5",
     "ajv": "^8.12.0",
     "eslint": "^8.0.0",
     "eslint-config-egg": "^14.0.0",

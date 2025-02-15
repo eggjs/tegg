@@ -12,7 +12,7 @@ import type {
   NpmModuleReferenceConfig,
   ReadModuleReferenceOptions,
 } from '@eggjs/tegg-types';
-import { FSUtil } from './FSUtil';
+import { FSUtil } from './FSUtil.js';
 
 export class ModuleReferenceConfigHelp {
   static isInlineModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is InlineModuleReferenceConfig {
@@ -248,7 +248,7 @@ export class ModuleConfigUtil {
       return;
     }
     const moduleYamlContent = await fsPromise.readFile(moduleYamlPath, 'utf8');
-    return yaml.safeLoad(moduleYamlContent) as ModuleConfigUtil;
+    return yaml.load(moduleYamlContent) as ModuleConfigUtil;
   }
 
   public static loadModuleConfigSync(moduleDir: string, baseDir?: string, env?: string): ModuleConfig {
@@ -302,6 +302,6 @@ export class ModuleConfigUtil {
       return;
     }
     const moduleYamlContent = fs.readFileSync(moduleYamlPath, 'utf8');
-    return yaml.safeLoad(moduleYamlContent) as ModuleConfig;
+    return yaml.load(moduleYamlContent) as ModuleConfig;
   }
 }

@@ -11,21 +11,21 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "src/**/*.js",
+    "src/**/*.d.ts"
   ],
   "scripts": {
     "pretest": "npm run clean",
     "test": "vitest",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -45,12 +45,13 @@
     "@eggjs/tegg-types": "^3.52.0",
     "extend2": "^4.0.0",
     "globby": "^11.1.0",
-    "js-yaml": "^3.14.0"
+    "js-yaml": "^4.1.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "22",
     "ts-node": "10",
     "typescript": "5"

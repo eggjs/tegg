@@ -3,7 +3,7 @@
  * https://github.com/v8/v8/wiki/Stack-Trace-API
  */
 
-function prepareObjectStackTrace(_, stack) {
+function prepareObjectStackTrace(_: Error, stack: NodeJS.CallSite[]) {
   return stack;
 }
 
