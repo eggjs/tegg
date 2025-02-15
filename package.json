@@ -15,8 +15,8 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "lint:fix": "eslint . --ext .ts --fix",
-    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix --cache",
+    "lint": "eslint . --ext .ts --cache",
     "test": "npm run test --workspaces --if-present",
     "cov": "nyc npm run test",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",

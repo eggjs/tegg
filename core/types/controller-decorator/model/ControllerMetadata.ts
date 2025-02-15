@@ -1,4 +1,4 @@
-import type { EggPrototypeName } from '../../../core-decorator';
+import type { EggPrototypeName } from '../../core-decorator';
 import { ControllerTypeLike, MiddlewareFunc } from './types';
 import { MethodMeta } from './MethodMeta';
 
