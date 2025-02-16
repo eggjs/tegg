@@ -1,8 +1,11 @@
-import globby from 'globby';
 import path from 'node:path';
-import { LoaderUtil } from '../LoaderUtil';
+import { debuglog } from 'node:util';
+import { globby } from 'globby';
 import type { EggProtoImplClass, Loader } from '@eggjs/tegg-types';
-import { LoaderFactory } from '../LoaderFactory';
+import { LoaderUtil } from '../LoaderUtil.js';
+import { LoaderFactory } from '../LoaderFactory.js';
+
+const debug = debuglog('@eggjs/tegg-loader/impl/ModuleLoader');
 
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;
@@ -12,18 +15,19 @@ export class ModuleLoader implements Loader {
     this.moduleDir = moduleDir;
   }
 
-  load(): EggProtoImplClass[] {
-    // optimise for EggModuleLoader
+  async load(): Promise<EggProtoImplClass[]> {
+    // optimize for EggModuleLoader
     if (this.protoClazzList) {
       return this.protoClazzList;
     }
     const protoClassList: EggProtoImplClass[] = [];
     const filePattern = LoaderUtil.filePattern();
 
-    const files = globby.sync(filePattern, { cwd: this.moduleDir });
+    const files = await globby(filePattern, { cwd: this.moduleDir });
+    debug('load files: %o, filePattern: %o, moduleDir: %o', files, filePattern, this.moduleDir);
     for (const file of files) {
       const realPath = path.join(this.moduleDir, file);
-      const fileClazzList = LoaderUtil.loadFile(realPath);
+      const fileClazzList = await LoaderUtil.loadFile(realPath);
       for (const clazz of fileClazzList) {
         protoClassList.push(clazz);
       }
