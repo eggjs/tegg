@@ -1,10 +1,10 @@
-import assert from 'node:assert';
+import assert from 'node:assert/strict';
+import { describe, it } from 'vitest';
 import { ControllerType } from '@eggjs/tegg-types';
-import { AclController } from './fixtures/AclController';
-import { ControllerMetaBuilderFactory } from '../src/builder/ControllerMetaBuilderFactory';
-import { HTTPControllerMeta } from '../src/model';
+import { AclController } from './fixtures/AclController.js';
+import { ControllerMetaBuilderFactory, HTTPControllerMeta } from '../src/index.js';
 
-describe('test/Context.test.ts', () => {
+describe('test/Acl.test.ts', () => {
   it('should work', () => {
     const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(AclController, ControllerType.HTTP)!;
     const aclControllerMeta = builder.build()! as HTTPControllerMeta;
@@ -12,7 +12,7 @@ describe('test/Context.test.ts', () => {
     const barMethod = aclControllerMeta.methods.find(t => t.name === 'bar')!;
     const fooAcl = aclControllerMeta.getMethodAcl(fooMethod);
     const barAcl = aclControllerMeta.getMethodAcl(barMethod);
-    assert(fooAcl === 'mock2');
-    assert(barAcl === 'mock1');
+    assert.equal(fooAcl, 'mock2');
+    assert.equal(barAcl, 'mock1');
   });
 });

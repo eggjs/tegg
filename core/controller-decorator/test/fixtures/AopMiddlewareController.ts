@@ -1,8 +1,6 @@
 import { HTTPMethodEnum, IAdvice, ObjectInitType } from '@eggjs/tegg-types';
-import { Middleware } from '../../src/decorator/Middleware';
 import { Advice } from '@eggjs/aop-decorator';
-import { HTTPController } from '../../src/decorator/http/HTTPController';
-import { HTTPMethod } from '../../src/decorator/http/HTTPMethod';
+import { Middleware, HTTPController, HTTPMethod } from '../../src/index.js';
 
 @Advice({
   initType: ObjectInitType.SINGLETON,

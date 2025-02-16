@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import ControllerInfoUtil from '../util/ControllerInfoUtil';
-import MethodInfoUtil from '../util/MethodInfoUtil';
+import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.js';
 
 export function Acl(code?: string) {
   function classAcl(constructor: EggProtoImplClass) {

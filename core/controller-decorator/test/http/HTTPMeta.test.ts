@@ -1,5 +1,7 @@
 import assert from 'node:assert';
+import { describe, it, beforeEach } from 'vitest';
 import { ControllerType, HTTPMethodEnum } from '@eggjs/tegg-types';
+import { PointcutAdviceInfoUtil } from '@eggjs/aop-decorator';
 import {
   ControllerWithParam,
   DefaultValueController,
@@ -8,7 +10,7 @@ import {
   FooController,
   FoxController,
   FxxController,
-} from '../fixtures/HTTPFooController';
+} from '../fixtures/HTTPFooController.js';
 import {
   BodyParamMeta,
   ControllerMetaBuilderFactory,
@@ -17,17 +19,16 @@ import {
   PathParamMeta,
   QueriesParamMeta,
   QueryParamMeta,
-} from '../..';
-import { HTTPControllerMeta } from '../../src/model';
-import { PriorityController, TooLongController } from '../fixtures/HTTPPriorityController';
+  HTTPControllerMeta,
+} from '../../src/index.js';
+import { PriorityController, TooLongController } from '../fixtures/HTTPPriorityController.js';
 import {
   AopMiddlewareController,
   BarAdvice,
   BarMethodAdvice,
   FooAdvice,
   FooMethodAdvice,
-} from '../fixtures/AopMiddlewareController';
-import { PointcutAdviceInfoUtil } from '@eggjs/aop-decorator';
+} from '../fixtures/AopMiddlewareController.js';
 
 describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
   it('should work', () => {

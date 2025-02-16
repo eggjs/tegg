@@ -1,9 +1,8 @@
 import assert from 'node:assert';
 import type { IAdvice, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
-import is from 'is-type-of';
-import ControllerInfoUtil from '../util/ControllerInfoUtil';
-import MethodInfoUtil from '../util/MethodInfoUtil';
+import { isClass } from 'is-type-of';
 import { AdviceInfoUtil } from '@eggjs/aop-decorator';
+import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.js';
 
 enum MiddlewareType {
   AOP = 'AOP',
@@ -11,7 +10,7 @@ enum MiddlewareType {
 }
 
 function isAop(mw: MiddlewareFunc | EggProtoImplClass<IAdvice>) {
-  return is.class(mw) && AdviceInfoUtil.isAdvice(mw as EggProtoImplClass<IAdvice>);
+  return isClass(mw) && AdviceInfoUtil.isAdvice(mw as EggProtoImplClass<IAdvice>);
 }
 
 function isAopTypeOrMiddlewareType(middlewares: Array<MiddlewareFunc> | Array<EggProtoImplClass<IAdvice>>): MiddlewareType {
@@ -28,7 +27,7 @@ function isAopTypeOrMiddlewareType(middlewares: Array<MiddlewareFunc> | Array<Eg
 export function Middleware(...middlewares: Array<MiddlewareFunc> | Array<EggProtoImplClass<IAdvice>>) {
   function functionTypeClassMiddleware(constructor: EggProtoImplClass) {
     middlewares.forEach(mid => {
-      ControllerInfoUtil.addControllerMiddleware(mid, constructor);
+      ControllerInfoUtil.addControllerMiddleware(mid as MiddlewareFunc, constructor);
     });
   }
 
@@ -44,7 +43,7 @@ export function Middleware(...middlewares: Array<MiddlewareFunc> | Array<EggProt
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;
     middlewares.forEach(mid => {
-      MethodInfoUtil.addMethodMiddleware(mid, controllerClazz, methodName);
+      MethodInfoUtil.addMethodMiddleware(mid as MiddlewareFunc, controllerClazz, methodName);
     });
   }
 

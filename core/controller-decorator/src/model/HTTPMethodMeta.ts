@@ -6,8 +6,9 @@ import type { HTTPMethodEnum, MethodMeta, MiddlewareFunc } from '@eggjs/tegg-typ
 export abstract class ParamMeta {
   type: HTTPParamType;
 
-  abstract validate(httpPath: string);
+  abstract validate(httpPath: string): void;
 }
+
 export class RequestParamMeta extends ParamMeta {
   type = HTTPParamType.REQUEST;
 

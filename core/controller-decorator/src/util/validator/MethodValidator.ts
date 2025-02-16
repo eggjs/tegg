@@ -1,7 +1,7 @@
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ClassUtil } from '@eggjs/tegg-metadata';
-import MethodInfoUtil from '../MethodInfoUtil';
-import ControllerInfoUtil from '../ControllerInfoUtil';
+import { MethodInfoUtil } from '../MethodInfoUtil.js';
+import { ControllerInfoUtil } from '../ControllerInfoUtil.js';
 
 export class MethodValidator {
   // should throw error

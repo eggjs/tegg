@@ -16,7 +16,7 @@ type HTTPMethodParamTypeMap = Map<string, Map<number, HTTPParamType>>;
 type HTTPMethodParamNameMap = Map<string, Map<number, string>>;
 type HTTPMethodPriorityMap = Map<string, number>;
 
-export default class HTTPInfoUtil {
+export class HTTPInfoUtil {
   static setHTTPPath(path: string, clazz: EggProtoImplClass) {
     MetadataUtil.defineMetaData(CONTROLLER_HTTP_PATH, path, clazz);
   }

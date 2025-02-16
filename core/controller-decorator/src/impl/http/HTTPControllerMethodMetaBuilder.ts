@@ -1,11 +1,8 @@
 import path from 'node:path';
 import { ClassUtil } from '@eggjs/tegg-metadata';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { HTTPMethodMeta, ParamMeta, ParamMetaUtil } from '../../model';
-import { MethodValidator } from '../../util/validator/MethodValidator';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
-import MethodInfoUtil from '../../util/MethodInfoUtil';
-import { HTTPPriorityUtil } from '../../util/HTTPPriorityUtil';
+import { HTTPMethodMeta, ParamMeta, ParamMetaUtil } from '../../model/index.js';
+import { MethodValidator, HTTPInfoUtil, MethodInfoUtil, HTTPPriorityUtil } from '../../util/index.js';
 
 export class HTTPControllerMethodMetaBuilder {
   private readonly clazz: EggProtoImplClass;
@@ -66,7 +63,7 @@ export class HTTPControllerMethodMetaBuilder {
 
       try {
         paramMeta.validate(httpPath);
-      } catch (e) {
+      } catch (e: any) {
         const classDesc = ClassUtil.classDescription(this.clazz);
         e.message = `build controller ${classDesc} method ${this.methodName} param ${paramName} failed: ${e.message}`;
         throw e;

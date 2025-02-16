@@ -8,7 +8,7 @@ import {
 import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';
 
-export default class ControllerInfoUtil {
+export class ControllerInfoUtil {
   static addControllerMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass) {
     const middlewares = MetadataUtil.initOwnArrayMetaData<MiddlewareFunc>(CONTROLLER_MIDDLEWARES, clazz, []);
     middlewares.push(middleware);
@@ -39,7 +39,7 @@ export default class ControllerInfoUtil {
     return MetadataUtil.getMetaData(CONTROLLER_NAME, clazz);
   }
 
-  static getControllerType(clazz): ControllerTypeLike | undefined {
+  static getControllerType(clazz: EggProtoImplClass): ControllerTypeLike | undefined {
     return MetadataUtil.getMetaData(CONTROLLER_TYPE, clazz);
   }
 
