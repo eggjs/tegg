@@ -1,6 +1,9 @@
 {
   "name": "@eggjs/tegg",
   "version": "3.52.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -8,16 +11,52 @@
     "metadata",
     "tegg"
   ],
-  "main": "./index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./ajv": {
+      "types": "./ajv.d.ts",
+      "default": "./ajv.js"
+    },
+    "./aop": {
+      "types": "./aop.d.ts",
+      "default": "./aop.js"
+    },
+    "./dal": {
+      "types": "./dal.d.ts",
+      "default": "./dal.js"
+    },
+    "./helper": {
+      "types": "./helper.d.ts",
+      "default": "./helper.js"
+    },
+    "./orm": {
+      "types": "./orm.d.ts",
+      "default": "./orm.js"
+    },
+    "./schedule": {
+      "types": "./schedule.d.ts",
+      "default": "./schedule.js"
+    },
+    "./standalone": {
+      "types": "./standalone.d.ts",
+      "default": "./standalone.js"
+    },
+    "./transaction": {
+      "types": "./transaction.d.ts",
+      "default": "./transaction.js"
+    }
+  },
   "files": [
     "*.js",
     "*.d.ts"
   ],
-  "typings": "index.d.ts",
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.json",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
@@ -29,10 +68,10 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/test-util"
+    "directory": "core/tegg"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@eggjs/ajv-decorator": "^3.52.0",
@@ -54,15 +93,9 @@
     "@eggjs/tegg-transaction-decorator": "^3.52.0",
     "@eggjs/tegg-types": "^3.52.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "ts-node": "10",
+    "typescript": "5"
   }
 }

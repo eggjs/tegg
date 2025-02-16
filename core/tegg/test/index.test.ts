@@ -1,4 +1,5 @@
-import assert = require('assert');
+import assert from 'node:assert/strict';
+import { it } from 'vitest';
 import {
   Acl,
   Context,
@@ -10,20 +11,18 @@ import {
   BackgroundTaskHelper,
   orm,
   aop,
-} from '..';
+} from '../index.js';
 
-describe('test/index.test.ts', () => {
-  it('should ok', async () => {
-    assert(Acl);
-    assert(Context);
-    assert(ContextProto);
-    assert(Inject);
-    assert(AccessLevel);
-    assert(EventInfoUtil);
-    assert(QualifierImplUtil);
-    assert(BackgroundTaskHelper);
-    assert(orm.DataSource);
-    assert(orm.Attribute);
-    assert(aop.Advice);
-  });
+it('should exports work', async () => {
+  assert(Acl);
+  assert(Context);
+  assert(ContextProto);
+  assert(Inject);
+  assert(AccessLevel);
+  assert(EventInfoUtil);
+  assert(QualifierImplUtil);
+  assert(BackgroundTaskHelper);
+  assert(orm.DataSource);
+  assert(orm.Attribute);
+  assert(aop.Advice);
 });
