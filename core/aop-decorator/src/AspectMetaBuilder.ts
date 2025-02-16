@@ -26,9 +26,9 @@ export class AspectMetaBuilder {
     return aspectList;
   }
 
-  static getAllMethods(clazz): PropertyKey[] {
+  static getAllMethods(clazz: EggProtoImplClass): PropertyKey[] {
     const methodSet = new Set<string>();
-    function getMethods(obj) {
+    function getMethods(obj: any) {
       if (obj) {
         const propDescs = Object.getOwnPropertyDescriptors(obj);
         for (const [ name, desc ] of Object.entries(propDescs)) {
