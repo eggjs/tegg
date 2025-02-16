@@ -9,17 +9,21 @@
     "controller",
     "tegg"
   ],
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "src/**/*.js",
+    "src/**/*.d.ts"
   ],
-  "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "npm run tsc",
     "prepublishOnly": "npm run tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
@@ -34,28 +38,24 @@
     "directory": "core/controller-decorator"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@eggjs/aop-decorator": "^3.52.0",
-    "@eggjs/cookies": "^3.0.1",
+    "@eggjs/cookies": "^3.1.0",
     "@eggjs/core-decorator": "^3.52.0",
     "@eggjs/tegg-common-util": "^3.52.0",
     "@eggjs/tegg-metadata": "^3.52.0",
     "@eggjs/tegg-types": "^3.52.0",
-    "is-type-of": "^1.2.1",
-    "path-to-regexp": "^1.8.0",
-    "reflect-metadata": "^0.1.13",
-    "undici": "^5.26.5"
+    "is-type-of": "^2.2.0",
+    "path-to-regexp": "^1.9.0",
+    "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "egg": "^3.9.1",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "egg": "4",
+    "ts-node": "10",
+    "typescript": "5"
   },
   "publishConfig": {
     "access": "public"

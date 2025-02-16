@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import { HTTPParamType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, HTTPParamParams, HTTPQueriesParams, HTTPQueryParams } from '@eggjs/tegg-types';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
+import { HTTPInfoUtil } from '../../util/index.js';
 
 // TODO url params
 // /foo/:id

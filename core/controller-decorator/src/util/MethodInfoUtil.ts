@@ -17,7 +17,7 @@ type MethodMiddlewareMap = Map<string, MiddlewareFunc[]>;
 type MethodAopMiddlewareMap = Map<string, EggProtoImplClass<IAdvice>[]>;
 type MethodAclMap = Map<string, string | undefined>;
 
-export default class MethodInfoUtil {
+export class MethodInfoUtil {
   static setMethodControllerType(clazz: EggProtoImplClass, methodName: string, controllerType: ControllerTypeLike) {
     const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(METHOD_CONTROLLER_TYPE_MAP, clazz, new Map());
     methodControllerMap.set(methodName, controllerType);

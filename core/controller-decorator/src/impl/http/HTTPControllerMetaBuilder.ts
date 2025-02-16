@@ -4,13 +4,10 @@ import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { ClassUtil } from '@eggjs/tegg-metadata';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ControllerType } from '@eggjs/tegg-types';
-import { ControllerMetaBuilderFactory } from '../../builder/ControllerMetaBuilderFactory';
-import { HTTPControllerMeta, HTTPMethodMeta } from '../../model';
-import ControllerInfoUtil from '../../util/ControllerInfoUtil';
-import { ControllerMetadataUtil } from '../../util/ControllerMetadataUtil';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
-import { ControllerValidator } from '../../util/validator/ControllerValidator';
-import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder';
+import { ControllerMetaBuilderFactory } from '../../builder/index.js';
+import { HTTPControllerMeta, HTTPMethodMeta } from '../../model/index.js';
+import { ControllerInfoUtil, ControllerMetadataUtil, HTTPInfoUtil, ControllerValidator } from '../../util/index.js';
+import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder.js';
 
 export class HTTPControllerMetaBuilder {
   private readonly clazz: EggProtoImplClass;

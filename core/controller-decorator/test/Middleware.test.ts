@@ -1,35 +1,35 @@
-import assert from 'node:assert';
-import { MiddlewareController, MiddlewaresController } from './fixtures/MiddlewareController';
-import ControllerInfoUtil from '../src/util/ControllerInfoUtil';
-import MethodInfoUtil from '../src/util/MethodInfoUtil';
+import assert from 'node:assert/strict';
+import { describe, it } from 'vitest';
+import { MiddlewareController, MiddlewaresController } from './fixtures/MiddlewareController.js';
 import {
   AopMiddlewareController,
   BarAdvice,
   BarMethodAdvice,
   FooAdvice,
   FooMethodAdvice,
-} from './fixtures/AopMiddlewareController';
+} from './fixtures/AopMiddlewareController.js';
+import { ControllerInfoUtil, MethodInfoUtil } from '../src/index.js';
 
 describe('test/Middleware.test.ts', () => {
   it('should work', () => {
     const controllerMws = ControllerInfoUtil.getControllerMiddlewares(MiddlewareController);
     const methodMws = MethodInfoUtil.getMethodMiddlewares(MiddlewareController, 'hello');
-    assert(controllerMws.length === 1);
-    assert(methodMws.length === 2);
+    assert.equal(controllerMws.length, 1);
+    assert.equal(methodMws.length, 2);
   });
   it('Middleware with muti params should work', () => {
     const controllerMws = ControllerInfoUtil.getControllerMiddlewares(MiddlewaresController);
     const methodMws = MethodInfoUtil.getMethodMiddlewares(MiddlewaresController, 'hello');
-    assert(controllerMws.length === 1);
-    assert(methodMws.length === 2);
+    assert.equal(controllerMws.length, 1);
+    assert.equal(methodMws.length, 2);
   });
 
   it('controller Aop Middleware should work', () => {
     const controllerAopMws = ControllerInfoUtil.getControllerAopMiddlewares(AopMiddlewareController);
     const helloMethodMws = MethodInfoUtil.getMethodAopMiddlewares(AopMiddlewareController, 'hello');
     const byeMethodMws = MethodInfoUtil.getMethodAopMiddlewares(AopMiddlewareController, 'bye');
-    assert.deepStrictEqual(controllerAopMws, [ FooAdvice, BarAdvice ]);
-    assert.deepStrictEqual(helloMethodMws, [ FooMethodAdvice, BarMethodAdvice ]);
-    assert.deepStrictEqual(byeMethodMws, []);
+    assert.deepEqual(controllerAopMws, [ FooAdvice, BarAdvice ]);
+    assert.deepEqual(helloMethodMws, [ FooMethodAdvice, BarMethodAdvice ]);
+    assert.deepEqual(byeMethodMws, []);
   });
 });

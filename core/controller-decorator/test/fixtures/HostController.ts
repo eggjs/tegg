@@ -1,4 +1,4 @@
-import { Host } from '../../src/decorator/http/Host';
+import { Host } from '../../src/index.js';
 
 @Host('foo.eggjs.com')
 export class HostController {

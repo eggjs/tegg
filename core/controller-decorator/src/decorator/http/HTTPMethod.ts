@@ -1,8 +1,7 @@
 import assert from 'node:assert';
 import { ControllerType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, HTTPMethodParams } from '@eggjs/tegg-types';
-import HTTPInfoUtil from '../../util/HTTPInfoUtil';
-import MethodInfoUtil from '../../util/MethodInfoUtil';
+import { HTTPInfoUtil, MethodInfoUtil } from '../../util/index.js';
 
 export function HTTPMethod(param: HTTPMethodParams) {
   return function(target: any, propertyKey: PropertyKey) {

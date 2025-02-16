@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import MethodInfoUtil from '../util/MethodInfoUtil';
+import { MethodInfoUtil } from '../util/index.js';
 
 export function Context() {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {

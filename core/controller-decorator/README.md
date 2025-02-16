@@ -1,5 +1,5 @@
 # @eggjs/controller-decorator
 
-# Usage
+## Usage
 
 Please read [@eggjs/tegg-controller-plugin](../../plugin/controller/README.md)

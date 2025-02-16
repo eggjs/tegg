@@ -1,4 +1,4 @@
-import { Context } from '../../src/decorator/Context';
+import { Context } from '../../src/index.js';
 
 export class ContextController {
   async hello(@Context() ctx: object) {

@@ -1,10 +1,11 @@
-import assert from 'node:assert';
-import { ContextController } from './fixtures/ContextController';
-import MethodInfoUtil from '../src/util/MethodInfoUtil';
+import assert from 'node:assert/strict';
+import { describe, it } from 'vitest';
+import { ContextController } from './fixtures/ContextController.js';
+import { MethodInfoUtil } from '../src/util/index.js';
 
 describe('test/Context.test.ts', () => {
   it('should work', () => {
     const contextIndex = MethodInfoUtil.getMethodContextIndex(ContextController, 'hello');
-    assert(contextIndex === 0);
+    assert.equal(contextIndex, 0);
   });
 });
