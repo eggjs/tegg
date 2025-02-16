@@ -1,11 +1,10 @@
 import { ObjectInitType } from '@eggjs/tegg-types';
 import type { EggRuntimeContext, EggContextLifecycleContext, EggObject, EggObjectName, EggPrototype, EggPrototypeName, Id } from '@eggjs/tegg-types';
 import { TeggError } from '@eggjs/tegg-metadata';
-import { EggContextLifecycleUtil } from './EggContext';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { EggContainerFactory } from '../factory/EggContainerFactory';
-import { EggObjectFactory } from '../factory/EggObjectFactory';
-import { ContextHandler } from './ContextHandler';
+import { EggContainerFactory, EggObjectFactory } from '../factory/index.js';
+import { ContextHandler } from './ContextHandler.js';
+import { EggContextLifecycleUtil } from './EggContext.js';
 
 export abstract class AbstractEggContext implements EggRuntimeContext {
   private contextData: Map<string | symbol, any> = new Map();
@@ -20,7 +19,7 @@ export abstract class AbstractEggContext implements EggRuntimeContext {
     this.protoToCreate.set(name, proto);
   }
 
-  deleteProtoToCreate(name) {
+  deleteProtoToCreate(name: string) {
     this.protoToCreate.delete(name);
   }
 

@@ -5,5 +5,5 @@ export interface CacheValue {
 
 export interface ICache {
   get(key: string): CacheValue;
-  set(key: string, val: string);
+  set(key: string, val: string): void;
 }

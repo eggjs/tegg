@@ -19,7 +19,7 @@ export interface EggObjectLifeCycleContext extends LifecycleContext {
 
 export interface EggObject extends LifecycleObject<EggObjectLifeCycleContext> {
   readonly isReady: boolean;
-  readonly obj: object;
+  readonly obj: Record<string | symbol, any>;
   readonly proto: EggPrototype;
   readonly name: EggPrototypeName;
   readonly ctx?: EggRuntimeContext;

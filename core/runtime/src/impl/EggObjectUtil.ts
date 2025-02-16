@@ -1,5 +1,5 @@
 import type { EggObject, EggPrototype } from '@eggjs/tegg-types';
-import { EggContainerFactory } from '../factory/EggContainerFactory';
+import { EggContainerFactory } from '../factory/index.js';
 
 export class EggObjectUtil {
   static eggObjectGetProperty(eggObject: EggObject): PropertyDescriptor {
@@ -29,7 +29,7 @@ export class EggObjectUtil {
 
   static eggObjectProxy(eggObject: EggObject): PropertyDescriptor {
     let _obj: object;
-    function getObj() {
+    function getObj(): Record<string | symbol, any> {
       if (!_obj) {
         _obj = eggObject.obj;
       }
@@ -42,15 +42,15 @@ export class EggObjectUtil {
         Object.defineProperty(obj, property, attributes);
         return true;
       },
-      deleteProperty(_target: {}, p: string | symbol): boolean {
+      deleteProperty(_target: any, p: string | symbol): boolean {
         const obj = getObj();
         delete obj[p];
         return true;
       },
-      get(target: {}, p: string | symbol): any {
+      get(target: any, p: string | symbol): any {
         // make get be lazy
         if (p === 'then') return;
-        if (Object.prototype[p]) {
+        if ((Object.prototype as any)[p]) {
           return target[p];
         }
         const obj = getObj();
@@ -60,7 +60,7 @@ export class EggObjectUtil {
         }
         return val;
       },
-      getOwnPropertyDescriptor(_target: {}, p: string | symbol): PropertyDescriptor | undefined {
+      getOwnPropertyDescriptor(_target: any, p: string | symbol): PropertyDescriptor | undefined {
         const obj = getObj();
         return Object.getOwnPropertyDescriptor(obj, p);
       },
@@ -68,7 +68,7 @@ export class EggObjectUtil {
         const obj = getObj();
         return Object.getPrototypeOf(obj);
       },
-      has(_target: {}, p: string | symbol): boolean {
+      has(_target: any, p: string | symbol): boolean {
         const obj = getObj();
         return p in obj;
       },
@@ -85,12 +85,12 @@ export class EggObjectUtil {
         Object.preventExtensions(obj);
         return true;
       },
-      set(_target: {}, p: string | symbol, newValue: any): boolean {
+      set(_target: any, p: string | symbol, newValue: any): boolean {
         const obj = getObj();
         obj[p] = newValue;
         return true;
       },
-      setPrototypeOf(_target: {}, v: object | null): boolean {
+      setPrototypeOf(_target: any, v: object | null): boolean {
         const obj = getObj();
         Object.setPrototypeOf(obj, v);
         return true;
@@ -103,29 +103,29 @@ export class EggObjectUtil {
     const PROTO_OBJ_PROXY = Symbol(`EggPrototype#objProxy#${String(objName)}`);
     if (!proto[PROTO_OBJ_PROXY]) {
       proto[PROTO_OBJ_PROXY] = new Proxy({}, {
-        defineProperty(_target: {}, property: string | symbol, attributes: PropertyDescriptor): boolean {
+        defineProperty(_target: any, property: string | symbol, attributes: PropertyDescriptor): boolean {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           Object.defineProperty(obj, property, attributes);
           return true;
         },
-        deleteProperty(_target: {}, p: string | symbol): boolean {
+        deleteProperty(_target: any, p: string | symbol): boolean {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           delete obj[p];
           return true;
         },
-        get(target: {}, p: string | symbol): any {
+        get(target: any, p: string | symbol): any {
           // make get be lazy
           if (p === 'then') return;
-          if (Object.prototype[p]) {
+          if ((Object.prototype as any)[p]) {
             return target[p];
           }
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           return obj[p];
         },
-        getOwnPropertyDescriptor(_target: {}, p: string | symbol): PropertyDescriptor | undefined {
+        getOwnPropertyDescriptor(_target: any, p: string | symbol): PropertyDescriptor | undefined {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           return Object.getOwnPropertyDescriptor(obj, p);
@@ -135,7 +135,7 @@ export class EggObjectUtil {
           const obj = eggObject.obj;
           return Object.getPrototypeOf(obj);
         },
-        has(_target: {}, p: string | symbol): boolean {
+        has(_target: any, p: string | symbol): boolean {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           return p in obj;
@@ -156,13 +156,13 @@ export class EggObjectUtil {
           Object.preventExtensions(obj);
           return true;
         },
-        set(_target: {}, p: string | symbol, newValue: any): boolean {
+        set(_target: any, p: string | symbol, newValue: any): boolean {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           obj[p] = newValue;
           return true;
         },
-        setPrototypeOf(_target: {}, v: object | null): boolean {
+        setPrototypeOf(_target: any, v: object | null): boolean {
           const eggObject = EggContainerFactory.getEggObject(proto, objName);
           const obj = eggObject.obj;
           Object.setPrototypeOf(obj, v);

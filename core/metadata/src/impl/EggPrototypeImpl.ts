@@ -28,6 +28,7 @@ export class EggPrototypeImpl implements EggPrototype {
   readonly className?: string;
   readonly multiInstanceConstructorIndex?: number;
   readonly multiInstanceConstructorAttributes?: QualifierAttribute[];
+  [key: symbol]: PropertyDescriptor;
 
   constructor(
     id: string,

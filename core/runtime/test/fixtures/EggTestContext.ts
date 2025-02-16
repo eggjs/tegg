@@ -1,5 +1,5 @@
-import { AbstractEggContext } from '../..';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { AbstractEggContext } from '../../src/index.js';
 
 const EGG_CTX = Symbol('TEgg#context');
 
