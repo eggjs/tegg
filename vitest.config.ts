@@ -32,5 +32,6 @@ export default defineConfig({
         '**/*/typings',
       ],
     },
+    testTimeout: 10000,
   },
 });

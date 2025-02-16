@@ -1,5 +1,5 @@
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
-import {EventBus, Event, IEventContext, EventContext} from '../..';
+import { EventBus, Event, IEventContext, EventContext } from '../../src/index.js';
 
 
 declare module '@eggjs/tegg' {
