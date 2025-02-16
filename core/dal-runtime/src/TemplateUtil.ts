@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { ColumnModel, SpatialHelper } from '@eggjs/tegg/dal';
+import { ColumnModel, SpatialHelper } from '@eggjs/dal-decorator';
 import { ColumnType } from '@eggjs/tegg-types';
 import type {
   Geometry,
@@ -60,7 +60,7 @@ export class TemplateUtil {
   static toGeometry(val: Geometry): string {
     const type = SpatialHelper.getGeometryType(val);
     const filterName = TemplateUtil.getSpatialFilter(type);
-    return TemplateUtil[filterName](val);
+    return (TemplateUtil as any)[filterName](val);
   }
   static toMultiPoint(val: MultiPoint): string {
     const points = val.map(t => TemplateUtil.toPoint(t));
@@ -90,7 +90,7 @@ export class TemplateUtil {
     [ColumnType.MULTILINESTRING]: 'toMultiLine',
     [ColumnType.MULTIPOLYGON]: 'toMultiPolygon',
     [ColumnType.GEOMETRYCOLLECTION]: 'toGeometryCollection',
-  };
+  } as Record<ColumnType, string>;
 
   static getSpatialFilter(columnType: ColumnType) {
     const filter = TemplateUtil.spatialFilter[columnType];

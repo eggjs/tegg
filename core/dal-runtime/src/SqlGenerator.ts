@@ -2,7 +2,7 @@ import {
   ColumnModel,
   IndexModel,
   TableModel,
-} from '@eggjs/tegg/dal';
+} from '@eggjs/dal-decorator';
 import { ColumnType, IndexType } from '@eggjs/tegg-types';
 import type { BaseSpatialParams, ColumnTypeParams } from '@eggjs/tegg-types';
 

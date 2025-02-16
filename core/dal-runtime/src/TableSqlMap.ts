@@ -1,9 +1,8 @@
-// const nunjucks = require('./NunjucksUtil');
 import { Template } from 'nunjucks';
-import { NunjucksUtils } from './NunjucksUtil';
-import { TemplateUtil } from './TemplateUtil';
 import { SqlType } from '@eggjs/tegg-types';
 import type { SqlMap } from '@eggjs/tegg-types';
+import { NunjucksUtils } from './NunjucksUtil.js';
+import { TemplateUtil } from './TemplateUtil.js';
 
 export interface SqlGenerator {
   type: SqlType;
@@ -47,6 +46,9 @@ export class TableSqlMap {
     const ret = {
       blocks: {},
       sqlGenerator: {},
+    } as {
+      blocks: Record<string, string>;
+      sqlGenerator: Record<string, SqlGenerator>;
     };
 
     for (const key in map) {

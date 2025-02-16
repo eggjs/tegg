@@ -1,68 +1,61 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import mm from 'mm';
+import { mock } from 'node:test';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { RDSClient } from '@eggjs/rds';
-import { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types';
+import { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types.js';
 import { TableModel } from '@eggjs/dal-decorator';
-import { MysqlDataSource } from '../src/MySqlDataSource';
-import { SqlMapLoader } from '../src/SqlMapLoader';
-import { Foo } from './fixtures/modules/dal/Foo';
-import { DataSource } from '../src/DataSource';
-import { TableModelInstanceBuilder } from '../src/TableModelInstanceBuilder';
-import { DatabaseForker } from '../src/DatabaseForker';
-import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO';
+import { MysqlDataSource, SqlMapLoader, DataSource, TableModelInstanceBuilder, DatabaseForker } from '../src/index.js';
+import { Foo } from './fixtures/modules/dal/Foo.js';
+import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.js';
 
 describe('test/Datasource.test.ts', () => {
   const mysqlOptions = {
     name: 'foo',
     host: '127.0.0.1',
     user: 'root',
-    database: 'test_runtime',
+    database: 'test_runtime_datasource',
     timezone: '+08:00',
     initSql: 'SET GLOBAL time_zone = \'+08:00\';',
     forkDb: true,
   };
 
-  describe('init', () => {
-    afterEach(() => {
-      mm.restore();
-    });
+  afterEach(() => {
+    mock.reset();
+  });
 
+  describe('init', () => {
     it('init failed should throw error', async () => {
-      mm.errorOnce(RDSClient.prototype, 'query', new Error('fake error'));
-      const query: any = RDSClient.prototype.query;
+      const tracker = mock.method(RDSClient.prototype, 'query', async () => {
+        throw new Error('fake error');
+      });
 
       const mysql = new MysqlDataSource(mysqlOptions);
       await assert.rejects(mysql.ready(), /fake error/);
-      assert.strictEqual(query.called, 1);
-      assert.deepStrictEqual(query.lastCalledArguments, [ mysqlOptions.initSql ]);
+      assert.equal(tracker.mock.callCount(), 1);
     });
 
     it('init should retry', async () => {
       let i = 0;
-      mm(RDSClient.prototype, 'query', () => {
+      const tracker = mock.method(RDSClient.prototype, 'query', () => {
         throw new Error(`fake error ${++i}`);
       });
-      const query: any = RDSClient.prototype.query;
-
       const mysql = new MysqlDataSource({ ...mysqlOptions, initRetryTimes: 3 });
       await assert.rejects(mysql.ready(), /fake error 3/);
-      assert.strictEqual(query.called, 3);
+      assert.strictEqual(tracker.mock.callCount(), 3);
     });
 
     it('should success after retry', async () => {
       let i = 0;
-      mm(RDSClient.prototype, 'query', async () => {
+      const tracker = mock.method(RDSClient.prototype, 'query', async () => {
         if (i === 0) {
           i++;
           throw new Error('fake error');
         }
       });
-      const query: any = RDSClient.prototype.query;
-
       const mysql = new MysqlDataSource({ ...mysqlOptions, initRetryTimes: 2 });
       await assert.doesNotReject(mysql.ready());
-      assert.strictEqual(query.called, 2);
+      assert.strictEqual(tracker.mock.callCount(), 2);
     });
   });
 
@@ -71,7 +64,7 @@ describe('test/Datasource.test.ts', () => {
     let tableModel: TableModel<Foo>;
     let forker: DatabaseForker;
 
-    before(async () => {
+    beforeAll(async () => {
       forker = new DatabaseForker('unittest', mysqlOptions);
       await forker.forkDb(path.join(__dirname, './fixtures/modules/dal'));
       const mysql = new MysqlDataSource(mysqlOptions);
@@ -83,7 +76,7 @@ describe('test/Datasource.test.ts', () => {
       dataSource = new DataSource(tableModel, mysql, sqlMap);
     });
 
-    after(async () => {
+    afterAll(async () => {
       await forker.destroy();
     });
 

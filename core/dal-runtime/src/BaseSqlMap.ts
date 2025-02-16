@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { TableModel } from '@eggjs/tegg/dal';
+import { TableModel } from '@eggjs/dal-decorator';
 import { ColumnType, IndexType, SqlType, SqlMap } from '@eggjs/tegg-types';
 import type { Logger, GenerateSqlMap } from '@eggjs/tegg-types';
-import { TemplateUtil } from './TemplateUtil';
+import { TemplateUtil } from './TemplateUtil.js';
 
 export class BaseSqlMapGenerator {
   private readonly tableModel: TableModel;

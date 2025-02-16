@@ -1,7 +1,8 @@
 import assert from 'node:assert';
 import { RDSClient } from '@eggjs/rds';
-import { DataSourceOptions } from './MySqlDataSource';
-import { DaoLoader } from './DaoLoader';
+import type { RDSConnection } from '@eggjs/rds/lib/connection.js';
+import { DataSourceOptions } from './MySqlDataSource.js';
+import { DaoLoader } from './DaoLoader.js';
 
 export class DatabaseForker {
   private readonly env: string;
@@ -29,21 +30,21 @@ export class DatabaseForker {
     await client.end();
   }
 
-  private async forkTables(conn, moduleDir: string) {
-    const daoClazzList = DaoLoader.loadDaos(moduleDir);
+  private async forkTables(conn: RDSConnection, moduleDir: string) {
+    const daoClazzList = await DaoLoader.loadDaos(moduleDir);
     for (const clazz of daoClazzList) {
       await this.doForkTable(conn, clazz.tableSql);
     }
   }
 
-  private async doForkTable(conn, sqlFile: string) {
+  private async doForkTable(conn: RDSConnection, sqlFile: string) {
     const sqls = sqlFile.split(';').filter(t => !!t.trim());
     for (const sql of sqls) {
       await conn.query(sql);
     }
   }
 
-  private async doCreateUtDb(conn) {
+  private async doCreateUtDb(conn: RDSConnection) {
     await conn.query(`CREATE DATABASE IF NOT EXISTS ${this.options.database};`);
     await conn.query(`use ${this.options.database};`);
   }

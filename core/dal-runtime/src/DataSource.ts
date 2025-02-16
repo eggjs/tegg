@@ -1,8 +1,8 @@
-import { TableModel } from '@eggjs/tegg/dal';
+import { TableModel } from '@eggjs/dal-decorator';
 import type { DataSource as IDataSource, PaginateData, SqlType } from '@eggjs/tegg-types';
-import { MysqlDataSource } from './MySqlDataSource';
-import { TableSqlMap } from './TableSqlMap';
-import { TableModelInstanceBuilder } from './TableModelInstanceBuilder';
+import { MysqlDataSource } from './MySqlDataSource.js';
+import { TableSqlMap } from './TableSqlMap.js';
+import { TableModelInstanceBuilder } from './TableModelInstanceBuilder.js';
 
 export interface ExecuteSql {
   sql: string;
@@ -48,7 +48,7 @@ export class DataSource<T> implements IDataSource<T> {
   async execute(sqlName: string, data?: any): Promise<Array<T>> {
     const executeSql = await this.generateSql(sqlName, data);
     const rows = await this.mysqlDataSource.query(executeSql.sql);
-    return rows.map(t => {
+    return rows.map((t: any) => {
       return TableModelInstanceBuilder.buildInstance(this.tableModel, t);
     });
   }
@@ -84,7 +84,7 @@ export class DataSource<T> implements IDataSource<T> {
     return {
       total: Number(ret[1]),
       pageNum: currentPage,
-      rows: ret[0].map(t => TableModelInstanceBuilder.buildInstance(this.tableModel, t)),
+      rows: ret[0].map((t: any) => TableModelInstanceBuilder.buildInstance(this.tableModel, t)),
     };
   }
 

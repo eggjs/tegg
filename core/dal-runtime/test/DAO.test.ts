@@ -1,25 +1,23 @@
 import assert from 'node:assert';
 import path from 'node:path';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
-import { MysqlDataSource } from '../src/MySqlDataSource';
-import { SqlMapLoader } from '../src/SqlMapLoader';
-import { Foo } from './fixtures/modules/dal/Foo';
-import { DataSource } from '../src/DataSource';
-import FooDAO from './fixtures/modules/dal/dal/dao/FooDAO';
-import { DatabaseForker } from '../src/DatabaseForker';
-import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO';
+import { MysqlDataSource, SqlMapLoader, DataSource, DatabaseForker } from '../src/index.js';
+import { Foo } from './fixtures/modules/dal/Foo.js';
+import FooDAO from './fixtures/modules/dal/dal/dao/FooDAO.js';
+import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.js';
 
 describe('test/DAO.test.ts', () => {
   let dataSource: DataSource<Foo>;
   let tableModel: TableModel<Foo>;
   let forker: DatabaseForker;
 
-  before(async () => {
+  beforeAll(async () => {
     const mysqlOptions = {
       name: 'foo',
       host: '127.0.0.1',
       user: 'root',
-      database: 'test_runtime',
+      database: 'test_runtime_dao',
       timezone: '+08:00',
       initSql: 'SET GLOBAL time_zone = \'+08:00\';',
       forkDb: true,
@@ -36,7 +34,7 @@ describe('test/DAO.test.ts', () => {
     dataSource = new DataSource(tableModel, mysql, sqlMap);
   });
 
-  after(async () => {
+  afterAll(async () => {
     await forker.destroy();
   });
 

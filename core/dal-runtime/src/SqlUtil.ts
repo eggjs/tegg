@@ -1,4 +1,4 @@
-function isWhiteChar(ch) {
+function isWhiteChar(ch: string) {
   return ch === ' ' || ch === '\n' || ch === '\r' || ch === '\t';
 }
 

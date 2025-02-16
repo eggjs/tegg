@@ -1,27 +1,27 @@
 import nunjucks, { Template, type Environment } from 'nunjucks';
 import sqlstring from 'sqlstring';
-import { NunjucksConverter } from './NunjucksConverter';
-import { SqlUtil } from './SqlUtil';
+import { NunjucksConverter } from './NunjucksConverter.js';
+import { SqlUtil } from './SqlUtil.js';
 
 const compiler = (nunjucks as any).compiler;
 const envs: Record<string, Environment> = {};
 
 const ROOT_RENDER_FUNC = Symbol('rootRenderFunc');
 const RUNTIME = Object.assign({}, nunjucks.runtime, {
-  escapeSQL: function escapeSQL(this: any, key, value) {
+  escapeSQL: function escapeSQL(this: any, key: string, value: unknown) {
     // 如果是预定义 block 则不转义
     if (this.env.globals[key]) return value;
     return sqlstring.escape(value, true, this.env.timezone);
   },
 });
 
-function _replaceCodeWithSQLFeature(source) {
+function _replaceCodeWithSQLFeature(source: string) {
   const funcs = [
     'convertNormalVariableCode', // 普通变量
     'convertTernaryCode', // 三目运算
     'convertNestedObjectCode', // 对象中的变量，如 `user.id`
     'convertValueInsideFor', // for 中的值需要转义
-  ];
+  ] as const;
 
   return funcs.reduce((source, func) => NunjucksConverter[func](source), source);
 }
@@ -48,12 +48,12 @@ function _compile(this: any) {
 
   this.blocks = this._getBlocks(props);
   this[ROOT_RENDER_FUNC] = props.root;
-  this.rootRenderFunc = function(env, context, frame, _runtime, cb) {
+  this.rootRenderFunc = function(env: Environment, context: any, frame: any, _runtime: any, cb: any) {
     /**
      * 1. 将 runtime 遗弃，用新的
      * 2. 移除 SQL 语句中多余空白符
      */
-    return this[ROOT_RENDER_FUNC](env, context, frame, RUNTIME, function(err, ret) {
+    return this[ROOT_RENDER_FUNC](env, context, frame, RUNTIME, function(err: Error | null, ret: string) {
       // istanbul ignore if
       if (err) return cb(err, ret);
       return cb(err, SqlUtil.minify(ret || ''));

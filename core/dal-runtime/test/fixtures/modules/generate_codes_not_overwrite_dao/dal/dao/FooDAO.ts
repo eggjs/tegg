@@ -1,5 +1,5 @@
-import { SingletonProto, AccessLevel } from '@eggjs/tegg';
-import { BaseFooDAO } from './base/BaseFooDAO';
+import { SingletonProto, AccessLevel } from '@eggjs/core-decorator';
+import { BaseFooDAO } from './base/BaseFooDAO.js';
 
 /**
  * FooDAO 类
