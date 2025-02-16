@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { describe, it } from 'vitest';
 import coffee from 'coffee';
 
 describe('test/typing.test.ts', () => {
@@ -7,7 +8,7 @@ describe('test/typing.test.ts', () => {
     await coffee.fork(tsc, [ '--noEmit', '-p', './tsconfig.json' ], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-enum-module'),
     })
-      .debug()
+      // .debug()
       .expect('stdout', /Argument of type '"WRONG_ENUM"' is not assignable to parameter of type 'ContextHelloType'/)
       .notExpect('code', 0)
       .end();
@@ -18,7 +19,7 @@ describe('test/typing.test.ts', () => {
     await coffee.fork(tsc, [ '--noEmit', '-p', './tsconfig.json' ], {
       cwd: path.join(__dirname, 'fixtures/modules/wrong-extends-module'),
     })
-      .debug()
+      // .debug()
       .expect('stdout', / Property 'hello' is missing in type 'BarContextHello' but required in type 'AbstractContextHello'/)
       .notExpect('code', 0)
       .end();

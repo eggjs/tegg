@@ -7,8 +7,7 @@ import type {
 import type { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { QualifierImplUtil } from '@eggjs/tegg-dynamic-inject';
-
-import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype';
+import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype.js';
 
 @SingletonProto({
   protoImplType: EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE,

@@ -2,7 +2,6 @@ import {
   EggContainerFactory,
   EggObjectFactory as TEggObjectFactory,
 } from '@eggjs/tegg-runtime';
-import { EggObjectFactoryPrototype } from './EggObjectFactoryPrototype';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import type {
   EggRuntimeContext,
@@ -10,7 +9,8 @@ import type {
   EggObjectName,
   EggPrototype,
 } from '@eggjs/tegg-types';
-import { EggObjectFactory } from './EggObjectFactory';
+import { EggObjectFactory } from './EggObjectFactory.js';
+import { EggObjectFactoryPrototype } from './EggObjectFactoryPrototype.js';
 
 const OBJ = Symbol('EggObjectFactoryObject#obj');
 

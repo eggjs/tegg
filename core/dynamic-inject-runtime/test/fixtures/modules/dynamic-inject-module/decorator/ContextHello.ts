@@ -1,6 +1,6 @@
-import { ContextHelloType } from '../FooType';
 import { ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/tegg-dynamic-inject';
-import { AbstractContextHello } from '../AbstractContextHello';
+import { ContextHelloType } from '../FooType.js';
+import { AbstractContextHello } from '../AbstractContextHello.js';
 
 export const CONTEXT_HELLO_ATTRIBUTE = 'CONTEXT_HELLO_ATTRIBUTE';
 
