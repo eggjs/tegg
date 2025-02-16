@@ -1,3 +1,4 @@
 {
-  "name": "app-multi-inject-multi"
+  "name": "app-multi-inject-multi",
+  "type": "module"
 }

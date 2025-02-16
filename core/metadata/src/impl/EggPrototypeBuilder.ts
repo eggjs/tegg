@@ -18,11 +18,10 @@ import {
   InjectConstructorProto,
   ObjectInitType,
 } from '@eggjs/tegg-types';
-import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggPrototypeImpl } from './EggPrototypeImpl';
-import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors';
+import { EggPrototypeFactory, EggPrototypeCreatorFactory } from '../factory/index.js';
+import { EggPrototypeImpl } from './EggPrototypeImpl.js';
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.js';
 
 export class EggPrototypeBuilder {
   private clazz: EggProtoImplClass;

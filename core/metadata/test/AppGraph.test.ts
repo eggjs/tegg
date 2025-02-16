@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { AppGraph, ModuleNode } from '../src/model/AppGraph';
-import { RootProto } from './fixtures/modules/app-graph-modules/root/Root';
-import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used';
-import { UnusedProto } from './fixtures/modules/app-graph-modules/unused/Unused';
-import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App';
-import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager';
-import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret';
-import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App';
+import { describe, it } from 'vitest';
+import { AppGraph, ModuleNode } from '../src/index.js';
+import { RootProto } from './fixtures/modules/app-graph-modules/root/Root.js';
+import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used.js';
+import { UnusedProto } from './fixtures/modules/app-graph-modules/unused/Unused.js';
+import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App.js';
+import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager.js';
+import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret.js';
+import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App.js';
 
 describe('test/LoadUnit/AppGraph.test.ts', () => {
   it('optional module dep should work', () => {

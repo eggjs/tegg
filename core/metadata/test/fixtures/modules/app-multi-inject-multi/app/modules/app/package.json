@@ -2,5 +2,6 @@
   "name": "app",
   "eggModule": {
     "name": "app"
-  }
+  },
+  "type": "module"
 }

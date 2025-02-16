@@ -6,13 +6,13 @@ import {
   ProtoDescriptor,
   QualifierInfo,
 } from '@eggjs/tegg-types';
-import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode';
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode';
 import { FrameworkErrorFormater } from 'egg-errors';
-import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors';
-import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder';
-import { ModuleDescriptor } from '../ModuleDescriptor';
 import { QualifierUtil } from '@eggjs/core-decorator';
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.js';
+import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode.js';
+import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.js';
+import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.js';
+import { ModuleDescriptor } from '../ModuleDescriptor.js';
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict

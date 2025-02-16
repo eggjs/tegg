@@ -1,7 +1,6 @@
 import { QualifierUtil } from '@eggjs/core-decorator';
-import { AbstractProtoDescriptor, AbstractProtoDescriptorOptions } from './AbstractProtoDescriptor';
-import { EggProtoImplClass, ProtoDescriptor } from '@eggjs/tegg-types';
-import { ProtoDescriptorType } from '@eggjs/tegg-types/metadata/enum/ProtoDescriptorType';
+import { EggProtoImplClass, ProtoDescriptor, ProtoDescriptorType } from '@eggjs/tegg-types';
+import { AbstractProtoDescriptor, AbstractProtoDescriptorOptions } from './AbstractProtoDescriptor.js';
 
 export interface ClassProtoDescriptorOptions extends Omit<AbstractProtoDescriptorOptions, 'type'> {
   clazz: EggProtoImplClass;

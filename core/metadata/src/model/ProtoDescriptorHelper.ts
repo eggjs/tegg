@@ -15,8 +15,8 @@ import {
   MultiInstanceType,
 } from '@eggjs/tegg-types';
 import assert from 'node:assert';
-import { ProtoSelectorContext } from './graph/ProtoSelector';
-import { ClassProtoDescriptor } from './ProtoDescriptor/ClassProtoDescriptor';
+import { ProtoSelectorContext } from './graph/index.js';
+import { ClassProtoDescriptor } from './ProtoDescriptor/index.js';
 
 export class ProtoDescriptorHelper {
   static addDefaultQualifier(qualifiers: QualifierInfo[], initType: ObjectInitTypeLike, loadUnitName: string): QualifierInfo[] {

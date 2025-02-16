@@ -7,8 +7,7 @@ import type {
   EggPrototype,
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-types';
-import { EggPrototypeLifecycleUtil } from '../model/EggPrototype';
-import { ClassProtoDescriptor } from '../model/ProtoDescriptor/ClassProtoDescriptor';
+import { EggPrototypeLifecycleUtil, ClassProtoDescriptor } from '../model/index.js';
 
 export class EggPrototypeCreatorFactory {
   private static creatorMap = new Map<string, EggPrototypeCreator>();
