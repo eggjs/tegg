@@ -4,8 +4,6 @@
     "baseUrl": "./"
   },
   "exclude": [
-    "dist",
-    "node_modules",
     "test"
   ]
 }
