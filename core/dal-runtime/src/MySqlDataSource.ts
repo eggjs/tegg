@@ -1,6 +1,6 @@
 import { RDSClient } from '@eggjs/rds';
 import type { RDSClientOptions } from '@eggjs/rds';
-import Base from 'sdk-base';
+import { Base } from 'sdk-base';
 import { Logger } from '@eggjs/tegg-types';
 
 export interface DataSourceOptions extends RDSClientOptions {

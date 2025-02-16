@@ -1,6 +1,5 @@
 {
   "name": "multi_primary_key_table",
-  "dataSourceName": "default",
   "columns": [
     {
       "columnName": "id_1",
@@ -36,5 +35,6 @@
     }
   ],
   "indices": [],
+  "dataSourceName": "default",
   "comment": "multi primary key table"
 }

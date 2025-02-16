@@ -1,5 +1,5 @@
-import { SingletonProto, AccessLevel } from '@eggjs/tegg';
-import { BaseMultiPrimaryKeyDAO } from './base/BaseMultiPrimaryKeyDAO';
+import { SingletonProto, AccessLevel } from '@eggjs/core-decorator';
+import { BaseMultiPrimaryKeyDAO } from './base/BaseMultiPrimaryKeyDAO.js';
 
 /**
  * MultiPrimaryKeyDAO 类

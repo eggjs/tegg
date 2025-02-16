@@ -1,11 +1,12 @@
-import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types';
-import { Inject, ModuleQualifier } from '@eggjs/tegg';
-import { Dao, DataSource, DataSourceInjectName, DataSourceQualifier } from '@eggjs/tegg/dal';
-import { Foo } from '../../../../generate_codes/Foo';
-import FooExtension from '../../extension/FooExtension';
-import Structure from '../../structure/Foo.json';
 import fs from 'node:fs';
 import path from 'node:path';
+import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/rds/lib/types.js';
+import { Inject, ModuleQualifier } from '@eggjs/core-decorator';
+import { Dao, DataSource, DataSourceInjectName, DataSourceQualifier } from '@eggjs/dal-decorator';
+import { Foo } from '../../../../generate_codes/Foo.js';
+import FooExtension from '../../extension/FooExtension.js';
+import Structure from '../../structure/Foo.json' with { type: 'json' };
+
 const SQL = Symbol('Dao#sql');
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;

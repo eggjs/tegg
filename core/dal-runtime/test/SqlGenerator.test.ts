@@ -1,9 +1,10 @@
 import assert from 'node:assert';
+import { describe, it } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
-import { Foo } from './fixtures/modules/dal/Foo';
-import { SqlGenerator } from '../src/SqlGenerator';
-import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime';
-import { FooIndexName } from './fixtures/modules/dal/FooIndexName';
+import { SqlGenerator } from '../src/index.js';
+import { Foo } from './fixtures/modules/dal/Foo.js';
+import { AutoUpdateTime } from './fixtures/modules/dal/AutoUpdateTime.js';
+import { FooIndexName } from './fixtures/modules/dal/FooIndexName.js';
 
 describe('test/SqlGenerator.test.ts', () => {
   it('generator should work', () => {
