@@ -1,7 +1,4 @@
-import { Model } from '../../src/decorator/Model';
-import { DataSource } from '../../src/decorator/DataSource';
-import { Index } from '../../src/decorator/Index';
-import { Attribute } from '../../src/decorator/Attribute';
+import { Model, DataSource, Index, Attribute } from '../../src/index.js';
 
 @Model({
   tableName: 'a_foo_table',

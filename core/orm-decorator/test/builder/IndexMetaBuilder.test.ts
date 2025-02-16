@@ -1,10 +1,9 @@
 import assert from 'node:assert/strict';
-import { AttributeMetaBuilder } from '../../src/builder/AttributeMetaBuilder';
-import { DefaultIndexModel } from '../fixtures/DefaultIndexModel';
-import { IndexMetaBuilder } from '../../src/builder/IndexMetaBuilder';
-import { IndexModel } from '../fixtures/IndexModel';
-import { InvalidateIndexModel } from '../fixtures/InvalidateIndexModel';
-import { IndexMeta } from '../../src/model/IndexMeta';
+import { describe, it } from 'vitest';
+import { AttributeMetaBuilder, IndexMetaBuilder, IndexMeta } from '../../src/index.js';
+import { DefaultIndexModel } from '../fixtures/DefaultIndexModel.js';
+import { IndexModel } from '../fixtures/IndexModel.js';
+import { InvalidateIndexModel } from '../fixtures/InvalidateIndexModel.js';
 
 describe('test/builder/AttributeMetaBuilder.test.ts', () => {
   describe('default value', () => {

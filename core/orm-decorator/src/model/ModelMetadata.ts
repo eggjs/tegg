@@ -1,5 +1,5 @@
-import { AttributeMeta } from './AttributeMeta';
-import { IndexMeta } from './IndexMeta';
+import { AttributeMeta } from './AttributeMeta.js';
+import { IndexMeta } from './IndexMeta.js';
 
 export class ModelMetadata {
   readonly dataSource: string | undefined;

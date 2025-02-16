@@ -1,5 +1,4 @@
-import { Model } from '../../src/decorator/Model';
-import { Attribute } from '../../src/decorator/Attribute';
+import { Model, Attribute } from '../../src/index.js';
 
 @Model()
 export class AttributeModel {

@@ -1,6 +1,6 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { ModelMetadata } from '../model/ModelMetadata';
+import { ModelMetadata } from '../model/index.js';
 
 export const MODEL_METADATA = Symbol.for('EggPrototype#model#metadata');
 
@@ -9,7 +9,7 @@ export class ModelMetadataUtil {
     MetadataUtil.defineMetaData(MODEL_METADATA, metaData, clazz);
   }
 
-  static getModelMetadata(clazz): ModelMetadata | undefined {
+  static getModelMetadata(clazz: EggProtoImplClass): ModelMetadata | undefined {
     return MetadataUtil.getMetaData(MODEL_METADATA, clazz);
   }
 }
