@@ -1,7 +1,7 @@
-import { Context } from 'egg';
-import { EggContext } from '@eggjs/tegg-runtime';
+import type { Context } from 'egg';
+import type { EggContext } from '@eggjs/tegg-runtime';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import ctxLifecycleMiddleware from '../../lib/ctx_lifecycle_middleware';
+import ctxLifecycleMiddleware from '../../lib/ctx_lifecycle_middleware.js';
 import { EggProtoImplClass, PrototypeUtil, QualifierInfo } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 
@@ -10,6 +10,8 @@ export interface TEggPluginContext extends Context {
 }
 
 export default {
+  [TEGG_CONTEXT]: undefined as EggContext | undefined,
+
   async beginModuleScope(this: TEggPluginContext, func: () => Promise<void>) {
     await ctxLifecycleMiddleware(this, func);
   },

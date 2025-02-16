@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import mm from 'egg-mock';
-import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { mm, MockApplication } from '@eggjs/mock';
+// import '../index.js';
+import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.js';
 
 describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
-  let app;
+  let app: MockApplication;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/access-level-check');
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
@@ -15,7 +17,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
     mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     mm(process.env, 'EGG_TYPESCRIPT', true);
     mm(process, 'cwd', () => {
       return path.join(__dirname, '..');

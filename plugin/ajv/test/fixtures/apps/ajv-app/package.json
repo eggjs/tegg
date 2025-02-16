@@ -1,3 +1,4 @@
 {
-  "name": "ajv-app"
+  "name": "ajv-app",
+  "type": "module"
 }

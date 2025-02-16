@@ -1,6 +1,6 @@
-import { MockApplication } from 'egg-mock';
-import { Context } from 'egg';
-import { EggContextImpl } from '../../lib/EggContextImpl';
+import { MockApplication } from '@eggjs/mock';
+import type { Context } from 'egg';
+import { EggContextImpl } from '../../lib/EggContextImpl.js';
 import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 const TEGG_LIFECYCLE_CACHE: Map<EggContext, EggContextLifecycleContext> = new Map();
@@ -42,13 +42,13 @@ export default {
       throw new Error('mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.');
     }
     return this.mockContextScope(async ctx => {
-      const teggCtx = new EggContextImpl(ctx);
+      const teggCtx = new EggContextImpl(ctx!);
       const lifecycle = {};
       if (teggCtx.init) {
         await teggCtx.init(lifecycle);
       }
       try {
-        return await fn(ctx);
+        return await fn(ctx!);
       } finally {
         await teggCtx.destroy(lifecycle);
       }

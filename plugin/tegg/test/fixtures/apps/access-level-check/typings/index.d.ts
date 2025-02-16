@@ -1,5 +1,5 @@
 import 'egg';
-import MainService from '../../modules/module-main/MainService';
+import MainService from '../../modules/module-main/MainService.js';
 
 declare module 'egg' {
   export interface EggModule {

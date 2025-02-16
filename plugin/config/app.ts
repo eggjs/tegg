@@ -1,7 +1,7 @@
 import type { Application, IBoot } from 'egg';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { ModuleReference } from '@eggjs/tegg-common-util';
-import { ModuleScanner } from './lib/ModuleScanner';
+import { ModuleScanner } from './lib/ModuleScanner.js';
 
 export default class App implements IBoot {
   private readonly app: Application;

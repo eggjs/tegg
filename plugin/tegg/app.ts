@@ -1,15 +1,15 @@
-import './lib/AppLoadUnit';
-import './lib/AppLoadUnitInstance';
-import './lib/EggCompatibleObject';
+import './lib/AppLoadUnit.js';
+import './lib/AppLoadUnitInstance.js';
+import './lib/EggCompatibleObject.js';
 import { Application } from 'egg';
-import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook';
-import { CompatibleUtil } from './lib/CompatibleUtil';
-import { ModuleHandler } from './lib/ModuleHandler';
-import { EggContextHandler } from './lib/EggContextHandler';
-import { hijackRunInBackground } from './lib/run_in_background';
-import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook';
 import { LoadUnitMultiInstanceProtoHook } from '@eggjs/tegg-metadata';
-import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook';
+import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.js';
+import { CompatibleUtil } from './lib/CompatibleUtil.js';
+import { ModuleHandler } from './lib/ModuleHandler.js';
+import { EggContextHandler } from './lib/EggContextHandler.js';
+import { hijackRunInBackground } from './lib/run_in_background.js';
+import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.js';
+import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.js';
 
 export default class App {
   private readonly app: Application;

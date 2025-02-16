@@ -20,6 +20,7 @@ import {
 export const COMPATIBLE_PROTO_IMPLE_TYPE = 'EGG_COMPATIBLE';
 
 export class EggCompatibleProtoImpl implements EggPrototype {
+  [key: symbol]: PropertyDescriptor;
   private readonly clazz: EggProtoImplClass;
   private readonly qualifiers: QualifierInfo[];
 
