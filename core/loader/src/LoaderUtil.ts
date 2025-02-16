@@ -1,7 +1,7 @@
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import BuiltinModule from 'node:module';
-import is from 'is-type-of';
+import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
 const Module = module.constructor.length > 1
@@ -19,12 +19,20 @@ export class LoaderUtil {
     this.config = config;
   }
 
+  static supportExtensions() {
+    const extensions = Object.keys((Module as any)._extensions);
+    if (process.env.VITEST === 'true' && !extensions.includes('.ts')) {
+      extensions.push('.ts');
+    }
+    return extensions;
+  }
+
   static get extension() {
-    return Object.keys((Module as any)._extensions).find(t => t === '.ts') ? '.ts' : '.js';
+    return LoaderUtil.supportExtensions().includes('.ts') ? '.ts' : '.js';
   }
 
   static filePattern(): string[] {
-    const extensions = Object.keys((Module as any)._extensions);
+    const extensions = LoaderUtil.supportExtensions();
     const extensionPattern = extensions.map(t => t.substring(1))
       // JSON file will not export class
       .filter(t => t !== 'json')
@@ -37,7 +45,7 @@ export class LoaderUtil {
       '!**/+(.*)/**',
       // not load node module
       '!**/node_modules',
-      // node load type defintions
+      // node load type definitions
       '!**/*.d.ts',
       // not load test/coverage files
       '!**/test',
@@ -49,11 +57,11 @@ export class LoaderUtil {
     return filePattern;
   }
 
-  static loadFile(filePath: string): EggProtoImplClass[] {
+  static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
     let exports;
     try {
-      exports = require(filePath);
-    } catch (e) {
+      exports = await import(filePath);
+    } catch (e: any) {
       e.message = '[tegg/loader] load ' + filePath + ' failed: ' + e.message;
       throw e;
     }
@@ -61,7 +69,7 @@ export class LoaderUtil {
     const exportNames = Object.keys(exports);
     for (const exportName of exportNames) {
       const clazz = exports[exportName];
-      const isEggProto = is.class(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
+      const isEggProto = isClass(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
       if (!isEggProto) {
         continue;
       }

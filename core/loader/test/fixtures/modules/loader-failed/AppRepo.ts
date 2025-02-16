@@ -15,8 +15,10 @@ export default class AppRepo {
 
 @Prototype()
 export class AppRepo2 {
+  error here;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async findAppByName(name: string): Promise<App> {
+    Foo.bar;
     return {
       name: 'hello',
     };

@@ -19,7 +19,7 @@ export class LoaderFactory {
     this.loaderCreatorMap.set(type, creator);
   }
 
-  static loadApp(moduleReferences: readonly ModuleReference[]): ModuleDescriptor[] {
+  static async loadApp(moduleReferences: readonly ModuleReference[]): Promise<ModuleDescriptor[]> {
     const result: ModuleDescriptor[] = [];
     const multiInstanceClazzList: EggProtoImplClass[] = [];
     for (const moduleReference of moduleReferences) {
@@ -33,7 +33,7 @@ export class LoaderFactory {
         optional: moduleReference.optional,
       };
       result.push(res);
-      const clazzList = loader.load();
+      const clazzList = await loader.load();
       for (const clazz of clazzList) {
         if (PrototypeUtil.isEggPrototype(clazz)) {
           res.clazzList.push(clazz);
