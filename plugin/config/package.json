@@ -32,7 +32,6 @@
     }
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run tsc",
@@ -55,11 +54,9 @@
     "@eggjs/utils": "^4.2.5"
   },
   "devDependencies": {
-    "@types/mocha": "10",
     "@types/node": "22",
     "@eggjs/mock": "6",
     "egg": "4",
-    "mocha": "10",
     "ts-node": "10",
     "typescript": "5"
   },

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { describe, it, afterAll as after, afterEach, beforeAll as before } from 'vitest';
 import { mm, MockApplication } from '@eggjs/mock';
 import '../index.js';
 
