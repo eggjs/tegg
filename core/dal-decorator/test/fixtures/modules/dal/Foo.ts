@@ -1,5 +1,5 @@
 import { ColumnType, IndexType } from '@eggjs/tegg-types';
-import { Table, Index, Column } from '../../../..';
+import { Table, Index, Column } from '../../../../src/index.js';
 
 @Table({
   comment: 'foo table',

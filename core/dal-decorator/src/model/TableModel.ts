@@ -3,11 +3,9 @@ import pluralize from 'pluralize';
 import snakecase from 'lodash.snakecase';
 import { IndexType } from '@eggjs/tegg-types';
 import type { CompressionType, EggProtoImplClass, InsertMethod, RowFormat } from '@eggjs/tegg-types';
-import { ColumnModel } from './ColumnModel';
-import { IndexModel } from './IndexModel';
-import { TableInfoUtil } from '../util/TableInfoUtil';
-import { ColumnInfoUtil } from '../util/ColumnInfoUtil';
-import { IndexInfoUtil } from '../util/IndexInfoUtil';
+import { ColumnModel } from './ColumnModel.js';
+import { IndexModel } from './IndexModel.js';
+import { TableInfoUtil, ColumnInfoUtil, IndexInfoUtil } from '../util/index.js';
 
 export class TableModel<T=object> {
   clazz: EggProtoImplClass<T>;
