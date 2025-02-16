@@ -1,8 +1,8 @@
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, ScheduleOptions, ScheduleParams, ScheduleSubscriber } from '@eggjs/tegg-types';
-import { ScheduleInfoUtil } from '../util/ScheduleInfoUtil';
 import { StackUtil } from '@eggjs/tegg-common-util';
+import { ScheduleInfoUtil } from '../util/index.js';
 
 export function Schedule<T>(param: ScheduleParams<T>, options?: ScheduleOptions) {
   return function(clazz: EggProtoImplClass<ScheduleSubscriber>) {
