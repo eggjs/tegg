@@ -1,9 +1,7 @@
 import assert from 'node:assert/strict';
-import { ModelMetaBuilder } from '../../src/builder/ModelMetaBuilder';
-import { Foo } from '../fixtures/Foo';
-import { ModelMetadata } from '../../src/model/ModelMetadata';
-import { AttributeMeta } from '../../src/model/AttributeMeta';
-import { IndexMeta } from '../../src/model/IndexMeta';
+import { describe, it } from 'vitest';
+import { ModelMetaBuilder, ModelMetadata, AttributeMeta, IndexMeta } from '../../src/index.js';
+import { Foo } from '../fixtures/Foo.js';
 
 describe('test/builder/ModelMetaBuilder.test.ts', () => {
   it('should work', () => {

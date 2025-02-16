@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import { Foo } from './fixtures/Foo';
-import { ModelInfoUtil } from '../src/util/ModelInfoUtil';
+import { describe, it } from 'vitest';
+import { ModelInfoUtil } from '../src/index.js';
+import { Foo } from './fixtures/Foo.js';
 
 describe('test/decorator.test.ts', () => {
   it('should work', () => {
@@ -40,7 +41,7 @@ describe('test/decorator.test.ts', () => {
         options: { unique: true },
       },
     ]);
-    assert(tableName === 'a_foo_table');
-    assert(dataSource === 'a_db');
+    assert.equal(tableName, 'a_foo_table');
+    assert.equal(dataSource, 'a_db');
   });
 });

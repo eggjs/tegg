@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import type { AttributeOptions, EggProtoImplClass } from '@eggjs/tegg-types';
-import { ModelInfoUtil } from '../util/ModelInfoUtil';
+import { ModelInfoUtil } from '../util/index.js';
 
 export function Attribute(dataType: string, options?: AttributeOptions) {
   return function(target: any, propertyKey: PropertyKey) {

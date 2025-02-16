@@ -1,6 +1,4 @@
-import { Model } from '../../src/decorator/Model';
-import { Attribute } from '../../src/decorator/Attribute';
-import { Index } from '../../src/decorator/Index';
+import { Model, Attribute, Index } from '../../src/index.js';
 
 @Model()
 @Index([ 'foo' ])

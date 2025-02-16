@@ -1,8 +1,6 @@
 import type { EggProtoImplClass, ModelIndexInfo } from '@eggjs/tegg-types';
-import { IndexMeta } from '../model/IndexMeta';
-import { ModelInfoUtil } from '../util/ModelInfoUtil';
-import { NameUtil } from '../util/NameUtil';
-import { AttributeMeta } from '../model/AttributeMeta';
+import { IndexMeta, AttributeMeta } from '../model/index.js';
+import { ModelInfoUtil, NameUtil } from '../util/index.js';
 
 export class IndexMetaBuilder {
   private readonly clazz: EggProtoImplClass;
