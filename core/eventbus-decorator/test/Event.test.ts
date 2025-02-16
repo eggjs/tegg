@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { describe, it } from 'vitest';
 import coffee from 'coffee';
-import { FooHandler } from './fixtures/right-event-handle';
-import { MultiHandler } from './fixtures/multiple-events-handle';
-import { EventContextHandler } from './fixtures/event-handle-with-context';
-import { EmptyHandler } from './fixtures/empty-handle';
-import { EventInfoUtil } from '../src/EventInfoUtil';
+import { FooHandler } from './fixtures/right-event-handle.js';
+import { MultiHandler } from './fixtures/multiple-events-handle.js';
+import { EventContextHandler } from './fixtures/event-handle-with-context.js';
+import { EmptyHandler } from './fixtures/empty-handle.js';
+import { EventInfoUtil } from '../src/index.js';
 
 describe('test/Event.test.ts', () => {
   it('getEventName should work', () => {

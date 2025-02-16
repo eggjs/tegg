@@ -3,7 +3,7 @@
 import type { Events } from '@eggjs/tegg';
 import assert from 'node:assert';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { EventInfoUtil } from './EventInfoUtil';
+import { EventInfoUtil } from './EventInfoUtil.js';
 
 export interface IEventContext {
   eventName: keyof Events

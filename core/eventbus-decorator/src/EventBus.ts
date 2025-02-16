@@ -1,18 +1,17 @@
-import TypedEventEmitter from 'typed-emitter';
-import type { Arguments } from 'typed-emitter';
 // use @eggjs/tegg as namespace
 // eslint-disable-next-line import/no-unresolved
 import type { Events } from '@eggjs/tegg';
-import type { IEventContext } from './EventContext';
+import type { IEventContext } from './EventContext.js';
+import type { Arguments, TypedEventEmitter } from './typed-emitter.js';
 
 export type EventName = string | symbol;
-export type { Arguments } from 'typed-emitter';
+export type { Arguments };
 
 /**
  * use `emit` to emit a event
  */
 export interface EventBus extends Pick<TypedEventEmitter<Events>, 'emit'> {
-  cork(corkId: string);
+  cork(corkId: string): void;
 
   /**
    * @return true if uncorked
@@ -23,8 +22,8 @@ export interface EventBus extends Pick<TypedEventEmitter<Events>, 'emit'> {
 export const CORK_ID = Symbol.for('eventBus#corkId');
 
 export interface ContextEventBus extends EventBus {
-  cork();
-  uncork();
+  cork(): void;
+  uncork(): boolean;
 }
 
 export type EventKeys = keyof Events;
