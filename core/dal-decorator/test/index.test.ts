@@ -2,8 +2,7 @@ import assert from 'node:assert/strict';
 import { expect, describe, it } from 'vitest';
 import { Foo } from './fixtures/modules/dal/Foo.js';
 import { ColumnType, IndexType } from '@eggjs/tegg-types';
-import { ColumnInfoUtil, IndexInfoUtil, TableInfoUtil } from '../src/index.js';
-import { TableModel } from '../src/model/TableModel.js';
+import { ColumnInfoUtil, IndexInfoUtil, TableInfoUtil, TableModel } from '../src/index.js';
 import * as types from '../src/index.js';
 
 describe('test/dal/index.test.ts', () => {

@@ -1,6 +1,6 @@
 import { EggProtoImplClass, IndexType } from '@eggjs/tegg-types';
 import type { IndexParams, IndexStoreType } from '@eggjs/tegg-types';
-import { ColumnModel } from './ColumnModel';
+import { ColumnModel } from './ColumnModel.js';
 
 export interface IndexKey {
   columnName: string;

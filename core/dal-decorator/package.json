@@ -51,7 +51,9 @@
     "access": "public"
   },
   "devDependencies": {
+    "@types/lodash.snakecase": "^4.1.9",
     "@types/node": "22",
+    "@types/pluralize": "^0.0.33",
     "ts-node": "10",
     "typescript": "5"
   }

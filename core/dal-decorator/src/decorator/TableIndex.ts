@@ -1,5 +1,5 @@
 import type { EggProtoImplClass, IndexParams } from '@eggjs/tegg-types';
-import { IndexInfoUtil } from '../util/IndexInfoUtil.js';
+import { IndexInfoUtil } from '../util/index.js';
 
 export function Index(params: IndexParams) {
   return function(constructor: EggProtoImplClass) {
