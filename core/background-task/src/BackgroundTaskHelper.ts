@@ -45,7 +45,7 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
             // fn is rejected, resolve the task
             resolve();
           });
-      } catch (e) {
+      } catch (e: any) {
         e.message = '[BackgroundTaskHelper] create background throw error:' + e.message;
         this.logger.error(e);
         // create task failed, resolve the task
@@ -81,8 +81,8 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
   }
 
   private sleep() {
-    let timer;
-    let promiseResolve;
+    let timer: NodeJS.Timeout;
+    let promiseResolve: () => void;
     const now = Date.now();
 
     const p = new Promise<void>(r => {
