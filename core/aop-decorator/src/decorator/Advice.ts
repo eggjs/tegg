@@ -2,7 +2,7 @@ import { Prototype, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, IAdvice, PrototypeParams } from '@eggjs/tegg-types';
-import { AdviceInfoUtil } from '../util/AdviceInfoUtil';
+import { AdviceInfoUtil } from '../util/index.js';
 
 const defaultAdviceParam = {
   accessLevel: AccessLevel.PUBLIC,

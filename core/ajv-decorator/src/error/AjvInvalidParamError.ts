@@ -1,4 +1,4 @@
-import { type ErrorObject } from 'ajv/dist/2019';
+import { type ErrorObject } from 'ajv/dist/2019.js';
 
 export interface AjvInvalidParamErrorOptions {
   errorData: unknown;

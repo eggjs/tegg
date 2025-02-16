@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
-import { TransformEnum } from '..';
+import { describe, it } from 'vitest';
+import { TransformEnum } from '../src/index.js';
 
 describe('core/ajv-decorator/test/TransformEnum.test.ts', () => {
   it('should get TransformEnum', () => {
