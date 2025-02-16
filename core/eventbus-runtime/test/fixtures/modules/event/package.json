@@ -2,5 +2,6 @@
   "name": "mock-event",
   "eggModule": {
     "name": "mockEvent"
-  }
+  },
+  "type": "module"
 }

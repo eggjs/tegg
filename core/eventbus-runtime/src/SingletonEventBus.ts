@@ -5,10 +5,12 @@ import { ContextHandler } from '@eggjs/tegg-runtime';
 import type { EggLogger } from 'egg';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggRuntimeContext } from '@eggjs/tegg-types';
-import { EventContextFactory } from './EventContextFactory';
-import { EventHandlerFactory } from './EventHandlerFactory';
+import { EventContextFactory } from './EventContextFactory.js';
+import { EventHandlerFactory } from './EventHandlerFactory.js';
 import EventEmitter from 'node:events';
+// @ts-expect-error await-event is not typed
 import awaitEvent from 'await-event';
+// @ts-expect-error await-first is not typed
 import awaitFirst from 'await-first';
 
 export interface Event {
@@ -130,7 +132,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   private doOnceEmit(event: EventName, args: Array<any>) {
     try {
       this.emitter.emit(event, ...args);
-    } catch (e) {
+    } catch (e: any) {
       e.message = `[EventBus] process once event ${String(event)} failed: ${e.message}`;
       this.logger.error(e);
     }
@@ -147,13 +149,13 @@ export class SingletonEventBus implements EventBus, EventWaiter {
         await Promise.all(handlerProtos.map(async proto => {
           try {
             await this.eventHandlerFactory.handle(event, proto, args);
-          } catch (e) {
+          } catch (e: any) {
             // should wait all handlers done then destroy ctx
             e.message = `[EventBus] process event ${String(event)} for handler ${String(proto.name)} failed: ${e.message}`;
             this.logger.error(e);
           }
         }));
-      } catch (e) {
+      } catch (e: any) {
         e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
         this.logger.error(e);
       } finally {

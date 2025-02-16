@@ -43,7 +43,7 @@ describe('test/Event.test.ts', () => {
       tsc,
       [ '--noEmit', '--experimentalDecorators', ...files ],
     )
-      // .debug()
+      .debug()
       .expect('stdout', /Type 'number' is not assignable to type 'string'/)
       .notExpect('code', 0)
       .end();
