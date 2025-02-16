@@ -1,16 +1,21 @@
 {
   "name": "@eggjs/tegg-dynamic-inject-runtime",
   "version": "3.52.0",
-  "description": "tegg dyniamic inject",
-  "main": "dist/index.js",
+  "description": "tegg dynamic inject",
   "eggModule": {
     "name": "teggDyniamicInjectRuntime"
   },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "src/**/*.js",
+    "src/**/*.d.ts"
   ],
-  "typings": "dist/index.d.ts",
   "keywords": [
     "egg",
     "typescript",
@@ -18,11 +23,10 @@
     "tegg"
   ],
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
-    "clean": "tsc -b --clean && rm -rf dist",
+    "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -36,7 +40,7 @@
     "directory": "core/dynamic-inject"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=20.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -53,11 +57,8 @@
   "devDependencies": {
     "@eggjs/module-test-util": "^3.52.0",
     "@eggjs/tegg-loader": "^3.52.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "ts-node": "10",
+    "typescript": "5"
   }
 }

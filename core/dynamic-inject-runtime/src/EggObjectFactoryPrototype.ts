@@ -25,6 +25,8 @@ import type {
 export const EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE = 'EGG_OBJECT_FACTORY_PROTOTYPE';
 
 export class EggObjectFactoryPrototype implements EggPrototype {
+  [key: symbol]: PropertyDescriptor;
+
   readonly clazz: EggProtoImplClass<EggObjectFactory>;
   readonly accessLevel: AccessLevel;
   readonly id: Id;
