@@ -1,5 +1,5 @@
-import { MainRunnerClass } from '../typing';
-import { StandaloneUtil } from '../util/StandaloneUtil';
+import { MainRunnerClass } from '../typing.js';
+import { StandaloneUtil } from '../util/index.js';
 
 export function Runner<T>() {
   return function(clazz: MainRunnerClass<T>) {
