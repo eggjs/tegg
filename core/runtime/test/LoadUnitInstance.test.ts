@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
-import { mm } from 'mm';
+import { mock } from 'node:test';
 import { LoaderUtil } from '@eggjs/module-test-util';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { LoadUnitInstance } from '@eggjs/tegg-types';
@@ -22,14 +22,14 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
 
     beforeEach(() => {
       ctx = new EggTestContext();
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return ctx;
       });
     });
 
     afterEach(async () => {
       await ctx.destroy({});
-      mm.restore();
+      mock.reset();
     });
 
     it('should create success', async () => {

@@ -1,10 +1,10 @@
+import assert from 'node:assert';
 import { ASPECT_LIST, InjectType } from '@eggjs/tegg-types';
 import type { EggObject, EggObjectLifeCycleContext, LifecycleHook } from '@eggjs/tegg-types';
 import { Aspect } from '@eggjs/aop-decorator';
-import { AspectExecutor } from './AspectExecutor';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import assert from 'node:assert';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { AspectExecutor } from './AspectExecutor.js';
 
 export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext, EggObject> {
   private hijackMethods(obj: any, aspectList: Array<Aspect>) {
@@ -39,12 +39,12 @@ export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext
     const propertyDesc = eggObject.constructor && Reflect.getOwnPropertyDescriptor(eggObject.constructor.prototype, 'obj')!;
     // process the lazy getter
     if (propertyDesc?.get) {
-      let obj;
+      let obj: unknown;
       // eslint-disable-next-line
       const self = this;
       Object.defineProperty(eggObject, 'obj', {
         ...propertyDesc,
-        get(): any {
+        get(): unknown {
           if (!obj) {
             obj = Reflect.apply(propertyDesc.get!, eggObject, []);
             self.hijackMethods(obj, aspectList);

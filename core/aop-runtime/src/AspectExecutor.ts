@@ -2,7 +2,7 @@ import type { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/tegg-types';
 import compose from 'koa-compose';
 import type { Middleware } from 'koa-compose';
 
-interface InternalAdviceContext<T = object> {
+interface InternalAdviceContext<T = Record<string, IAdvice>> {
   that: T;
   method: PropertyKey;
   args: any[];
@@ -21,7 +21,7 @@ export class AspectExecutor {
 
   async execute(...args: any[]) {
     const ctx: InternalAdviceContext = {
-      that: this.obj,
+      that: this.obj as Record<string, IAdvice>,
       method: this.method,
       args,
     };
@@ -31,7 +31,7 @@ export class AspectExecutor {
       await this.afterReturn(ctx, result);
       return result;
     } catch (e) {
-      await this.afterThrow(ctx, e);
+      await this.afterThrow(ctx, e as Error);
       throw e;
     } finally {
       await this.afterFinally(ctx);
@@ -40,7 +40,7 @@ export class AspectExecutor {
 
   async beforeCall(ctx: InternalAdviceContext) {
     for (const aspectAdvice of this.aspectAdviceList) {
-      const advice: IAdvice = ctx.that[aspectAdvice.name];
+      const advice = ctx.that[aspectAdvice.name];
       if (advice.beforeCall) {
         /**
          * 这里...写法使传入的参数变成了一个新的对象
@@ -58,7 +58,7 @@ export class AspectExecutor {
 
   async afterReturn(ctx: InternalAdviceContext, result: any) {
     for (const aspectAdvice of this.aspectAdviceList) {
-      const advice: IAdvice = ctx.that[aspectAdvice.name];
+      const advice = ctx.that[aspectAdvice.name];
       if (advice.afterReturn) {
         await advice.afterReturn({ ...ctx, adviceParams: aspectAdvice.adviceParams }, result);
       }
@@ -67,7 +67,7 @@ export class AspectExecutor {
 
   async afterThrow(ctx: InternalAdviceContext, error: Error) {
     for (const aspectAdvice of this.aspectAdviceList) {
-      const advice: IAdvice = ctx.that[aspectAdvice.name];
+      const advice = ctx.that[aspectAdvice.name];
       if (advice.afterThrow) {
         await advice.afterThrow({ ...ctx, adviceParams: aspectAdvice.adviceParams }, error);
       }
@@ -76,7 +76,7 @@ export class AspectExecutor {
 
   async afterFinally(ctx: InternalAdviceContext) {
     for (const aspectAdvice of this.aspectAdviceList) {
-      const advice: IAdvice = ctx.that[aspectAdvice.name];
+      const advice = ctx.that[aspectAdvice.name];
       if (advice.afterFinally) {
         await advice.afterFinally({ ...ctx, adviceParams: aspectAdvice.adviceParams });
       }
@@ -90,10 +90,10 @@ export class AspectExecutor {
     };
     const functions: Array<Middleware<InternalAdviceContext>> = [];
     for (const aspectAdvice of this.aspectAdviceList) {
-      const advice: IAdvice = ctx.that[aspectAdvice.name];
+      const advice = ctx.that[aspectAdvice.name];
       const fn = advice.around;
       if (fn) {
-        functions.push(async (ctx: InternalAdviceContext<object>, next: () => Promise<any>) => {
+        functions.push(async (ctx: InternalAdviceContext, next: () => Promise<any>) => {
           const fnCtx: AdviceContext = {
             ...ctx,
             adviceParams: aspectAdvice.adviceParams,

@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import { mm } from 'mm';
-import { describe, beforeEach, it } from 'vitest';
+import { mock } from 'node:test';
+import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggObjectUtil, ContextHandler } from '../src/index.js';
 import { EggTestContext } from './fixtures/EggTestContext.js';
@@ -11,9 +11,13 @@ describe('test/EggObjectUtil.test.ts', () => {
 
   beforeEach(() => {
     ctx = new EggTestContext();
-    mm(ContextHandler, 'getContext', () => {
+    mock.method(ContextHandler, 'getContext', () => {
       return ctx;
     });
+  });
+
+  afterEach(() => {
+    mock.reset();
   });
 
   it('should name should has self descriptor', async () => {

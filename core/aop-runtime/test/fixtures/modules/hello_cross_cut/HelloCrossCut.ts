@@ -2,8 +2,8 @@ import assert from 'node:assert';
 import { AccessLevel, Inject } from '@eggjs/core-decorator';
 import { Advice, Crosscut } from '@eggjs/aop-decorator';
 import { AdviceContext, IAdvice, PointcutType } from '@eggjs/tegg-types';
-import { Hello } from '../hello_succeed/Hello';
-import { CallTrace } from './CallTrace';
+import { Hello } from '../hello_succeed/Hello.js';
+import { CallTrace } from './CallTrace.js';
 
 export const crosscutAdviceParams = {
   cross: Math.random().toString(),

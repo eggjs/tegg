@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { mm } from 'mm';
+import { mock } from 'node:test';
 import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import TestUtil from './util.js';
@@ -12,14 +12,14 @@ describe('test/LoadUnit/QualifierLoadUnitInstance.test.ts', () => {
 
   beforeEach(() => {
     ctx = new EggTestContext();
-    mm(ContextHandler, 'getContext', () => {
+    mock.method(ContextHandler, 'getContext', () => {
       return ctx;
     });
   });
 
   afterEach(async () => {
     await ctx.destroy({});
-    mm.restore();
+    mock.reset();
   });
 
   describe('init type qualifier', () => {
