@@ -1,15 +1,16 @@
-import { GlobalGraph } from '../src/model/graph/GlobalGraph';
 import path from 'node:path';
-import { RootProto } from './fixtures/modules/app-graph-modules/root/Root';
-import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used';
-import { UnusedProto } from './fixtures/modules/app-graph-modules/unused/Unused';
-import assert from 'node:assert';
-import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App';
-import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App';
-import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager';
-import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret';
-import { TestLoader } from './fixtures/TestLoader';
-import { buildModuleNode } from './fixtures/LoaderUtil';
+import assert from 'node:assert/strict';
+import { describe, it } from 'vitest';
+import { GlobalGraph } from '../src/index.js';
+import { RootProto } from './fixtures/modules/app-graph-modules/root/Root.js';
+import { UsedProto } from './fixtures/modules/app-graph-modules/used/Used.js';
+import { UnusedProto } from './fixtures/modules/app-graph-modules/unused/Unused.js';
+import { App } from './fixtures/modules/app-multi-inject-multi/app/modules/app/App.js';
+import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App.js';
+import { BizManager } from './fixtures/modules/app-multi-inject-multi/app/modules/bar/BizManager.js';
+import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/foo/Secret.js';
+import { TestLoader } from './fixtures/TestLoader.js';
+import { buildModuleNode } from './fixtures/LoaderUtil.js';
 
 describe('test/LoadUnit/GlobalGraph.test.ts', () => {
   it('optional module dep should work', () => {
@@ -80,11 +81,11 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
     ]);
   });
 
-  it('should sort extends class success', () => {
+  it('should sort extends class success', async () => {
     const graph = new GlobalGraph();
     const moduleDir = path.join(__dirname, './fixtures/modules/extends-module');
     const loader = new TestLoader(moduleDir);
-    const clazzList = loader.load();
+    const clazzList = await loader.load();
     graph.addModuleNode(buildModuleNode(
       moduleDir,
       clazzList,
@@ -101,11 +102,11 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
     ]);
   });
 
-  it('should sort constructor extends class success', () => {
+  it('should sort constructor extends class success', async () => {
     const graph = new GlobalGraph();
     const moduleDir = path.join(__dirname, './fixtures/modules/extends-constructor-module');
     const loader = new TestLoader(moduleDir);
-    const clazzList = loader.load();
+    const clazzList = await loader.load();
     graph.addModuleNode(buildModuleNode(
       moduleDir,
       clazzList,

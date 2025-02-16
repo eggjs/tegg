@@ -1,16 +1,15 @@
 import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import is from 'is-type-of';
-import { GlobalModuleNodeBuilder } from '../../src/model/graph/GlobalModuleNodeBuilder';
-import { GlobalGraph } from '../../src/model/graph/GlobalGraph';
 import { Loader } from '@eggjs/tegg-types';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { GlobalModuleNodeBuilder, GlobalGraph } from '../../src/index.js';
 
 export class LoaderUtil {
-  static loadFile(filePath: string): EggProtoImplClass[] {
+  static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
     let exports;
     try {
-      exports = require(filePath);
-    } catch (e) {
+      exports = await import(filePath);
+    } catch (e: any) {
       e.message = '[tegg/loader] load ' + filePath + ' failed: ' + e.message;
       throw e;
     }
@@ -44,7 +43,7 @@ export function buildModuleNode(modulePath: string, clazzList: EggProtoImplClass
   return builder.build();
 }
 
-export function buildGlobalGraph(modulePaths: string[], loaders: Loader[]) {
+export async function buildGlobalGraph(modulePaths: string[], loaders: Loader[]) {
   GlobalGraph.instance = new GlobalGraph();
   const multiInstanceEggProtoClass: {
     clazz: any;
@@ -54,7 +53,7 @@ export function buildGlobalGraph(modulePaths: string[], loaders: Loader[]) {
   for (let i = 0; i < modulePaths.length; i++) {
     const modulePath = modulePaths[i];
     const loader = loaders[i];
-    const clazzList = loader.load();
+    const clazzList = await loader.load();
     const moduleName = ModuleConfigUtil.readModuleNameSync(modulePath);
     for (const clazz of clazzList) {
       if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
@@ -69,7 +68,7 @@ export function buildGlobalGraph(modulePaths: string[], loaders: Loader[]) {
   for (let i = 0; i < modulePaths.length; i++) {
     const modulePath = modulePaths[i];
     const loader = loaders[i];
-    const clazzList = loader.load();
+    const clazzList = await loader.load();
     const eggProtoClass: EggProtoImplClass[] = [];
     for (const clazz of clazzList) {
       if (PrototypeUtil.isEggPrototype(clazz)) {

@@ -9,7 +9,7 @@ import {
 } from '@eggjs/tegg';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { EggProtoImplClass, LoadUnitNameQualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
-import { Secret, SecretQualifierAttribute } from '../foo/Secret';
+import { Secret, SecretQualifierAttribute } from '../foo/Secret.js';
 
 export const BizManagerQualifierAttribute = Symbol.for('Qualifier.BizManager');
 export const BizManagerInjectName = 'bizManager';

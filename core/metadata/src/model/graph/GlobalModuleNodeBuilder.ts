@@ -1,7 +1,7 @@
 import { EggProtoImplClass, ProtoDescriptor } from '@eggjs/tegg-types';
-import { GlobalModuleNode, GlobalModuleNodeOptions } from './GlobalModuleNode';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
-import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper';
+import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper.js';
+import { GlobalModuleNode, GlobalModuleNodeOptions } from './GlobalModuleNode.js';
 
 export class GlobalModuleNodeBuilder {
   private readonly name: string;

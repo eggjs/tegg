@@ -1,6 +1,6 @@
 import { GraphNode, GraphNodeObj, EdgeMeta } from '@eggjs/tegg-common-util';
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode';
 import { ProtoDescriptor } from '@eggjs/tegg-types';
+import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.js';
 
 export interface GlobalModuleNodeOptions {
   name: string;

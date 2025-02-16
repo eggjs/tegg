@@ -1,7 +1,7 @@
 import { GraphNodeObj, ProtoDescriptor } from '@eggjs/tegg-types';
-import { ProtoSelectorContext } from './ProtoSelector';
 import { EdgeMeta } from '@eggjs/tegg-common-util';
-import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper';
+import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper.js';
+import { ProtoSelectorContext } from './ProtoSelector.js';
 
 export class ProtoDependencyMeta implements EdgeMeta {
   injectObj: PropertyKey;

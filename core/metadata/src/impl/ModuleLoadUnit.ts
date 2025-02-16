@@ -16,14 +16,11 @@ import type {
 } from '@eggjs/tegg-types';
 import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil, LifecycleUtil } from '@eggjs/tegg-lifecycle';
-import { EggPrototypeFactory } from '../factory/EggPrototypeFactory';
-import { LoadUnitFactory } from '../factory/LoadUnitFactory';
-import { EggPrototypeCreatorFactory } from '../factory/EggPrototypeCreatorFactory';
-import { MultiPrototypeFound } from '../errors';
 import { FrameworkErrorFormater } from 'egg-errors';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
-import { ClassProtoDescriptor } from '../model/ProtoDescriptor/ClassProtoDescriptor';
-import { GlobalGraph } from '../model/graph/GlobalGraph';
+import { EggPrototypeFactory, LoadUnitFactory, EggPrototypeCreatorFactory } from '../factory/index.js';
+import { ClassProtoDescriptor, GlobalGraph } from '../model/index.js';
+import { MultiPrototypeFound } from '../errors.js';
 
 let id = 0;
 
@@ -240,7 +237,11 @@ export class ModuleLoadUnit implements LoadUnit {
       // ModuleLoadUnit should not use clazz list
       const fnName = LifecycleUtil.getStaticLifecycleHook('preLoad', protoClass);
       if (fnName) {
-        await protoClass[fnName]?.();
+        const lifecycleHook = Reflect.get(protoClass, fnName);
+        if (typeof lifecycleHook === 'function') {
+          await lifecycleHook();
+        }
+        // TODO(@fengmk2): lifecycleHook is not a function should throw error
       }
     }
   }

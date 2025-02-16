@@ -1,9 +1,8 @@
-import globby from 'globby';
-import path from 'path';
-
-import { LoaderUtil } from './LoaderUtil';
+import path from 'node:path';
+import { globbySync } from 'globby';
 import { EggProtoImplClass } from '@eggjs/core-decorator';
-import { Loader } from '../..';
+import { Loader } from '../../src/index.js';
+import { LoaderUtil } from './LoaderUtil.js';
 
 export class TestLoader implements Loader {
   private readonly moduleDir: string;
@@ -12,12 +11,12 @@ export class TestLoader implements Loader {
     this.moduleDir = moduleDir;
   }
 
-  load(): EggProtoImplClass[] {
+  async load(): Promise<EggProtoImplClass[]> {
     const protoClassList: EggProtoImplClass[] = [];
-    const files = globby.sync([ '**/*.(js|ts)' ], { cwd: this.moduleDir });
+    const files = globbySync([ '**/*.(js|ts)' ], { cwd: this.moduleDir });
     for (const file of files) {
       const realPath = path.join(this.moduleDir, file);
-      const protoClazz = LoaderUtil.loadFile(realPath);
+      const protoClazz = await LoaderUtil.loadFile(realPath);
       if (!protoClazz) {
         continue;
       }
