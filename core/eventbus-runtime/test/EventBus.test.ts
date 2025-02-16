@@ -1,16 +1,17 @@
 import path from 'node:path';
-import mm from 'mm';
+import { mock } from 'node:test';
 import assert from 'node:assert/strict';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype, LoadUnitFactory } from '@eggjs/tegg-metadata';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { HelloHandler, HelloProducer } from './fixtures/modules/event/HelloEvent';
+import { HelloHandler, HelloProducer } from './fixtures/modules/event/HelloEvent.js';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { EventInfoUtil, CORK_ID } from '@eggjs/eventbus-decorator';
 import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
-import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '..';
-import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent';
-import { MultiWithContextHandler, MultiWithContextProducer } from './fixtures/modules/event/MultiEventWithContext';
+import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '../src/index.js';
+import { Timeout0Handler, Timeout100Handler, TimeoutProducer } from './fixtures/modules/event/MultiEvent.js';
+import { MultiWithContextHandler, MultiWithContextProducer } from './fixtures/modules/event/MultiEventWithContext.js';
 
 describe('test/EventBus.test.ts', () => {
   let modules: Array<LoadUnitInstance>;
@@ -27,6 +28,7 @@ describe('test/EventBus.test.ts', () => {
       await LoadUnitFactory.destroyLoadUnit(module.loadUnit);
       await LoadUnitInstanceFactory.destroyLoadUnitInstance(module);
     }
+    mock.reset();
   });
 
   it('should work', async () => {
@@ -45,7 +47,7 @@ describe('test/EventBus.test.ts', () => {
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
       let msg: string | undefined;
-      mm(helloHandler, 'handle', async (m: string) => {
+      mock.method(helloHandler, 'handle', async (m: string) => {
         msg = m;
       });
       helloProducer.trigger();
@@ -125,7 +127,7 @@ describe('test/EventBus.test.ts', () => {
   it('destroy should be called', async () => {
     await EggTestContext.mockContext(async (ctx: EggTestContext) => {
       let destroyCalled = false;
-      mm(ctx, 'destroy', async () => {
+      mock.method(ctx, 'destroy', async () => {
         destroyCalled = true;
       });
       const eventContextFactory = await CoreTestHelper.getObject(EventContextFactory);
@@ -191,7 +193,7 @@ describe('test/EventBus.test.ts', () => {
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
       let eventTime = 0;
-      mm(helloHandler, 'handle', async () => {
+      mock.method(helloHandler, 'handle', async () => {
         eventTime = Date.now();
       });
       eventBus.emitWithContext(ctx, 'hello', [ '01' ]);
@@ -224,7 +226,7 @@ describe('test/EventBus.test.ts', () => {
       const helloHandler = await CoreTestHelper.getObject(HelloHandler);
       const helloEvent = eventBus.await('hello');
       let eventTime = 0;
-      mm(helloHandler, 'handle', async () => {
+      mock.method(helloHandler, 'handle', async () => {
         eventTime = Date.now();
       });
       eventBus.emitWithContext(ctx, 'hello', [ '01' ]);

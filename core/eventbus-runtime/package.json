@@ -12,18 +12,22 @@
   "eggModule": {
     "name": "eventbusRuntime"
   },
-  "main": "dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "src/**/*.js",
+    "src/**/*.d.ts"
   ],
-  "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
-    "clean": "tsc -b --clean && rm -rf dist",
+    "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -46,20 +50,16 @@
     "await-first": "^1.0.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "devDependencies": {
     "@eggjs/tegg-loader": "^3.52.0",
     "@eggjs/tegg-metadata": "^3.52.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "coffee": "^5.4.0",
-    "cross-env": "^7.0.3",
-    "egg": "^3.9.1",
-    "mm": "^3.2.0",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "coffee": "5",
+    "egg": "4",
+    "ts-node": "10",
+    "typescript": "5"
   },
   "publishConfig": {
     "access": "public"

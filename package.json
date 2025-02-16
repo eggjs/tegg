@@ -31,7 +31,7 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "coverage": "vitest run --coverage core/types core/core-decorator core/common-util core/aop-decorator core/lifecycle core/ajv-decorator core/loader core/runtime core/test-util core/aop-runtime core/background-task core/controller-decorator core/dal-decorator core/dal-runtime core/dynamic-inject core/dynamic-inject-runtime core/eventbus-decorator",
+    "coverage": "vitest run --coverage core/types core/core-decorator core/common-util core/aop-decorator core/lifecycle core/ajv-decorator core/loader core/runtime core/test-util core/aop-runtime core/background-task core/controller-decorator core/dal-decorator core/dal-runtime core/dynamic-inject core/dynamic-inject-runtime core/eventbus-decorator core/eventbus-runtime",
     "preci": "npm run clean && npm run lint",
     "ci": "npm run coverage",
     "postci-skip": "npm run prepublishOnly --workspaces --if-present"
