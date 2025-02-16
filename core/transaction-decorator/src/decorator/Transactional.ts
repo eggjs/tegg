@@ -1,6 +1,6 @@
 import { PropagationType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, TransactionalParams } from '@eggjs/tegg-types';
-import { TransactionMetadataUtil } from '../util/TransactionMetadataUtil';
+import { TransactionMetadataUtil } from '../util/index.js';
 
 export function Transactional(params?: TransactionalParams) {
   const propagation = params?.propagation || PropagationType.REQUIRED;
