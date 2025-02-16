@@ -237,7 +237,11 @@ export class ModuleLoadUnit implements LoadUnit {
       // ModuleLoadUnit should not use clazz list
       const fnName = LifecycleUtil.getStaticLifecycleHook('preLoad', protoClass);
       if (fnName) {
-        await protoClass[fnName]?.();
+        const lifecycleHook = Reflect.get(protoClass, fnName);
+        if (typeof lifecycleHook === 'function') {
+          await lifecycleHook();
+        }
+        // TODO(@fengmk2): lifecycleHook is not a function should throw error
       }
     }
   }
