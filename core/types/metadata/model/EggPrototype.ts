@@ -115,6 +115,8 @@ export interface EggPrototypeLifecycleContext extends LifecycleContext {
 }
 
 export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleContext> {
+  [key: symbol]: PropertyDescriptor;
+
   // TODO
   // 1. proto name
   // 1. default obj name
@@ -129,7 +131,7 @@ export interface EggPrototype extends LifecycleObject<EggPrototypeLifecycleConte
   readonly multiInstanceConstructorAttributes?: QualifierAttribute[];
 
   /**
-   * get metedata for key
+   * get metadata for key
    * @param {MetaDataKey} metadataKey
    */
   getMetaData<T>(metadataKey: MetaDataKey): T | undefined;

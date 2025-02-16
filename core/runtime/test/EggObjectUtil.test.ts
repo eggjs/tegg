@@ -1,10 +1,10 @@
 import assert from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
+import { describe, beforeEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
-import { EggObjectUtil } from '../src/impl/EggObjectUtil';
-import { ContextHandler } from '../src/model/ContextHandler';
-import { EggTestContext } from './fixtures/EggTestContext';
-import TestUtil from './util';
+import { EggObjectUtil, ContextHandler } from '../src/index.js';
+import { EggTestContext } from './fixtures/EggTestContext.js';
+import TestUtil from './util.js';
 
 describe('test/EggObjectUtil.test.ts', () => {
   let ctx: EggTestContext;
@@ -21,7 +21,7 @@ describe('test/EggObjectUtil.test.ts', () => {
     const fooProto = EggPrototypeFactory.instance.getPrototype('foo');
     const fooDesc = EggObjectUtil.contextEggObjectGetProperty(fooProto, 'foo');
     const barDesc = EggObjectUtil.contextEggObjectGetProperty(fooProto, 'bar');
-    assert(fooDesc !== barDesc);
+    assert.notEqual(fooDesc, barDesc);
     await TestUtil.destroyLoadUnitInstance(instance);
   });
 });

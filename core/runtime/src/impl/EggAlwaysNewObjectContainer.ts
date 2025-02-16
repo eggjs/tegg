@@ -1,7 +1,6 @@
 import { ObjectInitType } from '@eggjs/tegg-types';
 import type { EggContainer, EggObject, EggObjectName, EggPrototype, Id, LifecycleContext } from '@eggjs/tegg-types';
-import { EggObjectFactory } from '../factory/EggObjectFactory';
-import { EggContainerFactory } from '../factory/EggContainerFactory';
+import { EggObjectFactory, EggContainerFactory } from '../factory/index.js';
 
 export class EggAlwaysNewObjectContainer implements EggContainer<LifecycleContext> {
   static instance = new EggAlwaysNewObjectContainer();

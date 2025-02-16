@@ -39,7 +39,7 @@ export class CoreTestHelper {
     return await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
   static async prepareModules(moduleDirs: string[], hooks?: GlobalGraphBuildHook[]): Promise<Array<LoadUnitInstance>> {
-    LoaderUtil.buildGlobalGraph(moduleDirs, hooks);
+    await LoaderUtil.buildGlobalGraph(moduleDirs, hooks);
     EggContextStorage.register();
     const instances: Array<LoadUnitInstance> = [];
     for (const { path } of GlobalGraph.instance!.moduleConfigList) {

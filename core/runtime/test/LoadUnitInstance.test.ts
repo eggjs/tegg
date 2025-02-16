@@ -1,19 +1,20 @@
 import assert from 'node:assert';
-import mm from 'mm';
+import path from 'node:path';
+import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
+import { mm } from 'mm';
+import { LoaderUtil } from '@eggjs/module-test-util';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { LoadUnitInstance } from '@eggjs/tegg-types';
-import { EggTestContext } from './fixtures/EggTestContext';
-import TestUtil from './util';
-import { EggContainerFactory } from '..';
-import CountController from './fixtures/modules/module-for-load-unit-instance/CountController';
-import AppService from './fixtures/modules/multi-module/multi-module-service/AppService';
-import { Bar, Foo } from './fixtures/modules/extends-module/Base';
-import { ContextHandler } from '../src/model/ContextHandler';
-import { EggContextStorage } from './fixtures/EggContextStorage';
-import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance';
-import { FooLoggerConstructor } from './fixtures/modules/multi-instance-module/MultiInstanceConstructor';
-import path from 'node:path';
-import { LoaderUtil } from '@eggjs/module-test-util';
+import { EggTestContext } from './fixtures/EggTestContext.js';
+import TestUtil from './util.js';
+import { EggContainerFactory } from '../src/index.js';
+import CountController from './fixtures/modules/module-for-load-unit-instance/CountController.js';
+import AppService from './fixtures/modules/multi-module/multi-module-service/AppService.js';
+import { Bar, Foo } from './fixtures/modules/extends-module/Base.js';
+import { ContextHandler } from '../src/model/ContextHandler.js';
+import { EggContextStorage } from './fixtures/EggContextStorage.js';
+import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance.js';
+import { FooLoggerConstructor } from './fixtures/modules/multi-instance-module/MultiInstanceConstructor.js';
 
 describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
   describe('ModuleLoadUnitInstance', () => {
@@ -148,9 +149,9 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
     let repoInstance: LoadUnitInstance;
     let serviceInstance: LoadUnitInstance;
 
-    before(async () => {
+    beforeAll(async () => {
       EggContextStorage.register();
-      LoaderUtil.buildGlobalGraph([
+      await LoaderUtil.buildGlobalGraph([
         path.join(__dirname, 'fixtures/modules/multi-module/multi-module-common'),
         path.join(__dirname, 'fixtures/modules/multi-module/multi-module-repo'),
         path.join(__dirname, 'fixtures/modules/multi-module/multi-module-service'),
@@ -160,7 +161,7 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
       serviceInstance = await TestUtil.createLoadUnitInstance('multi-module/multi-module-service', false);
     });
 
-    after(async () => {
+    afterAll(async () => {
       await TestUtil.destroyLoadUnitInstance(commonInstance);
       await TestUtil.destroyLoadUnitInstance(repoInstance);
       await TestUtil.destroyLoadUnitInstance(serviceInstance);

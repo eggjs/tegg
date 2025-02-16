@@ -1,4 +1,3 @@
-import { LoadUnitInstanceLifecycleUtil } from '../model/LoadUnitInstance';
 import { ObjectInitType } from '@eggjs/tegg-types';
 import type {
   EggLoadUnitTypeLike,
@@ -8,7 +7,8 @@ import type {
   LoadUnitInstanceLifecycleContext,
 } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggContainerFactory } from './EggContainerFactory';
+import { EggContainerFactory } from './EggContainerFactory.js';
+import { LoadUnitInstanceLifecycleUtil } from '../model/LoadUnitInstance.js';
 
 type LoadUnitInstanceCreator = (ctx: LoadUnitInstanceLifecycleContext) => LoadUnitInstance;
 interface LoadUnitInstancePair {

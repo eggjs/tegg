@@ -3,5 +3,5 @@
   "eggModule": {
     "name": "init-type-qualifier-module"
   },
-  "main": "index.js"
+  "type": "module"
 }

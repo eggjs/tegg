@@ -1,5 +1,5 @@
 import { ContextProto } from '@eggjs/core-decorator';
-import { ICache, CacheValue } from './Cache';
+import { ICache, CacheValue } from './Cache.js';
 
 @ContextProto({
   name: 'cache',

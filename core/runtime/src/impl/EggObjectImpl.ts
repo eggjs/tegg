@@ -8,12 +8,11 @@ import type {
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggObjectLifecycleUtil } from '../model/EggObject';
-import { EggContainerFactory } from '../factory/EggContainerFactory';
-import { EggObjectUtil } from './EggObjectUtil';
-import { ContextHandler } from '../model/ContextHandler';
+import { EggObjectLifecycleUtil, ContextHandler } from '../model/index.js';
+import { EggContainerFactory } from '../factory/index.js';
+import { EggObjectUtil } from './EggObjectUtil.js';
 
-export default class EggObjectImpl implements EggObject {
+export class EggObjectImpl implements EggObject {
   private _obj: object;
   private status: EggObjectStatus = EggObjectStatus.PENDING;
 

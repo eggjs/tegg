@@ -4,10 +4,10 @@ import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 
 export class LoaderUtil {
-  static loadFile(filePath: string): EggProtoImplClass | null {
+  static async loadFile(filePath: string): Promise<EggProtoImplClass | null> {
     let clazz;
     try {
-      clazz = require(filePath);
+      clazz = await import(filePath);
     } catch {
       return null;
     }
@@ -34,7 +34,7 @@ export class LoaderUtil {
     return builder.build();
   }
 
-  static buildGlobalGraph(modulePaths: string[], hooks?: GlobalGraphBuildHook[]) {
+  static async buildGlobalGraph(modulePaths: string[], hooks?: GlobalGraphBuildHook[]) {
     GlobalGraph.instance = new GlobalGraph();
     for (const hook of hooks ?? []) {
       GlobalGraph.instance.registerBuildHook(hook);
@@ -47,7 +47,7 @@ export class LoaderUtil {
     for (let i = 0; i < modulePaths.length; i++) {
       const modulePath = modulePaths[i];
       const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
-      const clazzList = loader.load();
+      const clazzList = await loader.load();
       const moduleName = ModuleConfigUtil.readModuleNameSync(modulePath);
       for (const clazz of clazzList) {
         if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
@@ -62,7 +62,7 @@ export class LoaderUtil {
     for (let i = 0; i < modulePaths.length; i++) {
       const modulePath = modulePaths[i];
       const loader = LoaderFactory.createLoader(modulePath, EggLoadUnitType.MODULE);
-      const clazzList = loader.load();
+      const clazzList = await loader.load();
       const eggProtoClass: EggProtoImplClass[] = [];
       for (const clazz of clazzList) {
         if (PrototypeUtil.isEggPrototype(clazz)) {

@@ -1,14 +1,15 @@
 import assert from 'node:assert';
-import mm from 'mm';
+import { mm } from 'mm';
+import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
-import { EggTestContext } from './fixtures/EggTestContext';
-import TestUtil from './util';
-import { EggContainerFactory } from '..';
-import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object';
-import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base';
-import { ContextHandler } from '../src/model/ContextHandler';
-import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object';
-import { SingletonConstructorBar } from './fixtures/modules/inject-constructor-context-to-singleton/object';
+import { EggTestContext } from './fixtures/EggTestContext.js';
+import TestUtil from './util.js';
+import { EggContainerFactory } from '../src/index.js';
+import { Foo, Bar } from './fixtures/modules/lifecycle-hook/object.js';
+import { Bar as ExtendsBar } from './fixtures/modules/extends-module/Base.js';
+import { ContextHandler } from '../src/model/ContextHandler.js';
+import { SingletonBar } from './fixtures/modules/inject-context-to-singleton/object.js';
+import { SingletonConstructorBar } from './fixtures/modules/inject-constructor-context-to-singleton/object.js';
 
 describe('test/EggObject.test.ts', () => {
   let ctx: EggTestContext;

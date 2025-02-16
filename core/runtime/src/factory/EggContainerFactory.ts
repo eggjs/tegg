@@ -11,9 +11,9 @@ import type {
   QualifierInfo,
 } from '@eggjs/tegg-types';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { ContextHandler } from '../model/ContextHandler';
-import type { ContextInitiator as ContextInitiatorType } from '../impl/ContextInitiator';
 import { NameUtil } from '@eggjs/tegg-common-util';
+import { ContextHandler } from '../model/index.js';
+import type { ContextInitiator as ContextInitiatorType } from '../impl/index.js';
 
 export class EggContainerFactory {
   private static containerGetMethodMap: Map<ObjectInitTypeLike, ContainerGetMethod> = new Map();

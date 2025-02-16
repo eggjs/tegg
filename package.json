@@ -31,8 +31,8 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "coverage": "vitest run --coverage core/types core/core-decorator core/common-util core/aop-decorator core/lifecycle core/ajv-decorator core/loader",
-    "preci": "npm run lint",
+    "coverage": "vitest run --coverage core/types core/core-decorator core/common-util core/aop-decorator core/lifecycle core/ajv-decorator core/loader core/runtime core/test-util",
+    "preci": "npm run clean && npm run lint",
     "ci": "npm run coverage",
     "postci-skip": "npm run prepublishOnly --workspaces --if-present"
   },
@@ -50,6 +50,7 @@
     "lerna": "^6.1.0",
     "nyc": "^15.1.0",
     "oxlint": "^0.15.10",
+    "rimraf": "^6.0.1",
     "source-map-support": "^0.5.16",
     "test-exclude": "^6.0.0",
     "vite-plugin-swc-transform": "^1.1.0",

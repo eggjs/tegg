@@ -37,7 +37,7 @@
     "directory": "core/test-util"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@eggjs/core-decorator": "^3.52.0",
@@ -45,8 +45,8 @@
     "@eggjs/tegg-loader": "^3.52.0",
     "@eggjs/tegg-metadata": "^3.52.0",
     "@eggjs/tegg-runtime": "^3.52.0",
-    "globby": "^11.1.0",
-    "mm": "^3.2.1"
+    "globby": "^14.1.0",
+    "mm": "^4"
   },
   "devDependencies": {
     "@types/node": "22",
