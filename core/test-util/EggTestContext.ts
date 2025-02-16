@@ -1,4 +1,4 @@
-import mm from 'mm';
+import { mock } from 'node:test';
 import { AbstractEggContext, ContextHandler } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 
@@ -21,7 +21,7 @@ export class EggTestContext extends AbstractEggContext {
     };
     this.id = IdenticalUtil.createContextId();
     this.set(EGG_CTX, mockCtx);
-    mm(ContextHandler, 'getContext', () => {
+    mock.method(ContextHandler, 'getContext', () => {
       return this;
     });
   }

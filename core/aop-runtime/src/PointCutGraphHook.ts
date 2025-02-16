@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import { AspectMetaBuilder, PointcutAdviceInfoUtil } from '@eggjs/aop-decorator';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import { GraphNode } from '@eggjs/tegg-common-util';
@@ -7,7 +8,6 @@ import {
   ProtoDependencyMeta,
   ProtoNode,
 } from '@eggjs/tegg-metadata';
-import assert from 'node:assert';
 
 export function pointCutGraphHook(globalGraph: GlobalGraph) {
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {

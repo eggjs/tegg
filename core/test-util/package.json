@@ -45,8 +45,7 @@
     "@eggjs/tegg-loader": "^3.52.0",
     "@eggjs/tegg-metadata": "^3.52.0",
     "@eggjs/tegg-runtime": "^3.52.0",
-    "globby": "^14.1.0",
-    "mm": "^4"
+    "globby": "^14.1.0"
   },
   "devDependencies": {
     "@types/node": "22",

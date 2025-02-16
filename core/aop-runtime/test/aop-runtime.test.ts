@@ -1,23 +1,28 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import mm from 'mm';
+import { mock } from 'node:test';
+import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggObjectLifecycleUtil, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 import { EggPrototypeLifecycleUtil, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
 import type { LoadUnitInstance } from '@eggjs/tegg-types';
 import { CrosscutAdviceFactory } from '@eggjs/aop-decorator';
-import { CoreTestHelper, EggTestContext } from '../../test-util';
-import { Hello } from './fixtures/modules/hello_succeed/Hello';
-import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut';
-import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut';
-import { EggObjectAopHook } from '../src/EggObjectAopHook';
-import { LoadUnitAopHook } from '../src/LoadUnitAopHook';
-import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook';
-import { crossCutGraphHook } from '../src/CrossCutGraphHook';
-import { pointCutGraphHook } from '../src/PointCutGraphHook';
-import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace';
-import { HelloConstructorInject } from './fixtures/modules/constructor_inject_aop/Hello';
+import { CoreTestHelper, EggTestContext } from '@eggjs/module-test-util';
+import { Hello } from './fixtures/modules/hello_succeed/Hello.js';
+import { crosscutAdviceParams } from './fixtures/modules/hello_cross_cut/HelloCrossCut.js';
+import { pointcutAdviceParams } from './fixtures/modules/hello_point_cut/HelloPointCut.js';
+import { EggObjectAopHook } from '../src/EggObjectAopHook.js';
+import { LoadUnitAopHook } from '../src/LoadUnitAopHook.js';
+import { EggPrototypeCrossCutHook } from '../src/EggPrototypeCrossCutHook.js';
+import { crossCutGraphHook } from '../src/CrossCutGraphHook.js';
+import { pointCutGraphHook } from '../src/PointCutGraphHook.js';
+import { CallTrace } from './fixtures/modules/hello_cross_cut/CallTrace.js';
+import { HelloConstructorInject } from './fixtures/modules/constructor_inject_aop/Hello.js';
 
 describe('test/aop-runtime.test.ts', () => {
+  afterEach(() => {
+    mock.reset();
+  });
+
   describe('succeed call', () => {
     let modules: Array<LoadUnitInstance>;
     let crosscutAdviceFactory: CrosscutAdviceFactory;
@@ -127,7 +132,7 @@ describe('test/aop-runtime.test.ts', () => {
       await EggTestContext.mockContext(async () => {
         const hello = await CoreTestHelper.getObject(Hello);
         let helloMocked = false;
-        mm(Hello.prototype, 'hello', async () => {
+        mock.method(Hello.prototype, 'hello', async () => {
           helloMocked = true;
         });
         await hello.hello('aop');
@@ -250,7 +255,7 @@ describe('test/aop-runtime.test.ts', () => {
       await EggTestContext.mockContext(async () => {
         const hello = await CoreTestHelper.getObject(HelloConstructorInject);
         let helloMocked = false;
-        mm(HelloConstructorInject.prototype, 'hello', async () => {
+        mock.method(HelloConstructorInject.prototype, 'hello', async () => {
           helloMocked = true;
         });
         await hello.hello('aop');

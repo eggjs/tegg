@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { mm } from 'mm';
+import { mock } from 'node:test';
 import { describe, beforeEach, afterEach, it } from 'vitest';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggTestContext } from './fixtures/EggTestContext.js';
@@ -19,12 +19,12 @@ describe('test/EggObject.test.ts', () => {
   });
 
   afterEach(() => {
-    mm.restore();
+    mock.reset();
   });
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return ctx;
       });
     });
@@ -98,12 +98,12 @@ describe('test/EggObject.test.ts', () => {
 
   describe('inject context to singleton', () => {
     it('should work', async () => {
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return;
       });
       const instance = await TestUtil.createLoadUnitInstance('inject-context-to-singleton');
       const barProto = EggPrototypeFactory.instance.getPrototype('singletonBar');
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return ctx;
       });
       const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
@@ -117,12 +117,12 @@ describe('test/EggObject.test.ts', () => {
 
   describe('constructor inject context to singleton', () => {
     it('should work', async () => {
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return;
       });
       const instance = await TestUtil.createLoadUnitInstance('inject-constructor-context-to-singleton');
       const barProto = EggPrototypeFactory.instance.getPrototype('singletonConstructorBar');
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return ctx;
       });
       const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
@@ -136,7 +136,7 @@ describe('test/EggObject.test.ts', () => {
 
   describe('property mock', () => {
     beforeEach(() => {
-      mm(ContextHandler, 'getContext', () => {
+      mock.method(ContextHandler, 'getContext', () => {
         return ctx;
       });
     });
@@ -147,8 +147,8 @@ describe('test/EggObject.test.ts', () => {
       const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
       const bar = barObj.obj as ExtendsBar;
       const foo = {};
-      mm(bar, 'foo', foo);
-      assert(bar.foo === foo);
+      mock.getter(bar, 'foo', () => foo);
+      assert.equal(bar.foo, foo);
 
       await TestUtil.destroyLoadUnitInstance(instance);
       await ctx.destroy({});

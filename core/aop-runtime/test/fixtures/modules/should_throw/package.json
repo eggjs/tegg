@@ -2,5 +2,6 @@
   "name": "throw-aop-module",
   "eggModule": {
     "name": "throwAopModule"
-  }
+  },
+  "type": "module"
 }
