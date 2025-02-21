@@ -1,4 +1,4 @@
-import Ajv2019, { type Schema } from 'ajv/dist/2019';
+import { type Schema, Ajv2019 } from 'ajv/dist/2019.js';
 import addFormats from '@eggjs/ajv-formats';
 import keyWords from '@eggjs/ajv-keywords';
 import { type Ajv as IAjv, AjvInvalidParamError } from '@eggjs/tegg/ajv';
@@ -15,7 +15,9 @@ export class Ajv implements IAjv {
   @LifecycleInit()
   protected _init() {
     this.#ajvInstance = new Ajv2019();
+    // @ts-expect-error ajv-keywords is not typed
     keyWords(this.#ajvInstance, 'transform');
+    // @ts-expect-error ajv-formats is not typed
     addFormats(this.#ajvInstance, [
       'date-time',
       'time',

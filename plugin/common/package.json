@@ -9,16 +9,22 @@
     "common",
     "tegg"
   ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "files": [
     "index.js",
     "index.d.ts"
   ],
-  "types": "index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -32,17 +38,14 @@
     "directory": "plugin/common"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "ts-node": "10",
+    "typescript": "5"
   }
 }

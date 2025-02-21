@@ -20,7 +20,6 @@
     "lint": "npm run oxlint && eslint . --ext .ts --cache",
     "oxlint": "oxlint",
     "test": "vitest",
-    "cov": "nyc npm run test",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
@@ -31,7 +30,7 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "coverage": "vitest run --coverage core/*",
+    "coverage": "vitest run --coverage core/* plugin/common plugin/config",
     "preci": "npm run clean && npm run lint",
     "ci": "npm run coverage",
     "postci-skip": "npm run prepublishOnly --workspaces --if-present"
@@ -53,6 +52,7 @@
     "rimraf": "^6.0.1",
     "source-map-support": "^0.5.16",
     "test-exclude": "^6.0.0",
+    "tsx": "^4.19.2",
     "vite-plugin-swc-transform": "^1.1.0",
     "vitest": "^3.0.5"
   },

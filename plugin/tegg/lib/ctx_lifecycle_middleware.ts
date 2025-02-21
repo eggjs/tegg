@@ -1,8 +1,8 @@
-import type { TEggPluginContext } from '../app/extend/context';
-import { EggContextImpl } from './EggContextImpl';
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import type { TEggPluginContext } from '../app/extend/context.js';
+import { EggContextImpl } from './EggContextImpl.js';
 
-export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, next) {
+export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, next: () => Promise<void>) {
   // should not recreate teggContext
   if (ctx[TEGG_CONTEXT]) {
     await next();

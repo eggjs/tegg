@@ -1,6 +1,6 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import BarService from './BarService';
-import FooService from './FooService';
+import BarService from './BarService.js';
+import FooService from './FooService.js';
 
 
 @SingletonProto({

@@ -16,6 +16,8 @@
     "tegg"
   ],
   "files": [
+    "index.js",
+    "index.d.ts",
     "app.js",
     "app.d.ts",
     "lib/**/*.js",
@@ -24,13 +26,18 @@
     "app/**/*.d.ts",
     "typings/*.d.ts"
   ],
-  "types": "typings/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./typings/index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
@@ -42,10 +49,11 @@
     "directory": "plugin/tegg"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^3.52.0",
+    "@eggjs/core": "^6.3.1",
     "@eggjs/tegg": "^3.52.0",
     "@eggjs/tegg-background-task": "^3.52.0",
     "@eggjs/tegg-common-util": "^3.52.0",
@@ -53,22 +61,18 @@
     "@eggjs/tegg-loader": "^3.52.0",
     "@eggjs/tegg-metadata": "^3.52.0",
     "@eggjs/tegg-runtime": "^3.52.0",
-    "extend2": "^1.0.0",
-    "sdk-base": "^4.2.0"
+    "extend2": "^4.0.0",
+    "sdk-base": "^5.0.1"
   },
   "devDependencies": {
     "@eggjs/tegg-config": "^3.52.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "egg": "^3.9.1",
+    "@types/node": "22",
+    "egg": "4",
     "egg-logger": "^3.0.1",
-    "egg-mock": "^5.5.0",
-    "egg-schedule": "^4.0.0",
+    "@eggjs/mock": "6",
     "egg-tracer": "^2.0.0",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "ts-node": "10",
+    "typescript": "5"
   },
   "publishConfig": {
     "access": "public"

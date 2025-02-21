@@ -1,4 +1,4 @@
-module.exports = () => {
+export default () => {
   const config = {
     keys: 'test key',
     security: {

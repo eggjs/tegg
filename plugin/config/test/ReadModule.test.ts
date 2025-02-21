@@ -1,9 +1,15 @@
-import mm from 'egg-mock';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { describe, it, afterAll as after, afterEach, beforeAll as before } from 'vitest';
+import { mm, MockApplication } from '@eggjs/mock';
+import '../index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('plugin/config/test/ReadModule.test.ts', () => {
-  let app;
+  let app: MockApplication;
   const fixturesPath = path.join(__dirname, './fixtures/apps/app-with-modules');
 
   after(async () => {
@@ -11,7 +17,7 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
@@ -21,7 +27,6 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
     });
     app = mm.app({
       baseDir: fixturesPath,
-      framework: require.resolve('egg'),
     });
     await app.ready();
   });
@@ -38,5 +43,10 @@ describe('plugin/config/test/ReadModule.test.ts', () => {
         },
       },
     });
+  });
+
+  it('should type defines work', async () => {
+    assert(app.moduleConfigs);
+    assert(app.moduleReferences);
   });
 });

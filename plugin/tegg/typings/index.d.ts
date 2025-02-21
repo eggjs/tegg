@@ -1,8 +1,8 @@
-import { AsyncLocalStorage } from 'async_hooks';
-import { Context } from 'egg';
+// import { AsyncLocalStorage } from 'async_hooks';
+// import { Context } from 'egg';
 import '@eggjs/tegg-config';
-import { EggPrototypeCreatorFactory } from '@eggjs/tegg-metadata';
 import {
+  EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   LoadUnitLifecycleUtil,
   LoadUnitFactory,
@@ -20,8 +20,8 @@ import {
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass, QualifierInfo } from '@eggjs/tegg';
-import { ModuleHandler } from '../lib/ModuleHandler';
-import { EggContextHandler } from '../lib/EggContextHandler';
+import { ModuleHandler } from './lib/ModuleHandler.js';
+import { EggContextHandler } from './lib/EggContextHandler.js';
 
 declare module 'egg' {
   export interface EggModule {
@@ -60,7 +60,7 @@ declare module 'egg' {
     module: EggModule & EggApplicationModule;
 
     getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
+    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
   }
 
   export interface TEggContext {

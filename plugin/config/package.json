@@ -20,15 +20,22 @@
     "lib/**/*.js",
     "lib/**/*.d.ts",
     "agent.js",
-    "agent.d.ts"
+    "agent.d.ts",
+    "index.js",
+    "index.d.ts"
   ],
-  "types": "typings/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc"
   },
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
@@ -40,19 +47,18 @@
     "directory": "plugin/config"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^3.52.0"
+    "@eggjs/tegg-common-util": "^3.52.0",
+    "@eggjs/utils": "^4.2.5"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
-    "egg": "^3.9.1",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@types/node": "22",
+    "@eggjs/mock": "6",
+    "egg": "4",
+    "ts-node": "10",
+    "typescript": "5"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,7 @@
-import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
+import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
+import { importResolve } from '@eggjs/utils';
 
 export class ModuleScanner {
   private readonly baseDir: string;
@@ -17,13 +19,13 @@ export class ModuleScanner {
   loadModuleReferences(): readonly ModuleReference[] {
     const moduleReferences = ModuleConfigUtil.readModuleReference(this.baseDir, this.readModuleOptions || {});
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const appPkg = require(path.join(this.baseDir, 'package.json'));
+    const appPkg = JSON.parse(readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8'));
     const framework = appPkg.egg?.framework;
     if (!framework) {
       return moduleReferences;
     }
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const frameworkPkg = require.resolve(`${framework}/package.json`, {
+    const frameworkPkg = importResolve(`${framework}/package.json`, {
       paths: [ this.baseDir ],
     });
     const frameworkDir = path.dirname(frameworkPkg);

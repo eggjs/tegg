@@ -1,4 +1,4 @@
-import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl';
+import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.js';
 import {
   EggObject,
   EggObjectFactory,

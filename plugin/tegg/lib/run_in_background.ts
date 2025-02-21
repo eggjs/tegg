@@ -2,8 +2,8 @@ import { Application, Context } from 'egg';
 import { BackgroundTaskHelper, PrototypeUtil } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import { TEggPluginContext } from '../app/extend/context';
-import { getCalleeFromStack } from './Utils';
+import { TEggPluginContext } from '../app/extend/context.js';
+import { getCalleeFromStack } from './Utils.js';
 
 export const LONG_STACK_DELIMITER = '\n --------------------\n';
 
@@ -25,15 +25,15 @@ export function hijackRunInBackground(app: Application) {
       return Reflect.apply(eggRunInBackground, this, [ scope ]);
     }
     const caseError = new Error('cause');
-    let resolveBackgroundTask;
-    const backgroundTaskPromise = new Promise(resolve => {
+    let resolveBackgroundTask: () => void;
+    const backgroundTaskPromise = new Promise<void>(resolve => {
       resolveBackgroundTask = resolve;
     });
     const newScope = async () => {
       try {
         await scope(this);
       } catch (e) {
-        addLongStackTrace(e, caseError);
+        addLongStackTrace(e as Error, caseError);
         throw e;
       } finally {
         resolveBackgroundTask();
