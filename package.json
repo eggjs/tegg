@@ -19,7 +19,7 @@
     "lint:fix": "eslint . --ext .ts --fix --cache",
     "lint": "npm run oxlint && eslint . --ext .ts --cache",
     "oxlint": "oxlint",
-    "test": "NODE_OPTIONS='--import tsx/esm' vitest",
+    "test": "vitest",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
@@ -30,7 +30,7 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "coverage": "NODE_OPTIONS='--import tsx/esm' vitest run --coverage core/* plugin/config",
+    "coverage": "vitest run --coverage core/* plugin/common plugin/config",
     "preci": "npm run clean && npm run lint",
     "ci": "npm run coverage",
     "postci-skip": "npm run prepublishOnly --workspaces --if-present"

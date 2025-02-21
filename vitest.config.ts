@@ -33,5 +33,10 @@ export default defineConfig({
       ],
     },
     testTimeout: 60000,
+    poolOptions: {
+      forks: {
+        execArgv: [ '--import=tsx/esm' ],
+      },
+    },
   },
 });
