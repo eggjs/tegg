@@ -1,5 +1,7 @@
+'use strict';
+
 exports.tracer = {
-  package: '@eggjs/tracer',
+  package: 'egg-tracer',
   enable: true,
 };
 

@@ -35,8 +35,7 @@
     "coverage:mocha": "nyc npm run test:mocha",
     "preci": "npm run clean && npm run lint",
     "ci": "npm run coverage && nyc npm run coverage:mocha",
-    "postci-skip": "npm run prepublishOnly --workspaces --if-present",
-    "rm-node_modules": "find . -name 'node_modules' -type d -exec rm -rf {} +; find . -name 'package-lock.json' -type f -exec rm -f {} +; find . -name 'yarn.lock' -type f -exec rm -f {} +;"
+    "postci-skip": "npm run prepublishOnly --workspaces --if-present"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",

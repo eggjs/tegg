@@ -1,6 +1,6 @@
 export default {
   tracer: {
-    package: '@eggjs/tracer',
+    package: 'egg-tracer',
     enable: true,
   },
   watcher: false,
