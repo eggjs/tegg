@@ -1,46 +1,39 @@
-// import assert from 'node:assert/strict';
-// import path from 'node:path';
-// import mm from 'egg-mock';
-// import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo';
+import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
+import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo.js';
 
-// describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
-//   let app;
-//   const fixtureDir = path.join(__dirname, 'fixtures/apps/constructor-module-config');
+describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
+  let app: MockApplication;
 
-//   after(async () => {
-//     await app.close();
-//   });
+  after(async () => {
+    await app.close();
+  });
 
-//   afterEach(() => {
-//     mm.restore();
-//   });
+  afterEach(() => {
+    return mm.restore();
+  });
 
-//   before(async () => {
-//     mm(process.env, 'EGG_TYPESCRIPT', true);
-//     mm(process, 'cwd', () => {
-//       return path.join(__dirname, '..');
-//     });
-//     app = mm.app({
-//       baseDir: fixtureDir,
-//       framework: require.resolve('egg'),
-//     });
-//     await app.ready();
-//   });
+  before(async () => {
+    app = mm.app({
+      baseDir: 'apps/constructor-module-config',
+    });
+    await app.ready();
+  });
 
-//   it('should work', async () => {
-//     await app.httpRequest()
-//       .get('/config')
-//       .expect(200)
-//       .expect(res => {
-//         assert.deepStrictEqual(res.body, {
-//           foo: 'bar',
-//           bar: 'foo',
-//         });
-//       });
-//   });
+  it('should work', async () => {
+    await app.httpRequest()
+      .get('/config')
+      .expect(200)
+      .expect(res => {
+        assert.deepStrictEqual(res.body, {
+          foo: 'bar',
+          bar: 'foo',
+        });
+      });
+  });
 
-//   it('construct proxy should work', async () => {
-//     const foo: Foo = await app.getEggObject(Foo);
-//     foo.log();
-//   });
-// });
+  it('construct proxy should work', async () => {
+    const foo: Foo = await app.getEggObject(Foo);
+    foo.log();
+  });
+});

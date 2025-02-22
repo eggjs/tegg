@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { AccessLevel, SingletonProto, Inject, ContextProto } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { CountService } from './CountService';
+import { CountService } from './CountService.js';
 
 @ContextProto()
 export class TestObj {
@@ -14,7 +14,7 @@ export class TestObj {
 })
 export default class BackgroundService {
   @Inject()
-  private readonly backgroundTaskHelper:BackgroundTaskHelper;
+  private readonly backgroundTaskHelper: BackgroundTaskHelper;
 
   @Inject()
   testObj: TestObj;

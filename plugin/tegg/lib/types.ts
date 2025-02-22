@@ -17,7 +17,7 @@ import {
   EggContext as TEggContext,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { IdenticalUtil, EggProtoImplClass, QualifierInfo } from '@eggjs/tegg';
+import { IdenticalUtil, QualifierInfo } from '@eggjs/tegg';
 import { ModuleHandler } from '../lib/ModuleHandler.js';
 import { EggContextHandler } from '../lib/EggContextHandler.js';
 
@@ -49,39 +49,20 @@ declare module '@eggjs/core' {
     mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
     destroyModuleContext(context: Context): Promise<void>;
 
-    getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
+    // getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
+    getEggObject<T>(clazz: new (...args: any[]) => T, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
+    getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
 
     module: EggModule;
   }
 
   interface Context {
     beginModuleScope(func: () => Promise<void>): Promise<void>;
-    getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
+    // getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
+    getEggObject<T>(clazz: new (...args: any[]) => T, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
     getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
     teggContext: TEggContext;
 
     module: EggModule;
-  }
-}
-
-declare module 'egg' {
-  export interface EggModule {
-  }
-
-  export interface EggApplicationModule {
-  }
-
-  export interface EggContextModule {
-  }
-
-  export interface Application {
-    // 兼容现有 module 的定义
-    module: EggModule & EggApplicationModule;
-  }
-
-  export interface Context {
-    // 兼容现有 module 的定义
-    module: EggModule & EggContextModule;
   }
 }
