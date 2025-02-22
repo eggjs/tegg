@@ -74,6 +74,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info,./**/*/coverage/lcov.info
 # GitHub mysql service not support windows
 #  Runner-windows:
 #    runs-on: windows-latest
