@@ -29,7 +29,8 @@
     ".": {
       "types": "./index.d.ts",
       "default": "./index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "clean": "tsc -b --clean",

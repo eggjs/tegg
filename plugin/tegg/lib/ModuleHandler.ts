@@ -1,4 +1,4 @@
-import Base from 'sdk-base';
+import { Base } from 'sdk-base';
 import { Application, Context } from 'egg';
 import {
   EggLoadUnitType,
@@ -6,9 +6,9 @@ import {
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
 import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { EggModuleLoader } from './EggModuleLoader';
-import { CompatibleUtil } from './CompatibleUtil';
-import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl';
+import { EggModuleLoader } from './EggModuleLoader.js';
+import { CompatibleUtil } from './CompatibleUtil.js';
+import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.js';
 
 export class ModuleHandler extends Base {
   loadUnits: LoadUnit[] = [];
@@ -44,10 +44,9 @@ export class ModuleHandler extends Base {
       this.loadUnitInstances = instances;
       this.ready(true);
     } catch (e) {
-      this.ready(e);
+      this.ready(e as Error);
       throw e;
     }
-
   }
 
   async destroy() {

@@ -1,6 +1,6 @@
-import PersistenceService from './PersistenceService';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import App from '../multi-module-common/model/App';
+import App from '../multi-module-common/model/App.js';
+import PersistenceService from './PersistenceService.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -9,7 +9,7 @@ export default class GlobalAppRepo {
   @Inject()
   persistenceService: PersistenceService;
 
-  public async findApp(name): Promise<App | null> {
+  public async findApp(name: string): Promise<App | null> {
     const raw = this.persistenceService.get(name);
     if (!raw) {
       return null;

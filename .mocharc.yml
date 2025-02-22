@@ -4,10 +4,12 @@ spec:
 recursive: true
 extension:
   - ts
-# require:
-#   - ts-node/register.js
-#   - source-map-support/register
+loader:
+  - ts-node/esm
 import:
-  - tsx/esm
+  # - ts-node/register.js
+  - source-map-support/register.js
+# import:
+#   - tsx/esm
 full-trace: true
 exit: true

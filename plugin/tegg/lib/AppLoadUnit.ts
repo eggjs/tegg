@@ -35,7 +35,7 @@ export class AppLoadUnit implements LoadUnit {
   }
 
   async init() {
-    const clazzList = this.loader.load();
+    const clazzList = await this.loader.load();
     for (const clazz of clazzList) {
       // TODO duplicate code, same in ModuleLoadUnit
       const defaultQualifier = [{

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 export * from '@eggjs/tegg-types/common';
 export * from './MapUtil.js';
 export * from './NameUtil.js';

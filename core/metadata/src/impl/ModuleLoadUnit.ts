@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import path from 'node:path';
+import { readFileSync } from 'node:fs';
 import {
   EggLoadUnitType,
   GraphNodeObj,
@@ -298,8 +299,7 @@ export class ModuleLoadUnit implements LoadUnit {
 
   static createModule(ctx: LoadUnitLifecycleContext): ModuleLoadUnit {
     const pkgPath = path.join(ctx.unitPath, 'package.json');
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const pkg = require(pkgPath);
+    const pkg: { eggModule?: { name: string } } = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     assert(pkg.eggModule, `module config not found in package ${pkgPath}`);
     const { name } = pkg.eggModule;
     return new ModuleLoadUnit(name, ctx.unitPath);

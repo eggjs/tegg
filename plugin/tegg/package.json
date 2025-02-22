@@ -29,11 +29,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./typings/index.d.ts",
+      "types": "./index.d.ts",
       "default": "./index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
+    "test": "egg-bin test",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run tsc",
@@ -65,12 +67,15 @@
     "sdk-base": "^5.0.1"
   },
   "devDependencies": {
+    "@types/mocha": "10",
+    "mocha": "10",
     "@eggjs/tegg-config": "^3.52.0",
+    "@eggjs/bin": "7",
     "@types/node": "22",
     "egg": "4",
     "egg-logger": "^3.0.1",
     "@eggjs/mock": "6",
-    "egg-tracer": "^2.0.0",
+    "@eggjs/tracer": "3",
     "ts-node": "10",
     "typescript": "5"
   },

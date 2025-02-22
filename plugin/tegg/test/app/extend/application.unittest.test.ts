@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import mm from 'egg-mock';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('test/app/extend/application.unittest.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
@@ -20,14 +24,13 @@ describe('test/app/extend/application.unittest.test.ts', () => {
     });
     app = mm.app({
       baseDir: path.join(__dirname, '../../fixtures/apps/egg-app'),
-      framework: require.resolve('egg'),
     });
     await app.ready();
   });
 
-  it('should work', async function() {
+  it('should work', async () => {
     await app.mockModuleContextScope(async () => {
-      const traceId = await app.module.multiModuleService.traceService.getTraceId();
+      const traceId = await (app.module as any).multiModuleService.traceService.getTraceId();
       assert(traceId);
     });
   });

@@ -1,15 +1,19 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { fileURLToPath } from 'node:url';
+// import { describe, it, afterAll as after, afterEach, beforeAll as before } from 'vitest';
 import { mm, MockApplication } from '@eggjs/mock';
 // import '../index.js';
 import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
   let app: MockApplication;
   const fixtureDir = path.join(__dirname, 'fixtures/apps/access-level-check');
 
-  afterAll(async () => {
+  after(async () => {
     await app.close();
   });
 
@@ -17,14 +21,14 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
     mm.restore();
   });
 
-  beforeAll(async () => {
+  before(async () => {
     mm(process.env, 'EGG_TYPESCRIPT', true);
     mm(process, 'cwd', () => {
       return path.join(__dirname, '..');
     });
     app = mm.app({
       baseDir: fixtureDir,
-      framework: require.resolve('egg'),
+      // framework: require.resolve('egg'),
     });
     await app.ready();
   });
@@ -42,7 +46,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
     await app.mockModuleContextScope(async ctx => {
       const mainService: MainService = await ctx.getEggObject(MainService);
       assert(mainService);
-      assert(mainService.invokeFoo() === 'moduleMain-FooService-Method');
+      assert.equal(mainService.invokeFoo(), 'moduleMain-FooService-Method');
     });
   });
 
@@ -50,7 +54,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
     await app.mockModuleContextScope(async ctx => {
       const mainService: MainService = await ctx.getEggObject(MainService);
       assert(mainService);
-      assert(mainService.invokeBar() === 'moduleMain-BarService-Method');
+      assert.equal(mainService.invokeBar(), 'moduleMain-BarService-Method');
     });
   });
 });

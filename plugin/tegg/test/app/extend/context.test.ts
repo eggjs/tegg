@@ -1,14 +1,17 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import mm from 'egg-mock';
-import { Application } from 'egg';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';
-import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService';
-import { LONG_STACK_DELIMITER } from '../../../lib/run_in_background';
+import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.js';
+import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.js';
+import { LONG_STACK_DELIMITER } from '../../../lib/run_in_background.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('test/app/extend/context.test.ts', () => {
-  let app: Application;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
@@ -25,7 +28,6 @@ describe('test/app/extend/context.test.ts', () => {
     });
     app = mm.app({
       baseDir: path.join(__dirname, '../../fixtures/apps/egg-app'),
-      framework: require.resolve('egg'),
     });
     await app.ready();
   });
@@ -60,7 +62,7 @@ describe('test/app/extend/context.test.ts', () => {
         await ctx.beginModuleScope(async () => {
           // ...do nothing
         });
-        assert(ctx.teggContext.destroyed === false);
+        assert.equal((ctx.teggContext as any).destroyed, false);
       });
     });
   });
@@ -92,7 +94,7 @@ describe('test/app/extend/context.test.ts', () => {
     });
 
     it('stack should be continuous', async () => {
-      let backgroundError;
+      let backgroundError: Error | undefined;
       app.on('error', e => {
         backgroundError = e;
       });
@@ -102,7 +104,7 @@ describe('test/app/extend/context.test.ts', () => {
         });
         await TimerUtil.sleep(1000);
       });
-      const stack: string = backgroundError.stack;
+      const stack = backgroundError?.stack ?? '';
       // background
       // at ~/plugin/tegg/test/app/extend/context.test.ts:88:17
       // at ~/plugin/tegg/test/app/extend/context.test.ts:82:21 (~/plugin/tegg/lib/run_in_background.ts:34:15)

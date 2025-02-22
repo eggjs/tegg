@@ -1,3 +1,4 @@
 {
-  "name": "egg-app"
+  "name": "inject-module-config",
+  "type": "module"
 }

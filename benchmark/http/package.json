@@ -11,7 +11,7 @@
     "@eggjs/tegg-controller-plugin": "^3.7.0",
     "@eggjs/tegg-plugin": "^3.7.0",
     "@eggjs/tsconfig": "^1.1.0",
-    "egg": "^3.9.1"
+    "egg": "4"
   },
   "devDependencies": {
     "egg-bin": "6"

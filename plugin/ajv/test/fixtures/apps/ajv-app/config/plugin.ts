@@ -1,7 +1,7 @@
 export default () => {
   return {
     tracer: {
-      package: 'egg-tracer',
+      package: '@eggjs/tracer',
       enable: true,
     },
     tegg: {

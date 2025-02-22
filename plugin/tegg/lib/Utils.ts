@@ -1,4 +1,4 @@
-function prepareObjectStackTrace(_, stack) {
+function prepareObjectStackTrace(_: Error, stack: NodeJS.CallSite[]) {
   return stack;
 }
 

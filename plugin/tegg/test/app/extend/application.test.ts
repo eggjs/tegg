@@ -1,12 +1,15 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import mm from 'egg-mock';
-import { Application } from 'egg';
-import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService';
-import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
+import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.js';
+import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('test/app/extend/application.test.ts', () => {
-  let app: Application;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
@@ -23,7 +26,6 @@ describe('test/app/extend/application.test.ts', () => {
     });
     app = mm.app({
       baseDir: path.join(__dirname, '../../fixtures/apps/egg-app'),
-      framework: require.resolve('egg'),
     });
     await app.ready();
   });
@@ -31,6 +33,7 @@ describe('test/app/extend/application.test.ts', () => {
   describe('getEggObject', () => {
     it('should work', async () => {
       const persistenceService = await app.getEggObject(PersistenceService);
+      assert(persistenceService);
       assert(persistenceService instanceof PersistenceService);
 
       await assert.rejects(() => {

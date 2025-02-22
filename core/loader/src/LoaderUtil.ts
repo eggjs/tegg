@@ -4,8 +4,8 @@ import BuiltinModule from 'node:module';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
-const Module = module.constructor.length > 1
-  ? module.constructor
+const Module = globalThis.module?.constructor?.length > 1
+  ? globalThis.module.constructor
   /* istanbul ignore next */
   : BuiltinModule;
 

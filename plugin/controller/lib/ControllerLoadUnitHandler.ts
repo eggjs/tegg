@@ -1,4 +1,4 @@
-import Base from 'sdk-base';
+import { Base } from 'sdk-base';
 import path from 'node:path';
 import { Application } from 'egg';
 import { EggLoadUnitType, LoadUnit } from '@eggjs/tegg-metadata';

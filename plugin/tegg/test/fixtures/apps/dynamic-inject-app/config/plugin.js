@@ -1,9 +1,7 @@
-'use strict';
-
 const path = require('path');
 
 exports.tracer = {
-  path: path.join(__dirname, '../../../../../node_modules/egg-tracer'),
+  path: '@eggjs/tracer',
   enable: true,
 };
 

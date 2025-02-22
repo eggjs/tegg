@@ -1,7 +1,7 @@
 import './lib/AppLoadUnit.js';
 import './lib/AppLoadUnitInstance.js';
 import './lib/EggCompatibleObject.js';
-import { Application } from 'egg';
+import { Application, ILifecycleBoot } from 'egg';
 import { LoadUnitMultiInstanceProtoHook } from '@eggjs/tegg-metadata';
 import { EggContextCompatibleHook } from './lib/EggContextCompatibleHook.js';
 import { CompatibleUtil } from './lib/CompatibleUtil.js';
@@ -11,7 +11,7 @@ import { hijackRunInBackground } from './lib/run_in_background.js';
 import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.js';
 import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.js';
 
-export default class App {
+export default class App implements ILifecycleBoot {
   private readonly app: Application;
   private compatibleHook?: EggContextCompatibleHook;
   private eggContextHandler: EggContextHandler;
