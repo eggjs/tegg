@@ -63,15 +63,5 @@
     "core/*",
     "plugin/*",
     "standalone/*"
-  ],
-  "c8": {
-    "reporter": [
-      "text-summary",
-      "json",
-      "lcov"
-    ],
-    "exclude": [
-      "**/*/test/**/*"
-    ]
-  }
+  ]
 }

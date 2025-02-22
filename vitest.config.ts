@@ -25,11 +25,13 @@ export default defineConfig({
         'json',
         'text-summary',
         'html',
+        'lcov',
       ],
       exclude: [
         '*/*/test',
         'benchmark',
         '**/*/typings',
+        'vitest.config.ts',
       ],
     },
     testTimeout: 60000,
