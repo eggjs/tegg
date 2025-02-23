@@ -1,5 +1,5 @@
-import { MockApplication } from '@eggjs/mock';
-import type { Context } from 'egg';
+import type { MockApplication } from '@eggjs/mock';
+import type { Context } from '@eggjs/core';
 import { EggContextImpl } from '../../lib/EggContextImpl.js';
 import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
@@ -13,7 +13,7 @@ export default {
     if (hasMockModuleContext) {
       throw new Error('should not call mockModuleContext twice.');
     }
-    const ctx = this.mockContext(data);
+    const ctx = this.mockContext(data) as unknown as Context;
     const teggCtx = new EggContextImpl(ctx);
     const lifecycle = {};
     TEGG_LIFECYCLE_CACHE.set(teggCtx, lifecycle);
@@ -41,14 +41,15 @@ export default {
     if (hasMockModuleContext) {
       throw new Error('mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.');
     }
-    return this.mockContextScope(async ctx => {
-      const teggCtx = new EggContextImpl(ctx!);
+    return this.mockContextScope(async _ctx => {
+      const ctx = _ctx as unknown as Context;
+      const teggCtx = new EggContextImpl(ctx);
       const lifecycle = {};
       if (teggCtx.init) {
         await teggCtx.init(lifecycle);
       }
       try {
-        return await fn(ctx!);
+        return await fn(ctx);
       } finally {
         await teggCtx.destroy(lifecycle);
       }

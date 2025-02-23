@@ -1,28 +1,22 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
-import { App2 } from './fixtures/apps/app-multi-inject-multi/app/modules/app2/App';
-import { App } from './fixtures/apps/app-multi-inject-multi/app/modules/app/App';
+import { mm, MockApplication } from '@eggjs/mock';
+import { App2 } from './fixtures/apps/app-multi-inject-multi/app/modules/app2/App.js';
+import { App } from './fixtures/apps/app-multi-inject-multi/app/modules/app/App.js';
 
 describe('plugin/tegg/test/MultiInstanceInjectMultiInstance.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, 'fixtures/apps/app-multi-inject-multi'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/app-multi-inject-multi',
     });
     await app.ready();
   });

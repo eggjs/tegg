@@ -1,4 +1,4 @@
-import Base from 'sdk-base';
+import { Base } from 'sdk-base';
 import { ModelProtoManager } from './ModelProtoManager';
 import { DataSourceManager, OrmConfig } from './DataSourceManager';
 import Realm, { hookNames } from 'leoric';

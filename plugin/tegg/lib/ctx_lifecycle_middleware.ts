@@ -1,8 +1,8 @@
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import type { TEggPluginContext } from '../app/extend/context.js';
 import { EggContextImpl } from './EggContextImpl.js';
+import type { Context } from '@eggjs/core';
 
-export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, next: () => Promise<void>) {
+export async function ctxLifecycleMiddleware(ctx: Context, next: () => Promise<void>) {
   // should not recreate teggContext
   if (ctx[TEGG_CONTEXT]) {
     await next();
@@ -14,7 +14,7 @@ export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, nex
   const teggCtx = new EggContextImpl(ctx);
   // rootProto is set by tegg-controller-plugin global middleware(teggRootProto)
   // is used in EggControllerHook
-  const rootProto = (ctx as any)[ROOT_PROTO];
+  const rootProto = ctx[ROOT_PROTO];
   if (rootProto) {
     teggCtx.set(ROOT_PROTO, rootProto);
   }

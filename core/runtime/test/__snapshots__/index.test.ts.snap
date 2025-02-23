@@ -8,7 +8,6 @@ exports[`should export stable 1`] = `
   "ContextObjectGraph": [Function],
   "EggAlwaysNewObjectContainer": [Function],
   "EggContainerFactory": [Function],
-  "EggContext": undefined,
   "EggContextLifecycleUtil": LifecycleUtil {
     "lifecycleSet": Set {},
     "objLifecycleSet": Map {},

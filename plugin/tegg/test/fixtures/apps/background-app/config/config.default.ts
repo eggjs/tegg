@@ -1,8 +1,7 @@
-'use strict';
+import { EggAppInfo } from 'egg';
+import path from 'node:path';
 
-const path = require('path');
-
-module.exports = function(appInfo) {
+export default function(appInfo: EggAppInfo) {
   const config = {
     keys: 'test key',
     customLogger: {
@@ -15,6 +14,9 @@ module.exports = function(appInfo) {
         ignoreJSON: false,
       },
     },
+    backgroundTask: {
+      timeout: Infinity,
+    },
   };
   return config;
-};
+}

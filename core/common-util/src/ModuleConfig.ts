@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import fs, { promises as fsPromise } from 'node:fs';
 import path from 'node:path';
-import extend from 'extend2';
+import { extend } from 'extend2';
 import globby from 'globby';
 import { load as yamlLoad } from 'js-yaml';
 import type {

@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import type { EggProtoImplClass, MetaDataKey } from '@eggjs/tegg-types';
 
 export class MetadataUtil {

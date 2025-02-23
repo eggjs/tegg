@@ -32,7 +32,7 @@ export class CompatibleUtil {
 
   private static singletonModuleProxyFactory(app: Application, loadUnitInstance: LoadUnitInstance) {
     let deprecated = false;
-    return function(_, p: PropertyKey) {
+    return function(_: unknown, p: PropertyKey) {
       const proto = CompatibleUtil.getSingletonProto(p);
       const eggObj = EggContainerFactory.getEggObject(proto);
       if (!deprecated) {
@@ -52,11 +52,11 @@ export class CompatibleUtil {
     });
   }
 
-  static contextModuleProxyFactory(holder: object, ctx: Context, loadUnitInstance: LoadUnitInstance) {
+  static contextModuleProxyFactory(holder: Record<string, any>, ctx: Context, loadUnitInstance: LoadUnitInstance) {
     const cacheKey = `_${loadUnitInstance.name}Proxy`;
     if (!holder[cacheKey]) {
       let deprecated = false;
-      const getter = function(_, p: PropertyKey) {
+      const getter = function(_: unknown, p: PropertyKey) {
         const proto = CompatibleUtil.getRequestProto(p);
         const eggObj = EggContainerFactory.getEggObject(proto, p);
         if (!deprecated) {
@@ -71,18 +71,18 @@ export class CompatibleUtil {
     return holder[cacheKey];
   }
 
-  static contextModuleCompatible(context: Context, loadUnitInstances: LoadUnitInstance[]) {
-    const loadUnitInstanceMap: Record<PropertyKey, LoadUnitInstance> = loadUnitInstances.reduce((p, c) => {
+  static contextModuleCompatible(ctx: Context, loadUnitInstances: LoadUnitInstance[]) {
+    const loadUnitInstanceMap = loadUnitInstances.reduce((p, c) => {
       p[c.name] = c;
       return p;
-    }, {});
+    }, {} as Record<PropertyKey, LoadUnitInstance>);
 
-    Reflect.defineProperty(context, 'module', {
+    Reflect.defineProperty(ctx, 'module', {
       configurable: true,
       enumerable: true,
       get(this: Context): any {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const ctx: Context = this;
+        const ctx = this;
         if (!this._moduleProxy) {
           const ctxModule = Object.create(loadUnitInstanceMap);
           this._moduleProxy = ProxyUtil.safeProxy(ctxModule, (_, p: PropertyKey) => {

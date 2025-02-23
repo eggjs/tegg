@@ -12,7 +12,7 @@ import {
   CONTEXT_CLAZZ_BLACK_LIST,
   DEFAULT_APP_CLAZZ,
   DEFAULT_CONTEXT_CLAZZ,
-} from './EggAppLoader';
+} from './EggAppLoader.js';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
@@ -23,7 +23,7 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
   }
 
   async preCreate(ctx: LoadUnitLifecycleContext): Promise<void> {
-    const clazzList = ctx.loader.load();
+    const clazzList = await ctx.loader.load();
     const appProperties = ObjectUtils.getProperties(this.app);
     const ctxProperties = ObjectUtils.getProperties(this.app.context);
     for (const clazz of clazzList) {

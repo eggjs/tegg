@@ -1,28 +1,27 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import mm from 'egg-mock';
-import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService';
-import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
+import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.js';
+import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('plugin/tegg/test/EggCompatible.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, 'fixtures/apps/egg-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/egg-app',
     });
     await app.ready();
   });
@@ -131,8 +130,8 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
 
   it('should load egg object with no side effect', async () => {
     await app.mockModuleContextScope(async ctx => {
-      assert(ctx.counter === 0);
-      assert(ctx.counter === 1);
+      assert.equal(ctx.counter, 0);
+      assert.equal(ctx.counter, 1);
     });
   });
 

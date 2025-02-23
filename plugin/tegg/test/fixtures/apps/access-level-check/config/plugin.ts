@@ -6,7 +6,7 @@ const __dirname = path.dirname(__filename);
 
 export default {
   tracer: {
-    path: path.join(__dirname, '../../../../../node_modules/egg-tracer'),
+    package: '@eggjs/tracer',
     enable: true,
   },
   tegg: {

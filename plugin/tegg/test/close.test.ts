@@ -1,16 +1,10 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
+import { mm } from '@eggjs/mock';
 
 describe('plugin/tegg/test/close.test.ts', () => {
   it('should clean lifecycle hooks', async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     const app = mm.app({
-      baseDir: path.join(__dirname, 'fixtures/apps/schedule-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/schedule-app',
     });
     await app.ready();
     await app.close();

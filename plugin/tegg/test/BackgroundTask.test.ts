@@ -1,33 +1,32 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
-import mm from 'egg-mock';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
+// import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { BackgroundTaskHelper } from '@eggjs/tegg';
 import { EggContext, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
-import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService';
+import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
   const appDir = path.join(__dirname, 'fixtures/apps/background-app');
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
       baseDir: appDir,
-      framework: require.resolve('egg'),
     });
     await app.ready();
   });
@@ -39,9 +38,9 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
       .expect(200);
 
     const countService = await app.getEggObject(CountService);
-    assert(countService.count === 0);
+    assert.equal(countService.count, 0);
     await TimerUtil.sleep(1000);
-    assert(countService.count === 1);
+    assert.equal(countService.count, 1);
   });
 
   it('background timeout with humanize error info', async () => {
@@ -58,7 +57,8 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
   it('should release', async () => {
     let teggCtx: EggContext;
     await app.mockModuleContextScope(async ctx => {
-      teggCtx = ctx[TEGG_CONTEXT];
+      // teggCtx = ctx[TEGG_CONTEXT]
+      teggCtx = ctx.teggContext;
       const backgroundTaskHelper = await ctx.getEggObject(BackgroundTaskHelper);
       backgroundTaskHelper.run(async () => {
         // do nothing

@@ -1,4 +1,4 @@
-import { MockApplication } from 'egg-mock';
+import { MockApplication } from '@eggjs/mock';
 
 export default {
   mockUser(this: MockApplication) {

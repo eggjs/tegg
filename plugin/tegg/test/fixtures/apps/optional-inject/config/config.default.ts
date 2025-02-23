@@ -1,8 +1,7 @@
-'use strict';
+import path from 'node:path';
+import { EggAppInfo } from 'egg';
 
-const path = require('path');
-
-module.exports = function(appInfo) {
+export default (appInfo: EggAppInfo) => {
   const config = {
     keys: 'test key',
     customLogger: {
@@ -13,7 +12,7 @@ module.exports = function(appInfo) {
     security: {
       csrf: {
         ignoreJSON: false,
-      }
+      },
     },
   };
   return config;

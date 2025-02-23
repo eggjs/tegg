@@ -12,10 +12,10 @@ import {
   QualifierUtil,
 } from '@eggjs/tegg';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
-import { ModuleConfigLoader } from './ModuleConfigLoader';
+import { ModuleConfigLoader } from './ModuleConfigLoader.js';
+import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.js';
 
 export const APP_CLAZZ_BLACK_LIST = [
   'eggObjectFactory',
@@ -35,7 +35,7 @@ export class EggAppLoader implements Loader {
   private readonly app: Application;
   private readonly moduleConfigLoader: ModuleConfigLoader;
 
-  constructor(app) {
+  constructor(app: Application) {
     this.app = app;
     this.moduleConfigLoader = new ModuleConfigLoader(this.app);
   }
@@ -45,7 +45,7 @@ export class EggAppLoader implements Loader {
     let func: EggProtoImplClass;
     if (eggType === EggType.APP) {
       func = function() {
-        return app[name];
+        return app[name as keyof Application];
       } as any;
     } else {
       func = function() {
@@ -109,7 +109,7 @@ export class EggAppLoader implements Loader {
     return loggerNames.filter(t => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
   }
 
-  load(): EggProtoImplClass[] {
+  async load(): Promise<EggProtoImplClass[]> {
     const app = this.app;
     const appProperties = ObjectUtils.getProperties(app);
     const contextProperties = ObjectUtils.getProperties((app as any).context);

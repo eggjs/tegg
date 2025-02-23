@@ -1,7 +1,7 @@
 import { SingletonProto } from '@eggjs/tegg';
-import { SingletonHelloType } from '../FooType';
-import { SingletonHello } from '../decorator/SingletonHello';
-import { AbstractContextHello } from '../AbstractContextHello';
+import { SingletonHelloType } from '../FooType.js';
+import { SingletonHello } from '../decorator/SingletonHello.js';
+import { AbstractContextHello } from '../AbstractContextHello.js';
 
 @SingletonProto()
 @SingletonHello(SingletonHelloType.BAR)

@@ -1,8 +1,8 @@
 import { BackgroundTaskHelper, LifecycleHook, ObjectInitType, PrototypeUtil } from '@eggjs/tegg';
 import { EggContainerFactory, EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { ModuleHandler } from './ModuleHandler';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
+import { ModuleHandler } from './ModuleHandler.js';
 
 export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecycleContext, EggContext> {
   private readonly moduleHandler: ModuleHandler;
@@ -20,7 +20,7 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
     }
   }
 
-  async preCreate(_, ctx: EggContext): Promise<void> {
+  async preCreate(_: unknown, ctx: EggContext): Promise<void> {
     // root proto added in ctxLifecycleMiddleware
     if (!ctx.get(ROOT_PROTO)) {
       for (const proto of this.requestProtoList) {
@@ -36,7 +36,7 @@ export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecyc
     }
   }
 
-  async postCreate(_, ctx: EggContext): Promise<void> {
+  async postCreate(_: unknown, ctx: EggContext): Promise<void> {
     const rootProto = ctx.get(ROOT_PROTO);
     if (rootProto) {
       // Ensure ContextInitiator be called.

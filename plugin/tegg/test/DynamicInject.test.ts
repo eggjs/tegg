@@ -1,26 +1,20 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/tegg/test/DynamicInject.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, 'fixtures/apps/dynamic-inject-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/dynamic-inject-app',
     });
     await app.ready();
   });

@@ -115,7 +115,6 @@ exports[`should export stable 1`] = `
   "LifecyclePreLoad": [Function],
   "LifecycleUtil": [Function],
   "LoadUnitNameQualifierAttribute": Symbol(Qualifier.LoadUnitName),
-  "Logger": undefined,
   "METHOD_ACL": Symbol(EggPrototype#method#acl),
   "METHOD_AOP_MIDDLEWARES": Symbol(EggPrototype#method#aopMiddlewares),
   "METHOD_AOP_REGISTER_MAP": Symbol(EggPrototype#method#aopMiddlewaresRegister),
@@ -136,7 +135,6 @@ exports[`should export stable 1`] = `
   },
   "MethodValidator": [Function],
   "Middleware": [Function],
-  "ModuleConfigHolder": undefined,
   "ModuleConfigs": [Function],
   "ModuleQualifier": [Function],
   "MultiInstanceInfo": [Function],
@@ -165,7 +163,6 @@ exports[`should export stable 1`] = `
   "QueryParamMeta": [Function],
   "Request": [Function],
   "RequestParamMeta": [Function],
-  "RuntimeConfig": undefined,
   "SingletonProto": [Function],
   "aop": {
     "ASPECT_LIST": Symbol(EggPrototype#aspectList),

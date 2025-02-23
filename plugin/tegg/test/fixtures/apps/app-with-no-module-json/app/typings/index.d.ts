@@ -1,7 +1,7 @@
 import 'egg';
-import ConfigService from '../../modules/multi-module-service/ConfigService';
+import ConfigService from '../../modules/config-module/ConfigService.js';
 
-declare module 'egg' {
+declare module '@eggjs/core' {
   export interface EggModule {
     config: {
       configService: ConfigService;

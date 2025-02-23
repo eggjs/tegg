@@ -7,5 +7,6 @@ export * from '@eggjs/tegg-background-task';
 export * as aop from '@eggjs/aop-decorator';
 export * as orm from '@eggjs/tegg-orm-decorator';
 export * as schedule from '@eggjs/tegg-schedule-decorator';
-export { RuntimeConfig, ModuleConfigs, ModuleConfigHolder } from '@eggjs/tegg-common-util';
-export { Logger } from '@eggjs/tegg-types';
+export { ModuleConfigs } from '@eggjs/tegg-common-util';
+export type { RuntimeConfig, ModuleConfigHolder } from '@eggjs/tegg-common-util';
+export type { Logger } from '@eggjs/tegg-types';

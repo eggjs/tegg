@@ -1,4 +1,5 @@
 import { Subscription } from 'egg';
+import AppService from '../../modules/multi-module-service/AppService.js';
 
 export default class Foo extends Subscription {
   static get schedule() {
@@ -10,7 +11,9 @@ export default class Foo extends Subscription {
 
   async subscribe() {
     await this.ctx.beginModuleScope(async () => {
-      await this.ctx.app.module.multiModuleService.appService.findApp();
+      const appService = await this.ctx.getEggObject(AppService);
+      await appService.findApp();
+      // await this.ctx.app.module.multiModuleService.appService.findApp();
     });
   }
 }

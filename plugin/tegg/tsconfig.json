@@ -4,6 +4,5 @@
     "baseUrl": "./"
   },
   "exclude": [
-    "node_modules"
   ]
 }

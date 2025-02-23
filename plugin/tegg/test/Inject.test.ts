@@ -1,37 +1,28 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
-import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService';
-import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService';
-import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1';
-import { BarService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService2';
+import { mm, MockApplication } from '@eggjs/mock';
+import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService.js';
+import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService.js';
+import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1.js';
+import { BarService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService2.js';
 import {
   BarConstructorService1,
-} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService1';
+} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService1.js';
 import {
   BarConstructorService2,
-} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService2';
+} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService2.js';
 
 describe('plugin/tegg/test/Inject.test.ts', () => {
-  let app;
-
-  beforeEach(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
-  });
+  let app: MockApplication;
 
   afterEach(async () => {
     await app.close();
-    mm.restore();
+    return mm.restore();
   });
 
   describe('optional', () => {
     beforeEach(async () => {
       app = mm.app({
-        baseDir: path.join(__dirname, 'fixtures/apps/optional-inject'),
-        framework: require.resolve('egg'),
+        baseDir: 'apps/optional-inject',
       });
       await app.ready();
     });
@@ -58,8 +49,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
   describe('default initType qualifier', async () => {
     beforeEach(async () => {
       app = mm.app({
-        baseDir: path.join(__dirname, 'fixtures/apps/same-name-singleton-and-context-proto'),
-        framework: require.resolve('egg'),
+        baseDir: 'apps/same-name-singleton-and-context-proto',
       });
       await app.ready();
     });
@@ -95,8 +85,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
 
   it('should throw error if no proto found', async () => {
     app = mm.app({
-      baseDir: path.join(__dirname, 'fixtures/apps/invalid-inject'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/invalid-inject',
     });
     await assert.rejects(
       app.ready(),

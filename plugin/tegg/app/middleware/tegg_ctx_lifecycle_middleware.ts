@@ -1,5 +1,5 @@
-import ctxLifecycleMiddleware from '../../lib/ctx_lifecycle_middleware.js';
+import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.js';
 
-export default function() {
+export default () => {
   return ctxLifecycleMiddleware;
-}
+};

@@ -1,5 +1,5 @@
 import { Controller } from 'egg';
-import BackgroundService from '../../modules/multi-module-background/BackgroundService';
+import BackgroundService from '../../modules/multi-module-background/BackgroundService.js';
 
 export default class App extends Controller {
   async background() {

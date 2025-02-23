@@ -1,28 +1,21 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
-import { BarService } from './fixtures/apps/same-name-protos/app/modules/module-a/BarService';
+import { mm, MockApplication } from '@eggjs/mock';
+import { BarService } from './fixtures/apps/same-name-protos/app/modules/module-a/BarService.js';
 
 describe('plugin/tegg/test/SameProtoName.test.ts', () => {
-  let app;
-  const fixtureDir = path.join(__dirname, 'fixtures/apps/same-name-protos');
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: fixtureDir,
-      framework: require.resolve('egg'),
+      baseDir: 'apps/same-name-protos',
     });
     await app.ready();
   });

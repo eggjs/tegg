@@ -1,7 +1,9 @@
 const COUNTER = Symbol('Context#counter');
 
 export default {
-  get counter() {
+  [COUNTER]: 0,
+
+  get counter(): number {
     if (!this[COUNTER]) {
       this[COUNTER] = 0;
     }

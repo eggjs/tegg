@@ -11,7 +11,7 @@ export class EggContextHandler {
 
   getContextCallback(): EggContext {
     const ctx = this.app.currentContext;
-    return ctx && ctx.teggContext;
+    return ctx?.teggContext as EggContext;
   }
 
   async run<R>(eggContext: EggContext, fn: () => Promise<R>): Promise<R> {

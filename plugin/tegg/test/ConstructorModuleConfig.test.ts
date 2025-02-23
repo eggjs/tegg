@@ -1,28 +1,21 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
-import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo';
+import { mm, MockApplication } from '@eggjs/mock';
+import { Foo } from './fixtures/apps/constructor-module-config/modules/module-with-config/foo.js';
 
 describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
-  let app;
-  const fixtureDir = path.join(__dirname, 'fixtures/apps/constructor-module-config');
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: fixtureDir,
-      framework: require.resolve('egg'),
+      baseDir: 'apps/constructor-module-config',
     });
     await app.ready();
   });

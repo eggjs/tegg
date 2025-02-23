@@ -4,16 +4,15 @@ import {
   GlobalGraph, ModuleDescriptorDumper,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { EggAppLoader } from './EggAppLoader';
 import { Application } from 'egg';
+import { EggAppLoader } from './EggAppLoader.js';
 
 export class EggModuleLoader {
   app: Application;
   globalGraph: GlobalGraph;
 
-  constructor(app) {
+  constructor(app: Application) {
     this.app = app;
-    GlobalGraph.instance = this.globalGraph = this.buildAppGraph();
   }
 
   private async loadApp() {
@@ -22,7 +21,7 @@ export class EggModuleLoader {
     this.app.moduleHandler.loadUnits.push(loadUnit);
   }
 
-  private buildAppGraph() {
+  private async buildAppGraph() {
     for (const plugin of Object.values(this.app.plugins)) {
       if (!plugin.enable) continue;
       const modulePlugin = this.app.moduleReferences.find(t => t.path === plugin.path);
@@ -30,7 +29,7 @@ export class EggModuleLoader {
         modulePlugin.optional = false;
       }
     }
-    const moduleDescriptors = LoaderFactory.loadApp(this.app.moduleReferences);
+    const moduleDescriptors = await LoaderFactory.loadApp(this.app.moduleReferences);
     for (const moduleDescriptor of moduleDescriptors) {
       ModuleDescriptorDumper.dump(moduleDescriptor, {
         dumpDir: this.app.baseDir,
@@ -56,6 +55,7 @@ export class EggModuleLoader {
   }
 
   async load() {
+    GlobalGraph.instance = this.globalGraph = await this.buildAppGraph();
     await this.loadApp();
     await this.loadModule();
   }

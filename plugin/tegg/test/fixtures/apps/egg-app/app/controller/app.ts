@@ -1,9 +1,13 @@
 import { Controller } from 'egg';
+import TraceService from '../../modules/multi-module-service/TraceService.js';
+import AppService from '../../modules/multi-module-service/AppService.js';
 
 export default class App extends Controller {
   async find() {
-    const traceId = await this.ctx.app.module.multiModuleService.traceService.getTraceId();
-    const app = await this.ctx.module.multiModuleService.appService.findApp(this.ctx.query.name);
+    const traceService = await this.ctx.app.getEggObject<TraceService>(TraceService);
+    const appService = await this.ctx.app.getEggObject<AppService>(AppService);
+    const traceId = await traceService.getTraceId();
+    const app = await appService.findApp(this.ctx.query.name);
     this.ctx.body = {
       traceId,
       app,
@@ -11,8 +15,10 @@ export default class App extends Controller {
   }
 
   async find2() {
-    const traceId = await this.ctx.app.module.multiModuleService.traceService.getTraceId();
-    const app = await this.ctx.module.multiModuleService.appService.findApp(this.ctx.query.name);
+    const traceService = await this.ctx.app.getEggObject<TraceService>(TraceService);
+    const appService = await this.ctx.app.getEggObject<AppService>(AppService);
+    const traceId = await traceService.getTraceId();
+    const app = await appService.findApp(this.ctx.query.name);
     this.ctx.body = {
       traceId,
       app,
@@ -21,8 +27,10 @@ export default class App extends Controller {
 
   async save() {
     const app = this.ctx.request.body;
-    const traceId = await this.ctx.app.module.multiModuleService.traceService.getTraceId();
-    await this.ctx.module.multiModuleService.appService.save(app);
+    const traceService = await this.ctx.app.getEggObject<TraceService>(TraceService);
+    const appService = await this.ctx.app.getEggObject<AppService>(AppService);
+    const traceId = await traceService.getTraceId();
+    await appService.save(app);
     this.ctx.body = {
       success: true,
       traceId,

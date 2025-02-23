@@ -1,33 +1,27 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('test/app/extend/application.unittest.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../../../');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../../fixtures/apps/egg-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/egg-app',
     });
     await app.ready();
   });
 
-  it('should work', async function() {
+  it('should work', async () => {
     await app.mockModuleContextScope(async () => {
-      const traceId = await app.module.multiModuleService.traceService.getTraceId();
+      const traceId = await (app.module as any).multiModuleService.traceService.getTraceId();
       assert(traceId);
     });
   });

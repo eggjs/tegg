@@ -2,5 +2,6 @@
   "name": "multi-module-common",
   "eggModule": {
     "name": "multi-module-common"
-  }
+  },
+  "type": "module"
 }

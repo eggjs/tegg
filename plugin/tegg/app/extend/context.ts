@@ -1,22 +1,22 @@
-import type { Context } from 'egg';
-import type { EggContext } from '@eggjs/tegg-runtime';
+import type { Context } from '@eggjs/core';
+import type { EggContext as TEggContext } from '@eggjs/tegg-runtime';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import ctxLifecycleMiddleware from '../../lib/ctx_lifecycle_middleware.js';
-import { EggProtoImplClass, PrototypeUtil, QualifierInfo } from '@eggjs/tegg';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggProtoImplClass, PrototypeUtil, type QualifierInfo } from '@eggjs/tegg';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
+import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.js';
 
 export interface TEggPluginContext extends Context {
-  [TEGG_CONTEXT]: EggContext;
+  [TEGG_CONTEXT]: TEggContext;
 }
 
 export default {
-  [TEGG_CONTEXT]: undefined as EggContext | undefined,
+  [TEGG_CONTEXT]: undefined as TEggContext | undefined,
 
   async beginModuleScope(this: TEggPluginContext, func: () => Promise<void>) {
     await ctxLifecycleMiddleware(this, func);
   },
 
-  get teggContext(): EggContext {
+  get teggContext(): TEggContext {
     if (!this[TEGG_CONTEXT]) {
       throw new Error('tegg context have not ready, should call after teggCtxLifecycleMiddleware');
     }
