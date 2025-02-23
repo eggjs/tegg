@@ -1,3 +1,5 @@
 {
-  "name": "egg-app"
+  "name": "egg-app",
+  "type": "module"
 }
+

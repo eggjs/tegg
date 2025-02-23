@@ -1,28 +1,21 @@
 // import assert from 'node:assert/strict';
-// import path from 'node:path';
-// import mm from 'egg-mock';
-// import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used';
+// import { mm, MockApplication } from '@eggjs/mock';
+// import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used.js';
 
 // describe('plugin/tegg/test/OptionalPluginModule.test.ts', () => {
-//   let app;
-//   const fixtureDir = path.join(__dirname, 'fixtures/apps/plugin-module');
+//   let app: MockApplication;
 
 //   after(async () => {
 //     await app.close();
 //   });
 
 //   afterEach(() => {
-//     mm.restore();
+//     return mm.restore();
 //   });
 
 //   before(async () => {
-//     mm(process.env, 'EGG_TYPESCRIPT', true);
-//     mm(process, 'cwd', () => {
-//       return path.join(__dirname, '..');
-//     });
 //     app = mm.app({
-//       baseDir: fixtureDir,
-//       framework: require.resolve('egg'),
+//       baseDir: 'apps/plugin-module',
 //     });
 //     await app.ready();
 //   });

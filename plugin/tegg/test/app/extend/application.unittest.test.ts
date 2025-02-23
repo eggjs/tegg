@@ -1,10 +1,5 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { mm, MockApplication } from '@eggjs/mock';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('test/app/extend/application.unittest.test.ts', () => {
   let app: MockApplication;
@@ -14,16 +9,12 @@ describe('test/app/extend/application.unittest.test.ts', () => {
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../../../');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../../fixtures/apps/egg-app'),
+      baseDir: 'apps/egg-app',
     });
     await app.ready();
   });

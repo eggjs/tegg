@@ -1,14 +1,8 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { mm, MockApplication } from '@eggjs/mock';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
   let app: MockApplication;
-  const fixtureDir = path.join(__dirname, 'fixtures/apps/inject-module-config');
 
   after(async () => {
     await app.close();
@@ -19,12 +13,8 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: fixtureDir,
+      baseDir: 'apps/inject-module-config',
     });
     await app.ready();
   });

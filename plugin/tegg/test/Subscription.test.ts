@@ -1,37 +1,31 @@
-// import assert from 'node:assert/strict';
-// import path from 'node:path';
-// import mm from 'egg-mock';
-// import AppService from './fixtures/apps/schedule-app/modules/multi-module-service/AppService';
+import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
+import AppService from './fixtures/apps/schedule-app/modules/multi-module-service/AppService.js';
 
-// describe('plugin/tegg/test/Subscription.test.ts', () => {
-//   let app;
+describe('plugin/tegg/test/Subscription.test.ts', () => {
+  let app: MockApplication;
 
-//   after(async () => {
-//     await app.close();
-//   });
+  after(async () => {
+    await app.close();
+  });
 
-//   afterEach(() => {
-//     mm.restore();
-//   });
+  afterEach(() => {
+    return mm.restore();
+  });
 
-//   before(async () => {
-//     mm(process.env, 'EGG_TYPESCRIPT', true);
-//     mm(process, 'cwd', () => {
-//       return path.join(__dirname, '..');
-//     });
-//     app = mm.app({
-//       baseDir: path.join(__dirname, 'fixtures/apps/schedule-app'),
-//       framework: require.resolve('egg'),
-//     });
-//     await app.ready();
-//   });
+  before(async () => {
+    app = mm.app({
+      baseDir: 'apps/schedule-app',
+    });
+    await app.ready();
+  });
 
-//   it('should work', async () => {
-//     let called = false;
-//     mm(AppService.prototype, 'findApp', () => {
-//       called = true;
-//     });
-//     await app.runSchedule('foo');
-//     assert(called);
-//   });
-// });
+  it('should work', async () => {
+    let called = false;
+    mm(AppService.prototype, 'findApp', () => {
+      called = true;
+    });
+    await app.runSchedule('foo');
+    assert(called);
+  });
+});

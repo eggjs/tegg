@@ -1,38 +1,37 @@
-// import assert from 'node:assert/strict';
-// import path from 'node:path';
-// import mm from 'egg-mock';
+import assert from 'node:assert/strict';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
 
-// describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
-//   let app;
-//   const fixtureDir = path.join(__dirname, 'fixtures/apps/app-with-no-module-json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-//   after(async () => {
-//     await app.close();
-//   });
+describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
+  let app: MockApplication;
+  const fixtureDir = path.join(__dirname, 'fixtures/apps/app-with-no-module-json');
 
-//   afterEach(() => {
-//     mm.restore();
-//   });
+  after(async () => {
+    await app.close();
+  });
 
-//   before(async () => {
-//     mm(process.env, 'EGG_TYPESCRIPT', true);
-//     mm(process, 'cwd', () => {
-//       return path.join(__dirname, '..');
-//     });
-//     app = mm.app({
-//       baseDir: fixtureDir,
-//       framework: require.resolve('egg'),
-//     });
-//     await app.ready();
-//   });
+  afterEach(() => {
+    return mm.restore();
+  });
 
-//   it('should work', async () => {
-//     await app.httpRequest()
-//       .get('/config')
-//       .expect(200)
-//       .expect(res => {
-//         const baseDir = res.body.baseDir;
-//         assert(baseDir === fixtureDir);
-//       });
-//   });
-// });
+  before(async () => {
+    app = mm.app({
+      baseDir: 'apps/app-with-no-module-json',
+    });
+    await app.ready();
+  });
+
+  it('should work', async () => {
+    await app.httpRequest()
+      .get('/config')
+      .expect(200)
+      .expect(res => {
+        const baseDir = res.body.baseDir;
+        assert.equal(baseDir, fixtureDir);
+      });
+  });
+});

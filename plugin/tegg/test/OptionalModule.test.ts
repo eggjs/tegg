@@ -1,30 +1,23 @@
 // import assert from 'node:assert/strict';
-// import path from 'node:path';
-// import mm from 'egg-mock';
-// import { RootProto } from './fixtures/apps/optional-module/app/modules/root/Root';
-// import { UsedProto } from './fixtures/apps/optional-module/node_modules/used/Used';
-// import { UnusedProto } from './fixtures/apps/optional-module/node_modules/unused/Unused';
+// import { mm, MockApplication } from '@eggjs/mock';
+// import { RootProto } from './fixtures/apps/optional-module/app/modules/root/Root.js';
+// import { UsedProto } from './fixtures/apps/optional-module/node_modules/used/Used.js';
+// import { UnusedProto } from './fixtures/apps/optional-module/node_modules/unused/Unused.js';
 
 // describe('plugin/tegg/test/OptionalModule.test.ts', () => {
-//   let app;
-//   const fixtureDir = path.join(__dirname, 'fixtures/apps/optional-module');
+//   let app: MockApplication;
 
 //   after(async () => {
 //     await app.close();
 //   });
 
 //   afterEach(() => {
-//     mm.restore();
+//     return mm.restore();
 //   });
 
 //   before(async () => {
-//     mm(process.env, 'EGG_TYPESCRIPT', true);
-//     mm(process, 'cwd', () => {
-//       return path.join(__dirname, '..');
-//     });
 //     app = mm.app({
-//       baseDir: fixtureDir,
-//       framework: require.resolve('egg'),
+//       baseDir: 'apps/optional-module',
 //     });
 //     await app.ready();
 //   });

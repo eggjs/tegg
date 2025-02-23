@@ -1,12 +1,12 @@
 import 'egg';
-import TraceService from '../../modules/multi-module-service/TraceService';
-import AppService from '../../modules/multi-module-service/AppService';
+import { HelloService } from '../../modules/dynamic-inject-module/HelloService.js';
+import { SingletonHelloService } from '../../modules/dynamic-inject-module/SingletonHelloService.js';
 
-declare module 'egg' {
+declare module '@eggjs/core' {
   export interface EggModule {
-    multiModuleService: {
-      traceService: TraceService;
-      appService: AppService;
+    dynamicInjectModule: {
+      helloService: HelloService;
+      singletonHelloService: SingletonHelloService;
     }
   }
 }
