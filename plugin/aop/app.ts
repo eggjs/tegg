@@ -37,8 +37,8 @@ export default class AopAppHook implements ILifecycleBoot {
   async didLoad() {
     await this.app.moduleHandler.ready();
     assert(GlobalGraph.instance, 'GlobalGraph.instance is not set');
-    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
-    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
+    GlobalGraph.instance.registerBuildHook(crossCutGraphHook);
+    GlobalGraph.instance.registerBuildHook(pointCutGraphHook);
     this.aopContextHook = new AopContextHook(this.app.moduleHandler);
     this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
   }
