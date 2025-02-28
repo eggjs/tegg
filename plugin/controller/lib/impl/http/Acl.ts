@@ -7,8 +7,9 @@ export function aclMiddlewareFactory(controllerMeta: HTTPControllerMeta, methodM
   const code = controllerMeta.getMethodAcl(methodMeta);
   return async function aclMiddleware(ctx: EggContext, next: Next) {
     try {
+      // @ts-expect-error ctx.acl is implemented in extend/context.ts on top level plugin, framework or app
       await ctx.acl(code);
-    } catch (e) {
+    } catch (e: any) {
       const { redirectUrl, status } = e.data || {};
       if (!redirectUrl) {
         throw e;

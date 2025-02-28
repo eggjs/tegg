@@ -14,6 +14,6 @@
     "egg": "4"
   },
   "devDependencies": {
-    "egg-bin": "6"
+    "@eggjs/bin": "7"
   }
 }

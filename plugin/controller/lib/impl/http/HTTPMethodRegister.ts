@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict';
-import { Context, Router } from 'egg';
+import assert from 'node:assert';
+import { Context, Router } from '@eggjs/core';
 import {
   EggContext,
   HTTPControllerMeta,
@@ -13,13 +13,13 @@ import {
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { RootProtoManager } from '../../RootProtoManager';
 import pathToRegexp from 'path-to-regexp';
-import { aclMiddlewareFactory } from './Acl';
-import { HTTPRequest } from './Req';
-import { RouterConflictError } from '../../errors';
-import { FrameworkErrorFormater } from 'egg-errors';
 import { EggRouter } from '@eggjs/router';
+import { FrameworkErrorFormater } from 'egg-errors';
+import { RootProtoManager } from '../../RootProtoManager.js';
+import { aclMiddlewareFactory } from './Acl.js';
+import { HTTPRequest } from './Req.js';
+import { RouterConflictError } from '../../errors.js';
 
 const noop = () => {
   // ...
@@ -78,7 +78,7 @@ export class HTTPMethodRegister {
           }
           case HTTPParamType.PARAM: {
             const pathParam: PathParamMeta = param as PathParamMeta;
-            args[index] = ctx.params[pathParam.name];
+            args[index] = (ctx.params as Record<string, string>)[pathParam.name];
             break;
           }
           case HTTPParamType.QUERY: {
@@ -130,13 +130,13 @@ export class HTTPMethodRegister {
     this.checkDuplicateInRouter(this.router);
 
     // 2. check duplicate with host tegg controller
-    let hostRouter;
+    let hostRouter: Router | undefined;
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [];
     hosts.forEach(h => {
       if (h) {
         hostRouter = this.checkRouters.get(h);
         if (!hostRouter) {
-          hostRouter = new EggRouter({ sensitive: true }, {});
+          hostRouter = new EggRouter({ sensitive: true }, this.router.app);
           this.checkRouters.set(h, hostRouter!);
         }
       }
@@ -148,7 +148,7 @@ export class HTTPMethodRegister {
   }
 
   private registerToRouter(router: Router) {
-    const routerFunc = router[this.methodMeta.method.toLowerCase()];
+    const routerFunc = router[this.methodMeta.method.toLowerCase() as keyof Router] as Function;
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     Reflect.apply(routerFunc, router, [ methodName, methodRealPath, noop ]);
@@ -168,7 +168,7 @@ export class HTTPMethodRegister {
   register(rootProtoManager: RootProtoManager) {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
-    const routerFunc = this.router[this.methodMeta.method.toLowerCase()];
+    const routerFunc = this.router[this.methodMeta.method.toLowerCase() as keyof Router] as Function;
     const methodMiddlewares = this.controllerMeta.getMethodMiddlewares(this.methodMeta);
     const aclMiddleware = aclMiddlewareFactory(this.controllerMeta, this.methodMeta);
     if (aclMiddleware) {

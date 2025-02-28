@@ -1,9 +1,9 @@
 import { Base } from 'sdk-base';
 import path from 'node:path';
-import { Application } from 'egg';
+import type { EggCore as Application } from '@eggjs/core';
 import { EggLoadUnitType, LoadUnit } from '@eggjs/tegg-metadata';
 import { LoadUnitInstance } from '@eggjs/tegg-runtime';
-import { CONTROLLER_LOAD_UNIT } from './ControllerLoadUnit';
+import { CONTROLLER_LOAD_UNIT } from './ControllerLoadUnit.js';
 
 export class ControllerLoadUnitHandler extends Base {
   private readonly app: Application;
