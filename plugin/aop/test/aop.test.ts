@@ -1,26 +1,20 @@
-import mm from 'egg-mock';
-import path from 'node:path';
 import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/aop/test/aop.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   after(async () => {
     await app.close();
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, 'fixtures/apps/aop-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/aop-app',
     });
     await app.ready();
   });

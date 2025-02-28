@@ -69,7 +69,6 @@
     "egg": "4",
     "@eggjs/mock": "6",
     "@eggjs/tracer": "^3.0.0",
-    "globby": "^11.1.0",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"

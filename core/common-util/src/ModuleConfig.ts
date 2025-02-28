@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import fs, { promises as fsPromise } from 'node:fs';
 import path from 'node:path';
 import { extend } from 'extend2';
-import globby from 'globby';
+import { globbySync } from 'globby';
 import { load as yamlLoad } from 'js-yaml';
 import type {
   InlineModuleReferenceConfig,
@@ -79,7 +79,7 @@ export class ModuleConfigUtil {
   private static readModuleReferenceFromScan(baseDir: string, options?: ReadModuleReferenceOptions): readonly ModuleReference[] {
     const ref: ModuleReference[] = [];
     const realOptions: ReadModuleReferenceOptions = Object.assign({}, DEFAULT_READ_MODULE_REF_OPTS, options);
-    const packagePaths = globby.sync([
+    const packagePaths = globbySync([
       '**/package.json',
       // not load node_modules
       '!**/node_modules',

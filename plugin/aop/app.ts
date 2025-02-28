@@ -1,4 +1,5 @@
-import { Application } from 'egg';
+import assert from 'node:assert';
+import { Application, ILifecycleBoot } from 'egg';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import {
   crossCutGraphHook,
@@ -7,10 +8,10 @@ import {
   LoadUnitAopHook,
   pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
-import { AopContextHook } from './lib/AopContextHook';
+import { AopContextHook } from './lib/AopContextHook.js';
 import { GlobalGraph } from '@eggjs/tegg-metadata';
 
-export default class AopAppHook {
+export default class AopAppHook implements ILifecycleBoot {
   private readonly app: Application;
 
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
@@ -31,17 +32,18 @@ export default class AopAppHook {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
-    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
-    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
   }
 
   async didLoad() {
     await this.app.moduleHandler.ready();
+    assert(GlobalGraph.instance, 'GlobalGraph.instance is not set');
+    GlobalGraph.instance.registerBuildHook(crossCutGraphHook);
+    GlobalGraph.instance.registerBuildHook(pointCutGraphHook);
     this.aopContextHook = new AopContextHook(this.app.moduleHandler);
     this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
   }
 
-  beforeClose() {
+  async beforeClose() {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);

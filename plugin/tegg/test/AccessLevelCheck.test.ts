@@ -10,7 +10,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
   });
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
@@ -31,7 +31,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
 
   it('should work: private has some name', async () => {
     await app.mockModuleContextScope(async ctx => {
-      const mainService: MainService = await ctx.getEggObject(MainService);
+      const mainService = await ctx.getEggObject(MainService);
       assert(mainService);
       assert.equal(mainService.invokeFoo(), 'moduleMain-FooService-Method');
     });
@@ -39,7 +39,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
 
   it('should work: public/private has some name', async () => {
     await app.mockModuleContextScope(async ctx => {
-      const mainService: MainService = await ctx.getEggObject(MainService);
+      const mainService = await ctx.getEggObject(MainService);
       assert(mainService);
       assert.equal(mainService.invokeBar(), 'moduleMain-BarService-Method');
     });
