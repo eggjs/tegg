@@ -2,5 +2,6 @@
   "name": "aop-module",
   "eggModule": {
     "name": "aopModule"
-  }
+  },
+  "type": "module"
 }

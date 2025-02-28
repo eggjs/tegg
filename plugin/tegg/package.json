@@ -69,7 +69,6 @@
   },
   "devDependencies": {
     "@types/mocha": "10",
-    "mocha": "10",
     "@eggjs/tegg-config": "^3.52.0",
     "@eggjs/bin": "7",
     "@types/node": "22",

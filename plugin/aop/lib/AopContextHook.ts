@@ -46,7 +46,7 @@ export class AopContextHook implements LifecycleHook<EggContextLifecycleContext,
     }
   }
 
-  async preCreate(_, ctx: EggContext): Promise<void> {
+  async preCreate(_: unknown, ctx: EggContext): Promise<void> {
     // compatible with egg controller
     // add context aspect to ctx
     if (!ctx.get(ROOT_PROTO)) {

@@ -1,12 +1,10 @@
-import 'egg';
-import TraceService from '../../modules/multi-module-service/TraceService';
-import AppService from '../../modules/multi-module-service/AppService';
+import { Hello, SingletonHello } from '../../modules/aop-module/Hello.js';
 
-declare module 'egg' {
+declare module '@eggjs/core' {
   export interface EggModule {
-    multiModuleService: {
-      traceService: TraceService;
-      appService: AppService;
+    aopModule: {
+      hello: Hello;
+      singletonHello: SingletonHello;
     }
   }
 }
