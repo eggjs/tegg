@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'vitest';
-import { MapUtil } from '..';
+import { MapUtil } from '../src/index.js';
 
 describe('test/MapUtil.test.ts', () => {
   it('should set value if key not exists', () => {

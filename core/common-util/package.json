@@ -37,12 +37,12 @@
     "directory": "core/common-util"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@eggjs/tegg-types": "^3.52.0",
     "extend2": "^4.0.0",
-    "globby": "^11.1.0",
+    "globby": "^14.1.0",
     "js-yaml": "^4.1.0"
   },
   "publishConfig": {

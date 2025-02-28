@@ -1,5 +1,5 @@
 import path from 'node:path';
-import globby from 'globby';
+import { globbySync } from 'globby';
 import { EggProtoImplClass } from '@eggjs/core-decorator';
 import { Loader } from '@eggjs/tegg-metadata';
 import { LoaderUtil } from './LoaderUtil.js';
@@ -13,7 +13,7 @@ export class TestLoader implements Loader {
 
   async load(): Promise<EggProtoImplClass[]> {
     const protoClassList: EggProtoImplClass[] = [];
-    const files = globby.sync([
+    const files = globbySync([
       '**/*',
       '!**/node_modules',
       '!**/*.d.ts',

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'vitest';
-import { TimerUtil } from '..';
+import { TimerUtil } from '../src/index.js';
 
 describe('test/TimerUtil.test.ts', () => {
   it('should sleep work', async () => {
