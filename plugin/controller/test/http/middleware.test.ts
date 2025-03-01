@@ -1,26 +1,16 @@
-import mm from 'egg-mock';
-import path from 'node:path';
 import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/http/middleware.test.ts', () => {
-  let app;
-
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
+  let app: MockApplication;
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../fixtures/apps/controller-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/controller-app',
     });
     await app.ready();
   });
@@ -35,7 +25,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       .get('/middleware/global')
       .expect(200)
       .expect(res => {
-        assert(res.body.count === 0);
+        assert.equal(res.body.count, 0);
       });
   });
 
@@ -45,7 +35,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       .get('/middleware/method')
       .expect(200)
       .expect(res => {
-        assert(res.body.log === 'use middleware');
+        assert.equal(res.body.log, 'use middleware');
       });
   });
 

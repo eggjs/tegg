@@ -1,26 +1,16 @@
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
-import mm from 'egg-mock';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/http/proto-poisoning.test.ts', () => {
-  let app;
-
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
+  let app: MockApplication;
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../fixtures/apps/proto-poisoning'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/proto-poisoning',
     });
     await app.ready();
   });

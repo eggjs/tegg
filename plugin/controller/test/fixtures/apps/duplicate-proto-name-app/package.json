@@ -1,3 +1,5 @@
 {
-  "name": "controller-app"
+  "name": "controller-app",
+  "type": "module"
 }
+

@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.52.0",
-    "@eggjs/router": "^2.0.0",
+    "@eggjs/router": "^3.0.5",
     "@eggjs/tegg-config": "^3.52.0",
     "@eggjs/tegg-plugin": "^3.52.0",
     "@types/mocha": "^10.0.1",

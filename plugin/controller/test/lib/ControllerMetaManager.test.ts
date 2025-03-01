@@ -1,47 +1,34 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm from 'egg-mock';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
-
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   describe('controllers have same controller name', () => {
     it('should throw error', async () => {
-      let app;
-      mm(process, 'cwd', () => {
-        return path.join(__dirname, '../..');
-      });
+      let app: MockApplication;
       await assert.rejects(async () => {
         app = mm.app({
-          baseDir: path.join(__dirname, '../fixtures/apps/duplicate-controller-name-app'),
-          framework: require.resolve('egg'),
+          baseDir: 'apps/duplicate-controller-name-app',
         });
         await app.ready();
       }, /duplicate controller name AppController/);
-      await app.close();
+      await app!.close();
     });
   });
 
   describe('controllers have same proto name', () => {
     it('should throw error', async () => {
-      let app;
-      mm(process, 'cwd', () => {
-        return path.join(__dirname, '../..');
-      });
+      let app: MockApplication;
       await assert.rejects(async () => {
         app = mm.app({
-          baseDir: path.join(__dirname, '../fixtures/apps/duplicate-proto-name-app'),
-          framework: require.resolve('egg'),
+          baseDir: 'apps/duplicate-proto-name-app',
         });
         await app.ready();
       }, /duplicate proto name appController/);
-      await app.close();
+      await app!.close();
     });
   });
 });

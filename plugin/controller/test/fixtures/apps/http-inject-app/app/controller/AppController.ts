@@ -10,7 +10,7 @@ import {
   Cookies,
   HTTPCookies,
 } from '@eggjs/tegg';
-import { countMw } from '../middleware/count_mw';
+import { countMw } from '../middleware/count_mw.js';
 
 @HTTPController({
   path: '/apps',

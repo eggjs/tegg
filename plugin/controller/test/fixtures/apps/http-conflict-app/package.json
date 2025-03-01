@@ -1,3 +1,4 @@
 {
-  "name": "controller-app"
+  "name": "http-conflict-app",
+  "type": "module"
 }

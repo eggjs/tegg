@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import KoaRouter from '@eggjs/router';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { EggRouter } from '@eggjs/router';
 import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
@@ -8,17 +9,19 @@ import {
   LoadUnit,
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
-import { EggControllerLoader } from '../../lib/EggControllerLoader';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../lib/ControllerLoadUnit';
-import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
-import { EggControllerPrototypeHook } from '../../lib/EggControllerPrototypeHook';
-import { HTTPMethodRegister } from '../../lib/impl/http/HTTPMethodRegister';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
+import { EggControllerLoader } from '../../lib/EggControllerLoader.js';
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../lib/ControllerLoadUnit.js';
+import { EggControllerPrototypeHook } from '../../lib/EggControllerPrototypeHook.js';
+import { HTTPMethodRegister } from '../../lib/impl/http/HTTPMethodRegister.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
-
   describe('method/path is registered', () => {
-    const router = new KoaRouter();
+    const router = new EggRouter({}, {} as any);
     const controllerPrototypeHook = new EggControllerPrototypeHook();
     let loadUnit: LoadUnit;
 

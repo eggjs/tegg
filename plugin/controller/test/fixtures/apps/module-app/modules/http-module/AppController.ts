@@ -15,7 +15,7 @@ export class AppController {
     path: '/apps/:id',
   })
   async get(@Context() ctx: EggContext, @HTTPParam() id: string) {
-    const traceId = await ctx.tracer.traceId;
+    const traceId = ctx.tracer.traceId;
     return {
       traceId,
       app: 'mock-app:' + id,

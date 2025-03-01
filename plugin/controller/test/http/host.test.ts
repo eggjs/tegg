@@ -1,26 +1,16 @@
-import mm from 'egg-mock';
-import path from 'node:path';
 import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/http/host.test.ts', () => {
-  let app;
-
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
+  let app: MockApplication;
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../fixtures/apps/host-controller-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/host-controller-app',
     });
     await app.ready();
   });
@@ -37,7 +27,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .expect(200)
       .expect(res => {
         console.log('res: ', res.text, res.body);
-        assert(res.text === 'foo');
+        assert.equal(res.text, 'foo');
       });
   });
 
@@ -48,7 +38,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'bar.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'bar');
+        assert.equal(res.text, 'bar');
       });
   });
 
@@ -64,7 +54,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'apple.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'apple');
+        assert.equal(res.text, 'apple');
       });
 
     await app.httpRequest()
@@ -72,7 +62,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'a.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'a');
+        assert.equal(res.text, 'a');
       });
   });
 
@@ -83,7 +73,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'o.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'orange');
+        assert.equal(res.text, 'orange');
       });
 
     await app.httpRequest()
@@ -91,7 +81,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'orange.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'orange');
+        assert.equal(res.text, 'orange');
       });
 
     await app.httpRequest()
@@ -99,7 +89,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'juice.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'juice');
+        assert.equal(res.text, 'juice');
       });
 
     await app.httpRequest()

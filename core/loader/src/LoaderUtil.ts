@@ -62,8 +62,9 @@ export class LoaderUtil {
     try {
       exports = await import(filePath);
     } catch (e: any) {
-      e.message = '[tegg/loader] load ' + filePath + ' failed: ' + e.message;
-      throw e;
+      console.error('[tegg/loader] loadFile %s error:', filePath);
+      console.error(e);
+      throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, { cause: e });
     }
     const clazzList: EggProtoImplClass[] = [];
     const exportNames = Object.keys(exports);

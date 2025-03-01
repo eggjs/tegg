@@ -1,27 +1,16 @@
-import mm from 'egg-mock';
-import path from 'node:path';
 import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/http/module.test.ts', () => {
-  let app;
-
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
+  let app: MockApplication;
 
   afterEach(() => {
-    mm.restore();
     delete (global as any).constructAppService;
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../fixtures/apps/module-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/module-app',
     });
     await app.ready();
   });
@@ -36,7 +25,7 @@ describe('plugin/controller/test/http/module.test.ts', () => {
       .get('/apps/foo')
       .expect(200)
       .expect(res => {
-        assert(res.body.app === 'mock-app:foo');
+        assert.equal(res.body.app, 'mock-app:foo');
       });
   });
 
@@ -46,7 +35,7 @@ describe('plugin/controller/test/http/module.test.ts', () => {
       .get('/apps/foo')
       .expect(200)
       .expect(res => {
-        assert(res.body.app === 'mock-app:foo');
+        assert.equal(res.body.app, 'mock-app:foo');
       });
     assert(!(global as any).constructAppService);
   });
@@ -57,7 +46,7 @@ describe('plugin/controller/test/http/module.test.ts', () => {
       .get('/apps2/foo')
       .expect(200)
       .expect(res => {
-        assert(res.body.app === 'mock-app:foo');
+        assert.equal(res.body.app, 'mock-app:foo');
       });
     assert((global as any).constructAppService);
   });

@@ -5,11 +5,11 @@ import {
   Middleware,
   Inject,
 } from '@eggjs/tegg';
-import AppService from '../../modules/multi-module-service/AppService';
-import { CountAdvice } from '../../modules/multi-module-common/advice/CountAdvice';
-import { FooControllerAdvice } from '../../modules/multi-module-common/advice/FooControllerAdvice';
-import { FooMethodAdvice } from '../../modules/multi-module-common/advice/FooMethodAdvice';
-import { BarMethodAdvice } from '../../modules/multi-module-common/advice/BarMethodAdvice';
+import AppService from '../../modules/multi-module-service/AppService.js';
+import { CountAdvice } from '../../modules/multi-module-common/advice/CountAdvice.js';
+import { FooControllerAdvice } from '../../modules/multi-module-common/advice/FooControllerAdvice.js';
+import { FooMethodAdvice } from '../../modules/multi-module-common/advice/FooMethodAdvice.js';
+import { BarMethodAdvice } from '../../modules/multi-module-common/advice/BarMethodAdvice.js';
 
 @HTTPController({
   path: '/aop/middleware',

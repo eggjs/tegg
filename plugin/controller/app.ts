@@ -1,23 +1,23 @@
-import { Application } from 'egg';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit';
-import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook';
+import type { EggCore as Application, ILifecycleBoot } from '@eggjs/core';
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.js';
+import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.js';
 import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
-import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister';
-import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory';
-import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler';
+import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.js';
+import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.js';
+import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.js';
 import { LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
-import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
-import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
-import { RootProtoManager } from './lib/RootProtoManager';
-import { EggControllerLoader } from './lib/EggControllerLoader';
+import { ControllerMetadataManager } from './lib/ControllerMetadataManager.js';
+import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.js';
+import { RootProtoManager } from './lib/RootProtoManager.js';
+import { EggControllerLoader } from './lib/EggControllerLoader.js';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
 // 2. load ${app_base_dir}app/controller file
 // 3. ControllerRegister register controller implement
 
-export default class ControllerAppBootHook {
+export default class ControllerAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
   private readonly loadUnitHook: AppLoadUnitControllerHook;
   private readonly controllerRegisterFactory: ControllerRegisterFactory;

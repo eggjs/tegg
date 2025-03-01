@@ -1,24 +1,19 @@
-import mm from 'egg-mock';
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { EggControllerLoader } from '../../lib/EggControllerLoader';
+import { fileURLToPath } from 'node:url';
 import { ControllerMetadataUtil } from '@eggjs/tegg';
+import { EggControllerLoader } from '../../lib/EggControllerLoader.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('plugin/controller/test/lib/EggModuleLoader.test.ts', () => {
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
-
-  afterEach(() => {
-    mm.restore();
-  });
-
-  it('should work', () => {
+  it('should work', async () => {
     const controllerDir = path.join(__dirname, '../fixtures/apps/controller-app/app/controller');
     const loader = new EggControllerLoader(controllerDir);
-    const clazzs = loader.load();
-    assert(clazzs.length === 7);
-    const AppController = clazzs[0];
+    const classes = await loader.load();
+    assert.equal(classes.length, 7);
+    const AppController = classes[0];
     const metadata = ControllerMetadataUtil.getControllerMetadata(AppController);
     assert(metadata);
   });

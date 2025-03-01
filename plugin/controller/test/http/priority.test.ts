@@ -1,25 +1,15 @@
-import mm from 'egg-mock';
-import path from 'node:path';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/http/priority.test.ts', () => {
-  let app;
-
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
+  let app: MockApplication;
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../fixtures/apps/controller-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/controller-app',
     });
     await app.ready();
   });

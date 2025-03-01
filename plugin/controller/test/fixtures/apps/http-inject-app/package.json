@@ -1,3 +1,5 @@
 {
-  "name": "http-inject-app"
+  "name": "http-inject-app",
+  "type": "module"
 }
+

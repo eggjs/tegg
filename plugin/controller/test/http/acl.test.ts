@@ -1,26 +1,16 @@
-import mm from 'egg-mock';
-import path from 'node:path';
 import assert from 'node:assert/strict';
+import { mm, MockApplication } from '@eggjs/mock';
 
 describe('plugin/controller/test/http/acl.test.ts', () => {
-  let app;
-
-  beforeEach(() => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-  });
+  let app: MockApplication;
 
   afterEach(() => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, '../fixtures/apps/acl-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/acl-app',
     });
     await app.ready();
   });
@@ -61,7 +51,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
           await app.httpRequest()
             .get('/foo')
             .expect(302)
-            .expectHeader('location', 'http://alipay.com/401');
+            .expect('location', 'http://alipay.com/401');
         });
       });
     });
@@ -99,7 +89,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
           await app.httpRequest()
             .get('/bar?pass=true&code=mock2')
             .expect(302)
-            .expectHeader('location', 'http://alipay.com/403');
+            .expect('location', 'http://alipay.com/403');
         });
       });
     });

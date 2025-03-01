@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^3.52.0",
-    "@eggjs/core": "^6.3.1",
+    "@eggjs/core": "^6.4.0",
     "@eggjs/tegg": "^3.52.0",
     "@eggjs/tegg-background-task": "^3.52.0",
     "@eggjs/tegg-common-util": "^3.52.0",
