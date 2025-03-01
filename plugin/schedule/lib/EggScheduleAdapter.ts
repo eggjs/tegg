@@ -1,4 +1,4 @@
-import { Context } from 'egg';
+import { Context } from '@eggjs/core';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { ScheduleMetadata, ScheduleSubscriber } from '@eggjs/tegg-schedule-decorator';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
