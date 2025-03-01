@@ -106,7 +106,6 @@ describe('test/ModuleConfig.test.ts', () => {
   });
 
   describe('read package dependencies', () => {
-
     it('should success if package.json not exist', async () => {
       const dir = path.resolve(__dirname, './fixtures/monorepo/foo');
       const ret = ModuleConfigUtil.readModuleFromNodeModules(dir);
@@ -119,6 +118,9 @@ describe('test/ModuleConfig.test.ts', () => {
       assert.deepStrictEqual(ret, [{
         path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/e'),
         name: 'e',
+      }, {
+        path: path.resolve(__dirname, './fixtures/monorepo/packages/d/node_modules/f'),
+        name: 'f',
       }]);
     });
 

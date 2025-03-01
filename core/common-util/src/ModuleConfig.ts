@@ -12,6 +12,7 @@ import type {
   NpmModuleReferenceConfig,
   ReadModuleReferenceOptions,
 } from '@eggjs/tegg-types';
+import { importResolve } from '@eggjs/utils';
 import { FSUtil } from './FSUtil.js';
 
 export class ModuleReferenceConfigHelp {
@@ -56,7 +57,7 @@ export class ModuleConfigUtil {
         const options = cwd ? { paths: [ cwd ] } : {};
         // path.posix for windows keep path as foo/package.json
         const pkgJson = path.posix.join(moduleReferenceConfig.package, 'package.json');
-        const file = require.resolve(pkgJson, options);
+        const file = importResolve(pkgJson, options);
         const modulePath = path.dirname(file);
         moduleReference = {
           path: modulePath,
@@ -151,7 +152,7 @@ export class ModuleConfigUtil {
       try {
         // https://nodejs.org/api/packages.html#package-entry-points
         // ignore cases where the package entry is exports but package.json is not exported
-        packageJsonPath = require.resolve(`${dependencyKey}/package.json`, { paths: [ baseDir ] });
+        packageJsonPath = importResolve(`${dependencyKey}/package.json`, { paths: [ baseDir ] });
       } catch {
         continue;
       }

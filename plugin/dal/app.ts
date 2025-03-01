@@ -1,12 +1,12 @@
-import { Application } from 'egg';
-import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook';
-import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager';
-import { SqlMapManager } from './lib/SqlMapManager';
-import { TableModelManager } from './lib/TableModelManager';
-import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook';
-import { TransactionPrototypeHook } from './lib/TransactionPrototypeHook';
+import { EggCore as Application, ILifecycleBoot } from '@eggjs/core';
+import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook.js';
+import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager.js';
+import { SqlMapManager } from './lib/SqlMapManager.js';
+import { TableModelManager } from './lib/TableModelManager.js';
+import { DalModuleLoadUnitHook } from './lib/DalModuleLoadUnitHook.js';
+import { TransactionPrototypeHook } from './lib/TransactionPrototypeHook.js';
 
-export default class ControllerAppBootHook {
+export default class DalAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
   private dalTableEggPrototypeHook: DalTableEggPrototypeHook;
   private dalModuleLoadUnitHook: DalModuleLoadUnitHook;

@@ -38,12 +38,13 @@ export class AppLoadUnit implements LoadUnit {
     const clazzList = await this.loader.load();
     for (const clazz of clazzList) {
       // TODO duplicate code, same in ModuleLoadUnit
+      const initTypeQualifierAttributeValue = await PrototypeUtil.getInitType(clazz, {
+        unitPath: this.unitPath,
+        moduleName: this.name,
+      });
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
-        value: PrototypeUtil.getInitType(clazz, {
-          unitPath: this.unitPath,
-          moduleName: this.name,
-        })!,
+        value: initTypeQualifierAttributeValue!,
       }, {
         attribute: LoadUnitNameQualifierAttribute,
         value: this.name,

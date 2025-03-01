@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
+import { debuglog } from 'node:util';
 import {
   EggLoadUnitType,
   GraphNodeObj,
@@ -22,6 +23,8 @@ import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import { EggPrototypeFactory, LoadUnitFactory, EggPrototypeCreatorFactory } from '../factory/index.js';
 import { ClassProtoDescriptor, GlobalGraph } from '../model/index.js';
 import { MultiPrototypeFound } from '../errors.js';
+
+const debug = debuglog('@eggjs/tegg-metadata/ModuleLoadUnit');
 
 let id = 0;
 
@@ -77,7 +80,8 @@ export class ModuleGraph {
     this.graph = new Graph<ProtoNode>();
     this.unitPath = unitPath;
     this.name = name;
-    this.build();
+    debug('ModuleGraph constructor on moduleName: %o, unitPath: %o, clazzList size: %o',
+      this.name, this.unitPath, this.clazzList.length);
   }
 
   private findInjectNode(objName: EggPrototypeName, qualifiers: QualifierInfo[], parentInitTye: ObjectInitTypeLike): GraphNode<ProtoNode> | undefined {
@@ -114,11 +118,11 @@ export class ModuleGraph {
     throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(String(objName), qualifiers, JSON.stringify(result)));
   }
 
-  private build() {
+  async build() {
     const protoGraphNodes: GraphNode<ProtoNode>[] = [];
     for (const clazz of this.clazzList) {
       if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
-        const properties = PrototypeUtil.getMultiInstanceProperty(clazz, {
+        const properties = await PrototypeUtil.getMultiInstanceProperty(clazz, {
           unitPath: this.unitPath,
           moduleName: this.name,
         });
@@ -147,7 +151,7 @@ export class ModuleGraph {
     }
     for (const node of protoGraphNodes) {
       if (PrototypeUtil.isEggMultiInstancePrototype(node.val.clazz)) {
-        const property = PrototypeUtil.getMultiInstanceProperty(node.val.clazz, {
+        const property = await PrototypeUtil.getMultiInstanceProperty(node.val.clazz, {
           moduleName: this.name,
           unitPath: this.unitPath,
         });
@@ -211,6 +215,8 @@ export class ModuleLoadUnit implements LoadUnit {
     this.id = IdenticalUtil.createLoadUnitId(name);
     this.name = name;
     this.unitPath = unitPath;
+    debug('ModuleLoadUnit constructor on moduleName: %o, unitPath: %o, id: %o',
+      this.name, this.unitPath, this.id);
   }
 
   private doLoadClazz() {
@@ -223,6 +229,8 @@ export class ModuleLoadUnit implements LoadUnit {
       this.protos = [];
       this.clazzList = [];
     }
+    debug('doLoadClazz on moduleName: %o, protos size: %o, clazzList size: %o',
+      this.name, this.protos.length, this.clazzList.length);
   }
 
   private loadClazz() {

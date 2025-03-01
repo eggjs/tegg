@@ -19,20 +19,20 @@ import {
   TableModel,
 } from '@eggjs/tegg/dal';
 import { DataSource } from '@eggjs/dal-runtime';
-import { TableModelManager } from './TableModelManager';
-import { MysqlDataSourceManager } from './MysqlDataSourceManager';
-import { SqlMapManager } from './SqlMapManager';
-import { TransactionalAOP } from './TransactionalAOP';
+import { TableModelManager } from './TableModelManager.js';
+import { MysqlDataSourceManager } from './MysqlDataSourceManager.js';
+import { SqlMapManager } from './SqlMapManager.js';
+import { TransactionalAOP } from './TransactionalAOP.js';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
   initType: ObjectInitType.SINGLETON,
-  getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
+  async getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as any | undefined;
     const dataSources = Object.keys(config?.dataSource || {});
     const result: ObjectInfo[] = [];
     const loader = LoaderFactory.createLoader(ctx.unitPath, EggLoadUnitType.MODULE);
-    const clazzList = loader.load();
+    const clazzList = await loader.load();
     const tableClazzList = clazzList.filter(t => {
       return TableInfoUtil.getIsTable(t);
     });

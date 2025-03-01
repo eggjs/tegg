@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-types": "^3.52.0",
+    "@eggjs/utils": "^4.3.0",
     "extend2": "^4.0.0",
     "globby": "^14.1.0",
     "js-yaml": "^4.1.0"

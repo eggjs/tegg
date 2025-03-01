@@ -1,3 +1,5 @@
 {
-  "name": "dal-app"
+  "name": "dal-app",
+  "type": "module"
 }
+

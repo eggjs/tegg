@@ -1,3 +1,4 @@
+import { debuglog } from 'node:util';
 import { Graph, GraphNode, ModuleReference } from '@eggjs/tegg-common-util';
 import {
   InitTypeQualifierAttribute,
@@ -13,6 +14,8 @@ import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode.js';
 import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.js';
 import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.js';
 import { ModuleDescriptor } from '../ModuleDescriptor.js';
+
+const debug = debuglog('@eggjs/tegg-metadata/GlobalGraph');
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict
@@ -215,6 +218,7 @@ export class GlobalGraph {
     if (loopPath) {
       throw new Error('module has recursive deps: ' + loopPath);
     }
+    debug('sortModule, loopPath: %o', loopPath);
     this.moduleConfigList = this.moduleGraph.sort()
       .filter(t => {
         return t.val.optional !== true || t.fromNodeMap.size > 0;
@@ -233,6 +237,7 @@ export class GlobalGraph {
     if (loopPath) {
       throw new Error('proto has recursive deps: ' + loopPath);
     }
+    debug('sortClazz, loopPath: %o', loopPath);
     for (const proto of this.protoGraph.sort()) {
       // // ignore the proto has no dependent
       // if (proto.fromNodeMap.size === 0) continue;
@@ -251,7 +256,7 @@ export class GlobalGraph {
     this.#sortClazz();
   }
 
-  static create(moduleDescriptors: ModuleDescriptor[], options?: GlobalGraphOptions): GlobalGraph {
+  static async create(moduleDescriptors: ModuleDescriptor[], options?: GlobalGraphOptions): Promise<GlobalGraph> {
     const graph = new GlobalGraph(options);
     for (const moduleDescriptor of moduleDescriptors) {
       const moduleNodeBuilder = new GlobalModuleNodeBuilder({
@@ -263,7 +268,7 @@ export class GlobalGraph {
         moduleNodeBuilder.addClazz(clazz);
       }
       for (const clazz of moduleDescriptor.multiInstanceClazzList) {
-        moduleNodeBuilder.addMultiInstanceClazz(clazz, moduleDescriptor.name, moduleDescriptor.unitPath);
+        await moduleNodeBuilder.addMultiInstanceClazz(clazz, moduleDescriptor.name, moduleDescriptor.unitPath);
       }
       graph.addModuleNode(moduleNodeBuilder.build());
     }

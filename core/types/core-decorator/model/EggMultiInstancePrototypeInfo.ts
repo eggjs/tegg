@@ -60,5 +60,5 @@ export interface EggMultiInstanceCallbackPrototypeInfo {
    * get object callback
    * @param ctx
    */
-  getObjects(ctx: MultiInstancePrototypeGetObjectsContext): ObjectInfo[];
+  getObjects(ctx: MultiInstancePrototypeGetObjectsContext): Promise<ObjectInfo[]>;
 }

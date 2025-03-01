@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { js_beautify } from 'js-beautify';
+import js_beautify from 'js-beautify';
 import _ from 'lodash';
 import nunjucks, { type Environment } from 'nunjucks';
 import { Templates } from '@eggjs/tegg-types';

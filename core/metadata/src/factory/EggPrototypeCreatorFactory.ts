@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import { InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute, PrototypeUtil } from '@eggjs/core-decorator';
 import type {
   EggProtoImplClass,
@@ -22,22 +23,24 @@ export class EggPrototypeCreatorFactory {
 
   static async createProto(clazz: EggProtoImplClass, loadUnit: LoadUnit): Promise<EggPrototype[]> {
     let properties: EggPrototypeInfo[] = [];
+    const initTypeQualifierAttributeValue = await PrototypeUtil.getInitType(clazz, {
+      unitPath: loadUnit.unitPath,
+      moduleName: loadUnit.name,
+    });
     const defaultQualifier = [{
       attribute: InitTypeQualifierAttribute,
-      value: PrototypeUtil.getInitType(clazz, {
-        unitPath: loadUnit.unitPath,
-        moduleName: loadUnit.name,
-      })!,
+      value: initTypeQualifierAttributeValue!,
     }, {
       attribute: LoadUnitNameQualifierAttribute,
       value: loadUnit.name,
     }];
 
     if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
-      const multiInstanceProtoInfo = PrototypeUtil.getMultiInstanceProperty(clazz, {
+      const multiInstanceProtoInfo = await PrototypeUtil.getMultiInstanceProperty(clazz, {
         unitPath: loadUnit.unitPath,
         moduleName: loadUnit.name,
       })!;
+      assert(multiInstanceProtoInfo, `multiInstanceProtoInfo is undefined, clazz: ${clazz.name}, unitPath: ${loadUnit.unitPath}, moduleName: ${loadUnit.name}`);
       for (const obj of multiInstanceProtoInfo.objects) {
         defaultQualifier.forEach(qualifier => {
           if (!obj.qualifiers.find(t => t.attribute === qualifier.attribute)) {
@@ -89,7 +92,6 @@ export class EggPrototypeCreatorFactory {
       protos.push(proto);
     }
     return protos;
-
   }
 
   static async createProtoByDescriptor(protoDescriptor: ClassProtoDescriptor, loadUnit: LoadUnit): Promise<EggPrototype> {

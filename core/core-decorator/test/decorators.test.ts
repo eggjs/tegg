@@ -165,7 +165,7 @@ describe('test/decorator.test.ts', () => {
   });
 
   describe('MultiInstanceProto', () => {
-    it('should work', () => {
+    it('should work', async () => {
       assert(PrototypeUtil.isEggMultiInstancePrototype(FooLogger));
       const expectObjectProperty: EggMultiInstancePrototypeInfo = {
         initType: ObjectInitType.SINGLETON,
@@ -186,7 +186,7 @@ describe('test/decorator.test.ts', () => {
         }],
         className: 'FooLogger',
       };
-      assert.deepStrictEqual(PrototypeUtil.getMultiInstanceProperty(FooLogger, {
+      assert.deepStrictEqual(await PrototypeUtil.getMultiInstanceProperty(FooLogger, {
         unitPath: 'foo',
         moduleName: '',
       }), expectObjectProperty);
@@ -213,34 +213,34 @@ describe('test/decorator.test.ts', () => {
       assert.strictEqual(PrototypeUtil.getFilePath(ChildSingletonProto), undefined);
     });
 
-    it('static multiInstanceProto should not be inherited', () => {
+    it('static multiInstanceProto should not be inherited', async () => {
       assert(PrototypeUtil.isEggMultiInstancePrototype(ParentStaticMultiInstanceProto));
       assert.strictEqual(
         PrototypeUtil.getEggMultiInstancePrototypeType(ParentStaticMultiInstanceProto),
         MultiInstanceType.STATIC,
       );
       assert(PrototypeUtil.getStaticMultiInstanceProperty(ParentStaticMultiInstanceProto));
-      assert(PrototypeUtil.getMultiInstanceProperty(ParentStaticMultiInstanceProto, fakeCtx));
+      assert(await PrototypeUtil.getMultiInstanceProperty(ParentStaticMultiInstanceProto, fakeCtx));
       assert(PrototypeUtil.getFilePath(ParentStaticMultiInstanceProto));
 
       assert.strictEqual(PrototypeUtil.isEggMultiInstancePrototype(ChildStaticMultiInstanceProto), false);
       assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildStaticMultiInstanceProto), undefined);
       assert.strictEqual(PrototypeUtil.getStaticMultiInstanceProperty(ChildStaticMultiInstanceProto), undefined);
-      assert.strictEqual(PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(await PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx), undefined);
       assert.strictEqual(PrototypeUtil.getFilePath(ChildStaticMultiInstanceProto), undefined);
     });
 
-    it('dynamic multipleInstanceProto should not be inherited', () => {
+    it('dynamic multipleInstanceProto should not be inherited', async () => {
       assert.strictEqual(
         PrototypeUtil.getEggMultiInstancePrototypeType(ParentDynamicMultiInstanceProto),
         MultiInstanceType.DYNAMIC,
       );
-      assert(PrototypeUtil.getDynamicMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
-      assert(PrototypeUtil.getMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
+      assert(await PrototypeUtil.getDynamicMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
+      assert(await PrototypeUtil.getMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
 
       assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildDynamicMultiInstanceProto), undefined);
-      assert.strictEqual(PrototypeUtil.getDynamicMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
-      assert.strictEqual(PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(await PrototypeUtil.getDynamicMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(await PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
     });
   });
 });

@@ -3,7 +3,7 @@ import { TableModel } from '@eggjs/dal-decorator';
 export class TableModelManager {
   static instance = new TableModelManager();
 
-  private tableModels: Map</* moduleName*/string, Map<string, TableModel>>;
+  private tableModels: Map</* moduleName */string, Map<string, TableModel>>;
 
   constructor() {
     this.tableModels = new Map();

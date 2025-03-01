@@ -17,7 +17,7 @@ export interface BaseMultiInstancePrototypeCallbackParams {
 }
 
 export interface MultiInstancePrototypeCallbackParams extends BaseMultiInstancePrototypeCallbackParams {
-  getObjects(ctx: MultiInstancePrototypeGetObjectsContext): ObjectInfo[];
+  getObjects(ctx: MultiInstancePrototypeGetObjectsContext): Promise<ObjectInfo[]>;
 }
 
 export interface MultiInstancePrototypeStaticParams extends BaseMultiInstancePrototypeCallbackParams {

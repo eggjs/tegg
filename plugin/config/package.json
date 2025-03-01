@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "^3.52.0",
-    "@eggjs/utils": "^4.2.5"
+    "@eggjs/utils": "^4.3.0"
   },
   "devDependencies": {
     "@types/node": "22",

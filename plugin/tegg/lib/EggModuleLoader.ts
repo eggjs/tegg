@@ -38,7 +38,7 @@ export class EggModuleLoader {
         this.app.logger.warn(e);
       });
     }
-    const graph = GlobalGraph.create(moduleDescriptors);
+    const graph = await GlobalGraph.create(moduleDescriptors);
     return graph;
   }
 

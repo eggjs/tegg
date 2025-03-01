@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function() {
+export default () => {
   const config = {
     keys: 'test key',
     security: {
