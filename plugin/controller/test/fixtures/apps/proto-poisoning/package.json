@@ -1,3 +1,4 @@
 {
-  "name": "proto-poisoning"
+  "name": "proto-poisoning",
+  "type": "module"
 }

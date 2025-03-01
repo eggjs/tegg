@@ -1,3 +1,4 @@
 {
-  "name": "acl-app"
+  "name": "acl-app",
+  "type": "module"
 }

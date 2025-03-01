@@ -55,7 +55,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/core": "^6.3.1",
+    "@eggjs/core": "^6.4.0",
     "@eggjs/egg-module-common": "^3.52.0",
     "@eggjs/router": "^3.0.5",
     "@eggjs/tegg": "^3.52.0",

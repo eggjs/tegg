@@ -1,3 +1,5 @@
 {
-  "name": "controller-app"
+  "name": "host-controller-app",
+  "type": "module"
 }
+
