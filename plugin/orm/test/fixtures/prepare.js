@@ -1,7 +1,5 @@
-'use strict';
-
-const mysql = require('mysql');
-const os = require('os');
+import os from 'node:os';
+import mysql from 'mysql2';
 
 const config = {
   host: '127.0.0.1',
@@ -55,7 +53,7 @@ async function init() {
 (async () => {
   try {
     // TODO win32 ci not support mysql
-    if ([ 'darwin', 'win32' ].includes(os.platform())) {
+    if ([ 'win32' ].includes(os.platform())) {
       return;
     }
     connect();

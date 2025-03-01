@@ -1,12 +1,12 @@
-import { Application } from 'egg';
-import { DataSourceManager } from './lib/DataSourceManager';
-import { LeoricRegister } from './lib/LeoricRegister';
-import { ModelProtoManager } from './lib/ModelProtoManager';
-import { ModelProtoHook } from './lib/ModelProtoHook';
+import { EggCore as Application } from '@eggjs/core';
+import { DataSourceManager } from './lib/DataSourceManager.js';
+import { LeoricRegister } from './lib/LeoricRegister.js';
+import { ModelProtoManager } from './lib/ModelProtoManager.js';
+import { ModelProtoHook } from './lib/ModelProtoHook.js';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
-import SingletonModelProto from './lib/SingletonModelProto';
-import { SingletonModelObject } from './lib/SingletonModelObject';
-import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook';
+import SingletonModelProto from './lib/SingletonModelProto.js';
+import { SingletonModelObject } from './lib/SingletonModelObject.js';
+import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook.js';
 
 export default class OrmAppBootHook {
   private readonly app: Application;
@@ -16,7 +16,7 @@ export default class OrmAppBootHook {
   private readonly modelProtoHook: ModelProtoHook;
   private readonly ormLoadUnitHook: ORMLoadUnitHook;
 
-  constructor(app) {
+  constructor(app: Application) {
     this.app = app;
     this.dataSourceManager = new DataSourceManager();
     this.modelProtoManager = new ModelProtoManager();

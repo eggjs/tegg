@@ -30,6 +30,7 @@
   "scripts": {
     "test": "egg-bin test",
     "cov": "egg-bin cov",
+    "clean": "tsc --build --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
     "tsc:pub": "npm run tsc",
     "prepublishOnly": "npm run tsc"

@@ -7,8 +7,8 @@ import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggPrototypeName, EggObjectName } from '@eggjs/tegg';
 import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { Bone } from 'leoric';
-import SingletonModelProto from './SingletonModelProto';
 import { EGG_CONTEXT } from '@eggjs/egg-module-common';
+import SingletonModelProto from './SingletonModelProto.js';
 
 export class SingletonModelObject implements EggObject {
   private status: EggObjectStatus = EggObjectStatus.PENDING;

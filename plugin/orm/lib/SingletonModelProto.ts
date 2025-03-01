@@ -12,6 +12,7 @@ import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { Bone } from 'leoric';
 
 export default class SingletonModelProto implements EggPrototype {
+  [key: symbol]: PropertyDescriptor;
   private readonly qualifiers: QualifierInfo[];
   readonly accessLevel = AccessLevel.PUBLIC;
   id: Id;

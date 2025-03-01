@@ -1,3 +1,4 @@
 {
-  "name": "controller-app"
+  "name": "orm-app",
+  "type": "module"
 }

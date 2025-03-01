@@ -1,7 +1,7 @@
 import { LifecycleHook } from '@eggjs/tegg';
 import { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 import { IS_MODEL, ModelMetaBuilder, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
-import { ModelProtoManager } from './ModelProtoManager';
+import { ModelProtoManager } from './ModelProtoManager.js';
 
 export class ModelProtoHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   private readonly modelProtoManager: ModelProtoManager;

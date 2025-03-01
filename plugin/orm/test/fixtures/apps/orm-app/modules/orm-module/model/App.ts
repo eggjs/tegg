@@ -1,5 +1,8 @@
 import { Attribute, Model } from '@eggjs/tegg-orm-decorator';
-import { DataTypes, Bone } from 'leoric';
+import Realm from 'leoric';
+
+const Bone = Realm.Bone;
+const DataTypes = Realm.DataTypes;
 
 @Model({
   dataSource: 'test',

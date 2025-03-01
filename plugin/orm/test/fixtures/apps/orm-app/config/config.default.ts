@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function () {
+export default () => {
   const config = {
     keys: 'test key',
     security: {
@@ -11,7 +9,7 @@ module.exports = function () {
     orm: {
       datasources: [
         {
-          client: 'mysql',
+          client: 'mysql2',
           database: 'test',
           host: '127.0.0.1',
           port: 3306,
@@ -26,7 +24,7 @@ module.exports = function () {
           },
         },
         {
-          client: 'mysql',
+          client: 'mysql2',
           database: 'apple',
           host: '127.0.0.1',
           port: 3306,
@@ -41,7 +39,7 @@ module.exports = function () {
           },
         },
         {
-          client: 'mysql',
+          client: 'mysql2',
           database: 'banana',
           host: '127.0.0.1',
           port: 3306,
