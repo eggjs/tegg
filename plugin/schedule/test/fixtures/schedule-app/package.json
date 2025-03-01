@@ -1,3 +1,4 @@
 {
-  "name": "schedule-app"
+  "name": "schedule-app",
+  "type": "module"
 }

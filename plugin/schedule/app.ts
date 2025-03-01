@@ -1,9 +1,9 @@
-import { Application } from 'egg';
-import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister';
-import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook';
-import { SchedulePrototypeHook } from './lib/SchedulePrototypeHook';
+import { EggCore as Application, ILifecycleBoot } from '@eggjs/core';
+import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister.js';
+import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook.js';
+import { SchedulePrototypeHook } from './lib/SchedulePrototypeHook.js';
 
-export default class ScheduleAppBootHook {
+export default class ScheduleAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
   private readonly scheduleWorkerRegister: ScheduleWorkerRegister;
   private readonly scheduleWorkerLoadUnitHook: ScheduleWorkerLoadUnitHook;
@@ -21,7 +21,7 @@ export default class ScheduleAppBootHook {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.schedulePrototypeHook);
   }
 
-  beforeClose() {
+  async beforeClose() {
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.scheduleWorkerLoadUnitHook);
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.schedulePrototypeHook);
   }

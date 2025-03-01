@@ -1,30 +1,24 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import mm from 'egg-mock';
+import { fileURLToPath } from 'node:url';
+import { mm, MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 describe('plugin/schedule/test/schedule.test.ts', () => {
-  let app;
+  let app: MockApplication;
 
   afterEach(async () => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    const cluster = mm.cluster as any;
-    app = cluster({
-      baseDir: path.join(__dirname, './fixtures/schedule-app'),
-      workers: 1,
-      cache: false,
-      framework: path.dirname(require.resolve('egg/package.json')),
-      opt: {
-        cwd: path.join(__dirname, '../'),
-        execArgv: [ '-r', require.resolve('ts-node/register') ],
-      },
-    })
-      .debug(true);
+    app = mm.app({
+      baseDir: 'schedule-app',
+    });
     await app.ready();
   });
 
@@ -35,11 +29,11 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
   it('schedule should work', async () => {
     await TimerUtil.sleep(1000);
     const scheduleLog = await getScheduleLogContent('schedule-app');
-    assert(/schedule called/.test(scheduleLog));
+    assert.match(scheduleLog, /schedule called/);
   });
 });
 
-async function getScheduleLogContent(name) {
+async function getScheduleLogContent(name: string) {
   const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
   // schedule called
   return fs.readFile(logPath, 'utf8');
