@@ -13,7 +13,7 @@ export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
   initType: ObjectInitType.SINGLETON,
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath);
-    return (config as any).features.logger.map(name => {
+    return (config as any).features.logger.map((name: string) => {
       return {
         name: 'foo',
         qualifiers: [{

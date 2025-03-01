@@ -1,7 +1,7 @@
-import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 import { LifecycleHook, Logger, ModuleConfigHolder } from '@eggjs/tegg';
 import { DatabaseForker, DataSourceOptions } from '@eggjs/dal-runtime';
 import { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
+import { MysqlDataSourceManager } from './MysqlDataSourceManager.js';
 
 export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly moduleConfigs: Record<string, ModuleConfigHolder>;
@@ -33,7 +33,9 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
       try {
         await MysqlDataSourceManager.instance.createDataSource(loadUnit.name, name, dataSourceOptions);
       } catch (e) {
-        e.message = `create module ${loadUnit.name} datasource ${name} failed: ` + e.message;
+        if (e instanceof Error) {
+          e.message = `create module ${loadUnit.name} datasource ${name} failed: ${e.message}`;
+        }
         throw e;
       }
     }));

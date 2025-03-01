@@ -1,5 +1,5 @@
-import { DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
 import crypto from 'node:crypto';
+import { DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
 
 export class MysqlDataSourceManager {
   static instance = new MysqlDataSourceManager();
@@ -32,12 +32,12 @@ export class MysqlDataSourceManager {
       dataSource = new MysqlDataSource({ ...dataSourceConfig, logger });
       this.dataSources.set(index, dataSource);
     }
-    let moduledataSourceIndices = this.dataSourceIndices.get(moduleName);
-    if (!moduledataSourceIndices) {
-      moduledataSourceIndices = new Map();
-      this.dataSourceIndices.set(moduleName, moduledataSourceIndices);
+    let moduleDataSourceIndices = this.dataSourceIndices.get(moduleName);
+    if (!moduleDataSourceIndices) {
+      moduleDataSourceIndices = new Map();
+      this.dataSourceIndices.set(moduleName, moduleDataSourceIndices);
     }
-    moduledataSourceIndices.set(dataSourceName, index);
+    moduleDataSourceIndices.set(dataSourceName, index);
 
     await dataSource.ready();
   }
@@ -51,7 +51,7 @@ export class MysqlDataSourceManager {
     const keys = Object.keys(dataSourceOptions)
       .sort();
     for (const key of keys) {
-      const value = dataSourceOptions[key];
+      const value = dataSourceOptions[key as keyof DataSourceOptions];
       if (value) {
         hash.update(key);
         hash.update(String(value));

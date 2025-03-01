@@ -38,16 +38,16 @@ export class ProtoDescriptorHelper {
     return res;
   }
 
-  static createByMultiInstanceClazz(clazz: EggProtoImplClass, options: {
+  static async createByMultiInstanceClazz(clazz: EggProtoImplClass, options: {
     defineModuleName: string;
     defineUnitPath: string;
     instanceModuleName: string;
     instanceDefineUnitPath: string;
-  }): ProtoDescriptor[] {
+  }): Promise<ProtoDescriptor[]> {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
     const type = PrototypeUtil.getEggMultiInstancePrototypeType(clazz);
     if (type === MultiInstanceType.DYNAMIC) {
-      return ProtoDescriptorHelper.createByDynamicMultiInstanceClazz(clazz, options);
+      return await ProtoDescriptorHelper.createByDynamicMultiInstanceClazz(clazz, options);
     } else if (type === MultiInstanceType.STATIC) {
       // static multi instance proto create only in self module
       if (options.defineModuleName === options.instanceModuleName) {
@@ -57,15 +57,15 @@ export class ProtoDescriptorHelper {
     return [];
   }
 
-  static createByDynamicMultiInstanceClazz(clazz: EggProtoImplClass, options: {
+  static async createByDynamicMultiInstanceClazz(clazz: EggProtoImplClass, options: {
     defineModuleName: string;
     defineUnitPath: string;
     instanceModuleName: string;
     instanceDefineUnitPath: string;
-  }): ProtoDescriptor[] {
+  }): Promise<ProtoDescriptor[]> {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
 
-    const instanceProperty = PrototypeUtil.getDynamicMultiInstanceProperty(clazz, {
+    const instanceProperty = await PrototypeUtil.getDynamicMultiInstanceProperty(clazz, {
       moduleName: options.instanceModuleName,
       unitPath: options.instanceDefineUnitPath,
     });

@@ -1,25 +1,19 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm, { MockApplication } from 'egg-mock';
-import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO';
-import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService';
-import { MysqlDataSourceManager } from '../lib/MysqlDataSourceManager';
+import { mm, MockApplication } from '@eggjs/mock';
+import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.js';
+import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService.js';
+import { MysqlDataSourceManager } from '../lib/MysqlDataSourceManager.js';
 
 describe('plugin/dal/test/transaction.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, './fixtures/apps/dal-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/dal-app',
     });
     await app.ready();
   });

@@ -10,6 +10,7 @@ describe('test/ModuleGraph.test.ts', () => {
     const loader = new TestLoader(modulePath);
     const clazzList = await loader.load();
     const graph = new ModuleGraph(clazzList, modulePath, 'foo');
+    await graph.build();
     graph.sort();
   });
 
@@ -18,6 +19,7 @@ describe('test/ModuleGraph.test.ts', () => {
     const loader = new TestLoader(modulePath);
     const clazzList = await loader.load();
     const graph = new ModuleGraph(clazzList, modulePath, 'foo');
+    await graph.build();
     graph.sort();
     assert.deepStrictEqual(graph.clazzList.map(t => t.name), [
       'Logger',

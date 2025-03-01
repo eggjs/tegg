@@ -11,62 +11,62 @@ import { Secret } from './fixtures/modules/app-multi-inject-multi/app/modules/fo
 import { App2 } from './fixtures/modules/app-multi-inject-multi/app/modules/app2/App.js';
 
 describe('test/LoadUnit/AppGraph.test.ts', () => {
-  it('optional module dep should work', () => {
+  it('optional module dep should work', async () => {
     const graph = new AppGraph();
     const rootModuleNode = new ModuleNode({
       name: 'foo',
       path: path.join(__dirname, './fixtures/modules/app-graph-modules/root'),
     });
-    rootModuleNode.addClazz(RootProto);
+    await rootModuleNode.addClazz(RootProto);
     graph.addNode(rootModuleNode);
     const usedOptionalModuleNode = new ModuleNode({
       name: 'usedOptionalModuleNode',
       path: path.join(__dirname, './fixtures/modules/app-graph-modules/used'),
       optional: true,
     });
-    usedOptionalModuleNode.addClazz(UsedProto);
+    await usedOptionalModuleNode.addClazz(UsedProto);
     graph.addNode(usedOptionalModuleNode);
     const unusedOptionalModuleNode = new ModuleNode({
       name: 'unusedOptionalModuleNode',
       path: path.join(__dirname, './fixtures/modules/app-graph-modules/unused'),
       optional: true,
     });
-    unusedOptionalModuleNode.addClazz(UnusedProto);
+    await unusedOptionalModuleNode.addClazz(UnusedProto);
     graph.addNode(unusedOptionalModuleNode);
-    graph.build();
+    await graph.build();
     graph.sort();
     assert(graph.moduleConfigList.length === 2);
   });
 
-  it('multi instance inject multi instance should work', () => {
+  it('multi instance inject multi instance should work', async () => {
     const graph = new AppGraph();
     const appModuleNode = new ModuleNode({
       name: 'app',
       path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app'),
     });
-    appModuleNode.addClazz(App);
+    await appModuleNode.addClazz(App);
     graph.addNode(appModuleNode);
 
     const app2ModuleNode = new ModuleNode({
       name: 'app2',
       path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app2'),
     });
-    app2ModuleNode.addClazz(App2);
+    await app2ModuleNode.addClazz(App2);
     graph.addNode(app2ModuleNode);
 
     const barOptionalModuleNode = new ModuleNode({
       name: 'bar',
       path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/bar'),
     });
-    barOptionalModuleNode.addClazz(BizManager);
+    await barOptionalModuleNode.addClazz(BizManager);
     graph.addNode(barOptionalModuleNode);
     const fooOptionalModuleNode = new ModuleNode({
       name: 'foo',
       path: path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/foo'),
     });
-    fooOptionalModuleNode.addClazz(Secret);
+    await fooOptionalModuleNode.addClazz(Secret);
     graph.addNode(fooOptionalModuleNode);
-    graph.build();
+    await graph.build();
     graph.sort();
     assert.deepStrictEqual(graph.moduleConfigList.map(t => t.name), [
       'app',

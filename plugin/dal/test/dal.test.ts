@@ -1,24 +1,18 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm, { MockApplication } from 'egg-mock';
-import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO';
-import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo';
+import { mm, MockApplication } from '@eggjs/mock';
+import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.js';
+import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo.js';
 
 describe('plugin/dal/test/dal.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, './fixtures/apps/dal-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/dal-app',
     });
     await app.ready();
   });

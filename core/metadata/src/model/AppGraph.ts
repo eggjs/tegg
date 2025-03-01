@@ -32,12 +32,14 @@ function verifyQualifiers(clazzQualifiers: QualifierInfo[], qualifiers: Qualifie
 
 export class ClazzMap {
   private clazzMap: ClazzMetaMap;
+  private graph: Graph<ModuleNode>;
 
   constructor(graph: Graph<ModuleNode>) {
-    this.build(graph);
+    this.graph = graph;
   }
 
-  private build(graph: Graph<ModuleNode>) {
+  async build() {
+    const graph = this.graph;
     /**
      * 1. iterate all module get all MultiInstanceClazz
      * 2. iterate MultiInstanceClazz and all module get object meta
@@ -49,7 +51,7 @@ export class ClazzMap {
         const qualifiers = QualifierUtil.getProtoQualifiers(clazz);
         if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
           for (const instanceNode of graph.nodes.values()) {
-            const property = PrototypeUtil.getMultiInstanceProperty(clazz, {
+            const property = await PrototypeUtil.getMultiInstanceProperty(clazz, {
               unitPath: instanceNode.val.moduleConfig.path,
               moduleName: instanceNode.val.moduleConfig.name,
             });
@@ -62,7 +64,7 @@ export class ClazzMap {
               clazzMap[info.name] = clazzMap[info.name] || [];
               clazzMap[info.name].push({
                 name: info.name,
-                accessLevel: PrototypeUtil.getAccessLevel(clazz, {
+                accessLevel: await PrototypeUtil.getAccessLevel(clazz, {
                   unitPath: instanceNode.val.moduleConfig.path,
                   moduleName: instanceNode.val.moduleConfig.name,
                 }) as AccessLevel,
@@ -79,7 +81,7 @@ export class ClazzMap {
           clazzMap[property.name] = clazzMap[property.name] || [];
           clazzMap[property.name].push({
             name: property.name,
-            accessLevel: PrototypeUtil.getAccessLevel(clazz, {
+            accessLevel: await PrototypeUtil.getAccessLevel(clazz, {
               unitPath: ownerNode.val.moduleConfig.path,
               moduleName: ownerNode.val.moduleConfig.name,
             }) as AccessLevel,
@@ -176,17 +178,18 @@ export class ModuleNode implements GraphNodeObj {
     this.clazzList = [];
   }
 
-  addClazz(clazz: EggProtoImplClass) {
+  async addClazz(clazz: EggProtoImplClass) {
     if (!this.clazzList.includes(clazz)) {
       this.clazzList.push(clazz);
     }
     if (!PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+      const initTypeQualifierAttributeValue = await PrototypeUtil.getInitType(clazz, {
+        unitPath: this.moduleConfig.path,
+        moduleName: this.moduleConfig.name,
+      });
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
-        value: PrototypeUtil.getInitType(clazz, {
-          unitPath: this.moduleConfig.path,
-          moduleName: this.moduleConfig.name,
-        })!,
+        value: initTypeQualifierAttributeValue!,
       }, {
         attribute: LoadUnitNameQualifierAttribute,
         value: this.name,
@@ -231,8 +234,9 @@ export class AppGraph {
     return Array.from(clazzSet);
   }
 
-  build() {
+  async build() {
     this.clazzMap = new ClazzMap(this.graph);
+    await this.clazzMap.build();
 
     // 1. iterate all modules
     for (const node of this.graph.nodes.values()) {
@@ -243,7 +247,7 @@ export class AppGraph {
         for (const injectObject of injectObjects) {
           if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
             for (const instanceNode of this.graph.nodes.values()) {
-              const property = PrototypeUtil.getMultiInstanceProperty(clazz, {
+              const property = await PrototypeUtil.getMultiInstanceProperty(clazz, {
                 unitPath: instanceNode.val.moduleConfig.path,
                 moduleName: instanceNode.val.moduleConfig.name,
               });

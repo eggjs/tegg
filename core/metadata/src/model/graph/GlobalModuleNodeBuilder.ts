@@ -25,8 +25,8 @@ export class GlobalModuleNodeBuilder {
     return this;
   }
 
-  addMultiInstanceClazz(clazz: EggProtoImplClass, defineModuleName: string, defineUnitPath: string) {
-    const protos = ProtoDescriptorHelper.createByMultiInstanceClazz(clazz, {
+  async addMultiInstanceClazz(clazz: EggProtoImplClass, defineModuleName: string, defineUnitPath: string) {
+    const protos = await ProtoDescriptorHelper.createByMultiInstanceClazz(clazz, {
       defineModuleName,
       defineUnitPath,
       instanceModuleName: this.name,

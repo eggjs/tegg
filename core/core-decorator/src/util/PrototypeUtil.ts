@@ -109,22 +109,22 @@ export class PrototypeUtil {
     return MetadataUtil.getOwnMetaData(PrototypeUtil.PROTOTYPE_PROPERTY, clazz);
   }
 
-  static getInitType(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): string | undefined {
-    const property = PrototypeUtil.getProperty(clazz) ?? PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
+  static async getInitType(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): Promise<string | undefined> {
+    const property = PrototypeUtil.getProperty(clazz) ?? await PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
     return property?.initType;
   }
 
-  static getAccessLevel(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): string | undefined {
-    const property = PrototypeUtil.getProperty(clazz) ?? PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
+  static async getAccessLevel(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): Promise<string | undefined> {
+    const property = PrototypeUtil.getProperty(clazz) ?? await PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
     return property?.accessLevel;
   }
 
-  static getObjNames(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggPrototypeName[] {
+  static async getObjNames(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): Promise<EggPrototypeName[]> {
     const property = PrototypeUtil.getProperty(clazz);
     if (property) {
       return [ property.name ];
     }
-    const multiInstanceProperty = PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
+    const multiInstanceProperty = await PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
     return multiInstanceProperty?.objects.map(t => t.name) || [];
   }
 
@@ -162,10 +162,10 @@ export class PrototypeUtil {
    * @param {EggProtoImplClass} clazz -
    * @param {MultiInstancePrototypeGetObjectsContext} ctx -
    */
-  static getDynamicMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggMultiInstancePrototypeInfo | undefined {
+  static async getDynamicMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): Promise<EggMultiInstancePrototypeInfo | undefined> {
     const callBackMetadata = MetadataUtil.getOwnMetaData<EggMultiInstanceCallbackPrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
     if (callBackMetadata) {
-      const objects = callBackMetadata.getObjects(ctx);
+      const objects = await callBackMetadata.getObjects(ctx);
       return {
         ...callBackMetadata,
         objects,
@@ -178,14 +178,14 @@ export class PrototypeUtil {
    * @param {EggProtoImplClass} clazz -
    * @param {MultiInstancePrototypeGetObjectsContext} ctx -
    */
-  static getMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): EggMultiInstancePrototypeInfo | undefined {
+  static async getMultiInstanceProperty(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): Promise<EggMultiInstancePrototypeInfo | undefined> {
     const metadata = MetadataUtil.getOwnMetaData<EggMultiInstancePrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY, clazz);
     if (metadata) {
       return metadata;
     }
     const callBackMetadata = MetadataUtil.getOwnMetaData<EggMultiInstanceCallbackPrototypeInfo>(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, clazz);
     if (callBackMetadata) {
-      const objects = callBackMetadata.getObjects(ctx);
+      const objects = await callBackMetadata.getObjects(ctx);
       // TODO delete in next major version, default qualifier be added in ProtoDescriptorHelper.addDefaultQualifier
       const defaultQualifier = [{
         attribute: InitTypeQualifierAttribute,
