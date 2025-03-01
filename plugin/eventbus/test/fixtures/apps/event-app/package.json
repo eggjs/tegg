@@ -1,3 +1,4 @@
 {
-  "name": "event-app"
+  "name": "event-app",
+  "type": "module"
 }

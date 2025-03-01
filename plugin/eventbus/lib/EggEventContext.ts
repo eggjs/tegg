@@ -1,4 +1,4 @@
-import { Context, Application } from 'egg';
+import { Context, EggCore as Application } from '@eggjs/core';
 import { AbstractEggContext, EggContext } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
@@ -14,12 +14,12 @@ export function eggEventContextFactory(AbstractEggContextClazz: typeof AbstractE
     constructor(context: Context) {
       super();
       this.set(EGG_CONTEXT, context);
-      (context as any)[TEGG_CONTEXT] = this;
+      context[TEGG_CONTEXT] = this;
       // In chair application mode,
       // Plugin event may install in app dir,
       // Plugin tegg may install in layer dir,
       // Will has multi IdenticalUtil instance.
-      this.id = identicalUtil.createContextId(context.tracer?.traceId);
+      this.id = identicalUtil.createContextId((context.tracer as { traceId: string } | undefined)?.traceId);
     }
 
     static createContextFactory(app: Application): ContextCreator {

@@ -1,4 +1,5 @@
 import { Event, EventContext, IEventContext } from '@eggjs/tegg';
+
 @Event('helloEgg')
 @Event('hiEgg')
 export class MultiEventHandler {
