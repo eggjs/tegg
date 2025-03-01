@@ -1,26 +1,21 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import mm, { MockApplication } from 'egg-mock';
+import { mm, MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService';
-import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger';
-import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler';
+import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService.js';
+import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger.js';
+import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler.js';
+import { IEventContext } from '@eggjs/tegg';
 
 describe('plugin/eventbus/test/eventbus.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, './fixtures/apps/event-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/event-app',
     });
     await app.ready();
   });
@@ -34,7 +29,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       const helloService = await ctx.getEggObject(HelloService);
       let msg: string | undefined;
       // helloLogger is in child context
-      mm(HelloLogger.prototype, 'handle', m => {
+      mm(HelloLogger.prototype, 'handle', (m: string) => {
         msg = m;
       });
       const eventWaiter = await app.getEventWaiter();
@@ -146,7 +141,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       const helloService = await ctx.getEggObject(HelloService);
       let eventName = '';
       let msg = '';
-      mm(MultiEventHandler.prototype, 'handle', (ctx, m) => {
+      mm(MultiEventHandler.prototype, 'handle', (ctx: IEventContext, m: string) => {
         eventName = ctx.eventName;
         msg = m;
       });

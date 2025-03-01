@@ -1,7 +1,7 @@
-import { Application } from 'egg';
-import { EventHandlerProtoManager } from './lib/EventHandlerProtoManager';
-import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook';
-import { EventbusProtoHook } from './lib/EventbusProtoHook';
+import { EggCore as Application } from '@eggjs/core';
+import { EventHandlerProtoManager } from './lib/EventHandlerProtoManager.js';
+import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook.js';
+import { EventbusProtoHook } from './lib/EventbusProtoHook.js';
 
 export default class EventbusAppHook {
   private readonly app: Application;
@@ -9,7 +9,7 @@ export default class EventbusAppHook {
   private readonly eventbusLoadUnitHook: EventbusLoadUnitHook;
   private readonly eventbusProtoHook: EventbusProtoHook;
 
-  constructor(app) {
+  constructor(app: Application) {
     this.app = app;
     this.eventHandlerProtoManager = new EventHandlerProtoManager(app);
     this.eventbusLoadUnitHook = new EventbusLoadUnitHook();

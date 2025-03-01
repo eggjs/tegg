@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { Context } from 'egg';
+import type { Context } from '@eggjs/core';
 import { Events, PrototypeUtil, CORK_ID, ContextEventBus } from '@eggjs/tegg';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
@@ -32,11 +32,10 @@ export class EggContextEventBus implements ContextEventBus {
       this.context.set(CORK_ID, null);
       this.corkId = undefined;
     }
+    return true;
   }
 
   emit<E extends keyof Events>(event: E, ...args: Arguments<Events[E]>): boolean {
     return this.eventBus.emitWithContext(this.context, event, args);
   }
-
-
 }
