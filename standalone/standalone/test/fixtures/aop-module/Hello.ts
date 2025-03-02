@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict';
+import assert from 'node:assert';
 import {
   ContextProto,
   Inject,

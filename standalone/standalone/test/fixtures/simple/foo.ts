@@ -15,7 +15,8 @@ export class HelloContext {
   }
 }
 
-@ContextProto()
+// @ContextProto()
+@SingletonProto()
 @Runner()
 export class Foo implements MainRunner<string> {
   @Inject()

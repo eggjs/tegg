@@ -33,17 +33,19 @@ import {
   LoadUnitAopHook, pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
 
-import { EggModuleLoader } from './EggModuleLoader';
-import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
-import { StandaloneContext } from './StandaloneContext';
-import { StandaloneContextHandler } from './StandaloneContextHandler';
-import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
-import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
-import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
-import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSourceManager';
-import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
-import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
-import { TransactionPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/TransactionPrototypeHook';
+import { EggModuleLoader } from './EggModuleLoader.js';
+import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit.js';
+import { StandaloneContext } from './StandaloneContext.js';
+import { StandaloneContextHandler } from './StandaloneContextHandler.js';
+import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.js';
+import {
+  DalTableEggPrototypeHook,
+  DalModuleLoadUnitHook,
+  MysqlDataSourceManager,
+  SqlMapManager,
+  TableModelManager,
+  TransactionPrototypeHook,
+} from '@eggjs/tegg-dal-plugin';
 
 export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;
@@ -68,6 +70,7 @@ export class Runner {
   readonly moduleConfigs: Record<string, ModuleConfigHolder>;
   readonly env?: string;
   readonly name?: string;
+  readonly options?: RunnerOptions;
   private loadUnitLoader: EggModuleLoader;
   private runnerProto: EggPrototype;
   private configSourceEggPrototypeHook: ConfigSourceLoadUnitHook;
@@ -76,10 +79,10 @@ export class Runner {
   private dalModuleLoadUnitHook: DalModuleLoadUnitHook;
   private transactionPrototypeHook: TransactionPrototypeHook;
 
-  private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
-  private readonly loadUnitAopHook: LoadUnitAopHook;
-  private readonly eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
-  private readonly eggObjectAopHook: EggObjectAopHook;
+  private crosscutAdviceFactory: CrosscutAdviceFactory;
+  private loadUnitAopHook: LoadUnitAopHook;
+  private eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
+  private eggObjectAopHook: EggObjectAopHook;
 
   loadUnits: LoadUnit[] = [];
   loadUnitInstances: LoadUnitInstance[] = [];
@@ -89,6 +92,7 @@ export class Runner {
     this.cwd = cwd;
     this.env = options?.env;
     this.name = options?.name;
+    this.options = options;
     this.moduleReferences = Runner.getModuleReferences(this.cwd, options?.dependencies);
     this.moduleConfigs = {};
     this.innerObjects = {
@@ -143,11 +147,47 @@ export class Runner {
     } else if (options?.innerObjectHandlers) {
       Object.assign(this.innerObjects, options.innerObjectHandlers);
     }
+  }
+
+  async load() {
+    StandaloneContextHandler.register();
+    LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
+      return new StandaloneLoadUnit(this.innerObjects);
+    });
+    LoadUnitInstanceFactory.registerLoadUnitInstanceClass(StandaloneLoadUnitType, ModuleLoadUnitInstance.createModuleLoadUnitInstance);
+    const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit('MockStandaloneLoadUnitPath', StandaloneLoadUnitType, {
+      async load(): Promise<EggProtoImplClass[]> {
+        return [];
+      },
+    });
+    const loadUnits = await this.loadUnitLoader.load();
+    return [ standaloneLoadUnit, ...loadUnits ];
+  }
+
+  static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+    const moduleDirs = (dependencies || []).concat(cwd);
+    return moduleDirs.reduce((list, baseDir) => {
+      const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
+      return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
+    }, [] as readonly ModuleReference[]);
+  }
+
+  static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+    const moduleReferences = Runner.getModuleReferences(cwd, dependencies);
+    await EggModuleLoader.preLoad(moduleReferences, {
+      baseDir: cwd,
+      logger: console,
+      dump: false,
+    });
+  }
+
+  private async initLoaderInstance() {
     this.loadUnitLoader = new EggModuleLoader(this.moduleReferences, {
       logger: ((this.innerObjects.logger && this.innerObjects.logger[0])?.obj as Logger) || console,
       baseDir: this.cwd,
-      dump: options?.dump,
+      dump: this.options?.dump,
     });
+    await this.loadUnitLoader.init();
     GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
     GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
     const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
@@ -178,39 +218,9 @@ export class Runner {
     LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }
 
-  async load() {
-    StandaloneContextHandler.register();
-    LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
-      return new StandaloneLoadUnit(this.innerObjects);
-    });
-    LoadUnitInstanceFactory.registerLoadUnitInstanceClass(StandaloneLoadUnitType, ModuleLoadUnitInstance.createModuleLoadUnitInstance);
-    const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit('MockStandaloneLoadUnitPath', StandaloneLoadUnitType, {
-      load(): EggProtoImplClass[] {
-        return [];
-      },
-    });
-    const loadUnits = await this.loadUnitLoader.load();
-    return [ standaloneLoadUnit, ...loadUnits ];
-  }
-
-  static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']) {
-    const moduleDirs = (dependencies || []).concat(cwd);
-    return moduleDirs.reduce((list, baseDir) => {
-      const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
-      return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
-    }, [] as readonly ModuleReference[]);
-  }
-
-  static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
-    const moduleReferences = Runner.getModuleReferences(cwd, dependencies);
-    await EggModuleLoader.preLoad(moduleReferences, {
-      baseDir: cwd,
-      logger: console,
-      dump: false,
-    });
-  }
-
   async init() {
+    await this.initLoaderInstance();
+
     this.loadUnits = await this.load();
     const instances: LoadUnitInstance[] = [];
     for (const loadUnit of this.loadUnits) {

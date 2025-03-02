@@ -1,10 +1,12 @@
-import { Runner, RunnerOptions } from './Runner';
+import { Runner, RunnerOptions } from './Runner.js';
 
 export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
   try {
     await Runner.preLoad(cwd, dependencies);
   } catch (e) {
-    e.message = `[tegg/standalone] bootstrap standalone preLoad failed: ${e.message}`;
+    if (e instanceof Error) {
+      e.message = `[tegg/standalone] bootstrap standalone preLoad failed: ${e.message}`;
+    }
     throw e;
   }
 }
@@ -14,7 +16,9 @@ export async function main<T = void>(cwd: string, options?: RunnerOptions): Prom
   try {
     await runner.init();
   } catch (e) {
-    e.message = `[tegg/standalone] bootstrap tegg failed: ${e.message}`;
+    if (e instanceof Error) {
+      e.message = `[tegg/standalone] bootstrap tegg failed: ${e.message}`;
+    }
     throw e;
   }
   try {

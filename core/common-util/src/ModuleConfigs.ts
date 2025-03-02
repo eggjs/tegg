@@ -8,3 +8,5 @@ export class ModuleConfigs {
     return this.inner[moduleName]?.config;
   }
 }
+
+export type { ModuleConfig };

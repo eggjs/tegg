@@ -1,7 +1,7 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
-import { DynamicLogger, LogPath } from '../logger/DynamicLogger';
-import { Biz } from '../biz/biz';
+import { DynamicLogger, LogPath } from '../logger/DynamicLogger.js';
+import { Biz } from '../biz/biz.js';
 
 @SingletonProto()
 @Runner()

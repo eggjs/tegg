@@ -13,7 +13,7 @@ import {
  */
 export class ConfigSourceLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   async preCreate(ctx: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
-    const classList = ctx.loader.load();
+    const classList = await ctx.loader.load();
     for (const clazz of classList) {
       const injectObjects = PrototypeUtil.getInjectObjects(clazz);
       const moduleConfigObject = injectObjects.find(t => t.objName === 'moduleConfig');

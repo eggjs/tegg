@@ -19,14 +19,19 @@ export interface EggModuleLoaderOptions {
 export class EggModuleLoader {
   private moduleReferences: readonly ModuleReference[];
   private globalGraph: GlobalGraph;
+  private options: EggModuleLoaderOptions;
 
   constructor(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
     this.moduleReferences = moduleReferences;
-    GlobalGraph.instance = this.globalGraph = EggModuleLoader.generateAppGraph(this.moduleReferences, options);
+    this.options = options;
   }
 
-  private static generateAppGraph(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
-    const moduleDescriptors = LoaderFactory.loadApp(moduleReferences);
+  async init() {
+    GlobalGraph.instance = this.globalGraph = await EggModuleLoader.generateAppGraph(this.moduleReferences, this.options);
+  }
+
+  private static async generateAppGraph(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions) {
+    const moduleDescriptors = await LoaderFactory.loadApp(moduleReferences);
     if (options.dump !== false) {
       for (const moduleDescriptor of moduleDescriptors) {
         ModuleDescriptorDumper.dump(moduleDescriptor, {
@@ -37,7 +42,7 @@ export class EggModuleLoader {
         });
       }
     }
-    const globalGraph = GlobalGraph.create(moduleDescriptors);
+    const globalGraph = await GlobalGraph.create(moduleDescriptors);
     return globalGraph;
   }
 
@@ -58,7 +63,7 @@ export class EggModuleLoader {
   static async preLoad(moduleReferences: readonly ModuleReference[], options: EggModuleLoaderOptions): Promise<void> {
     const loadUnits: LoadUnit[] = [];
     const loaderCache = new Map<string, Loader>();
-    const globalGraph = GlobalGraph.instance = EggModuleLoader.generateAppGraph(moduleReferences, options);
+    const globalGraph = GlobalGraph.instance = await EggModuleLoader.generateAppGraph(moduleReferences, options);
     globalGraph.sort();
     const moduleConfigList = globalGraph.moduleConfigList;
     for (const moduleConfig of moduleConfigList) {

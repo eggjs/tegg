@@ -2,7 +2,7 @@ import { EggPrototype, EggPrototypeFactory, LoadUnit } from '@eggjs/tegg-metadat
 import { EggPrototypeName, ObjectInitType, QualifierInfo } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto';
+import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto.js';
 
 export const StandaloneLoadUnitType = 'StandaloneLoadUnitType';
 

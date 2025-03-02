@@ -16,6 +16,7 @@ import {
 } from '@eggjs/tegg-metadata';
 
 export class StandaloneInnerObjectProto implements EggPrototype {
+  [key: symbol]: PropertyDescriptor;
   private readonly clazz: EggProtoImplClass;
   private readonly qualifiers: QualifierInfo[];
 

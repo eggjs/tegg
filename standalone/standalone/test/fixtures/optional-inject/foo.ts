@@ -1,6 +1,6 @@
 import { Inject, InjectOptional, SingletonProto } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
-import { Bar } from './bar';
+import { Bar } from './bar.js';
 
 @Runner()
 @SingletonProto()
