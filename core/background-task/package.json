@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-background-task",
   "description": "background util for tegg",
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "keywords": [
     "egg",
     "typescript",
@@ -41,13 +41,13 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/core-decorator": "^3.52.0",
-    "@eggjs/tegg-lifecycle": "^3.52.0",
-    "@eggjs/tegg-runtime": "^3.52.0",
-    "@eggjs/tegg-types": "^3.52.0"
+    "@eggjs/core-decorator": "^4.0.0-beta.1",
+    "@eggjs/tegg-lifecycle": "^4.0.0-beta.1",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.1",
+    "@eggjs/tegg-types": "^4.0.0-beta.1"
   },
   "devDependencies": {
-    "@eggjs/tegg-common-util": "^3.52.0",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
     "@types/node": "22",
     "egg": "4",
     "mocha": "10",

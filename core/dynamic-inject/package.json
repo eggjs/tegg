@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject",
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "description": "tegg dynamic inject",
   "type": "module",
   "exports": {
@@ -43,8 +43,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.52.0",
-    "@eggjs/tegg-types": "^3.52.0"
+    "@eggjs/core-decorator": "^4.0.0-beta.1",
+    "@eggjs/tegg-types": "^4.0.0-beta.1"
   },
   "devDependencies": {
     "@types/node": "22",

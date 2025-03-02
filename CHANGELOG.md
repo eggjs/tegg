@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.1](https://github.com/eggjs/tegg/compare/v3.52.0...v4.0.0-beta.1) (2025-03-02)
+
+
+### Features
+
+* **core/types:** change to esm ([#263](https://github.com/eggjs/tegg/issues/263)) ([6ee4dad](https://github.com/eggjs/tegg/commit/6ee4dadcee4b90541b4d3fcd37161ed63960c7bd))
+* esm only ([2370354](https://github.com/eggjs/tegg/commit/2370354b4e3f57b416e55f92396cabf9bc74b6a3))
+
+
+### BREAKING CHANGES
+
+* drop Node.js < 20 support, and drop commonjs support
+
+
+
+
+
 # [3.52.0](https://github.com/eggjs/tegg/compare/v3.51.2...v3.52.0) (2024-12-30)
 
 

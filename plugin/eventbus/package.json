@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-plugin",
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "eggPlugin": {
     "name": "eventbusModule",
     "strict": false,
@@ -58,21 +58,21 @@
   },
   "dependencies": {
     "@eggjs/core": "^6.4.0",
-    "@eggjs/egg-module-common": "^3.52.0",
-    "@eggjs/tegg-eventbus-runtime": "^3.52.0",
-    "@eggjs/tegg": "^3.52.0",
-    "@eggjs/tegg-metadata": "^3.52.0",
-    "@eggjs/tegg-runtime": "^3.52.0"
+    "@eggjs/egg-module-common": "^4.0.0-beta.1",
+    "@eggjs/tegg": "^4.0.0-beta.1",
+    "@eggjs/tegg-eventbus-runtime": "^4.0.0-beta.1",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.1"
   },
   "devDependencies": {
-    "@eggjs/tegg-common-util": "^3.52.0",
-    "@eggjs/tegg-config": "^3.52.0",
-    "@eggjs/tegg-plugin": "^3.52.0",
+    "@eggjs/mock": "6",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
+    "@eggjs/tegg-config": "^4.0.0-beta.1",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.1",
+    "@eggjs/tracer": "3",
     "@types/mocha": "10",
     "@types/node": "22",
     "egg": "4",
-    "@eggjs/mock": "6",
-    "@eggjs/tracer": "3",
     "ts-node": "10",
     "typescript": "5"
   },

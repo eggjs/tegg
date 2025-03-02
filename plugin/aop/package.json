@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-plugin",
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "eggPlugin": {
     "name": "aopModule",
     "dependencies": [
@@ -48,20 +48,20 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^3.52.0",
-    "@eggjs/egg-module-common": "^3.52.0",
-    "@eggjs/tegg": "^3.52.0",
-    "@eggjs/tegg-aop-runtime": "^3.52.0",
-    "@eggjs/tegg-metadata": "^3.52.0"
+    "@eggjs/aop-decorator": "^4.0.0-beta.1",
+    "@eggjs/egg-module-common": "^4.0.0-beta.1",
+    "@eggjs/tegg": "^4.0.0-beta.1",
+    "@eggjs/tegg-aop-runtime": "^4.0.0-beta.1",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.1"
   },
   "devDependencies": {
     "@eggjs/bin": "7",
-    "@eggjs/tegg-config": "^3.52.0",
-    "@eggjs/tegg-plugin": "^3.52.0",
+    "@eggjs/mock": "6",
+    "@eggjs/tegg-config": "^4.0.0-beta.1",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.1",
     "@types/mocha": "10",
     "@types/node": "20",
     "egg": "4",
-    "@eggjs/mock": "6",
     "ts-node": "10",
     "typescript": "5"
   },

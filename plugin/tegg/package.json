@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -55,27 +55,27 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.52.0",
     "@eggjs/core": "^6.4.0",
-    "@eggjs/tegg": "^3.52.0",
-    "@eggjs/tegg-background-task": "^3.52.0",
-    "@eggjs/tegg-common-util": "^3.52.0",
-    "@eggjs/tegg-dynamic-inject-runtime": "^3.52.0",
-    "@eggjs/tegg-loader": "^3.52.0",
-    "@eggjs/tegg-metadata": "^3.52.0",
-    "@eggjs/tegg-runtime": "^3.52.0",
+    "@eggjs/egg-module-common": "^4.0.0-beta.1",
+    "@eggjs/tegg": "^4.0.0-beta.1",
+    "@eggjs/tegg-background-task": "^4.0.0-beta.1",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
+    "@eggjs/tegg-dynamic-inject-runtime": "^4.0.0-beta.1",
+    "@eggjs/tegg-loader": "^4.0.0-beta.1",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.1",
     "extend2": "^4.0.0",
     "sdk-base": "^5.0.1"
   },
   "devDependencies": {
-    "@types/mocha": "10",
-    "@eggjs/tegg-config": "^3.52.0",
     "@eggjs/bin": "7",
+    "@eggjs/mock": "6",
+    "@eggjs/tegg-config": "^4.0.0-beta.1",
+    "@eggjs/tracer": "3",
+    "@types/mocha": "10",
     "@types/node": "22",
     "egg": "4",
     "egg-logger": "^3.0.1",
-    "@eggjs/mock": "6",
-    "@eggjs/tracer": "3",
     "ts-node": "10",
     "typescript": "5"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/standalone-decorator",
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "description": "tegg standalone decorator",
   "keywords": [
     "egg",
@@ -41,7 +41,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^3.52.0",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
     "reflect-metadata": "^0.2.2"
   },
   "publishConfig": {

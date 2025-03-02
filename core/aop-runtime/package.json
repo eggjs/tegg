@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-runtime",
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "description": "tegg aop",
   "eggModule": {
     "name": "teggAopRuntime"
@@ -47,19 +47,19 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^3.52.0",
-    "@eggjs/core-decorator": "^3.52.0",
-    "@eggjs/tegg-common-util": "^3.52.0",
-    "@eggjs/tegg-lifecycle": "^3.52.0",
-    "@eggjs/tegg-metadata": "^3.52.0",
-    "@eggjs/tegg-runtime": "^3.52.0",
-    "@eggjs/tegg-types": "^3.52.0",
+    "@eggjs/aop-decorator": "^4.0.0-beta.1",
+    "@eggjs/core-decorator": "^4.0.0-beta.1",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
+    "@eggjs/tegg-lifecycle": "^4.0.0-beta.1",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.1",
+    "@eggjs/tegg-types": "^4.0.0-beta.1",
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
+    "@eggjs/module-test-util": "^4.0.0-beta.1",
+    "@eggjs/tegg-loader": "^4.0.0-beta.1",
     "@types/koa-compose": "3",
-    "@eggjs/module-test-util": "^3.52.0",
-    "@eggjs/tegg-loader": "^3.52.0",
     "@types/node": "22",
     "ts-node": "10",
     "typescript": "5"

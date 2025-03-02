@@ -3,7 +3,7 @@
   "eggPlugin": {
     "name": "teggConfig"
   },
-  "version": "3.52.0",
+  "version": "4.0.0-beta.1",
   "description": "module config plugin for egg",
   "keywords": [
     "egg",
@@ -51,12 +51,12 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^3.52.0",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
     "@eggjs/utils": "^4.3.0"
   },
   "devDependencies": {
-    "@types/node": "22",
     "@eggjs/mock": "6",
+    "@types/node": "22",
     "egg": "4",
     "ts-node": "10",
     "typescript": "5"
