@@ -6,7 +6,7 @@ import {
   LoadUnit,
   LoadUnitLifecycleContext,
 } from '@eggjs/tegg-metadata';
-import { Orm } from './SingletonORM';
+import { Orm } from './SingletonORM.js';
 
 const REGISTER_CLAZZ = [
   Orm,

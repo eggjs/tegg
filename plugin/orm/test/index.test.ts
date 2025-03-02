@@ -1,19 +1,17 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-// @ts-expect-error: the library definition is wrong
-import { Logger } from 'leoric';
-import mm, { MockApplication } from 'egg-mock';
-import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService';
 import os from 'node:os';
-import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService';
-import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg';
-import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App';
-import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService';
-import { EggContext } from '@eggjs/tegg';
+import Realm from 'leoric';
+import { mm, MockApplication } from '@eggjs/mock';
+import { Context } from '@eggjs/core';
+import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.js';
+import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.js';
+import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.js';
+import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App.js';
+import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService.js';
 
 describe('plugin/orm/test/orm.test.ts', () => {
   // TODO win32 ci not support mysql
-  if ([ 'darwin', 'win32' ].includes(os.platform())) {
+  if ([ 'win32' ].includes(os.platform())) {
     return;
   }
 
@@ -25,17 +23,12 @@ describe('plugin/orm/test/orm.test.ts', () => {
       Pkg.truncate(),
       App.truncate(),
     ]);
-    mm.restore();
+    return mm.restore();
   });
 
   before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../');
-    });
     app = mm.app({
-      baseDir: path.join(__dirname, './fixtures/apps/orm-app'),
-      framework: require.resolve('egg'),
+      baseDir: 'apps/orm-app',
     });
     await app.ready();
   });
@@ -51,13 +44,13 @@ describe('plugin/orm/test/orm.test.ts', () => {
       desc: 'the framework',
     });
     assert(appModel);
-    assert(appModel.name === 'egg');
-    assert(appModel.desc === 'the framework');
+    assert.equal(appModel.name, 'egg');
+    assert.equal(appModel.desc, 'the framework');
 
     const findModel = await appService.findApp('egg');
     assert(findModel);
-    assert(findModel.name === 'egg');
-    assert(findModel.desc === 'the framework');
+    assert.equal(findModel.name, 'egg');
+    assert.equal(findModel.desc, 'the framework');
   });
 
   it('hook should work', async () => {
@@ -67,13 +60,13 @@ describe('plugin/orm/test/orm.test.ts', () => {
       desc: 'the framework',
     });
     assert(pkgModel);
-    assert(pkgModel.name === 'egg_before_create_hook');
-    assert(pkgModel.desc === 'the framework');
+    assert.equal(pkgModel.name, 'egg_before_create_hook');
+    assert.equal(pkgModel.desc, 'the framework');
 
     const findModel = await pkgService.findPkg('egg_before_create_hook');
     assert(findModel);
-    assert(findModel.name === 'egg_before_create_hook');
-    assert(findModel.desc === 'the framework');
+    assert.equal(findModel.name, 'egg_before_create_hook');
+    assert.equal(findModel.desc, 'the framework');
   });
 
   it('ctx should inject with Model', async () => {
@@ -95,32 +88,31 @@ describe('plugin/orm/test/orm.test.ts', () => {
           desc: 'the framework',
         });
         assert(appModel);
-        assert(appModel.name === 'egg');
-        assert(appModel.desc === 'the framework');
+        assert.equal(appModel.name, 'egg');
+        assert.equal(appModel.desc, 'the framework');
       });
 
       it('query success', async () => {
         const res = await appService.rawQuery('test', 'select * from apps where name = "egg"');
-        assert(res.rows.length === 1);
-        assert(res.rows[0].name === 'egg');
+        assert.equal(res.rows.length, 1);
+        assert.equal(res.rows[0].name, 'egg');
       });
 
       it('query success for args', async () => {
         const res = await appService.rawQuery('test', 'select * from apps where name = ?', [ 'egg' ]);
-        assert(res.rows.length === 1);
-        assert(res.rows[0].name === 'egg');
+        assert.equal(res.rows.length, 1);
+        assert.equal(res.rows[0].name, 'egg');
       });
     });
 
     describe('multi db', () => {
-
       it('should work for multi database', async () => {
         const appleClient = await appService.getClient('apple');
         const bananaClient = await appService.getClient('banana');
-        assert(appleClient.options.database === 'apple');
-        assert(appleClient.options.database === 'apple');
-        assert(bananaClient.options.database === 'banana');
-        assert(bananaClient.options.database === 'banana');
+        assert.equal(appleClient.options.database, 'apple');
+        assert.equal(appleClient.options.database, 'apple');
+        assert.equal(bananaClient.options.database, 'banana');
+        assert.equal(bananaClient.options.database, 'banana');
       });
 
       it('should throw when invalid database', async () => {
@@ -131,14 +123,14 @@ describe('plugin/orm/test/orm.test.ts', () => {
 
       it('should return undefined when get default client', async () => {
         const defaultClient = await appService.getDefaultClient();
-        assert(defaultClient === undefined);
+        assert.equal(defaultClient, undefined);
       });
     });
 
   });
 
   describe('context proto', () => {
-    let ctx: EggContext;
+    let ctx: Context;
     let ctxService: CtxService;
     beforeEach(async () => {
       ctx = await app.mockModuleContext();
@@ -153,7 +145,7 @@ describe('plugin/orm/test/orm.test.ts', () => {
         name: 'egg',
         desc: 'the framework',
       });
-      assert(ctxPkg.name === 'egg_before_create_hook');
+      assert.equal(ctxPkg.name, 'egg_before_create_hook');
     });
 
     it('should query work', async () => {
@@ -164,16 +156,16 @@ describe('plugin/orm/test/orm.test.ts', () => {
       });
       const ctxPkg = await ctxService.findCtxPkg('egg_before_create_hook');
       assert(ctxPkg);
-      assert(ctxPkg.name === 'egg_before_create_hook');
+      assert.equal(ctxPkg.name, 'egg_before_create_hook');
       app.expectLog(/sql: SELECT \* FROM `pkgs` WHERE `name` = 'egg_before_create_hook' LIMIT 1 path: \//);
-
     });
 
     it('should tracer ctx set', async () => {
       let ctx;
       await (app as any).leoricRegister.ready();
       for (const realm of app.leoricRegister.realmMap.values()) {
-        realm.driver.logger = new Logger({
+        // @ts-expect-error: the library definition is wrong
+        (realm.driver as any).logger = new Realm.Logger({
           // eslint-disable-next-line no-loop-func
           logQuery(_: any, __: any, options: { Model: { ctx: any; }; }) {
             if (options.Model) {
@@ -187,10 +179,9 @@ describe('plugin/orm/test/orm.test.ts', () => {
         desc: 'the framework',
       });
 
-      assert(ctx.originalUrl === '/');
-      assert(ctx.tracer.traceId);
-
+      assert.equal(ctx!.originalUrl, '/');
+      assert(ctx!.tracer.traceId);
+      // assert.equal(ctx!.tracer.traceId, '1234567890');
     });
-
   });
 });

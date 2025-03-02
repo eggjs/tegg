@@ -57,6 +57,7 @@
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
+    "@types/koa-compose": "3",
     "@eggjs/module-test-util": "^3.52.0",
     "@eggjs/tegg-loader": "^3.52.0",
     "@types/node": "22",

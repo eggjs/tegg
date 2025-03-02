@@ -1,13 +1,13 @@
 import { Base } from 'sdk-base';
-import { ModelProtoManager } from './ModelProtoManager';
-import { DataSourceManager, OrmConfig } from './DataSourceManager';
-import Realm, { hookNames } from 'leoric';
+import Realm from 'leoric';
 import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
-
+import { ModelProtoManager } from './ModelProtoManager.js';
+import { DataSourceManager, OrmConfig } from './DataSourceManager.js';
+import type { RealmType } from './types.js';
 export class LeoricRegister extends Base {
   private readonly modelProtoManager: ModelProtoManager;
   private readonly dataSourceManager: DataSourceManager;
-  readonly realmMap: Map<string, any>;
+  readonly realmMap: Map<string, RealmType>;
 
   constructor(modelProtoManager: ModelProtoManager, dataSourceManager: DataSourceManager) {
     super();
@@ -26,7 +26,7 @@ export class LeoricRegister extends Base {
     return config;
   }
 
-  getRealm(config: OrmConfig | undefined): Realm | undefined {
+  getRealm(config: OrmConfig | undefined): RealmType | undefined {
     if (!config?.database) {
       return undefined;
     }
@@ -36,7 +36,7 @@ export class LeoricRegister extends Base {
 
   getOrCreateRealm(datasource: string | undefined): any {
     const config = this.getConfig(datasource);
-    let realm: Realm | undefined;
+    let realm: RealmType | undefined;
     if (config) {
       realm = this.getRealm(config);
       if (realm) {
@@ -44,12 +44,12 @@ export class LeoricRegister extends Base {
       }
     }
     realm = new (Realm as any)({ ...config });
-    this.realmMap.set(config!.database, realm);
+    this.realmMap.set(config!.database, realm!);
     return realm;
   }
 
   generateLeoricAttributes(metadata: ModelMetadata) {
-    const attributes = {};
+    const attributes: Record<string, any> = {};
     for (const attribute of metadata.attributes) {
       attributes[attribute.propertyName] = {
         columnName: attribute.attributeName,
@@ -71,10 +71,10 @@ export class LeoricRegister extends Base {
       realm.models[clazz.name] = clazz;
       realm[clazz.name] = clazz;
       const attributes = this.generateLeoricAttributes(metadata);
-      const hooks = {};
-      for (const hookName of hookNames) {
-        if (clazz[hookName]) {
-          hooks[hookName] = clazz[hookName];
+      const hooks: Record<string, any> = {};
+      for (const hookName of Realm.hookNames) {
+        if (clazz[hookName as keyof typeof clazz]) {
+          hooks[hookName] = clazz[hookName as keyof typeof clazz];
         }
       }
 

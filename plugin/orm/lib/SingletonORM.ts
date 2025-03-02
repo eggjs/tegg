@@ -3,8 +3,8 @@ import {
   Inject,
   SingletonProto,
 } from '@eggjs/tegg';
-import { LeoricRegister } from './LeoricRegister';
-import Realm from 'leoric';
+import { LeoricRegister } from './LeoricRegister.js';
+import type { RealmType } from './types.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -14,12 +14,12 @@ export class Orm {
   private leoricRegister: LeoricRegister;
 
   // default dataSource
-  get client(): Realm {
+  get client(): RealmType {
     const defaultConfig = this.leoricRegister.getConfig();
     return this.leoricRegister.getRealm(defaultConfig)!;
   }
 
-  getClient(datasource: string): Realm {
+  getClient(datasource: string): RealmType {
     const config = this.leoricRegister.getConfig(datasource);
     if (!config) {
       throw new Error(`not found ${datasource} datasource`);

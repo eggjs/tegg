@@ -24,15 +24,26 @@
     "lib/**/*.d.ts",
     "app/**/*.js",
     "app/**/*.d.ts",
-    "typings/*.d.ts"
+    "index.js",
+    "index.d.ts"
   ],
-  "types": "typings/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "test": "npm run prepare-test && cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "pretest": "npm run prepare-test",
+    "test": "egg-bin test",
+    "precov": "npm run prepare-test",
+    "cov": "egg-bin cov",
     "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub",
+    "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "npm run tsc",
+    "prepublishOnly": "npm run tsc",
     "prepare-test": "node ./test/fixtures/prepare.js"
   },
   "homepage": "https://github.com/eggjs/tegg",
@@ -45,9 +56,10 @@
     "directory": "plugin/orm"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
+    "@eggjs/core": "^6.4.0",
     "@eggjs/egg-module-common": "^3.52.0",
     "@eggjs/tegg": "^3.52.0",
     "@eggjs/tegg-common-util": "^3.52.0",
@@ -56,27 +68,21 @@
     "@eggjs/tegg-metadata": "^3.52.0",
     "@eggjs/tegg-orm-decorator": "^3.52.0",
     "@eggjs/tegg-runtime": "^3.52.0",
-    "@types/koa-router": "^7.0.40",
-    "koa-compose": "^3.2.1",
     "leoric": "^2.12.2",
     "sdk-base": "^5.0.1"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.52.0",
-    "@eggjs/router": "^3.0.5",
     "@eggjs/tegg-config": "^3.52.0",
     "@eggjs/tegg-plugin": "^3.52.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^20.2.4",
-    "cross-env": "^7.0.3",
+    "@types/mocha": "10",
+    "@types/node": "22",
     "egg": "4",
     "@eggjs/mock": "6",
-    "@eggjs/tracer": "^3.0.0",
-    "koa-router": "^8.0.8",
-    "mocha": "^10.2.0",
-    "mysql": "^2.18.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "@eggjs/tracer": "3",
+    "mysql2": "3",
+    "ts-node": "10",
+    "typescript": "5"
   },
   "publishConfig": {
     "access": "public"

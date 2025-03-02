@@ -1,6 +1,6 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
-import { Orm } from '@eggjs/tegg-orm-plugin/lib/SingletonORM';
-import { App } from './model/App';
+import { Orm } from '../../../../../../lib/SingletonORM.js';
+import { App } from './model/App.js';
 
 @SingletonProto()
 export class AppService {
@@ -14,7 +14,7 @@ export class AppService {
     name: string;
     desc: string;
   }): Promise<App> {
-    const bone = await this.App.create(data as any);
+    const bone = await this.App.create(data);
     return bone as App;
   }
 
@@ -34,5 +34,4 @@ export class AppService {
   async getDefaultClient() {
     return this.orm.client;
   }
-
 }

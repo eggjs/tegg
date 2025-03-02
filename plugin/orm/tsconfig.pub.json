@@ -1,10 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./"
+    "baseUrl": "./",
+     "target": "ES2021"
   },
   "exclude": [
-    "node_modules",
     "test"
   ]
 }
