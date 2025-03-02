@@ -79,7 +79,6 @@
     "@eggjs/tracer": "3",
     "@types/mocha": "10",
     "@types/node": "22",
-    "snap-shot-it": "^7",
     "egg": "4",
     "mysql2": "3",
     "ts-node": "10",
