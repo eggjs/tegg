@@ -1,5 +1,4 @@
-import { Inject, SingletonProto } from '@eggjs/tegg';
-import { RuntimeConfig } from '@eggjs/tegg-common-util';
+import { Inject, SingletonProto, RuntimeConfig } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 
 @Runner()

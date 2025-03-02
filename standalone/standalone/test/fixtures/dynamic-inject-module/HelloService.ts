@@ -1,7 +1,7 @@
 import { ContextProto, Inject, EggObjectFactory } from '@eggjs/tegg';
-import { ContextHelloType, SingletonHelloType } from './FooType';
-import { AbstractContextHello } from './AbstractContextHello';
-import { AbstractSingletonHello } from './AbstractSingletonHello';
+import { ContextHelloType, SingletonHelloType } from './FooType.js';
+import { AbstractContextHello } from './AbstractContextHello.js';
+import { AbstractSingletonHello } from './AbstractSingletonHello.js';
 
 @ContextProto()
 export class HelloService {

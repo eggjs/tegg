@@ -1,5 +1,5 @@
 import { Inject, SingletonProto, AccessLevel } from '@eggjs/tegg';
-import { DynamicLogger, LogPath } from '../logger/DynamicLogger';
+import { DynamicLogger, LogPath } from '../logger/DynamicLogger.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

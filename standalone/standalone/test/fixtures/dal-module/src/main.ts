@@ -1,8 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import { ContextProto, Inject } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
-import FooDAO from './dal/dao/FooDAO';
-import { Foo } from './Foo';
-
+import FooDAO from './dal/dao/FooDAO.js';
+import { Foo } from './Foo.js';
 
 @Runner()
 @ContextProto()
@@ -13,7 +13,7 @@ export class FooRunner implements MainRunner<Foo | null> {
   async main(): Promise<Foo | null> {
     const foo = new Foo();
     foo.col1 = '2333';
-    foo.name = 'test_service_worker';
+    foo.name = 'test_service_worker' + randomUUID();
     foo.bitColumn = Buffer.from([ 0, 0 ]);
     foo.boolColumn = 0;
     foo.tinyIntColumn = 0;

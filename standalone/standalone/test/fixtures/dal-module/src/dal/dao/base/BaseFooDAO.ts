@@ -1,12 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { InsertResult, UpdateResult, DeleteResult } from '@eggjs/dal-decorator';
 import { Inject } from '@eggjs/tegg';
 import { Dao } from '@eggjs/tegg/dal';
 import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '@eggjs/dal-decorator';
-import { Foo } from '../../../Foo';
-import FooExtension from '../../extension/FooExtension';
-import Structure from '../../structure/Foo.json';
+import { Foo } from '../../../Foo.js';
+import FooExtension from '../../extension/FooExtension.js';
+import Structure from '../../structure/Foo.json' with { type: 'json' };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const SQL = Symbol('Dao#sql');
 
 type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
@@ -18,6 +23,7 @@ type Optional<T, K extends keyof T> = Omit < T, K > & Partial<T> ;
 /* istanbul ignore next */
 @Dao()
 export class BaseFooDAO {
+  static [SQL] = '';
   static clazzModel = Foo;
   static clazzExtension = FooExtension;
   static tableStature = Structure;

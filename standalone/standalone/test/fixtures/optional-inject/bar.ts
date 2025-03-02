@@ -1,5 +1,4 @@
-import { Inject, SingletonProto } from '@eggjs/tegg';
-import { InjectOptional } from '@eggjs/core-decorator';
+import { Inject, SingletonProto, InjectOptional } from '@eggjs/tegg';
 
 @SingletonProto()
 export class Bar {

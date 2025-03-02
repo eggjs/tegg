@@ -1,7 +1,7 @@
-import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto';
 import { EggObject, EggObjectFactory } from '@eggjs/tegg-runtime';
 import { IdenticalUtil, EggObjectName } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
+import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto.js';
 
 const OBJ = Symbol('EggCompatibleObject#obj');
 

@@ -1,3 +1,7 @@
+import fs from 'node:fs';
+import { Writable } from 'node:stream';
+import path from 'node:path';
+import { EOL } from 'node:os';
 import {
   MultiInstanceProto,
   MultiInstancePrototypeGetObjectsContext,
@@ -8,10 +12,6 @@ import {
   AccessLevel,
 } from '@eggjs/tegg';
 import { EggObject, ModuleConfigUtil, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
-import fs from 'node:fs';
-import { Writable } from 'node:stream';
-import path from 'node:path';
-import { EOL } from 'node:os';
 
 export const LOG_PATH_ATTRIBUTE = Symbol.for('LOG_PATH_ATTRIBUTE');
 
@@ -21,7 +21,6 @@ export function LogPath(name: string) {
   };
 }
 
-
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
@@ -30,7 +29,7 @@ export function LogPath(name: string) {
     if (!logger) {
       return [];
     }
-    return logger.map(name => {
+    return logger.map((name: string) => {
       return {
         name: 'dynamicLogger',
         qualifiers: [{
@@ -55,7 +54,7 @@ export class DynamicLogger {
   @LifecycleDestroy()
   async destroy() {
     return new Promise<void>((resolve, reject) => {
-      this.stream.end(err => {
+      this.stream.end((err: any) => {
         if (err) {
           return reject(err);
         }
@@ -66,7 +65,7 @@ export class DynamicLogger {
 
   info(msg: string) {
     return new Promise<void>((resolve, reject) => {
-      this.stream.write(msg + EOL, err => {
+      this.stream.write(msg + EOL, (err: any) => {
         if (err) {
           return reject(err);
         }
