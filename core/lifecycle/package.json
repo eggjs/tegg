@@ -47,8 +47,6 @@
     "@eggjs/tegg-types": "^3.52.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-metadata": "^3.52.0",
-    "@eggjs/tegg-runtime": "^3.52.0",
     "@types/node": "22",
     "ts-node": "10",
     "typescript": "5"
