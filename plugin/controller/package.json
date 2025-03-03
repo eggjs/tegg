@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -56,14 +56,14 @@
   },
   "dependencies": {
     "@eggjs/core": "^6.4.0",
-    "@eggjs/egg-module-common": "^4.0.0-beta.1",
+    "@eggjs/egg-module-common": "^4.0.0-beta.2",
     "@eggjs/router": "^3.0.5",
-    "@eggjs/tegg": "^4.0.0-beta.1",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
-    "@eggjs/tegg-loader": "^4.0.0-beta.1",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.1",
-    "@eggjs/tegg-types": "^4.0.0-beta.1",
+    "@eggjs/tegg": "^4.0.0-beta.2",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.2",
+    "@eggjs/tegg-loader": "^4.0.0-beta.2",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.2",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.2",
+    "@eggjs/tegg-types": "^4.0.0-beta.2",
     "egg-errors": "^2.3.0",
     "globby": "^14.1.0",
     "path-to-regexp": "^1.9.0",
@@ -72,9 +72,9 @@
   "devDependencies": {
     "@eggjs/bin": "7",
     "@eggjs/mock": "6",
-    "@eggjs/module-test-util": "^4.0.0-beta.1",
-    "@eggjs/tegg-config": "^4.0.0-beta.1",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.1",
+    "@eggjs/module-test-util": "^4.0.0-beta.2",
+    "@eggjs/tegg-config": "^4.0.0-beta.2",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.2",
     "@eggjs/tracer": "^3.0.0",
     "@types/mocha": "10",
     "@types/node": "22",

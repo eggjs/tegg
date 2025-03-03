@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-common-util",
   "description": "common util for tegg",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "keywords": [
     "egg",
     "typescript",
@@ -40,7 +40,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-types": "^4.0.0-beta.1",
+    "@eggjs/tegg-types": "^4.0.0-beta.2",
     "@eggjs/utils": "^4.3.0",
     "extend2": "^4.0.0",
     "globby": "^14.1.0",

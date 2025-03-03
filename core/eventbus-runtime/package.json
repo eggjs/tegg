@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-runtime",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "description": "tegg eventbus runtime",
   "keywords": [
     "egg",
@@ -41,11 +41,11 @@
     "directory": "core/eventbus-runtime"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.1",
-    "@eggjs/eventbus-decorator": "^4.0.0-beta.1",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.1",
-    "@eggjs/tegg-types": "^4.0.0-beta.1",
+    "@eggjs/core-decorator": "^4.0.0-beta.2",
+    "@eggjs/eventbus-decorator": "^4.0.0-beta.2",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.2",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.2",
+    "@eggjs/tegg-types": "^4.0.0-beta.2",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0"
   },
@@ -53,8 +53,8 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^4.0.0-beta.1",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
+    "@eggjs/tegg-loader": "^4.0.0-beta.2",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.2",
     "@types/node": "22",
     "coffee": "5",
     "egg": "4",

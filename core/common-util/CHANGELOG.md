@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.2](https://github.com/eggjs/tegg/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2025-03-03)
+
+
+### Bug Fixes
+
+* convert fileURL to normal path ([#294](https://github.com/eggjs/tegg/issues/294)) ([34c1b64](https://github.com/eggjs/tegg/commit/34c1b645d368a712ae255c06bd1bc2d09780e095))
+
+
+
+
+
 # [4.0.0-beta.1](https://github.com/eggjs/tegg/compare/v3.52.0...v4.0.0-beta.1) (2025-03-02)
 
 

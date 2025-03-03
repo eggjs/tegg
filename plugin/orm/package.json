@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -60,22 +60,22 @@
   },
   "dependencies": {
     "@eggjs/core": "^6.4.0",
-    "@eggjs/egg-module-common": "^4.0.0-beta.1",
-    "@eggjs/tegg": "^4.0.0-beta.1",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.1",
-    "@eggjs/tegg-loader": "^4.0.0-beta.1",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
-    "@eggjs/tegg-orm-decorator": "^4.0.0-beta.1",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.1",
+    "@eggjs/egg-module-common": "^4.0.0-beta.2",
+    "@eggjs/tegg": "^4.0.0-beta.2",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.2",
+    "@eggjs/tegg-lifecycle": "^4.0.0-beta.2",
+    "@eggjs/tegg-loader": "^4.0.0-beta.2",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.2",
+    "@eggjs/tegg-orm-decorator": "^4.0.0-beta.2",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.2",
     "leoric": "^2.12.2",
     "sdk-base": "^5.0.1"
   },
   "devDependencies": {
     "@eggjs/mock": "6",
-    "@eggjs/module-test-util": "^4.0.0-beta.1",
-    "@eggjs/tegg-config": "^4.0.0-beta.1",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.1",
+    "@eggjs/module-test-util": "^4.0.0-beta.2",
+    "@eggjs/tegg-config": "^4.0.0-beta.2",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.2",
     "@eggjs/tracer": "3",
     "@types/mocha": "10",
     "@types/node": "22",

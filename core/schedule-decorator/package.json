@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-schedule-decorator",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "description": "tegg schedule decorator",
   "type": "module",
   "exports": {
@@ -40,10 +40,10 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.1",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.1",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.1",
-    "@eggjs/tegg-types": "^4.0.0-beta.1"
+    "@eggjs/core-decorator": "^4.0.0-beta.2",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.2",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.2",
+    "@eggjs/tegg-types": "^4.0.0-beta.2"
   },
   "devDependencies": {
     "@types/node": "22",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.2](https://github.com/eggjs/tegg/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2025-03-03)
+
+
+### Bug Fixes
+
+* export Orm class ([#293](https://github.com/eggjs/tegg/issues/293)) ([cc902e0](https://github.com/eggjs/tegg/commit/cc902e0e0a833fd7a3301b72862df0d75b2042cb))
+
+
+
+
+
 # [4.0.0-beta.1](https://github.com/eggjs/tegg/compare/v3.52.0...v4.0.0-beta.1) (2025-03-02)
 
 
