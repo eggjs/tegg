@@ -24,6 +24,8 @@ export interface OrmConfig {
   user: string;
   define: object;
   options: object;
+  charset: string;
+  [key: string]: any;
 }
 
 export class DataSourceManager {
