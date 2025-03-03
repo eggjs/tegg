@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
 const debug = debuglog('@eggjs/tegg-common-util/StackUtil');
@@ -31,12 +32,15 @@ export class StackUtil {
       debug('call stack: %o', obj.stack.map(callSite => callSite.getFileName() ?? '<anonymous>').join('\n'));
     }
     const callSite = obj.stack[stackIndex];
-    let fileName;
-    /* istanbul ignore else */
+    let fileName: string | undefined;
     if (callSite) {
       // egg-mock will create a proxy
       // https://github.com/eggjs/egg-mock/blob/master/lib/app.js#L174
       fileName = callSite.getFileName();
+      if (fileName?.startsWith('file://')) {
+        // remove file://
+        fileName = fileURLToPath(fileName);
+      }
     }
 
     Error.prepareStackTrace = prep;

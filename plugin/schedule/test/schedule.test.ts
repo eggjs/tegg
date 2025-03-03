@@ -7,6 +7,7 @@ import { TimerUtil } from '@eggjs/tegg-common-util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const FooSubscriberFilePath = path.join(__dirname, 'fixtures', 'schedule-app', 'app', 'subscriber', 'Subscriber.ts');
 
 describe('plugin/schedule/test/schedule.test.ts', () => {
   let app: MockApplication;
@@ -30,6 +31,10 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
     await TimerUtil.sleep(1000);
     const scheduleLog = await getScheduleLogContent('schedule-app');
     assert.match(scheduleLog, /schedule called/);
+  });
+
+  it('schedule work with app.runSchedule', async () => {
+    await app.runSchedule(FooSubscriberFilePath);
   });
 });
 
