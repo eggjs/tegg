@@ -105,11 +105,11 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   }
 
   queueEvent(corkId: string, event: Event) {
-    const corkdEvents = this.corkedEvents.get(corkId);
-    if (!corkdEvents) {
+    const corkedEvents = this.corkedEvents.get(corkId);
+    if (!corkedEvents) {
       throw new Error(`eventbus corkId ${corkId} not found`);
     }
-    corkdEvents.events.push(event);
+    corkedEvents.events.push(event);
   }
 
   emitWithContext<E extends keyof Events>(parentContext: EggRuntimeContext, event: E, args: Arguments<Events[E]>): boolean {

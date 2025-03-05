@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { mm } from 'mm';
 import { ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
+
 import { main, StandaloneContext, Runner, preLoad } from '../index.js';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.js';
 import { Foo } from './fixtures/dal-module/src/Foo.js';
