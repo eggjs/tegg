@@ -6,7 +6,7 @@ import { MetadataUtil } from './MetadataUtil';
 export class QualifierUtil {
   static addProtoQualifier(clazz: EggProtoImplClass, attribute: QualifierAttribute, value: QualifierValue) {
     if (QualifierUtil.getQualifierValue(clazz, attribute)) {
-      throw new Error(`Qualifier Error: clazz ${clazz.toString()} attribute ${attribute.toString()} has been implemented`);
+      throw new Error(`Qualifier Error: clazz ${clazz.name} attribute ${attribute.toString()} has been implemented`);
     }
     const qualifiers = MetadataUtil.initOwnMapMetaData(QUALIFIER_META_DATA, clazz, new Map<QualifierAttribute, QualifierValue>());
     qualifiers.set(attribute, value);

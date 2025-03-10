@@ -4,9 +4,6 @@ import type { EggAbstractClazz, EggProtoImplClass, QualifierValue } from '@eggjs
 
 export class QualifierImplUtil {
   static addQualifierImpl(abstractClazz: EggAbstractClazz, qualifierValue: QualifierValue, implClazz: EggProtoImplClass) {
-    if (QualifierImplUtil.getQualifierImp(abstractClazz, qualifierValue)) {
-      throw new Error(`Qualifier Error: abstractClazz ${abstractClazz.toString()} qualifierValue ${qualifierValue.toString()} has been implemented`);
-    }
     const implMap = MetadataUtil.initOwnMapMetaData(QUALIFIER_IMPL_MAP, abstractClazz as unknown as EggProtoImplClass, new Map());
     implMap.set(qualifierValue, implClazz);
   }
