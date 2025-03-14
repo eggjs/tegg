@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.52.1](https://github.com/eggjs/tegg/compare/v3.52.0...v3.52.1) (2025-03-14)
+
+
+### Bug Fixes
+
+* add qualifier check ([#295](https://github.com/eggjs/tegg/issues/295)) ([6744088](https://github.com/eggjs/tegg/commit/674408810d77fe0f4b95b25790bcb3975e543e26))
+
+
+
+
+
 # [3.52.0](https://github.com/eggjs/tegg/compare/v3.51.2...v3.52.0) (2024-12-30)
 
 **Note:** Version bump only for package @eggjs/tegg-types
