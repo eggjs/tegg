@@ -6,7 +6,7 @@ import { AdviceInfoUtil } from '../util/index.js';
 
 const defaultAdviceParam = {
   accessLevel: AccessLevel.PUBLIC,
-  initType: ObjectInitType.CONTEXT,
+  initType: ObjectInitType.SINGLETON,
 };
 
 export function Advice(param?: PrototypeParams) {

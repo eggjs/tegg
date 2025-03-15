@@ -2,10 +2,39 @@ import type { AdviceContext, AspectAdvice, IAdvice } from '@eggjs/tegg-types';
 import compose from 'koa-compose';
 import type { Middleware } from 'koa-compose';
 
-interface InternalAdviceContext<T = Record<string, IAdvice>> {
+class InternalAdviceContext<T = Record<string, IAdvice>> {
+  private readonly state: Map<PropertyKey, any>;
   that: T;
   method: PropertyKey;
   args: any[];
+
+  constructor(
+    that: T,
+    method: PropertyKey,
+    args: any[],
+  ) {
+    this.state = new Map();
+    this.that = that;
+    this.method = method;
+    this.args = args;
+  }
+
+  get(key: PropertyKey): any {
+    return this.state.get(key);
+  }
+
+  set(key: PropertyKey, value: any): this {
+    this.state.set(key, value);
+    return this;
+  }
+
+  createCallContext(adviceParams?: any): AdviceContext<T> {
+    return Object.create(this, {
+      adviceParams: {
+        value: adviceParams,
+      },
+    });
+  }
 }
 
 export class AspectExecutor {
@@ -20,11 +49,7 @@ export class AspectExecutor {
   }
 
   async execute(...args: any[]) {
-    const ctx: InternalAdviceContext = {
-      that: this.obj as Record<string, IAdvice>,
-      method: this.method,
-      args,
-    };
+    const ctx = new InternalAdviceContext(this.obj as Record<string, IAdvice>, this.method, args);
     await this.beforeCall(ctx);
     try {
       const result = await this.doExecute(ctx);
@@ -49,9 +74,9 @@ export class AspectExecutor {
          * 先保证args可以生效
          * 不改动其余地方
          */
-        const params = { ...ctx, adviceParams: aspectAdvice.adviceParams };
-        await advice.beforeCall(params);
-        ctx.args = params.args;
+        const fnCtx = ctx.createCallContext(aspectAdvice.adviceParams);
+        await advice.beforeCall(fnCtx);
+        ctx.args = fnCtx.args;
       }
     }
   }
@@ -60,7 +85,8 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.afterReturn) {
-        await advice.afterReturn({ ...ctx, adviceParams: aspectAdvice.adviceParams }, result);
+        const fnCtx = ctx.createCallContext(aspectAdvice.adviceParams);
+        await advice.afterReturn(fnCtx, result);
       }
     }
   }
@@ -69,7 +95,8 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.afterThrow) {
-        await advice.afterThrow({ ...ctx, adviceParams: aspectAdvice.adviceParams }, error);
+        const fnCtx = ctx.createCallContext(aspectAdvice.adviceParams);
+        await advice.afterThrow(fnCtx, error);
       }
     }
   }
@@ -78,7 +105,8 @@ export class AspectExecutor {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.afterFinally) {
-        await advice.afterFinally({ ...ctx, adviceParams: aspectAdvice.adviceParams });
+        const fnCtx = ctx.createCallContext(aspectAdvice.adviceParams);
+        await advice.afterFinally(fnCtx);
       }
     }
   }
@@ -94,10 +122,7 @@ export class AspectExecutor {
       const fn = advice.around;
       if (fn) {
         functions.push(async (ctx: InternalAdviceContext, next: () => Promise<any>) => {
-          const fnCtx: AdviceContext = {
-            ...ctx,
-            adviceParams: aspectAdvice.adviceParams,
-          };
+          const fnCtx = ctx.createCallContext(aspectAdvice.adviceParams);
           return await fn.call(advice, fnCtx, next);
         });
       }
