@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-standalone",
   "description": "tegg standalone",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.4",
   "keywords": [
     "egg",
     "typescript",
@@ -44,24 +44,24 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/egg-module-common": "^4.0.0-beta.3",
-    "@eggjs/tegg": "^4.0.0-beta.3",
-    "@eggjs/tegg-aop-runtime": "^4.0.0-beta.3",
-    "@eggjs/tegg-background-task": "^4.0.0-beta.3",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.3",
-    "@eggjs/tegg-dal-plugin": "^4.0.0-beta.3",
-    "@eggjs/tegg-dynamic-inject-runtime": "^4.0.0-beta.3",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.3",
-    "@eggjs/tegg-loader": "^4.0.0-beta.3",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.3",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.3"
+    "@eggjs/egg-module-common": "^4.0.0-beta.4",
+    "@eggjs/tegg": "^4.0.0-beta.4",
+    "@eggjs/tegg-aop-runtime": "^4.0.0-beta.4",
+    "@eggjs/tegg-background-task": "^4.0.0-beta.4",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
+    "@eggjs/tegg-dal-plugin": "^4.0.0-beta.4",
+    "@eggjs/tegg-dynamic-inject-runtime": "^4.0.0-beta.4",
+    "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
+    "@eggjs/tegg-loader": "^4.0.0-beta.4",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.4"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
     "@eggjs/bin": "7",
-    "@eggjs/tegg-ajv-plugin": "^4.0.0-beta.3",
+    "@eggjs/tegg-ajv-plugin": "^4.0.0-beta.4",
     "@eggjs/utils": "^4.3.0",
     "@types/mocha": "10",
     "@types/node": "22",
