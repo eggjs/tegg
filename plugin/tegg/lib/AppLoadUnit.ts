@@ -50,7 +50,7 @@ export class AppLoadUnit implements LoadUnit {
         value: this.name,
       }];
       defaultQualifier.forEach(qualifier => {
-        QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value, true);
+        QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
       });
       const protos = await EggPrototypeCreatorFactory.createProto(clazz, this);
       for (const proto of protos) {
