@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.3](https://github.com/eggjs/tegg/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2025-03-15)
+
+
+### Features
+
+* add get/set for AdviceContext ([#297](https://github.com/eggjs/tegg/issues/297)) ([c299495](https://github.com/eggjs/tegg/commit/c299495b9407ec07b0a6e257d755d3d6f937d320))
+
+
+
+
+
 # [4.0.0-beta.2](https://github.com/eggjs/tegg/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2025-03-03)
 
 **Note:** Version bump only for package @eggjs/tegg-aop-runtime

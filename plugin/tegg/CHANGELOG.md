@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.3](https://github.com/eggjs/tegg/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2025-03-15)
+
+
+### Bug Fixes
+
+* add qualifier check ([#296](https://github.com/eggjs/tegg/issues/296)) ([5ea21ff](https://github.com/eggjs/tegg/commit/5ea21ffec61e0c4a743e84d9c8e96d8d9079b4cc))
+
+
+
+
+
 # [4.0.0-beta.2](https://github.com/eggjs/tegg/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2025-03-03)
 
 **Note:** Version bump only for package @eggjs/tegg-plugin

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.3](https://github.com/eggjs/tegg/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2025-03-15)
+
+**Note:** Version bump only for package @eggjs/ajv-decorator
+
+
+
+
+
 # [4.0.0-beta.2](https://github.com/eggjs/tegg/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2025-03-03)
 
 **Note:** Version bump only for package @eggjs/ajv-decorator

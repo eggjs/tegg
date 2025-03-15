@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0-beta.3",
   "publishConfig": {
     "access": "public"
   },
@@ -74,24 +74,24 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@eggjs/ajv-decorator": "^4.0.0-beta.2",
-    "@eggjs/aop-decorator": "^4.0.0-beta.2",
-    "@eggjs/controller-decorator": "^4.0.0-beta.2",
-    "@eggjs/core-decorator": "^4.0.0-beta.2",
-    "@eggjs/dal-decorator": "^4.0.0-beta.2",
-    "@eggjs/eventbus-decorator": "^4.0.0-beta.2",
-    "@eggjs/standalone-decorator": "^4.0.0-beta.2",
-    "@eggjs/tegg-background-task": "^4.0.0-beta.2",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.2",
-    "@eggjs/tegg-dynamic-inject": "^4.0.0-beta.2",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.2",
-    "@eggjs/tegg-loader": "^4.0.0-beta.2",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.2",
-    "@eggjs/tegg-orm-decorator": "^4.0.0-beta.2",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.2",
-    "@eggjs/tegg-schedule-decorator": "^4.0.0-beta.2",
-    "@eggjs/tegg-transaction-decorator": "^4.0.0-beta.2",
-    "@eggjs/tegg-types": "^4.0.0-beta.2"
+    "@eggjs/ajv-decorator": "^4.0.0-beta.3",
+    "@eggjs/aop-decorator": "^4.0.0-beta.3",
+    "@eggjs/controller-decorator": "^4.0.0-beta.3",
+    "@eggjs/core-decorator": "^4.0.0-beta.3",
+    "@eggjs/dal-decorator": "^4.0.0-beta.3",
+    "@eggjs/eventbus-decorator": "^4.0.0-beta.3",
+    "@eggjs/standalone-decorator": "^4.0.0-beta.3",
+    "@eggjs/tegg-background-task": "^4.0.0-beta.3",
+    "@eggjs/tegg-common-util": "^4.0.0-beta.3",
+    "@eggjs/tegg-dynamic-inject": "^4.0.0-beta.3",
+    "@eggjs/tegg-lifecycle": "^4.0.0-beta.3",
+    "@eggjs/tegg-loader": "^4.0.0-beta.3",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.3",
+    "@eggjs/tegg-orm-decorator": "^4.0.0-beta.3",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.3",
+    "@eggjs/tegg-schedule-decorator": "^4.0.0-beta.3",
+    "@eggjs/tegg-transaction-decorator": "^4.0.0-beta.3",
+    "@eggjs/tegg-types": "^4.0.0-beta.3"
   },
   "devDependencies": {
     "@types/node": "22",
