@@ -4,10 +4,7 @@ import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierVal
 import { MetadataUtil } from './MetadataUtil.js';
 
 export class QualifierUtil {
-  static addProtoQualifier(clazz: EggProtoImplClass, attribute: QualifierAttribute, value: QualifierValue, isForceReplacement?: boolean) {
-    if (QualifierUtil.getQualifierValue(clazz, attribute) && !isForceReplacement) {
-      throw new Error(`Qualifier Error: clazz ${clazz.name} attribute ${attribute.toString()} has been implemented`);
-    }
+  static addProtoQualifier(clazz: EggProtoImplClass, attribute: QualifierAttribute, value: QualifierValue) {
     const qualifiers = MetadataUtil.initOwnMapMetaData(QUALIFIER_META_DATA, clazz, new Map<QualifierAttribute, QualifierValue>());
     qualifiers.set(attribute, value);
   }

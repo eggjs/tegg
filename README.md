@@ -974,7 +974,6 @@ import { ContextHelloType } from '../FooType';
 import { AbstractContextHello } from '../AbstractHello';
 
 @ContextProto()
-// 需要注意的是，对应枚举如果已经被实现，则会报错，若你已经知晓此情况，想覆盖此枚举类型，则增加参数 true 来强制覆盖，例：@Hello(HelloType.BAR, true)
 @Hello(HelloType.BAR)
 export class BarHello extends AbstractHello {
   hello(): string {
