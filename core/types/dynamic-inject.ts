@@ -5,7 +5,7 @@ export type ImplTypeEnum = {
   [id: string]: QualifierValue;
 };
 
-export type ImplDecorator<T extends object, Enum extends ImplTypeEnum> = (type: Enum[keyof Enum]) => ((clazz: EggProtoImplClass<T>) => void);
+export type ImplDecorator<T extends object, Enum extends ImplTypeEnum> = (type: Enum[keyof Enum], isForceReplacement?: boolean) => ((clazz: EggProtoImplClass<T>) => void);
 
 export interface EggObjectFactory {
   getEggObject<T extends object>(abstractClazz: EggAbstractClazz<T>, qualifierValue: QualifierValue): Promise<T>;
