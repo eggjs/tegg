@@ -14,10 +14,14 @@ export.aopModule = {
 
 使用 `@Advice` 注解来申明一个实现，可以用来监听、拦截方法执行。
 
-**注意：Advice 也是一种 Prototype，可以通过 initType 来指定不同的生命周期。**
+**注意：Advice 也是一种 Prototype，可以通过 initType 来指定不同的生命周期，默认为 Singleton。**
+
+如需在调用过程中保存状态，可以将状态通过 `AdviceContext` 的 get/set 来保存。
 
 ```ts
 import { Advice, IAdvice } from '@eggjs/tegg/aop';
+
+const FOO_STATE_SYMBOL = Symbol('AdviceExample#state');
 
 @Advice()
 export class AdviceExample implements IAdvice {
@@ -28,11 +32,13 @@ export class AdviceExample implements IAdvice {
   // 在函数执行前执行
   async beforeCall(ctx: AdviceContext): Promise<void> {
     // ...
+    ctx.set(FOO_STATE_SYMBOL, 23333);
   }
 
   // 在函数成功后执行
   async afterReturn(ctx: AdviceContext, result: any): Promise<void> {
-    // ...
+    // 将会打印 23333
+    console.log(ctx.get(FOO_STATE_SYMBOL));
   }
 
   // 在函数成功后执行
@@ -113,7 +119,7 @@ export class CrosscutNameAdviceExample implements IAdvice {
   }
 })
 @Advice()
-****export class CrosscutCustomAdviceExample implements IAdvice {
+export class CrosscutCustomAdviceExample implements IAdvice {
 }
 
 ```

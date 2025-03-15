@@ -3,6 +3,8 @@ export interface AdviceContext<T = object, K = any> {
   method: PropertyKey;
   args: any[];
   adviceParams?: K;
+  get(key: PropertyKey): any | undefined;
+  set(set: PropertyKey, value: any): this;
 }
 
 /**

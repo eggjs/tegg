@@ -43,6 +43,7 @@ describe('test/aop-runtime.test.ts', () => {
         path.join(__dirname, '..'),
         path.join(__dirname, 'fixtures/modules/hello_succeed'),
         path.join(__dirname, 'fixtures/modules/hello_point_cut'),
+        path.join(__dirname, 'fixtures/modules/state_point_cut'),
         path.join(__dirname, 'fixtures/modules/hello_cross_cut'),
       ], [
         crossCutGraphHook,
@@ -125,6 +126,14 @@ describe('test/aop-runtime.test.ts', () => {
           result: 'ops, exception for withPointAroundParam(foo)',
           adviceParams: pointcutAdviceParams,
         });
+      });
+    });
+
+    it('state should work', async () => {
+      await EggTestContext.mockContext(async () => {
+        const hello = await CoreTestHelper.getObject(Hello);
+        const msg = await hello.helloState('aop');
+        assert.equal(msg, 'withStatePointAroundResult(hello aop)(2333)');
       });
     });
 
