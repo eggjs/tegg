@@ -8,6 +8,7 @@ import {
   FooController,
   FoxController,
   FxxController,
+  TimeoutController,
 } from '../fixtures/HTTPFooController';
 import {
   BodyParamMeta,
@@ -179,5 +180,23 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
       { clazz: FooAdvice, order: 1000, adviceParams: undefined },
       { clazz: BarAdvice, order: 1000, adviceParams: undefined },
     ]);
+  });
+
+  describe('timeout', () => {
+    it('should work', () => {
+      const controllerMeta = ControllerMetaBuilderFactory.build(TimeoutController)! as HTTPControllerMeta;
+      const methodMeta1 = controllerMeta.methods.find(m => m.path === '/timeout-1')!;
+      const methodMeta2 = controllerMeta.methods.find(m => m.path === '/timeout-2')!;
+
+      assert.strictEqual(controllerMeta.getMethodTimeout(methodMeta1), 1000);
+      assert.strictEqual(controllerMeta.getMethodTimeout(methodMeta2), 2000);
+    });
+
+    it('should default be undefined', () => {
+      const controllerMeta = ControllerMetaBuilderFactory.build(FooController)! as HTTPControllerMeta;
+      const methodMeta = controllerMeta.methods[0];
+
+      assert.strictEqual(controllerMeta.getMethodTimeout(methodMeta), undefined);
+    });
   });
 });
