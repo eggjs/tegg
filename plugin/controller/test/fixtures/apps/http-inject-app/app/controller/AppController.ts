@@ -10,7 +10,9 @@ import {
   HTTPRequest,
   Cookies,
   HTTPCookies,
-  Inject, BackgroundTaskHelper } from '@eggjs/tegg';
+  Inject,
+  BackgroundTaskHelper,
+} from '@eggjs/tegg';
 import { countMw } from '../middleware/count_mw';
 import { Tracer } from '@eggjs/module-test-util';
 import { Readable } from 'node:stream';
@@ -30,8 +32,6 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '/testRequest',
   })
-
-
   async testRequest(@Context() ctx: EggContext, @Request() request: HTTPRequest, @Cookies() cookies: HTTPCookies) {
     const traceId = await ctx.tracer.traceId;
     return {
@@ -43,7 +43,6 @@ export class AppController {
       cookies: cookies.get('test', { signed: false }),
     };
   }
-
 
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/stream' })
   async streamResponse(@Context() ctx: EggContext) {
@@ -68,6 +67,7 @@ export class AppController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/error_stream' })
   async errorStreamResponse(@Context() ctx: EggContext) {
     const self = this;
+
     async function* generate(count = 5, duration = 500) {
       yield '<html><head><title>hello stream</title></head><body>';
       for (let i = 0; i < count; i++) {
@@ -86,5 +86,15 @@ export class AppController {
     ctx.type = 'html';
     ctx.set('X-Accel-Buffering', 'no');
     return Readable.from(generate());
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/test-timeout',
+    timeout: 100,
+  })
+  async testTimeout() {
+    await setTimeout(200);
+    return 'success';
   }
 }
