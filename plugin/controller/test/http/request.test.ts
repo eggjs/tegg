@@ -56,7 +56,7 @@ describe('plugin/controller/test/http/request.test.ts', () => {
         .get('/apps/stream')
         .expect(200)
         .expect(res => {
-          console.log(res.text);
+          assert(res.text.includes('流式内容5'));
         });
     });
   }

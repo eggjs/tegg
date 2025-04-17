@@ -2,6 +2,7 @@ import { TEggPluginContext } from '../app/extend/context';
 import { EggContextImpl } from './EggContextImpl';
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { StreamUtil } from '@eggjs/tegg-common-util';
+import awaitEvent from 'await-event';
 
 export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, next) {
   // should not recreate teggContext
@@ -34,7 +35,7 @@ export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, nex
     await next();
   } finally {
     if (StreamUtil.isStream(ctx.response.body)) {
-      StreamUtil.untilEnd(ctx.response.body, doDestory);
+      awaitEvent(ctx.response.body, 'close').then(doDestory);
     } else {
       doDestory();
     }
