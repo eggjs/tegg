@@ -1,6 +1,7 @@
 import { TEggPluginContext } from '../app/extend/context';
 import { EggContextImpl } from './EggContextImpl';
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import { StreamUtil } from '@eggjs/tegg-common-util';
 
 export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, next) {
   // should not recreate teggContext
@@ -22,14 +23,20 @@ export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, nex
   if (teggCtx.init) {
     await teggCtx.init(lifecycle);
   }
+
+  function doDestory() {
+    teggCtx.destroy(lifecycle).catch(e => {
+      e.message = '[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed:' + e.message;
+      ctx.logger.error(e);
+    });
+  }
   try {
     await next();
   } finally {
-    if (teggCtx.destroy) {
-      teggCtx.destroy(lifecycle).catch(e => {
-        e.message = '[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed:' + e.message;
-        ctx.logger.error(e);
-      });
+    if (StreamUtil.isStream(ctx.response.body)) {
+      StreamUtil.untilEnd(ctx.response.body, doDestory);
+    } else {
+      doDestory();
     }
   }
 }

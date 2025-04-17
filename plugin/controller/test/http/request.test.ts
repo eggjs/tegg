@@ -50,6 +50,15 @@ describe('plugin/controller/test/http/request.test.ts', () => {
           assert(res.body.cookies === 'foo');
         });
     });
+
+    it('stream should work', async () => {
+      await app.httpRequest()
+        .get('/apps/stream')
+        .expect(200)
+        .expect(res => {
+          console.log(res.text);
+        });
+    });
   }
 
 });
