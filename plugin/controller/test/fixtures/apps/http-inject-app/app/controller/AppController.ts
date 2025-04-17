@@ -10,6 +10,7 @@ import {
   Cookies,
   HTTPCookies,
 } from '@eggjs/tegg';
+import { setTimeout } from 'node:timers/promises';
 import { countMw } from '../middleware/count_mw';
 
 @HTTPController({
@@ -17,12 +18,10 @@ import { countMw } from '../middleware/count_mw';
 })
 @Middleware(countMw)
 export class AppController {
-
   @HTTPMethod({
     method: HTTPMethodEnum.POST,
     path: '/testRequest',
   })
-
   async testRequest(@Context() ctx: EggContext, @Request() request: HTTPRequest, @Cookies() cookies: HTTPCookies) {
     const traceId = await ctx.tracer.traceId;
     return {
@@ -33,5 +32,15 @@ export class AppController {
       requestBody: await request.text(),
       cookies: cookies.get('test', { signed: false }),
     };
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/test-timeout',
+    timeout: 100,
+  })
+  async testTimeout() {
+    await setTimeout(200);
+    return 'success';
   }
 }
