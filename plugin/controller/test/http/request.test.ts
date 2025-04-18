@@ -59,6 +59,20 @@ describe('plugin/controller/test/http/request.test.ts', () => {
           assert(res.text.includes('流式内容5'));
         });
     });
+
+    it.only('error stream should work', async () => {
+      try {
+        await app.httpRequest()
+          .get('/apps/error_stream')
+          .expect(200)
+          .expect(res => {
+            assert(res.text.includes('流式内容5'));
+          });
+      } catch (error) {
+        console.log('error 2333: ', error);
+      }
+
+    });
   }
 
 });

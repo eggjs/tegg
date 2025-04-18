@@ -64,4 +64,27 @@ export class AppController {
     ctx.set('X-Accel-Buffering', 'no');
     return Readable.from(generate());
   }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/error_stream' })
+  async errorStreamResponse(@Context() ctx: EggContext) {
+    const self = this;
+    async function* generate(count = 5, duration = 500) {
+      yield '<html><head><title>hello stream</title></head><body>';
+      for (let i = 0; i < count; i++) {
+        console.log('generate', i);
+        if (i > 2) {
+          throw new Error('test');
+        }
+        yield `<h2>流式内容${i + 1}，${Date()}</h2>`;
+        await setTimeout(duration);
+      }
+      yield self.backgroundTaskHelper.toString();
+      yield '</body></html>';
+
+    }
+
+    ctx.type = 'html';
+    ctx.set('X-Accel-Buffering', 'no');
+    return Readable.from(generate());
+  }
 }
