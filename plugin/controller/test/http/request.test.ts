@@ -65,7 +65,7 @@ describe('plugin/controller/test/http/request.test.ts', () => {
         app.httpRequest()
           .get('/apps/error_stream')
           .expect(200)
-      , /Error: aborted/);
+        , /Error: aborted/);
     });
   }
 
