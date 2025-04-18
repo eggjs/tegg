@@ -60,7 +60,7 @@ describe('plugin/controller/test/http/request.test.ts', () => {
         });
     });
 
-    it.only('error stream should work', async () => {
+    it('error stream should work', async () => {
       try {
         await app.httpRequest()
           .get('/apps/error_stream')
