@@ -34,7 +34,7 @@ export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, nex
       }
     }
     try {
-      if (!teggCtx.destroy) {
+      if (teggCtx.destroy) {
         await teggCtx.destroy(lifecycle);
       }
     } catch (e) {
