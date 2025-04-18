@@ -2,11 +2,14 @@ import { MetadataUtil } from '@eggjs/core-decorator';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import {
   IAdvice,
-  METHOD_ACL, METHOD_AOP_MIDDLEWARES, METHOD_AOP_REGISTER_MAP,
+  METHOD_ACL,
+  METHOD_AOP_MIDDLEWARES,
+  METHOD_AOP_REGISTER_MAP,
   METHOD_CONTEXT_INDEX,
   METHOD_CONTROLLER_HOST,
   METHOD_CONTROLLER_TYPE_MAP,
   METHOD_MIDDLEWARES,
+  METHOD_TIMEOUT_METADATA,
 } from '@eggjs/tegg-types';
 import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 
@@ -16,6 +19,7 @@ type MethodContextIndexMap = Map<string, number>;
 type MethodMiddlewareMap = Map<string, MiddlewareFunc[]>;
 type MethodAopMiddlewareMap = Map<string, EggProtoImplClass<IAdvice>[]>;
 type MethodAclMap = Map<string, string | undefined>;
+type MethodTimeoutMap = Map<string, number>;
 
 export default class MethodInfoUtil {
   static setMethodControllerType(clazz: EggProtoImplClass, methodName: string, controllerType: ControllerTypeLike) {
@@ -98,5 +102,15 @@ export default class MethodInfoUtil {
   static registerAopMiddlewarePointcut(clazz: EggProtoImplClass, methodName: string) {
     const methodControllerMap: MethodAopRegisterMap = MetadataUtil.initOwnMapMetaData(METHOD_AOP_REGISTER_MAP, clazz, new Map());
     methodControllerMap.set(methodName, true);
+  }
+
+  static setMethodTimeout(timeout: number, clazz: EggProtoImplClass, methodName: string) {
+    const methodAclMap: MethodTimeoutMap = MetadataUtil.initOwnMapMetaData(METHOD_TIMEOUT_METADATA, clazz, new Map());
+    methodAclMap.set(methodName, timeout);
+  }
+
+  static getMethodTimeout(clazz: EggProtoImplClass, methodName: string): number | undefined {
+    const methodAclMap: MethodTimeoutMap | undefined = MetadataUtil.getMetaData(METHOD_TIMEOUT_METADATA, clazz);
+    return methodAclMap?.get(methodName);
   }
 }
