@@ -50,6 +50,23 @@ describe('plugin/controller/test/http/request.test.ts', () => {
           assert(res.body.cookies === 'foo');
         });
     });
+
+    it('stream should work', async () => {
+      await app.httpRequest()
+        .get('/apps/stream')
+        .expect(200)
+        .expect(res => {
+          assert(res.text.includes('流式内容5'));
+        });
+    });
+
+    it('error stream should work', async () => {
+      await assert.rejects(
+        app.httpRequest()
+          .get('/apps/error_stream')
+          .expect(200)
+        , /Error: aborted/);
+    });
   }
 
 });

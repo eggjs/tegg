@@ -6,6 +6,7 @@ import { Middleware } from '../../src/decorator/Middleware';
 import { HTTPBody, HTTPParam, HTTPQueries, HTTPQuery, HTTPHeaders } from '../../src/decorator/http/HTTPParam';
 import { HTTPMethod } from '../../src/decorator/http/HTTPMethod';
 
+
 async function middleware1(ctx: EggContext, next: Next) {
   console.log(ctx, next);
 }
