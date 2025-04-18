@@ -61,17 +61,11 @@ describe('plugin/controller/test/http/request.test.ts', () => {
     });
 
     it('error stream should work', async () => {
-      try {
-        await app.httpRequest()
+      await assert.rejects(
+        app.httpRequest()
           .get('/apps/error_stream')
           .expect(200)
-          .expect(res => {
-            assert(res.text.includes('流式内容5'));
-          });
-      } catch (error) {
-        console.log('error 2333: ', error);
-      }
-
+      , /Error: aborted/);
     });
   }
 
