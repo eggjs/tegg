@@ -25,19 +25,23 @@ export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, nex
     await teggCtx.init(lifecycle);
   }
 
-  function doDestory() {
-    teggCtx.destroy(lifecycle).catch(e => {
+  async function doDestory() {
+    if (!teggCtx.destroy) {
+      return;
+    }
+    try {
+      if (StreamUtil.isStream(ctx.response.body)) {
+        await awaitEvent(ctx.response.body, 'close');
+      }
+      await teggCtx.destroy(lifecycle);
+    } catch (e) {
       e.message = '[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed:' + e.message;
       ctx.logger.error(e);
-    });
+    }
   }
   try {
     await next();
   } finally {
-    if (StreamUtil.isStream(ctx.response.body)) {
-      awaitEvent(ctx.response.body, 'close').then(doDestory);
-    } else {
-      doDestory();
-    }
+    doDestory();
   }
 }
