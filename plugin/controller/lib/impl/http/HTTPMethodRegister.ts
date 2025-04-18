@@ -109,18 +109,17 @@ export class HTTPMethodRegister {
         }
       }
 
-      let body: any;
-      if (!timeout) {
-        body = await Reflect.apply(realMethod, realObj, args);
-      } else {
-        body = await Promise.race([
-          Reflect.apply(realMethod, realObj, args),
-          TimerUtil.sleep(timeout).then(() => {
-            ctx.logger.error(`timeout after ${timeout}ms`);
-            ctx.throw(500, 'timeout');
-          }),
-        ]);
+      let body: unknown;
+      try {
+        body = await TimerUtil.timeout<unknown>(() => Reflect.apply(realMethod, realObj, args), timeout);
+      } catch (e: any) {
+        if (e instanceof TimerUtil.TimeoutError) {
+          ctx.logger.error(`timeout after ${timeout}ms`);
+          ctx.throw(500, 'timeout');
+        }
+        throw e;
       }
+
       // https://github.com/koajs/koa/blob/master/lib/response.js#L88
       // ctx.status is set
       const explicitStatus = (ctx.response as any)._explicitStatus;
