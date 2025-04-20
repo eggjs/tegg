@@ -5,7 +5,7 @@ import type { EggAbstractClazz, EggProtoImplClass, QualifierValue } from '@eggjs
 export class QualifierImplUtil {
   static addQualifierImpl(abstractClazz: EggAbstractClazz, qualifierValue: QualifierValue, implClazz: EggProtoImplClass, isForceReplacement?: boolean) {
     if (QualifierImplUtil.getQualifierImp(abstractClazz, qualifierValue) && !isForceReplacement) {
-      throw new Error(`Qualifier Error: abstractClazz ${abstractClazz.name} qualifierValue ${qualifierValue.toString()} has been implemented`);
+      console.warn(`Qualifier Warning: abstractClazz ${abstractClazz.name} qualifierValue ${qualifierValue.toString()} has been implemented`);
     }
     const implMap = MetadataUtil.initOwnMapMetaData(QUALIFIER_IMPL_MAP, abstractClazz as unknown as EggProtoImplClass, new Map());
     implMap.set(qualifierValue, implClazz);
