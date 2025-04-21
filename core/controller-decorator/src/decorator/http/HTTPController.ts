@@ -11,6 +11,9 @@ export function HTTPController(param?: HTTPControllerParams) {
     if (param?.controllerName) {
       ControllerInfoUtil.setControllerName(constructor, param.controllerName);
     }
+    if (param?.timeout) {
+      ControllerInfoUtil.setControllerTimeout(param.timeout, constructor);
+    }
     if (param?.path) {
       HTTPInfoUtil.setHTTPPath(param.path, constructor);
     }
