@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.53.0](https://github.com/eggjs/tegg/compare/v3.52.1...v3.53.0) (2025-04-21)
+
+
+### Features
+
+* add timeout metadata for http controller ([#301](https://github.com/eggjs/tegg/issues/301)) ([68980c2](https://github.com/eggjs/tegg/commit/68980c23de81dbc9bd86c1d8df7b3952f52aa5ce))
+
+
+
+
+
 ## [3.52.1](https://github.com/eggjs/tegg/compare/v3.52.0...v3.52.1) (2025-03-14)
 
 

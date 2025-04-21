@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.53.0](https://github.com/eggjs/tegg/compare/v3.52.1...v3.53.0) (2025-04-21)
+
+**Note:** Version bump only for package @eggjs/tegg-orm-plugin
+
+
+
+
+
 ## [3.52.1](https://github.com/eggjs/tegg/compare/v3.52.0...v3.52.1) (2025-03-14)
 
 **Note:** Version bump only for package @eggjs/tegg-orm-plugin
