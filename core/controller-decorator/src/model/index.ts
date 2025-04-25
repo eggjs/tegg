@@ -3,3 +3,7 @@ export * from './HTTPControllerMeta';
 export * from './HTTPRequest';
 export * from './HTTPResponse';
 export * from './HTTPCookies';
+export * from './MCPControllerMeta';
+export * from './MCPPromptMeta';
+export * from './MCPResourceMeta';
+export * from './MCPToolMeta';

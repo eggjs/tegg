@@ -11,6 +11,7 @@ import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
+import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
@@ -41,6 +42,7 @@ export default class ControllerAppBootHook {
       return new EggControllerLoader(unitPath);
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -61,6 +63,8 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
+    // Don't let the mcp's body be consumed
+    this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
   }
 
   prepareMiddleware(middlewareNames: string[]) {
@@ -83,6 +87,8 @@ export default class ControllerAppBootHook {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+
+    await (this.app.mcpProxy as any).ready();
   }
 
   async beforeClose() {

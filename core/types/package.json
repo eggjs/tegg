@@ -37,6 +37,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
