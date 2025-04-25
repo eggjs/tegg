@@ -88,7 +88,7 @@ export default class ControllerAppBootHook {
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
 
-    await (this.app.mcpProxy as any).ready();
+    await (this.app.mcpProxy as any)?.ready();
   }
 
   async beforeClose() {

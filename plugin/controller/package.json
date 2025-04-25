@@ -4,7 +4,8 @@
     "name": "teggController",
     "strict": false,
     "dependencies": [
-      "tegg"
+      "tegg",
+      "mcpProxy"
     ]
   },
   "version": "3.53.0",
