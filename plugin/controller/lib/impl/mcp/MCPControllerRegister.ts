@@ -53,6 +53,7 @@ export class MCPControllerRegister implements ControllerRegister {
   transports: Record<string, SSEServerTransport> = {};
   sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
   private mcpServer: McpServer;
+  private statelessMcpServer: McpServer;
   private controllerMeta: MCPControllerMeta;
   private mcpConfig: MCPConfig;
   statelessTransport: StreamableHTTPServerTransport;
@@ -84,7 +85,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
   static async connectStatelessStreamTransport() {
     if (MCPControllerRegister.instance && MCPControllerRegister.instance.statelessTransport) {
-      MCPControllerRegister.instance.mcpServer.connect(MCPControllerRegister.instance.statelessTransport);
+      MCPControllerRegister.instance.statelessMcpServer.connect(MCPControllerRegister.instance.statelessTransport);
       // 由于 mcp server stateless 需要我们在这里 init
       // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
       const socket = new Socket();
@@ -435,6 +436,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     args.push(handler);
     this.mcpServer.prompt(...(args as unknown as [any, any, any, any]));
+    this.statelessMcpServer.prompt(...(args as unknown as [any, any, any, any]));
   }
 
   async mcpToolRegister(controllerProto: EggPrototype, toolMeta: MCPToolMeta) {
@@ -479,6 +481,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     args.push(handler);
     this.mcpServer.tool(...(args as unknown as [any, any, any, any]));
+    this.statelessMcpServer.tool(...(args as unknown as [any, any, any, any]));
   }
 
   async mcpResourceRegister(controllerProto: EggPrototype, resourceMeta: MCPResourceMeta) {
@@ -502,6 +505,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     args.push(handler);
     this.mcpServer.resource(...(args as unknown as [any, any, any, any]));
+    this.statelessMcpServer.resource(...(args as unknown as [any, any, any, any]));
   }
 
   async register() {
@@ -527,6 +531,10 @@ export class MCPControllerRegister implements ControllerRegister {
     if (!this.mcpServer) {
       this.mcpServer = new McpServer({
         name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
+        version: this.controllerMeta.version ?? '1.0.0',
+      }, { capabilities: { logging: {} } });
+      this.statelessMcpServer = new McpServer({
+        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-stateless-server`,
         version: this.controllerMeta.version ?? '1.0.0',
       }, { capabilities: { logging: {} } });
       this.mcpStatelessStreamServerInit();
