@@ -211,3 +211,105 @@ export class FooController {
   }
 }
 ```
+
+### MCP 注解
+
+#### MCPController/MCPPrompt/MCPTool/MCPResource
+
+`@MCPController` 注解用来声明当前类是一个 MCP controller。
+通过使用装饰器 `@MCPPrompt` `@MCPTool` `@MCPResource` 来声明对应的 MCP 类型。
+使用 `@ToolArgsSchema` `@PromptArgsSchema` `@Extra` 来 schema 和 extra。
+
+```ts
+import {
+  MCPController,
+  PromptArgs,
+  ToolArgs,
+  MCPPromptResponse,
+  MCPToolResponse,
+  MCPResourceResponse,
+  MCPPrompt,
+  MCPTool,
+  MCPResource,
+  PromptArgsSchema,
+  Logger,
+  Inject,
+  ToolArgsSchema,
+} from '@eggjs/tegg';
+import z from 'zod';
+
+export const PromptType = {
+  name: z.string(),
+};
+
+export const ToolType = {
+  name: z.string({
+    description: 'npm package name',
+  }),
+};
+
+
+@MCPController()
+export class McpController {
+
+  @Inject()
+  logger: Logger;
+
+  @MCPPrompt()
+  async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
+    this.logger.info('hello world');
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Generate a concise but descriptive commit message for these changes:\n\n${args.name}`,
+          },
+        },
+      ],
+    };
+  }
+
+  @MCPTool()
+  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `npm package: ${args.name} not found`,
+        },
+      ],
+    };
+  }
+
+
+  @MCPResource({
+    template: [
+      'mcp://npm/{name}{?version}',
+      {
+        list: () => {
+          return {
+            resources: [
+              { name: 'egg', uri: 'mcp://npm/egg?version=4.10.0' },
+              { name: 'mcp', uri: 'mcp://npm/mcp?version=0.10.0' },
+            ],
+          };
+        },
+      },
+    ],
+  })
+  async car(uri: URL): Promise<MCPResourceResponse> {
+    return {
+      contents: [{
+        uri: uri.toString(),
+        text: 'MOCK TEXT',
+      }],
+    };
+  }
+}
+
+```
+
+#### MCP 地址
+MCP controller 完整的实现了 SSE / streamable HTTP / streamable stateless HTTP 三种模式，默认情况下，他们的路径分别是 `/mcp/init` `/mcp/stream` `/mcp/stateless/stream`, 你可以根据你所需要的场景，灵活使用对应的接口。 

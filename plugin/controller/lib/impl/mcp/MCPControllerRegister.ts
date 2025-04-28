@@ -1,7 +1,8 @@
 import type { Application, Context, Router } from 'egg';
 
 import assert from 'node:assert';
-import http, { ServerResponse } from 'node:http';
+import http, { IncomingMessage, ServerResponse } from 'node:http';
+import { Socket } from 'node:net';
 
 import {
   ControllerMetadata,
@@ -18,12 +19,13 @@ import { ControllerRegister } from '../../ControllerRegister';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
 import { isInitializeRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { MCPProtocols } from '@eggjs/mcp-proxy';
 
 import getRawBody from 'raw-body';
 import contentType from 'content-type';
+
+import { MCPConfig } from './MCPConfig';
 
 export interface MCPControllerHook {
   // SSE
@@ -52,6 +54,8 @@ export class MCPControllerRegister implements ControllerRegister {
   sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
   private mcpServer: McpServer;
   private controllerMeta: MCPControllerMeta;
+  private mcpConfig: MCPConfig;
+  statelessTransport: StreamableHTTPServerTransport;
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
   static hooks: MCPControllerHook[] = [];
 
@@ -70,13 +74,105 @@ export class MCPControllerRegister implements ControllerRegister {
     this.router = app.router;
 
     this.controllerMeta = controllerMeta;
+
+    this.mcpConfig = new MCPConfig(app.config.mcp);
   }
 
   static addHook(hook: MCPControllerHook) {
     MCPControllerRegister.hooks.push(hook);
   }
 
-  async mcpStreamServerInit() {
+  static async connectStatelessStreamTransport() {
+    if (MCPControllerRegister.instance && MCPControllerRegister.instance.statelessTransport) {
+      MCPControllerRegister.instance.mcpServer.connect(MCPControllerRegister.instance.statelessTransport);
+      // 由于 mcp server stateless 需要我们在这里 init
+      // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
+      const socket = new Socket();
+      const req = new IncomingMessage(socket);
+      const res = new ServerResponse(req);
+      req.method = 'POST';
+      req.url = '/mcp/stream';
+      req.headers = {
+        accept: 'application/json, text/event-stream',
+        'content-type': 'application/json',
+      };
+      const initBody = {
+        jsonrpc: '2.0',
+        id: 0,
+        method: 'initialize',
+        params: {
+          protocolVersion: '2024-11-05',
+          capabilities: {
+          },
+          clientInfo: {
+            name: 'init-client',
+            version: '1.0.0',
+          },
+        },
+      };
+      await MCPControllerRegister.instance.statelessTransport.handleRequest(req, res, initBody);
+    }
+  }
+
+  mcpStatelessStreamServerInit() {
+    const postRouterFunc = this.router.post;
+    const self = this;
+    const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined,
+    });
+    self.statelessTransport = transport;
+    const initHandler = async (ctx: Context) => {
+      if (MCPControllerRegister.hooks.length > 0) {
+        for (const hook of MCPControllerRegister.hooks) {
+          await hook.preHandle?.(self.app.currentContext);
+        }
+      }
+      ctx.respond = false;
+      ctx.set({
+        'content-type': 'text/event-stream',
+        'transfer-encoding': 'chunked',
+      });
+
+      await ctx.app.ctxStorage.run(ctx, async () => {
+        await self.statelessTransport.handleRequest(ctx.req, ctx.res);
+      });
+      return;
+    };
+    Reflect.apply(postRouterFunc, this.router, [
+      'chairMcpStatelessStreamInit',
+      this.mcpConfig.statelessStreamPath,
+      ...[],
+      initHandler,
+    ]);
+    // stateless 只支持 post
+    const getRouterFunc = this.router.get;
+    const delRouterFunc = this.router.del;
+    const notHandler = async (ctx: Context) => {
+      ctx.status = 405;
+      ctx.body = {
+        jsonrpc: '2.0',
+        error: {
+          code: -32000,
+          message: 'Method not allowed.',
+        },
+        id: null,
+      };
+    };
+    Reflect.apply(getRouterFunc, this.router, [
+      'chairMcpStatelessStreamInit',
+      this.mcpConfig.statelessStreamPath,
+      ...[],
+      notHandler,
+    ]);
+    Reflect.apply(delRouterFunc, this.router, [
+      'chairMcpStatelessStreamInit',
+      this.mcpConfig.statelessStreamPath,
+      ...[],
+      notHandler,
+    ]);
+  }
+
+  mcpStreamServerInit() {
     const allRouterFunc = this.router.all;
     const self = this;
     const initHandler = async (ctx: Context) => {
@@ -114,10 +210,10 @@ export class MCPControllerRegister implements ControllerRegister {
 
         if (isInitializeRequest(body)) {
           ctx.respond = false;
-          const eventStore = this.app.config.mcp?.eventStore ?? new InMemoryEventStore();
+          const eventStore = this.mcpConfig.eventStore;
           const self = this;
           const transport = new StreamableHTTPServerTransport({
-            sessionIdGenerator: () => this.app.config.mcp?.sessionIdGenerator?.(),
+            sessionIdGenerator: () => this.mcpConfig.sessionIdGenerator(),
             eventStore,
             onsessioninitialized: async () => {
               if (MCPControllerRegister.hooks.length > 0) {
@@ -181,7 +277,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(allRouterFunc, this.router, [
       'chairMcpStreamInit',
-      self.app.config.mcp?.streamPath,
+      self.mcpConfig.streamPath,
       ...[],
       initHandler,
     ]);
@@ -195,7 +291,7 @@ export class MCPControllerRegister implements ControllerRegister {
     // }
     const self = this;
     const initHandler = async (ctx: Context) => {
-      const transport = new SSEServerTransport(self.app.config.mcp.sseMessagePath, ctx.res);
+      const transport = new SSEServerTransport(self.mcpConfig.sseMessagePath, ctx.res);
       const id = transport.sessionId;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -210,7 +306,7 @@ export class MCPControllerRegister implements ControllerRegister {
           clearInterval(intervalId);
           self.sseConnections.delete(id);
         }
-      }, self.app.config.mcp?.sseHeartTime ?? 25000);
+      }, self.mcpConfig.sseHeartTime);
       self.sseConnections.set(id, { res: ctx.res, intervalId });
       self.transports[id] = transport;
       ctx.set({
@@ -223,7 +319,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(routerFunc, this.router, [
       'chairMcpInit',
-      self.app.config.mcp?.sseInitPath,
+      self.mcpConfig.sseInitPath,
       ...[],
       initHandler,
     ]);
@@ -291,7 +387,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(routerFunc, this.router, [
       'chairMcpMessage',
-      self.app.config.mcp?.sseMessagePath,
+      self.mcpConfig.sseMessagePath,
       ...[],
       messageHander,
     ]);
@@ -433,6 +529,7 @@ export class MCPControllerRegister implements ControllerRegister {
         name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
         version: this.controllerMeta.version ?? '1.0.0',
       }, { capabilities: { logging: {} } });
+      this.mcpStatelessStreamServerInit();
       this.mcpStreamServerInit();
       this.mcpServerInit();
       this.mcpServerRegister();

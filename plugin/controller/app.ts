@@ -108,6 +108,9 @@ export default class ControllerAppBootHook {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+    if (this.app.mcpProxy) {
+      MCPControllerRegister.connectStatelessStreamTransport();
+    }
   }
 
   async beforeClose() {
