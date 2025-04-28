@@ -73,6 +73,7 @@ export default class ControllerAppBootHook {
             this.app.config.mcp.sseInitPath,
             this.app.config.mcp.sseMessagePath,
             this.app.config.mcp.streamPath,
+            this.app.config.mcp.statelessStreamPath,
             ...(Array.isArray(this.app.config.security.csrf.ignore)
               ? this.app.config.security.csrf.ignore
               : [ this.app.config.security.csrf.ignore ]),
@@ -83,6 +84,7 @@ export default class ControllerAppBootHook {
           this.app.config.mcp.sseInitPath,
           this.app.config.mcp.sseMessagePath,
           this.app.config.mcp.streamPath,
+          this.app.config.mcp.statelessStreamPath,
         ];
       }
     }

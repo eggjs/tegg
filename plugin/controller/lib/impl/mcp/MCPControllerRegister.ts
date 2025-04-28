@@ -91,7 +91,7 @@ export class MCPControllerRegister implements ControllerRegister {
       const req = new IncomingMessage(socket);
       const res = new ServerResponse(req);
       req.method = 'POST';
-      req.url = '/mcp/stream';
+      req.url = MCPControllerRegister.instance.mcpConfig.statelessStreamPath;
       req.headers = {
         accept: 'application/json, text/event-stream',
         'content-type': 'application/json',
