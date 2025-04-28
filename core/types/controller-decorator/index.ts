@@ -6,3 +6,7 @@ export * from './HTTPController';
 export * from './HTTPMethod';
 export * from './HTTPParam';
 export * from './MetadataKey';
+export * from './MCPController';
+export * from './MCPPromptParams';
+export * from './MCPResourceParams';
+export * from './MCPToolParams';

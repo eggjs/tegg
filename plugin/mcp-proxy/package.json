@@ -1,31 +1,24 @@
 {
-  "name": "@eggjs/tegg-controller-plugin",
-  "eggPlugin": {
-    "name": "teggController",
-    "strict": false,
-    "dependencies": [
-      "tegg"
-    ]
-  },
+  "name": "@eggjs/mcp-proxy",
   "version": "3.53.0",
-  "description": "controller decorator for egg",
+  "eggPlugin": {
+    "name": "mcpProxy"
+  },
+  "types": "typings/index.d.ts",
+  "description": "tegg mcp proxy plugin",
   "keywords": [
     "egg",
-    "plugin",
     "typescript",
-    "module",
+    "decorator",
+    "aop",
     "tegg"
   ],
   "files": [
     "app.js",
     "app.d.ts",
     "lib/**/*.js",
-    "lib/**/*.d.ts",
-    "app/**/*.js",
-    "app/**/*.d.ts",
-    "typings/*.d.ts"
+    "lib/**/*.d.ts"
   ],
-  "types": "typings/index.d.ts",
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
@@ -40,31 +33,26 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/controller"
+    "directory": "plugin/mcp-proxy"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.53.0",
-    "@eggjs/router": "^2.0.1",
-    "@eggjs/tegg": "^3.53.0",
-    "@eggjs/tegg-common-util": "^3.53.0",
-    "@eggjs/tegg-loader": "^3.53.0",
-    "@eggjs/tegg-metadata": "^3.53.0",
-    "@eggjs/tegg-runtime": "^3.53.0",
-    "@eggjs/mcp-proxy": "^3.53.0",
+    "@eggjs/core": "^6.5.0",
+    "@eggjs/tegg-controller-plugin": "^3.53.0",
+    "@eggjs/tegg-types": "^3.53.0",
     "@modelcontextprotocol/sdk": "^1.10.0",
+    "cluster-client": "^3.7.0",
     "content-type": "^1.0.5",
     "raw-body": "^2.5.2",
-    "egg-errors": "^2.3.0",
-    "globby": "^10.0.2",
-    "koa-compose": "^3.2.1",
-    "path-to-regexp": "^1.8.0",
-    "sdk-base": "^4.2.0"
+    "sdk-base": "^5.0.1"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.53.0",
+    "@eggjs/egg-module-common": "^3.53.0",
+    "@eggjs/tegg": "^3.53.0",
+    "@eggjs/tegg-aop-runtime": "^3.53.0",
+    "@eggjs/tegg-metadata": "^3.53.0",
     "@eggjs/tegg-config": "^3.53.0",
     "@eggjs/tegg-plugin": "^3.53.0",
     "@types/mocha": "^10.0.1",
@@ -72,10 +60,11 @@
     "cross-env": "^7.0.3",
     "egg": "^3.9.1",
     "egg-mock": "^5.5.0",
-    "egg-tracer": "^2.0.0",
+    "eventsource": "^3.0.5",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "undici": "^5.26.5"
   },
   "publishConfig": {
     "access": "public"

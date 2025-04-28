@@ -9,6 +9,7 @@
   },
   "rules": {
     "@typescript-eslint/ban-types": "off",
+    "import/no-unresolved": "off",
     "import/no-relative-packages": "error"
   },
   "overrides": [

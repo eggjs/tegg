@@ -11,6 +11,7 @@ import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
+import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
@@ -61,6 +62,30 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
+    if (this.app.mcpProxy) {
+      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
+      // Don't let the mcp's body be consumed
+      this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
+
+      if (this.app.config.security.csrf.ignore) {
+        if (Array.isArray(this.app.config.security.csrf.ignore)) {
+          this.app.config.security.csrf.ignore = [
+            this.app.config.mcp.sseInitPath,
+            this.app.config.mcp.sseMessagePath,
+            this.app.config.mcp.streamPath,
+            ...(Array.isArray(this.app.config.security.csrf.ignore)
+              ? this.app.config.security.csrf.ignore
+              : [ this.app.config.security.csrf.ignore ]),
+          ];
+        }
+      } else {
+        this.app.config.security.csrf.ignore = [
+          this.app.config.mcp.sseInitPath,
+          this.app.config.mcp.sseMessagePath,
+          this.app.config.mcp.streamPath,
+        ];
+      }
+    }
   }
 
   prepareMiddleware(middlewareNames: string[]) {

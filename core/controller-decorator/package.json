@@ -43,6 +43,7 @@
     "@eggjs/tegg-common-util": "^3.53.0",
     "@eggjs/tegg-metadata": "^3.53.0",
     "@eggjs/tegg-types": "^3.53.0",
+    "@modelcontextprotocol/sdk": "^1.10.0",
     "is-type-of": "^1.2.1",
     "path-to-regexp": "^1.8.0",
     "reflect-metadata": "^0.1.13",
