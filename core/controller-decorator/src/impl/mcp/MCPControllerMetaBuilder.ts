@@ -1,13 +1,13 @@
 import assert from 'assert';
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/tegg';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { MCPPromptMeta, MCPResourceMeta, MCPToolMeta } from '../../model';
 import { ControllerValidator } from '../../util/validator/ControllerValidator';
 import ControllerInfoUtil from '../../util/ControllerInfoUtil';
 import { MCPControllerPromptMetaBuilder } from './MCPControllerPromptMetaBuilder';
 import { MCPControllerResourceMetaBuilder } from './MCPControllerResourceMetaBuilder';
 import { MCPControllerToolMetaBuilder } from './MCPControllerToolMetaBuilder';
-import MCPInfoUtil from '../../../src/util/MCPInfoUtil';
-import { ControllerType } from '@eggjs/tegg-types';
+import { MCPInfoUtil } from '../../../src/util/MCPInfoUtil';
+import { ControllerType, EggProtoImplClass } from '@eggjs/tegg-types';
 import { MCPControllerMeta } from '../../../src/model/MCPControllerMeta';
 import { ControllerMetaBuilderFactory } from '../../builder/ControllerMetaBuilderFactory';
 

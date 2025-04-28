@@ -9,6 +9,7 @@ import getRawBody from 'raw-body';
 import contentType from 'content-type';
 import { isInitializeRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'node:crypto';
+import { MCPProtocols } from '../../../../../..';
 
 const mcpServer = new McpServer({
   name: 'tegg-mcp-demo-server',
@@ -148,7 +149,14 @@ export default class App extends Controller {
     if (transport) {
       await transport.handlePostMessage(req, res);
     } else {
-      res.status(400).send('No transport found for sessionId');
+      res.status(404).send({
+        jsonrpc: '2.0',
+        error: {
+          code: -32602,
+          message: 'Bad Request: No transport found for sessionId',
+        },
+        id: null,
+      });
     }
   }
 
@@ -163,7 +171,7 @@ export default class App extends Controller {
     const self = this;
     const transport = new SSEServerTransport('/message', this.ctx.res);
     // register handler and client demo
-    this.app.mcpProxy.setProxyHandler('SSE', async (req, res) => {
+    this.app.mcpProxy.setProxyHandler(MCPProtocols.SSE, async (req, res) => {
       return await self.ssePostHandler(req, res);
     });
     transports[transport.sessionId] = transport;
@@ -178,12 +186,12 @@ export default class App extends Controller {
   }
 
   async message() {
-    const pid = await this.app.mcpProxy.getClient(this.ctx.request.query.sessionId);
-    if (pid !== process.pid) {
+    const detail = await this.app.mcpProxy.getClient(this.ctx.request.query.sessionId);
+    if (detail?.pid !== process.pid) {
       await this.app.mcpProxy.proxyMessage(this.ctx, {
-        pid: pid!,
+        detail: detail!,
         sessionId: this.ctx.request.query.sessionId,
-        type: 'SSE',
+        type: MCPProtocols.SSE,
       });
     } else {
       await this.ssePostHandler(this.ctx.req, this.ctx.res);
@@ -220,7 +228,14 @@ export default class App extends Controller {
       if (transport) {
         await transport.handleRequest(req, res);
       } else {
-        res.status(400).send('No transport found for sessionId');
+        res.status(404).send({
+          jsonrpc: '2.0',
+          error: {
+            code: -32602,
+            message: 'Bad Request: No transport found for sessionId',
+          },
+          id: null,
+        });
       }
     }
   }
@@ -249,7 +264,7 @@ export default class App extends Controller {
           eventStore,
           onsessioninitialized: async sessionId => {
             transports[sessionId] = transport;
-            this.app.mcpProxy.setProxyHandler('STREAM', async (req, res) => {
+            this.app.mcpProxy.setProxyHandler(MCPProtocols.STREAM, async (req, res) => {
               return await self.streamPostHandler(req, res);
             });
             await this.app.mcpProxy.registerClient(sessionId, process.pid);
@@ -278,12 +293,12 @@ export default class App extends Controller {
         return;
       }
     } else if (sessionId) {
-      const pid = await this.app.mcpProxy.getClient(sessionId);
-      if (pid !== process.pid) {
+      const detail = await this.app.mcpProxy.getClient(sessionId);
+      if (detail?.pid !== process.pid) {
         await this.app.mcpProxy.proxyMessage(this.ctx, {
-          pid: pid!,
+          detail: detail!,
           sessionId,
-          type: 'STREAM',
+          type: MCPProtocols.STREAM,
         });
       } else {
         this.ctx.respond = false;

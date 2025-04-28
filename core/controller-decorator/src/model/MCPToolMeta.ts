@@ -1,5 +1,5 @@
 import type { MiddlewareFunc } from '@eggjs/tegg-types';
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { ToolArgsSchemaDetail } from '../../src/util/MCPInfoUtil';
 
 
 export class MCPToolMeta {
@@ -8,8 +8,9 @@ export class MCPToolMeta {
   readonly aclCode?: string;
   readonly mcpName?: string;
   readonly description?: string;
-  readonly schema?: Parameters<McpServer['tool']>['2'];
+  readonly detail?: ToolArgsSchemaDetail;
   readonly middlewares: readonly MiddlewareFunc[];
+  readonly extra?: number;
 
   constructor(opt: {
     name: string;
@@ -18,7 +19,8 @@ export class MCPToolMeta {
     aclCode?: string,
     description?: string;
     mcpName?: string;
-    schema?: Parameters<McpServer['tool']>['2'];
+    detail?: ToolArgsSchemaDetail;
+    extra?: number;
   }) {
     this.name = opt.name;
     this.needAcl = !!opt.needAcl;
@@ -26,6 +28,7 @@ export class MCPToolMeta {
     this.mcpName = opt.mcpName;
     this.middlewares = opt.middlewares;
     this.aclCode = opt.aclCode;
-    this.schema = opt.schema;
+    this.detail = opt.detail;
+    this.extra = opt.extra;
   }
 }

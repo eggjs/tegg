@@ -10,6 +10,5 @@ export type MCPToolResponse = CallToolResult;
 export interface MCPToolParams {
   name?: string;
   description?: string;
-  schema?: Parameters<McpServer['tool']>['2'];
 }
 

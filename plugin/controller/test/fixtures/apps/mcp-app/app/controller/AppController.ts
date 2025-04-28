@@ -4,6 +4,8 @@ import {
   MCPToolResponse,
   MCPTool,
   ToolExtra,
+  ToolArgsSchema,
+  Extra,
 } from '@eggjs/tegg';
 import z from 'zod';
 
@@ -24,9 +26,8 @@ export class AppController {
     name: 'start-notification-stream',
     description:
       'Starts sending periodic notifications for testing resumability',
-    schema: NotificationType,
   })
-  async startNotificationStream(args: ToolArgs<typeof NotificationType>, extra :ToolExtra): Promise<MCPToolResponse> {
+  async startNotificationStream(@ToolArgsSchema(NotificationType) args: ToolArgs<typeof NotificationType>, @Extra() extra :ToolExtra): Promise<MCPToolResponse> {
     const { interval, count } = args;
     const { sendNotification } = extra;
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

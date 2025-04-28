@@ -1,7 +1,8 @@
-import { ControllerType, MCPControllerParams } from '@eggjs/tegg-types';
-import { AccessLevel, ControllerInfoUtil, EggProtoImplClass, PrototypeUtil, SingletonProto } from '@eggjs/tegg';
+import { ControllerType, MCPControllerParams, AccessLevel, EggProtoImplClass } from '@eggjs/tegg-types';
+import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
+import ControllerInfoUtil from '../../util/ControllerInfoUtil';
 import { StackUtil } from '@eggjs/tegg-common-util';
-import MCPInfoUtil from '../../../src/util/MCPInfoUtil';
+import { MCPInfoUtil } from '../../../src/util/MCPInfoUtil';
 
 export function MCPController(param?: MCPControllerParams) {
   return function(constructor: EggProtoImplClass) {

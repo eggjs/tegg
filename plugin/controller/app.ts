@@ -42,7 +42,6 @@ export default class ControllerAppBootHook {
       return new EggControllerLoader(unitPath);
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
-    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -63,8 +62,30 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
-    // Don't let the mcp's body be consumed
-    this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
+    if (this.app.mcpProxy) {
+      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
+      // Don't let the mcp's body be consumed
+      this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
+
+      if (this.app.config.security.csrf.ignore) {
+        if (Array.isArray(this.app.config.security.csrf.ignore)) {
+          this.app.config.security.csrf.ignore = [
+            this.app.config.mcp.sseInitPath,
+            this.app.config.mcp.sseMessagePath,
+            this.app.config.mcp.streamPath,
+            ...(Array.isArray(this.app.config.security.csrf.ignore)
+              ? this.app.config.security.csrf.ignore
+              : [ this.app.config.security.csrf.ignore ]),
+          ];
+        }
+      } else {
+        this.app.config.security.csrf.ignore = [
+          this.app.config.mcp.sseInitPath,
+          this.app.config.mcp.sseMessagePath,
+          this.app.config.mcp.streamPath,
+        ];
+      }
+    }
   }
 
   prepareMiddleware(middlewareNames: string[]) {
@@ -87,8 +108,6 @@ export default class ControllerAppBootHook {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
-
-    await (this.app.mcpProxy as any).ready();
   }
 
   async beforeClose() {

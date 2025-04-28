@@ -1,4 +1,4 @@
-import { MiddlewareFunc } from '@eggjs/tegg';
+import type { MiddlewareFunc } from '@eggjs/tegg-types';
 import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ResourceMetadata } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -11,6 +11,7 @@ export class MCPResourceMeta {
   readonly template?: ResourceTemplate;
   readonly metadata?: ResourceMetadata;
   readonly middlewares: readonly MiddlewareFunc[];
+  readonly extra?: number;
 
   constructor(opt: {
     name: string;
@@ -21,6 +22,7 @@ export class MCPResourceMeta {
     uri?: string;
     template?: ConstructorParameters<typeof ResourceTemplate>;
     metadata?: ResourceMetadata;
+    extra?: number;
   }) {
     this.name = opt.name;
     this.needAcl = !!opt.needAcl;
@@ -32,5 +34,6 @@ export class MCPResourceMeta {
     this.middlewares = opt.middlewares;
     this.aclCode = opt.aclCode;
     this.mcpName = opt.mcpName;
+    this.extra = opt.extra;
   }
 }

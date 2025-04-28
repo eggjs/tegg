@@ -1,9 +1,10 @@
 import { MCPPromptResponse, MCPResourceResponse, MCPToolResponse, PromptArgs, ToolArgs } from "@eggjs/tegg-types";
-import { MCPPrompt } from "../../src/decorator/mcp/MCPPrompt";
-import { MCPTool } from "../../src/decorator/mcp/MCPTool";
+import { MCPPrompt, PromptArgsSchema } from "../../src/decorator/mcp/MCPPrompt";
+import { MCPTool, ToolArgsSchema } from "../../src/decorator/mcp/MCPTool";
 import { MCPController } from "../../src/decorator/mcp/MCPController";
 import z from 'zod';
 import { MCPResource } from "../../src/decorator/mcp/MCPResource";
+import { Extra } from "../../src/decorator/mcp/Extra";
 
 export const PromptType = {
   name: z.string(),
@@ -20,10 +21,8 @@ export const ToolType = {
 })
 export class MCPFooController {
 
-  @MCPPrompt({
-    schema: PromptType,
-  })
-  async foo(args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
+  @MCPPrompt()
+  async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
     return {
       messages: [
         {
@@ -37,10 +36,8 @@ export class MCPFooController {
     };
   }
 
-  @MCPTool({
-    schema: ToolType,
-  })
-  async bar(args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
+  @MCPTool()
+  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
     return {
       content: [
         {
@@ -60,7 +57,8 @@ export class MCPFooController {
       },
     ],
   })
-  async car(uri: URL): Promise<MCPResourceResponse> {
+  async car(uri: URL, @Extra() extra): Promise<MCPResourceResponse> {
+    console.log(extra);
     return {
       contents: [{
         uri: uri.toString(),

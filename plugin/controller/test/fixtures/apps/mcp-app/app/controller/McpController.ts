@@ -8,6 +8,10 @@ import {
   MCPPrompt,
   MCPTool,
   MCPResource,
+  PromptArgsSchema,
+  Logger,
+  Inject,
+  ToolArgsSchema,
 } from '@eggjs/tegg';
 import z from 'zod';
 
@@ -25,10 +29,12 @@ export const ToolType = {
 @MCPController()
 export class McpController {
 
-  @MCPPrompt({
-    schema: PromptType,
-  })
-  async foo(args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
+  @Inject()
+  logger: Logger;
+
+  @MCPPrompt()
+  async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
+    this.logger.info('hello world');
     return {
       messages: [
         {
@@ -42,10 +48,8 @@ export class McpController {
     };
   }
 
-  @MCPTool({
-    schema: ToolType,
-  })
-  async bar(args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
+  @MCPTool()
+  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
     return {
       content: [
         {

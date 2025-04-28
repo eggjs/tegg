@@ -1,12 +1,13 @@
-const MCP_RE = /^\/mcp\//;
+import { randomUUID } from 'node:crypto';
 
 export default () => {
 
   const config = {
-    security: {
-      csrf: {
-        ignore: MCP_RE,
-      },
+    mcp: {
+      sseInitPath: '/mcp/init',
+      sseMessagePath: '/mcp/message',
+      streamPath: '/mcp/stream',
+      sessionIdGenerator: randomUUID,
     },
   };
 

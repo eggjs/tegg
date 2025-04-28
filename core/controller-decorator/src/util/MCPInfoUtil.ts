@@ -1,12 +1,43 @@
-import { CONTROLLER_MCP_NAME, CONTROLLER_MCP_PROMPT_MAP, CONTROLLER_MCP_RESOURCE_MAP, CONTROLLER_MCP_RESOURCE_PARAMS_MAP, CONTROLLER_MCP_TOOL_MAP, CONTROLLER_MCP_TOOL_PARAMS_MAP, CONTROLLER_MCP_VERSION, MCPPromptParams, MCPResourceParams, MCPToolParams } from '@eggjs/tegg-types';
-import { EggProtoImplClass, MetadataUtil } from '@eggjs/tegg';
+import {
+  CONTROLLER_MCP_NAME,
+  CONTROLLER_MCP_PROMPT_MAP,
+  CONTROLLER_MCP_RESOURCE_MAP,
+  CONTROLLER_MCP_RESOURCE_PARAMS_MAP,
+  CONTROLLER_MCP_TOOL_MAP,
+  CONTROLLER_MCP_TOOL_PARAMS_MAP,
+  CONTROLLER_MCP_VERSION,
+  MCPPromptParams,
+  MCPResourceParams,
+  MCPToolParams,
+  EggProtoImplClass,
+  CONTROLLER_MCP_TOOL_ARGS_INDEX,
+  CONTROLLER_MCP_PROMPT_ARGS_INDEX,
+  CONTROLLER_MCP_EXTRA_INDEX,
+  CONTROLLER_MCP_PROMPT_PARAMS_MAP,
+} from '@eggjs/tegg-types';
+import { MetadataUtil } from '@eggjs/core-decorator';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 type MCPMethodMap = Map<string, boolean>;
 type MCPResourceMap = Map<string, MCPResourceParams>;
 type MCPToolMap = Map<string, MCPToolParams>;
 type MCPPromptMap = Map<string, MCPPromptParams>;
 
-export default class MCPInfoUtil {
+export interface ToolArgsSchemaDetail {
+  argsSchema: Parameters<McpServer['tool']>['2'];
+  index: number;
+}
+type MCPToolArgsSchemaMap = Map<string, ToolArgsSchemaDetail>;
+
+type MCPExtraMap = Map<string, number>;
+
+export interface PromptArgsSchemaDetail {
+  argsSchema: Parameters<McpServer['prompt']>['2'];
+  index: number;
+}
+type MCPPromptArgsSchemaMap = Map<string, PromptArgsSchemaDetail>;
+
+export class MCPInfoUtil {
 
   static setMCPName(name: string, clazz: EggProtoImplClass) {
     MetadataUtil.defineMetaData(CONTROLLER_MCP_NAME, name, clazz);
@@ -84,13 +115,42 @@ export default class MCPInfoUtil {
   }
 
   static setMCPPromptParams(params: MCPPromptParams & { mcpName?: string }, clazz: EggProtoImplClass, resourceName: string) {
-    const methodMap: MCPPromptMap = MetadataUtil.initOwnMapMetaData(CONTROLLER_MCP_RESOURCE_PARAMS_MAP, clazz, new Map());
+    const methodMap: MCPPromptMap = MetadataUtil.initOwnMapMetaData(CONTROLLER_MCP_PROMPT_PARAMS_MAP, clazz, new Map());
     methodMap.set(resourceName, params);
   }
 
   static getMCPPromptParams(clazz: EggProtoImplClass, resourceName: string): MCPPromptParams & { mcpName?: string } | undefined {
-    const methodMap: MCPPromptMap | undefined = MetadataUtil.getMetaData(CONTROLLER_MCP_RESOURCE_PARAMS_MAP, clazz);
+    const methodMap: MCPPromptMap | undefined = MetadataUtil.getMetaData(CONTROLLER_MCP_PROMPT_PARAMS_MAP, clazz);
     return methodMap?.get(resourceName);
   }
 
+  static setMCPToolArgsInArgs(detail: ToolArgsSchemaDetail, clazz: EggProtoImplClass, methodName: string) {
+    const methodContextIndexMap: MCPToolArgsSchemaMap = MetadataUtil.initOwnMapMetaData(CONTROLLER_MCP_TOOL_ARGS_INDEX, clazz, new Map());
+    methodContextIndexMap.set(methodName, detail);
+  }
+
+  static getMCPToolArgsIndex(clazz: EggProtoImplClass, methodName: string): ToolArgsSchemaDetail | undefined {
+    const methodContextIndexMap: MCPToolArgsSchemaMap | undefined = MetadataUtil.getMetaData(CONTROLLER_MCP_TOOL_ARGS_INDEX, clazz);
+    return methodContextIndexMap?.get(methodName);
+  }
+
+  static setMCPExtra(index: number, clazz: EggProtoImplClass, methodName: string) {
+    const methodContextIndexMap: MCPExtraMap = MetadataUtil.initOwnMapMetaData(CONTROLLER_MCP_EXTRA_INDEX, clazz, new Map());
+    methodContextIndexMap.set(methodName, index);
+  }
+
+  static getMCPExtra(clazz: EggProtoImplClass, methodName: string): number | undefined {
+    const methodContextIndexMap: MCPExtraMap | undefined = MetadataUtil.getMetaData(CONTROLLER_MCP_EXTRA_INDEX, clazz);
+    return methodContextIndexMap?.get(methodName);
+  }
+
+  static setMCPPromptArgsInArgs(detail: PromptArgsSchemaDetail, clazz: EggProtoImplClass, methodName: string) {
+    const methodContextIndexMap: MCPPromptArgsSchemaMap = MetadataUtil.initOwnMapMetaData(CONTROLLER_MCP_PROMPT_ARGS_INDEX, clazz, new Map());
+    methodContextIndexMap.set(methodName, detail);
+  }
+
+  static getMCPPromptArgsIndex(clazz: EggProtoImplClass, methodName: string): PromptArgsSchemaDetail | undefined {
+    const methodContextIndexMap: MCPPromptArgsSchemaMap | undefined = MetadataUtil.getMetaData(CONTROLLER_MCP_PROMPT_ARGS_INDEX, clazz);
+    return methodContextIndexMap?.get(methodName);
+  }
 }

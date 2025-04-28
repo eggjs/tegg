@@ -20,7 +20,7 @@ exports.aopModule = {
   enable: true,
 };
 
-exports.aopModule = {
+exports.mcpProxy = {
   package: '@eggjs/mcp-proxy',
   enable: true,
 };

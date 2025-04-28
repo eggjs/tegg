@@ -53,223 +53,227 @@ async function startNotificationTool(client: Client) {
 }
 
 describe('plugin/controller/test/mcp/mcp.test.ts', () => {
-  let app;
 
-  after(async () => {
-    await app.close();
-  });
 
-  afterEach(() => {
-    // mm.restore();
-  });
+  if (parseInt(process.version.slice(1, 3)) > 17) {
+    let app;
 
-  before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '../..');
-    });
-    app = mm.cluster({
-      baseDir: path.join(__dirname, '../fixtures/apps/mcp-app'),
-      framework: path.dirname(require.resolve('egg')),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      workers: 4,
-      sticky: false,
-      opt: {
-        env: {
-          ...process.env,
-          NODE_OPTIONS: '--require ts-node/register tsconfig-paths/register',
-        },
-      },
-    });
-    await app.ready();
-  });
-
-  after(() => {
-    return app.close();
-  });
-
-  it('sse should work', async () => {
-    const sseClient = new Client({
-      name: 'sse-demo-client',
-      version: '1.0.0',
-    });
-    const baseUrl = await app.httpRequest()
-      .get('/mcp/init').url;
-    const sseTransport = new SSEClientTransport(new URL(baseUrl));
-    const sseNotifications: { level: string, data: string }[] = [];
-    sseClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
-      sseNotifications.push({ level: notification.params.level, data: notification.params.data as string });
-    });
-    await sseClient.connect(sseTransport);
-    // tool
-    const tools = await listTools(sseClient);
-    assert.deepEqual(tools, [
-      {
-        name: 'start-notification-stream',
-        description: 'Starts sending periodic notifications for testing resumability',
-      },
-      {
-        description: undefined,
-        name: 'bar',
-      },
-    ]);
-
-    const toolRes = await sseClient.callTool({
-      name: 'bar',
-      arguments: {
-        name: 'aaa',
-      },
-    });
-    assert.deepEqual(toolRes, {
-      content: [{ type: 'text', text: 'npm package: aaa not found' }],
-    });
-    // notification
-    const notificationResp = await startNotificationTool(sseClient);
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    assert.deepEqual(notificationResp, [{ text: 'Started sending periodic notifications every 1000ms' }]);
-    assert.deepEqual(sseNotifications, [
-      { level: 'info', data: 'Periodic notification #1' },
-      { level: 'info', data: 'Periodic notification #2' },
-      { level: 'info', data: 'Periodic notification #3' },
-      { level: 'info', data: 'Periodic notification #4' },
-      { level: 'info', data: 'Periodic notification #5' },
-    ]);
-
-    // resources
-    const resources = await sseClient.listResources();
-    assert.deepEqual(resources, {
-      resources: [
-        { uri: 'mcp://npm/egg?version=4.10.0', name: 'egg' },
-        { uri: 'mcp://npm/mcp?version=0.10.0', name: 'mcp' },
-      ],
+    after(async () => {
+      await app.close();
     });
 
-    const resourceRes = await sseClient.readResource({
-      uri: 'mcp://npm/egg?version=4.10.0',
-    });
-    assert.deepEqual(resourceRes, {
-      contents: [{ uri: 'mcp://npm/egg?version=4.10.0', text: 'MOCK TEXT' }],
+    afterEach(() => {
+      // mm.restore();
     });
 
-    // prompts
-    const prompts = await sseClient.listPrompts();
-    assert.deepEqual(prompts, {
-      prompts: [
-        { name: 'foo', arguments: [{ name: 'name', required: true }] },
-      ],
-    });
-
-    const promptRes = await sseClient.getPrompt({
-      name: 'foo',
-      arguments: {
-        name: 'bbb',
-      },
-    });
-    assert.deepEqual(promptRes, {
-      messages: [
-        {
-          role: 'user',
-          content: {
-            type: 'text',
-            text: 'Generate a concise but descriptive commit message for these changes:\n\nbbb',
+    before(async () => {
+      mm(process.env, 'EGG_TYPESCRIPT', true);
+      mm(process, 'cwd', () => {
+        return path.join(__dirname, '../..');
+      });
+      app = mm.cluster({
+        baseDir: path.join(__dirname, '../fixtures/apps/mcp-app'),
+        framework: path.dirname(require.resolve('egg')),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        workers: 3,
+        sticky: false,
+        opt: {
+          env: {
+            ...process.env,
+            NODE_OPTIONS: '--require ts-node/register tsconfig-paths/register',
           },
         },
-      ],
-    });
-    await sseTransport.close();
-  });
-
-  it('streamable should work', async () => {
-    const streamableClient = new Client({
-      name: 'streamable-demo-client',
-      version: '1.0.0',
-    });
-    const baseUrl = await app.httpRequest()
-      .post('/mcp/stream').url;
-    const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl));
-    const streamableNotifications: { level: string, data: string }[] = [];
-    streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
-      streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
-    });
-    await streamableClient.connect(streamableTransport);
-    // tool
-    const tools = await listTools(streamableClient);
-    assert.deepEqual(tools, [
-      {
-        name: 'start-notification-stream',
-        description: 'Starts sending periodic notifications for testing resumability',
-      },
-      {
-        description: undefined,
-        name: 'bar',
-      },
-    ]);
-
-    const toolRes = await streamableClient.callTool({
-      name: 'bar',
-      arguments: {
-        name: 'aaa',
-      },
-    });
-    assert.deepEqual(toolRes, {
-      content: [{ type: 'text', text: 'npm package: aaa not found' }],
-    });
-    // notification
-    const notificationResp = await startNotificationTool(streamableClient);
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    assert.deepEqual(notificationResp, [{ text: 'Started sending periodic notifications every 1000ms' }]);
-    assert.deepEqual(streamableNotifications, [
-      { level: 'info', data: 'Periodic notification #1' },
-      { level: 'info', data: 'Periodic notification #2' },
-      { level: 'info', data: 'Periodic notification #3' },
-      { level: 'info', data: 'Periodic notification #4' },
-      { level: 'info', data: 'Periodic notification #5' },
-    ]);
-
-    // resources
-    const resources = await streamableClient.listResources();
-    assert.deepEqual(resources, {
-      resources: [
-        { uri: 'mcp://npm/egg?version=4.10.0', name: 'egg' },
-        { uri: 'mcp://npm/mcp?version=0.10.0', name: 'mcp' },
-      ],
+      });
+      await app.ready();
     });
 
-    const resourceRes = await streamableClient.readResource({
-      uri: 'mcp://npm/egg?version=4.10.0',
-    });
-    assert.deepEqual(resourceRes, {
-      contents: [{ uri: 'mcp://npm/egg?version=4.10.0', text: 'MOCK TEXT' }],
+    after(() => {
+      return app.close();
     });
 
-    // prompts
-    const prompts = await streamableClient.listPrompts();
-    assert.deepEqual(prompts, {
-      prompts: [
-        { name: 'foo', arguments: [{ name: 'name', required: true }] },
-      ],
-    });
-
-    const promptRes = await streamableClient.getPrompt({
-      name: 'foo',
-      arguments: {
-        name: 'bbb',
-      },
-    });
-    assert.deepEqual(promptRes, {
-      messages: [
+    it('sse should work', async () => {
+      const sseClient = new Client({
+        name: 'sse-demo-client',
+        version: '1.0.0',
+      });
+      const baseUrl = await app.httpRequest()
+        .get('/mcp/init').url;
+      const sseTransport = new SSEClientTransport(new URL(baseUrl));
+      const sseNotifications: { level: string, data: string }[] = [];
+      sseClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
+        sseNotifications.push({ level: notification.params.level, data: notification.params.data as string });
+      });
+      await sseClient.connect(sseTransport);
+      // tool
+      const tools = await listTools(sseClient);
+      assert.deepEqual(tools, [
         {
-          role: 'user',
-          content: {
-            type: 'text',
-            text: 'Generate a concise but descriptive commit message for these changes:\n\nbbb',
-          },
+          name: 'start-notification-stream',
+          description: 'Starts sending periodic notifications for testing resumability',
         },
-      ],
+        {
+          description: undefined,
+          name: 'bar',
+        },
+      ]);
+
+      const toolRes = await sseClient.callTool({
+        name: 'bar',
+        arguments: {
+          name: 'aaa',
+        },
+      });
+      assert.deepEqual(toolRes, {
+        content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+      // notification
+      const notificationResp = await startNotificationTool(sseClient);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      assert.deepEqual(notificationResp, [{ text: 'Started sending periodic notifications every 1000ms' }]);
+      assert.deepEqual(sseNotifications, [
+        { level: 'info', data: 'Periodic notification #1' },
+        { level: 'info', data: 'Periodic notification #2' },
+        { level: 'info', data: 'Periodic notification #3' },
+        { level: 'info', data: 'Periodic notification #4' },
+        { level: 'info', data: 'Periodic notification #5' },
+      ]);
+
+      // resources
+      const resources = await sseClient.listResources();
+      assert.deepEqual(resources, {
+        resources: [
+          { uri: 'mcp://npm/egg?version=4.10.0', name: 'egg' },
+          { uri: 'mcp://npm/mcp?version=0.10.0', name: 'mcp' },
+        ],
+      });
+
+      const resourceRes = await sseClient.readResource({
+        uri: 'mcp://npm/egg?version=4.10.0',
+      });
+      assert.deepEqual(resourceRes, {
+        contents: [{ uri: 'mcp://npm/egg?version=4.10.0', text: 'MOCK TEXT' }],
+      });
+
+      // prompts
+      const prompts = await sseClient.listPrompts();
+      assert.deepEqual(prompts, {
+        prompts: [
+          { name: 'foo', arguments: [{ name: 'name', required: true }] },
+        ],
+      });
+
+      const promptRes = await sseClient.getPrompt({
+        name: 'foo',
+        arguments: {
+          name: 'bbb',
+        },
+      });
+      assert.deepEqual(promptRes, {
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: 'Generate a concise but descriptive commit message for these changes:\n\nbbb',
+            },
+          },
+        ],
+      });
+      await sseTransport.close();
     });
 
-    await streamableTransport.terminateSession();
-    await streamableClient.close();
-  });
+    it('streamable should work', async () => {
+      const streamableClient = new Client({
+        name: 'streamable-demo-client',
+        version: '1.0.0',
+      });
+      const baseUrl = await app.httpRequest()
+        .post('/mcp/stream').url;
+      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl));
+      const streamableNotifications: { level: string, data: string }[] = [];
+      streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
+        streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
+      });
+      await streamableClient.connect(streamableTransport);
+      // tool
+      const tools = await listTools(streamableClient);
+      assert.deepEqual(tools, [
+        {
+          name: 'start-notification-stream',
+          description: 'Starts sending periodic notifications for testing resumability',
+        },
+        {
+          description: undefined,
+          name: 'bar',
+        },
+      ]);
+
+      const toolRes = await streamableClient.callTool({
+        name: 'bar',
+        arguments: {
+          name: 'aaa',
+        },
+      });
+      assert.deepEqual(toolRes, {
+        content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+      // notification
+      const notificationResp = await startNotificationTool(streamableClient);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      assert.deepEqual(notificationResp, [{ text: 'Started sending periodic notifications every 1000ms' }]);
+      assert.deepEqual(streamableNotifications, [
+        { level: 'info', data: 'Periodic notification #1' },
+        { level: 'info', data: 'Periodic notification #2' },
+        { level: 'info', data: 'Periodic notification #3' },
+        { level: 'info', data: 'Periodic notification #4' },
+        { level: 'info', data: 'Periodic notification #5' },
+      ]);
+
+      // resources
+      const resources = await streamableClient.listResources();
+      assert.deepEqual(resources, {
+        resources: [
+          { uri: 'mcp://npm/egg?version=4.10.0', name: 'egg' },
+          { uri: 'mcp://npm/mcp?version=0.10.0', name: 'mcp' },
+        ],
+      });
+
+      const resourceRes = await streamableClient.readResource({
+        uri: 'mcp://npm/egg?version=4.10.0',
+      });
+      assert.deepEqual(resourceRes, {
+        contents: [{ uri: 'mcp://npm/egg?version=4.10.0', text: 'MOCK TEXT' }],
+      });
+
+      // prompts
+      const prompts = await streamableClient.listPrompts();
+      assert.deepEqual(prompts, {
+        prompts: [
+          { name: 'foo', arguments: [{ name: 'name', required: true }] },
+        ],
+      });
+
+      const promptRes = await streamableClient.getPrompt({
+        name: 'foo',
+        arguments: {
+          name: 'bbb',
+        },
+      });
+      assert.deepEqual(promptRes, {
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: 'Generate a concise but descriptive commit message for these changes:\n\nbbb',
+            },
+          },
+        ],
+      });
+
+      await streamableTransport.terminateSession();
+      await streamableClient.close();
+    });
+  }
 });

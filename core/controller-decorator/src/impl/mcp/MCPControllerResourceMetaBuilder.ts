@@ -2,7 +2,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { MCPResourceMeta } from '../../model';
 import { MethodValidator } from '../../util/validator/MethodValidator';
 import MethodInfoUtil from '../../util/MethodInfoUtil';
-import MCPInfoUtil from '../../util/MCPInfoUtil';
+import { MCPInfoUtil } from '../../util/MCPInfoUtil';
 
 export class MCPControllerResourceMetaBuilder {
   private readonly clazz: EggProtoImplClass;
@@ -23,12 +23,14 @@ export class MCPControllerResourceMetaBuilder {
     const needAcl = MethodInfoUtil.hasMethodAcl(this.clazz, this.methodName);
     const aclCode = MethodInfoUtil.getMethodAcl(this.clazz, this.methodName);
     const params = MCPInfoUtil.getMCPResourceParams(this.clazz, this.methodName);
+    const extra = MCPInfoUtil.getMCPExtra(this.clazz, this.methodName);
 
     return new MCPResourceMeta({
       name: this.methodName,
       middlewares,
       needAcl,
       aclCode,
+      extra,
       ...params,
     });
   }

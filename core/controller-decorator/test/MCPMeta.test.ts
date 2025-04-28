@@ -5,7 +5,7 @@ import { ControllerMetaBuilderFactory, MCPControllerMeta } from '..';
 import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 describe('test/MCPMeta.test.ts', () => {
-  it.only('should work', () => {
+  it('should work', () => {
     const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(MCPFooController, ControllerType.MCP)!;
     const fooControllerMetaData = builder.build()! as MCPControllerMeta;
     assert(fooControllerMetaData);
@@ -19,7 +19,7 @@ describe('test/MCPMeta.test.ts', () => {
     assert(fooControllerMetaData.tools[0].name === 'bar');
     assert(fooControllerMetaData.resources[0].name === 'car');
     assert(fooControllerMetaData.resources[0].template instanceof ResourceTemplate);
-    assert(fooControllerMetaData.tools[0].schema === ToolType);
-    assert(fooControllerMetaData.prompts[0].schema === PromptType);
+    assert(fooControllerMetaData.tools[0].detail?.argsSchema === ToolType);
+    assert(fooControllerMetaData.prompts[0].detail?.argsSchema === PromptType);
   });
 });

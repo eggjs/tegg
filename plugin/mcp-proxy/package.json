@@ -20,7 +20,7 @@
     "lib/**/*.d.ts"
   ],
   "scripts": {
-    "test": "mocha  --require ts-node/register --watch-extensions ts,tsx \"test/**/*.{ts,tsx}\"",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
@@ -33,12 +33,16 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/aop"
+    "directory": "plugin/mcp-proxy"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "dependencies": {
+    "@eggjs/core": "^6.5.0",
+    "@eggjs/tegg-controller-plugin": "^3.53.0",
+    "@eggjs/tegg-types": "^3.53.0",
+    "@modelcontextprotocol/sdk": "^1.10.0",
     "cluster-client": "^3.7.0",
     "content-type": "^1.0.5",
     "raw-body": "^2.5.2",
@@ -51,7 +55,6 @@
     "@eggjs/tegg-metadata": "^3.53.0",
     "@eggjs/tegg-config": "^3.53.0",
     "@eggjs/tegg-plugin": "^3.53.0",
-    "@modelcontextprotocol/sdk": "^1.10.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

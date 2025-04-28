@@ -10,5 +10,4 @@ export type MCPPromptResponse = GetPromptResult;
 export interface MCPPromptParams {
   name?: string;
   description?: string;
-  schema?: Parameters<McpServer['prompt']>['2'];
 }

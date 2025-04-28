@@ -14,9 +14,10 @@ export * from './src/decorator/mcp/MCPController';
 export * from './src/decorator/mcp/MCPPrompt';
 export * from './src/decorator/mcp/MCPResource';
 export * from './src/decorator/mcp/MCPTool';
+export * from './src/decorator/mcp/Extra';
 export * from './src/builder/ControllerMetaBuilderFactory';
 export * from './src/util/ControllerMetadataUtil';
-export { default as MCPInfoUtil } from './src/util/MCPInfoUtil';
+export * from './src/util/MCPInfoUtil';
 export * from './src/util/HTTPPriorityUtil';
 
 export { default as ControllerInfoUtil } from './src/util/ControllerInfoUtil';

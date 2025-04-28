@@ -3,7 +3,7 @@ import {
   EggProtoImplClass,
   MCPResourceParams,
 } from '@eggjs/tegg-types';
-import MCPInfoUtil from '../../../src/util/MCPInfoUtil';
+import { MCPInfoUtil } from '../../../src/util/MCPInfoUtil';
 import MethodInfoUtil from '../../../src/util/MethodInfoUtil';
 
 export function MCPResource(params: MCPResourceParams) {

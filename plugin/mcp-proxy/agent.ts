@@ -8,6 +8,8 @@ export default class AppHook {
   }
 
   async didLoad() {
-    await (this.agent.mcpProxy as any).ready();
+    if (this.agent.mcpProxy) {
+      await (this.agent.mcpProxy as any)?.ready();
+    }
   }
 }

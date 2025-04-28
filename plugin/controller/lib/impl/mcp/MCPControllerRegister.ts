@@ -1,12 +1,7 @@
 import type { Application, Context, Router } from 'egg';
 
 import assert from 'node:assert';
-import { ServerResponse } from 'node:http';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import { randomUUID } from 'node:crypto';
-import querystring from 'node:querystring';
-import url from 'node:url';
+import http, { ServerResponse } from 'node:http';
 
 import {
   ControllerMetadata,
@@ -16,7 +11,6 @@ import {
   MCPResourceMeta,
   MCPToolMeta,
   ControllerType,
-  MCPControllerHook,
 } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
@@ -25,24 +19,41 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
-import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
+import { isInitializeRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import { MCPProtocols } from '@eggjs/mcp-proxy';
 
 import getRawBody from 'raw-body';
 import contentType from 'content-type';
 
+export interface MCPControllerHook {
+  // SSE
+  preSSEInitHandle?: (ctx: Context, transport: SSEServerTransport, register: MCPControllerRegister) => Promise<void>
+  preHandleInitHandle?: (ctx: Context) => Promise<void>
+
+  // STREAM
+  preHandle?: (ctx: Context) => Promise<void>
+  onStreamSessionInitialized?: (ctx: Context, transport: StreamableHTTPServerTransport, register: MCPControllerRegister) => Promise<void>
+
+  // COMMON
+  preProxy?: (ctx: Context, proxyReq: http.IncomingMessage, proxyResp: http.ServerResponse) => Promise<void>
+  schemaLoader?: (controllerMeta: MCPControllerMeta, meta: MCPPromptMeta | MCPToolMeta) => Promise<Parameters<McpServer['tool']>['2'] | Parameters<McpServer['prompt']>['2']>
+  checkAndRunProxy?: (ctx: Context, type: MCPProtocols, sessionId: string) => Promise<boolean>;
+}
+
+
 export class MCPControllerRegister implements ControllerRegister {
   static instance?: MCPControllerRegister;
-  private readonly app: Application;
+  readonly app: Application;
   private readonly eggContainerFactory: typeof EggContainerFactory;
   private readonly router: Router;
   private controllerProtos: EggPrototype[] = [];
   private registeredControllerProtos: EggPrototype[] = [];
-  private transports: Record<string, SSEServerTransport> = {};
-  private sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
+  transports: Record<string, SSEServerTransport> = {};
+  sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
   private mcpServer: McpServer;
   private controllerMeta: MCPControllerMeta;
-  private streamTransports: Record<string, StreamableHTTPServerTransport> = {};
-  private hook: MCPControllerHook;
+  streamTransports: Record<string, StreamableHTTPServerTransport> = {};
+  static hooks: MCPControllerHook[] = [];
 
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
     assert(controllerMeta.type === ControllerType.MCP, 'controller meta type is not MCP');
@@ -61,10 +72,8 @@ export class MCPControllerRegister implements ControllerRegister {
     this.controllerMeta = controllerMeta;
   }
 
-  static setHook(hook: MCPControllerHook) {
-    if (MCPControllerRegister.instance) {
-      MCPControllerRegister.instance.hook = hook;
-    }
+  static addHook(hook: MCPControllerHook) {
+    MCPControllerRegister.hooks.push(hook);
   }
 
   async mcpStreamServerInit() {
@@ -72,88 +81,63 @@ export class MCPControllerRegister implements ControllerRegister {
     const self = this;
     const initHandler = async (ctx: Context) => {
       ctx.respond = false;
-      ctx.set({
-        'content-type': 'text/event-stream',
-        'cache-control': 'no-cache',
-        'transfer-encoding': 'chunked',
-        'X-Accel-Buffering': 'no',
-      });
-      if (self.hook) {
-        await self.hook.preHandle?.(self.app.currentContext);
+      if (MCPControllerRegister.hooks.length > 0) {
+        for (const hook of MCPControllerRegister.hooks) {
+          await hook.preHandle?.(self.app.currentContext);
+        }
       }
       const sessionId = ctx.req.headers['mcp-session-id'] as string | undefined;
       if (!sessionId) {
         const ct = contentType.parse(ctx.req.headers['content-type'] ?? '');
 
-        const body = JSON.parse(await getRawBody(ctx.req, {
-          limit: '4mb',
-          encoding: ct.parameters.charset ?? 'utf-8',
-        }));
+        let body;
+
+        try {
+          const rawBody = await getRawBody(ctx.req, {
+            limit: '4mb',
+            encoding: ct.parameters.charset ?? 'utf-8',
+          });
+
+          body = JSON.parse(rawBody);
+        } catch (e) {
+          ctx.status = 400;
+          ctx.body = {
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: `Bad Request: body should is json, ${e.toString()}`,
+            },
+            id: null,
+          };
+          return;
+        }
 
         if (isInitializeRequest(body)) {
           ctx.respond = false;
-          ctx.set({
-            'content-type': 'text/event-stream',
-            'cache-control': 'no-cache',
-            'transfer-encoding': 'chunked',
-          });
-          const eventStore = new InMemoryEventStore();
+          const eventStore = this.app.config.mcp?.eventStore ?? new InMemoryEventStore();
           const self = this;
           const transport = new StreamableHTTPServerTransport({
-            sessionIdGenerator: () => randomUUID(),
+            sessionIdGenerator: () => this.app.config.mcp?.sessionIdGenerator?.(),
             eventStore,
-            onsessioninitialized: async sessionId => {
-              self.streamTransports[sessionId] = transport;
-              this.app.mcpProxy.setProxyHandler('STREAM', async (req, res) => {
-                if (self.hook) {
-                  await self.hook.preProxy?.(self.app.currentContext, req, res);
+            onsessioninitialized: async () => {
+              if (MCPControllerRegister.hooks.length > 0) {
+                for (const hook of MCPControllerRegister.hooks) {
+                  await hook.onStreamSessionInitialized?.(self.app.currentContext, transport, self);
                 }
-                const sessionId = req.headers['mcp-session-id'] as string | undefined;
-                if (!sessionId) {
-                  res.status(500).json({
-                    jsonrpc: '2.0',
-                    error: {
-                      code: -32603,
-                      message: 'session id not have and run in proxy',
-                    },
-                    id: null,
-                  });
-                } else {
-                  let transport: StreamableHTTPServerTransport;
-                  const existingTransport = self.streamTransports[sessionId];
-                  if (existingTransport instanceof StreamableHTTPServerTransport) {
-                    transport = existingTransport;
-                  } else {
-                    res.status(400).json({
-                      jsonrpc: '2.0',
-                      error: {
-                        code: -32000,
-                        message: 'Bad Request: Session exists but uses a different transport protocol',
-                      },
-                      id: null,
-                    });
-                    return;
-                  }
-                  if (transport) {
-                    await transport.handleRequest(req, res);
-                  } else {
-                    res.status(400).send('No transport found for sessionId');
-                  }
-                }
-              });
-              await this.app.mcpProxy.registerClient(sessionId, process.pid);
+              }
             },
           });
-          transport.onclose = async () => {
-            const sid = transport.sessionId;
-            if (sid && self.streamTransports[sid]) {
-              delete self.streamTransports[sid];
-            }
-            await this.app.mcpProxy.unregisterClient(sid!);
-          };
+
+          ctx.set({
+            'content-type': 'text/event-stream',
+            'transfer-encoding': 'chunked',
+          });
+
           await self.mcpServer.connect(transport);
 
-          await transport.handleRequest(ctx.req, ctx.res, body);
+          await ctx.app.ctxStorage.run(ctx, async () => {
+            await transport.handleRequest(ctx.req, ctx.res, body);
+          });
         } else {
           ctx.status = 400;
           ctx.body = {
@@ -167,29 +151,37 @@ export class MCPControllerRegister implements ControllerRegister {
           return;
         }
       } else if (sessionId) {
-        const pid = await this.app.mcpProxy.getClient(sessionId);
-        if (pid !== process.pid) {
-          await this.app.mcpProxy.proxyMessage(ctx, {
-            pid: pid!,
-            sessionId,
-            type: 'STREAM',
-          });
-        } else {
+        const transport = self.streamTransports[sessionId];
+        if (transport) {
+          if (MCPControllerRegister.hooks.length > 0) {
+            for (const hook of MCPControllerRegister.hooks) {
+              await hook.preHandle?.(self.app.currentContext);
+            }
+          }
           ctx.respond = false;
           ctx.set({
             'content-type': 'text/event-stream',
-            'cache-control': 'no-cache',
             'transfer-encoding': 'chunked',
           });
-          const transport = self.streamTransports[sessionId];
-          await transport.handleRequest(ctx.req, ctx.res);
+          await ctx.app.ctxStorage.run(ctx, async () => {
+            await transport.handleRequest(ctx.req, ctx.res);
+          });
+          return;
+        }
+        if (MCPControllerRegister.hooks.length > 0) {
+          for (const hook of MCPControllerRegister.hooks) {
+            const checked = await hook.checkAndRunProxy?.(self.app.currentContext, MCPProtocols.STREAM, sessionId);
+            if (checked) {
+              return;
+            }
+          }
         }
       }
       return;
     };
     Reflect.apply(allRouterFunc, this.router, [
       'chairMcpStreamInit',
-      '/mcp/stream',
+      self.app.config.mcp?.streamPath,
       ...[],
       initHandler,
     ]);
@@ -203,17 +195,12 @@ export class MCPControllerRegister implements ControllerRegister {
     // }
     const self = this;
     const initHandler = async (ctx: Context) => {
-      ctx.respond = false;
-      ctx.set({
-        'content-type': 'text/event-stream',
-        'cache-control': 'no-cache',
-        'transfer-encoding': 'chunked',
-        'X-Accel-Buffering': 'no',
-      });
-      const transport = new SSEServerTransport('/mcp/message', ctx.res);
+      const transport = new SSEServerTransport(self.app.config.mcp.sseMessagePath, ctx.res);
       const id = transport.sessionId;
-      if (self.hook) {
-        await self.hook.preHandle?.(self.app.currentContext);
+      if (MCPControllerRegister.hooks.length > 0) {
+        for (const hook of MCPControllerRegister.hooks) {
+          await hook.preSSEInitHandle?.(self.app.currentContext, transport, self);
+        }
       }
       // https://github.com/modelcontextprotocol/typescript-sdk/issues/270#issuecomment-2789526821
       const intervalId = setInterval(() => {
@@ -223,54 +210,39 @@ export class MCPControllerRegister implements ControllerRegister {
           clearInterval(intervalId);
           self.sseConnections.delete(id);
         }
-      }, 25000);
+      }, self.app.config.mcp?.sseHeartTime ?? 25000);
       self.sseConnections.set(id, { res: ctx.res, intervalId });
       self.transports[id] = transport;
-      // cluster proxy
-      await self.app.mcpProxy.registerClient(id, process.pid);
-      this.app.mcpProxy.setProxyHandler('SSE', async (req, res) => {
-        const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
-        if (self.hook) {
-          await self.hook.preProxy?.(self.app.currentContext, req, res);
-        }
-        let transport: SSEServerTransport;
-        const existingTransport = self.transports[sessionId];
-        if (existingTransport instanceof SSEServerTransport) {
-          transport = existingTransport;
-        } else {
-          res.status(400).json({
-            jsonrpc: '2.0',
-            error: {
-              code: -32000,
-              message: 'Bad Request: Session exists but uses a different transport protocol',
-            },
-            id: null,
-          });
-          return;
-        }
-        if (transport) {
-          await transport.handlePostMessage(req, res);
-        } else {
-          res.status(400).send('No transport found for sessionId');
-        }
+      ctx.set({
+        'content-type': 'text/event-stream',
+        'transfer-encoding': 'chunked',
       });
-      ctx.res.on('close', () => {
-        delete self.transports[id];
-        const connection = self.sseConnections.get(id);
-        if (connection) {
-          clearInterval(connection.intervalId);
-          self.sseConnections.delete(id);
-        }
-        self.app.mcpProxy.unregisterClient(id);
-      });
+      ctx.respond = false;
       await self.mcpServer.connect(transport);
+      return self.sseCtxStorageRun.bind(self)(ctx, transport);
     };
     Reflect.apply(routerFunc, this.router, [
       'chairMcpInit',
-      '/mcp/init',
+      self.app.config.mcp?.sseInitPath,
       ...[],
       initHandler,
     ]);
+  }
+
+  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport | StreamableHTTPServerTransport) {
+    const closeFunc = transport.onclose;
+    transport.onclose = (...args) => {
+      closeFunc?.(...args);
+    };
+    transport.onerror = error => {
+      this.app.logger.error('session %s error %o', transport.sessionId, error);
+    };
+    const messageFunc = transport.onmessage;
+    transport.onmessage = async (...args: [ JSONRPCMessage ]) => {
+      await ctx.app.ctxStorage.run(ctx, async () => {
+        await messageFunc!(...args);
+      });
+    };
   }
 
   mcpServerRegister() {
@@ -282,95 +254,132 @@ export class MCPControllerRegister implements ControllerRegister {
     // }
     const messageHander = async (ctx: Context) => {
       const sessionId = ctx.query.sessionId;
-      const pid = await self.app.mcpProxy.getClient(sessionId);
-      if (!pid) {
-        throw new Error('not found session: ' + sessionId);
-      }
-      if (pid !== process.pid) {
-        self.app.logger.info('proxy message', sessionId, pid);
-        await self.app.mcpProxy.proxyMessage(ctx, { pid, sessionId, type: 'SSE' });
-      } else {
-        if (self.hook) {
-          await self.hook.preHandle?.(self.app.currentContext);
+
+      if (self.transports[sessionId]) {
+        if (MCPControllerRegister.hooks.length > 0) {
+          for (const hook of MCPControllerRegister.hooks) {
+            await hook.preHandleInitHandle?.(self.app.currentContext);
+          }
         }
         self.app.logger.info('message coming', sessionId);
-        await self.transports[sessionId].handlePostMessage(ctx.req, ctx.res);
+        try {
+          await self.transports[sessionId].handlePostMessage(ctx.req, ctx.res);
+        } catch (error) {
+          self.app.logger.error('Error handling MCP message', error);
+          if (!ctx.res.headersSent) {
+            ctx.status = 500;
+            ctx.body = {
+              jsonrpc: '2.0',
+              error: {
+                code: -32603,
+                message: `Internal error: ${error.message}`,
+              },
+              id: null,
+            };
+          }
+        }
+        return;
       }
-      return;
+      if (MCPControllerRegister.hooks.length > 0) {
+        for (const hook of MCPControllerRegister.hooks) {
+          const checked = await hook.checkAndRunProxy?.(self.app.currentContext, MCPProtocols.SSE, sessionId);
+          if (checked) {
+            return;
+          }
+        }
+      }
     };
     Reflect.apply(routerFunc, this.router, [
       'chairMcpMessage',
-      '/mcp/message',
+      self.app.config.mcp?.sseMessagePath,
       ...[],
       messageHander,
     ]);
   }
 
-  async mcpPromptRegister(controllerProto: EggPrototype, promptMeta: MCPPromptMeta, oneapiMeta: any) {
+  async mcpPromptRegister(controllerProto: EggPrototype, promptMeta: MCPPromptMeta) {
     const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
-    let schemaName;
-    let filePath;
-    if (oneapiMeta) {
-      const relativeFilePath = oneapiMeta.apis[`${controllerMeta.className}.${promptMeta.name}`]?.relativeFilePath;
-      if (!relativeFilePath) {
-        this.app.logger.warn(`${controllerMeta.className}.${promptMeta.name} is not found in oneapi meta json`);
-      } else {
-        filePath = path.join(this.app.baseDir, relativeFilePath).replace('.ts', '');
-        schemaName = oneapiMeta.apis[`${controllerMeta.className}.${promptMeta.name}`]?.meta?.request?.[0]?.schema?.title;
-      }
-    }
     const args: any[] = [ promptMeta.mcpName ?? promptMeta.name ];
     if (promptMeta.description) {
       args.push(promptMeta.description);
     }
-    if (promptMeta.schema) {
-      args.push(promptMeta.schema);
-    } else if (schemaName && filePath) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const schema = require(filePath)[schemaName];
+    let schema;
+    if (promptMeta.detail?.argsSchema) {
+      schema = promptMeta.detail?.argsSchema;
       args.push(schema);
+    } else if (MCPControllerRegister.hooks.length > 0) {
+      for (const hook of MCPControllerRegister.hooks) {
+        schema = await hook.schemaLoader?.(controllerMeta, promptMeta);
+        if (schema) {
+          args.push(schema);
+          break;
+        }
+      }
     }
     const self = this;
     const handler = async (...args) => {
       const eggObj = await self.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[promptMeta.name];
-      return Reflect.apply(realMethod, realObj, args);
+      let newArgs: any[] = [];
+      if (schema && promptMeta.detail) {
+        // 如果有 schema 则证明入参第一个就是 schema
+        newArgs[promptMeta.detail.index] = args[0];
+
+        // 如果有 schema 则证明入参第二个就是 extra
+        if (promptMeta.extra) {
+          newArgs[promptMeta.extra] = args[1];
+        }
+      } else if (promptMeta.extra) {
+        // 无 schema, 那么入参第一个就是 extra
+        newArgs[promptMeta.extra] = args[0];
+      }
+      newArgs = [ ...newArgs, ...args ];
+      return Reflect.apply(realMethod, realObj, newArgs);
     };
     args.push(handler);
     this.mcpServer.prompt(...(args as unknown as [any, any, any, any]));
   }
 
-  async mcpToolRegister(controllerProto: EggPrototype, toolMeta: MCPToolMeta, oneapiMeta: any) {
+  async mcpToolRegister(controllerProto: EggPrototype, toolMeta: MCPToolMeta) {
     const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
-    let schemaName;
-    let filePath;
-    if (oneapiMeta) {
-      const relativeFilePath = oneapiMeta.apis[`${controllerMeta.className}.${toolMeta.name}`]?.relativeFilePath;
-      if (!relativeFilePath) {
-        this.app.logger.warn(`${controllerMeta.className}.${toolMeta.name} is not found in oneapi meta json`);
-      } else {
-        filePath = path.join(this.app.baseDir, relativeFilePath).replace('.ts', '');
-        schemaName = oneapiMeta.apis[`${controllerMeta.className}.${toolMeta.name}`]?.meta?.request?.[0]?.schema?.title;
-      }
-    }
     const args: any[] = [ toolMeta.mcpName ?? toolMeta.name ];
     if (toolMeta.description) {
       args.push(toolMeta.description);
     }
-    if (toolMeta.schema) {
-      args.push(toolMeta.schema);
-    } else if (schemaName && filePath) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const schema = require(filePath)[schemaName];
-      args.push(schema);
+    let schema;
+    if (toolMeta.detail?.argsSchema) {
+      schema = toolMeta.detail?.argsSchema;
+      args.push(toolMeta.detail?.argsSchema);
+    } else if (MCPControllerRegister.hooks.length > 0) {
+      for (const hook of MCPControllerRegister.hooks) {
+        schema = await hook.schemaLoader?.(controllerMeta, toolMeta);
+        if (schema) {
+          args.push(schema);
+          break;
+        }
+      }
     }
     const self = this;
     const handler = async (...args) => {
       const eggObj = await self.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[toolMeta.name];
-      return Reflect.apply(realMethod, realObj, args);
+      let newArgs: any[] = [];
+      if (schema && toolMeta.detail) {
+        // 如果有 schema 则证明入参第一个就是 schema
+        newArgs[toolMeta.detail.index] = args[0];
+
+        // 如果有 schema 则证明入参第二个就是 extra
+        if (toolMeta.extra) {
+          newArgs[toolMeta.extra] = args[1];
+        }
+      } else if (toolMeta.extra) {
+        // 无 schema, 那么入参第一个就是 extra
+        newArgs[toolMeta.extra] = args[0];
+      }
+      newArgs = [ ...newArgs, ...args ];
+      return Reflect.apply(realMethod, realObj, newArgs);
     };
     args.push(handler);
     this.mcpServer.tool(...(args as unknown as [any, any, any, any]));
@@ -428,23 +437,13 @@ export class MCPControllerRegister implements ControllerRegister {
       this.mcpServerInit();
       this.mcpServerRegister();
     }
-    let oneapiMeta;
-    try {
-      const metadata = await fs.readFile(path.join(this.app.baseDir, '.oneapi/metadata.json'), 'utf8');
-      oneapiMeta = JSON.parse(metadata);
-    } catch (e) {
-      this.app.logger.warn('mcp controller register warn: not found oneapi metadata, please run oneapi:server or set schema to mcp decorator');
+    for (const [ prompt, controllerProto ] of promptMap.entries()) {
+      await this.mcpPromptRegister(controllerProto, prompt);
     }
-    for (const prompt of promptMap.keys()) {
-      const controllerProto = promptMap.get(prompt)!;
-      await this.mcpPromptRegister(controllerProto, prompt, oneapiMeta);
+    for (const [ tool, controllerProto ] of toolMap.entries()) {
+      await this.mcpToolRegister(controllerProto, tool);
     }
-    for (const tool of toolMap.keys()) {
-      const controllerProto = toolMap.get(tool)!;
-      await this.mcpToolRegister(controllerProto, tool, oneapiMeta);
-    }
-    for (const resource of resourceMap.keys()) {
-      const controllerProto = resourceMap.get(resource)!;
+    for (const [ resource, controllerProto ] of resourceMap.entries()) {
       await this.mcpResourceRegister(controllerProto, resource);
     }
   }
