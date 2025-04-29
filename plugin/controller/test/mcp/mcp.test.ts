@@ -275,5 +275,98 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       await streamableTransport.terminateSession();
       await streamableClient.close();
     });
+
+    it('stateless streamable should work', async () => {
+      const streamableClient = new Client({
+        name: 'streamable-demo-client',
+        version: '1.0.0',
+      });
+      const baseUrl = await app.httpRequest()
+        .post('/mcp/stateless/stream').url;
+      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl));
+      const streamableNotifications: { level: string, data: string }[] = [];
+      streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
+        streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
+      });
+      await streamableClient.connect(streamableTransport);
+      // tool
+      const tools = await listTools(streamableClient);
+      assert.deepEqual(tools, [
+        {
+          name: 'start-notification-stream',
+          description: 'Starts sending periodic notifications for testing resumability',
+        },
+        {
+          description: undefined,
+          name: 'bar',
+        },
+      ]);
+
+      const toolRes = await streamableClient.callTool({
+        name: 'bar',
+        arguments: {
+          name: 'aaa',
+        },
+      });
+      assert.deepEqual(toolRes, {
+        content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+      // notification
+      const notificationResp = await startNotificationTool(streamableClient);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      assert.deepEqual(notificationResp, [{ text: 'Started sending periodic notifications every 1000ms' }]);
+      assert.deepEqual(streamableNotifications, [
+        { level: 'info', data: 'Periodic notification #1' },
+        { level: 'info', data: 'Periodic notification #2' },
+        { level: 'info', data: 'Periodic notification #3' },
+        { level: 'info', data: 'Periodic notification #4' },
+        { level: 'info', data: 'Periodic notification #5' },
+      ]);
+
+      // resources
+      const resources = await streamableClient.listResources();
+      assert.deepEqual(resources, {
+        resources: [
+          { uri: 'mcp://npm/egg?version=4.10.0', name: 'egg' },
+          { uri: 'mcp://npm/mcp?version=0.10.0', name: 'mcp' },
+        ],
+      });
+
+      const resourceRes = await streamableClient.readResource({
+        uri: 'mcp://npm/egg?version=4.10.0',
+      });
+      assert.deepEqual(resourceRes, {
+        contents: [{ uri: 'mcp://npm/egg?version=4.10.0', text: 'MOCK TEXT' }],
+      });
+
+      // prompts
+      const prompts = await streamableClient.listPrompts();
+      assert.deepEqual(prompts, {
+        prompts: [
+          { name: 'foo', arguments: [{ name: 'name', required: true }] },
+        ],
+      });
+
+      const promptRes = await streamableClient.getPrompt({
+        name: 'foo',
+        arguments: {
+          name: 'bbb',
+        },
+      });
+      assert.deepEqual(promptRes, {
+        messages: [
+          {
+            role: 'user',
+            content: {
+              type: 'text',
+              text: 'Generate a concise but descriptive commit message for these changes:\n\nbbb',
+            },
+          },
+        ],
+      });
+
+      await streamableTransport.terminateSession();
+      await streamableClient.close();
+    });
   }
 });

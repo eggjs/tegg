@@ -7,6 +7,7 @@ export default () => {
       sseInitPath: '/mcp/init',
       sseMessagePath: '/mcp/message',
       streamPath: '/mcp/stream',
+      statelessStreamPath: '/mcp/stateless/stream',
       sessionIdGenerator: randomUUID,
     },
   };

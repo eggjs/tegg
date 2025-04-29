@@ -19,6 +19,8 @@
   "files": [
     "app.js",
     "app.d.ts",
+    "config/**/*.js",
+    "config/**/*.d.ts",
     "lib/**/*.js",
     "lib/**/*.d.ts",
     "app/**/*.js",

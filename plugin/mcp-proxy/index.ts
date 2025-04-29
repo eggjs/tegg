@@ -51,193 +51,191 @@ const IGNORE_HEADERS = [
   'transfer-encoding',
 ];
 
+
+export const MCPProxyHook: MCPControllerHook = {
+  async preSSEInitHandle(ctx, transport, self) {
+    const id = transport.sessionId;
+    // cluster proxy
+    await self.app.mcpProxy.registerClient(id, process.pid);
+    self.app.mcpProxy.setProxyHandler(MCPProtocols.SSE, async (req, res) => {
+      const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
+      if (MCPControllerRegister.hooks.length > 0) {
+        for (const hook of MCPControllerRegister.hooks) {
+          await hook.preProxy?.(self.app.currentContext, req, res);
+        }
+      }
+      let transport: SSEServerTransport;
+      const existingTransport = self.transports[sessionId];
+      if (existingTransport instanceof SSEServerTransport) {
+        transport = existingTransport;
+      } else {
+        // https://modelcontextprotocol.io/docs/concepts/architecture#error-handling
+        res.status(400).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32000,
+            message: 'Bad Request: Session exists but uses a different transport protocol',
+          },
+          id: null,
+        });
+        return;
+      }
+      if (transport) {
+        try {
+          await self.transports[sessionId].handlePostMessage(req, res);
+        } catch (error) {
+          self.app.logger.error('Error handling MCP message', error);
+          if (!ctx.res.headersSent) {
+            ctx.status = 500;
+            ctx.body = {
+              jsonrpc: '2.0',
+              error: {
+                code: -32603,
+                message: `Internal error: ${error.message}`,
+              },
+              id: null,
+            };
+          }
+        }
+      } else {
+        res.status(404).json({
+          jsonrpc: '2.0',
+          error: {
+            code: -32602,
+            message: 'Bad Request: No transport found for sessionId',
+          },
+          id: null,
+        });
+      }
+    });
+    ctx.res.once('close', () => {
+      delete self.transports[id];
+      const connection = self.sseConnections.get(id);
+      if (connection) {
+        clearInterval(connection.intervalId);
+        self.sseConnections.delete(id);
+      }
+      self.app.mcpProxy.unregisterClient(id);
+    });
+  },
+  async onStreamSessionInitialized(_ctx, transport, self) {
+    const sessionId = transport.sessionId!;
+    self.streamTransports[sessionId] = transport;
+    self.app.mcpProxy.setProxyHandler(MCPProtocols.STREAM, async (req: http.IncomingMessage, res: http.ServerResponse) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      self.app.RequestClass = EggRequest;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      self.app.ResponseClass = EggResponse;
+      const ctx = new EggContext(self.app as any, req, res) as any;
+      if (MCPControllerRegister.hooks.length > 0) {
+        for (const hook of MCPControllerRegister.hooks) {
+          await hook.preProxy?.(ctx, req, res);
+        }
+      }
+      const sessionId = req.headers['mcp-session-id'] as string | undefined;
+      if (!sessionId) {
+        res.writeHead(500, { 'content-type': 'application/json' });
+        res.end(JSON.stringify({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'session id not have and run in proxy',
+          },
+          id: null,
+        }));
+      } else {
+        let transport: StreamableHTTPServerTransport;
+        const existingTransport = self.streamTransports[sessionId];
+        if (existingTransport instanceof StreamableHTTPServerTransport) {
+          transport = existingTransport;
+        } else {
+          res.writeHead(400, { 'content-type': 'application/json' });
+          res.end(JSON.stringify({
+            jsonrpc: '2.0',
+            error: {
+              code: -32000,
+              message: 'Bad Request: Session exists but uses a different transport protocol',
+            },
+            id: null,
+          }));
+          return;
+        }
+        if (transport) {
+          await self.app.ctxStorage.run(ctx, async () => {
+            await transport.handleRequest(ctx.req, ctx.res);
+          });
+        } else {
+          res.writeHead(400, { 'content-type': 'application/json' });
+          res.end(JSON.stringify({
+            jsonrpc: '2.0',
+            error: {
+              code: -32602,
+              message: 'Bad Request: No transport found for sessionId',
+            },
+            id: null,
+          }));
+        }
+      }
+    });
+    await self.app.mcpProxy.registerClient(sessionId, process.pid);
+    transport.onclose = async () => {
+      const sid = transport.sessionId;
+      if (sid && self.streamTransports[sid]) {
+        delete self.streamTransports[sid];
+      }
+      await self.app.mcpProxy.unregisterClient(sid!);
+    };
+  },
+  async checkAndRunProxy(ctx, type, sessionId) {
+    const detail = await ctx.app.mcpProxy.getClient(sessionId);
+    if (detail?.pid !== process.pid) {
+      await ctx.app.mcpProxy.proxyMessage(ctx, {
+        detail: detail!,
+        sessionId,
+        type,
+      });
+      return true;
+    }
+    return false;
+  },
+};
+
 export class MCPProxyApiClient extends APIClientBase {
   private _client: any;
   private logger: EggLogger;
   private proxyHandlerMap: { [P in ProxyAction]?: StreamableHTTPServerTransport['handleRequest']; } = {};
   private port: number;
   private app: Application;
+  private isAgent: boolean;
 
   constructor(options: {
     logger: EggLogger;
     messenger: Messenger;
     app: Application;
+    isAgent?: boolean;
   }) {
     super(Object.assign({}, options, { initMethod: '_init' }));
     this.logger = options.logger;
     this.port = 0;
     this.app = options.app;
-  }
-
-  addProxyHook() {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const apiClient = this;
-
-    const MCPProxyHook: MCPControllerHook = {
-      async preSSEInitHandle(ctx, transport, self) {
-        const id = transport.sessionId;
-        // cluster proxy
-        await apiClient.registerClient(id, process.pid);
-        apiClient.setProxyHandler(MCPProtocols.SSE, async (req, res) => {
-          const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
-          if (MCPControllerRegister.hooks.length > 0) {
-            for (const hook of MCPControllerRegister.hooks) {
-              await hook.preProxy?.(self.app.currentContext, req, res);
-            }
-          }
-          let transport: SSEServerTransport;
-          const existingTransport = self.transports[sessionId];
-          if (existingTransport instanceof SSEServerTransport) {
-            transport = existingTransport;
-          } else {
-            // https://modelcontextprotocol.io/docs/concepts/architecture#error-handling
-            res.status(400).json({
-              jsonrpc: '2.0',
-              error: {
-                code: -32000,
-                message: 'Bad Request: Session exists but uses a different transport protocol',
-              },
-              id: null,
-            });
-            return;
-          }
-          if (transport) {
-            try {
-              await self.transports[sessionId].handlePostMessage(req, res);
-            } catch (error) {
-              self.app.logger.error('Error handling MCP message', error);
-              if (!ctx.res.headersSent) {
-                ctx.status = 500;
-                ctx.body = {
-                  jsonrpc: '2.0',
-                  error: {
-                    code: -32603,
-                    message: `Internal error: ${error.message}`,
-                  },
-                  id: null,
-                };
-              }
-            }
-          } else {
-            res.status(404).json({
-              jsonrpc: '2.0',
-              error: {
-                code: -32602,
-                message: 'Bad Request: No transport found for sessionId',
-              },
-              id: null,
-            });
-          }
-        });
-        ctx.res.once('close', () => {
-          delete self.transports[id];
-          const connection = self.sseConnections.get(id);
-          if (connection) {
-            clearInterval(connection.intervalId);
-            self.sseConnections.delete(id);
-          }
-          apiClient.unregisterClient(id);
-        });
-      },
-      async onStreamSessionInitialized(_ctx, transport, self) {
-        const sessionId = transport.sessionId!;
-        self.streamTransports[sessionId] = transport;
-        apiClient.setProxyHandler(MCPProtocols.STREAM, async (req: http.IncomingMessage, res: http.ServerResponse) => {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          self.app.RequestClass = EggRequest;
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          self.app.ResponseClass = EggResponse;
-          const ctx = new EggContext(self.app as any, req, res) as any;
-          if (MCPControllerRegister.hooks.length > 0) {
-            for (const hook of MCPControllerRegister.hooks) {
-              await hook.preProxy?.(ctx, req, res);
-            }
-          }
-          const sessionId = req.headers['mcp-session-id'] as string | undefined;
-          if (!sessionId) {
-            res.writeHead(500, { 'content-type': 'application/json' });
-            res.end(JSON.stringify({
-              jsonrpc: '2.0',
-              error: {
-                code: -32603,
-                message: 'session id not have and run in proxy',
-              },
-              id: null,
-            }));
-          } else {
-            let transport: StreamableHTTPServerTransport;
-            const existingTransport = self.streamTransports[sessionId];
-            if (existingTransport instanceof StreamableHTTPServerTransport) {
-              transport = existingTransport;
-            } else {
-              res.writeHead(400, { 'content-type': 'application/json' });
-              res.end(JSON.stringify({
-                jsonrpc: '2.0',
-                error: {
-                  code: -32000,
-                  message: 'Bad Request: Session exists but uses a different transport protocol',
-                },
-                id: null,
-              }));
-              return;
-            }
-            if (transport) {
-              await self.app.ctxStorage.run(ctx, async () => {
-                await transport.handleRequest(ctx.req, ctx.res);
-              });
-            } else {
-              res.writeHead(400, { 'content-type': 'application/json' });
-              res.end(JSON.stringify({
-                jsonrpc: '2.0',
-                error: {
-                  code: -32602,
-                  message: 'Bad Request: No transport found for sessionId',
-                },
-                id: null,
-              }));
-            }
-          }
-        });
-        await apiClient.registerClient(sessionId, process.pid);
-        transport.onclose = async () => {
-          const sid = transport.sessionId;
-          if (sid && self.streamTransports[sid]) {
-            delete self.streamTransports[sid];
-          }
-          await apiClient.unregisterClient(sid!);
-        };
-      },
-      async checkAndRunProxy(ctx, type, sessionId) {
-        const detail = await apiClient.getClient(sessionId);
-        if (detail?.pid !== process.pid) {
-          await apiClient.proxyMessage(ctx, {
-            detail: detail!,
-            sessionId,
-            type,
-          });
-          return true;
-        }
-        return false;
-      },
-    };
-
-    MCPControllerRegister.addHook(MCPProxyHook);
+    this.isAgent = !!options.isAgent;
   }
 
   async _init() {
-    const server = http.createServer(async (req, res) => {
-      const type = req.headers['mcp-proxy-type'] as ProxyAction;
-      await this.proxyHandlerMap[type]?.(req, res);
-    });
-    this.port = this.app.config.mcp?.proxyPort + (cluster.worker?.id ?? 0);
-    this.addProxyHook();
-    await new Promise(resolve => server.listen(this.port, () => {
-      // const address = server.address()! as AddressInfo;
-      // this.port = address.port;
-      resolve(null);
-    }));
+    if (!this.isAgent) {
+      const server = http.createServer(async (req, res) => {
+        const type = req.headers['mcp-proxy-type'] as ProxyAction;
+        await this.proxyHandlerMap[type]?.(req, res);
+      });
+      this.port = this.app.config.mcp?.proxyPort + (cluster.worker?.id ?? 0);
+      await new Promise(resolve => server.listen(this.port, () => {
+        // const address = server.address()! as AddressInfo;
+        // this.port = address.port;
+        resolve(null);
+      }));
+    }
   }
 
   setProxyHandler(type: MCPProtocols, handler: StreamableHTTPServerTransport['handleRequest'] | SSEServerTransport['handlePostMessage']) {
