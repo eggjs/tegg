@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.56.0](https://github.com/eggjs/tegg/compare/v3.55.0...v3.56.0) (2025-04-29)
+
+
+### Features
+
+* add mcp stateless ([#309](https://github.com/eggjs/tegg/issues/309)) ([b79d313](https://github.com/eggjs/tegg/commit/b79d313aa8f24adc91f88ea0732f2d98c0a8ead9))
+
+
+
+
+
 # [3.55.0](https://github.com/eggjs/tegg/compare/v3.53.0...v3.55.0) (2025-04-29)
 
 
