@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.1](https://github.com/eggjs/tegg/compare/v3.56.0...v3.56.1) (2025-04-29)
+
+
+### Bug Fixes
+
+* mock init to ready ([#310](https://github.com/eggjs/tegg/issues/310)) ([2bd6fb6](https://github.com/eggjs/tegg/commit/2bd6fb6d5e60945637358140c8d669f78ea923f7))
+
+
+
+
+
 # [3.56.0](https://github.com/eggjs/tegg/compare/v3.55.0...v3.56.0) (2025-04-29)
 
 
