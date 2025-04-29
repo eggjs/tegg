@@ -10,6 +10,7 @@ export default {
         logger: (this as unknown as Application).logger,
         messenger: (this as unknown as Application).messenger,
         app: this as unknown as Application,
+        isAgent: true,
       });
     }
     return this[MCP_PROXY];

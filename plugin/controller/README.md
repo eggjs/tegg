@@ -313,3 +313,24 @@ export class McpController {
 
 #### MCP 地址
 MCP controller 完整的实现了 SSE / streamable HTTP / streamable stateless HTTP 三种模式，默认情况下，他们的路径分别是 `/mcp/init` `/mcp/stream` `/mcp/stateless/stream`, 你可以根据你所需要的场景，灵活使用对应的接口。 
+
+``` ts
+// config.{env}.ts
+import { randomUUID } from 'node:crypto';
+
+export default () => {
+
+  const config = {
+    mcp: {
+      sseInitPath: '/mcp/init', // SSE path
+      sseMessagePath: '/mcp/message', // SSE message path
+      streamPath: '/mcp/stream', // streamable path
+      statelessStreamPath: '/mcp/stateless/stream', // stateless streamable path
+      sessionIdGenerator: randomUUID, 
+    },
+  };
+
+  return config;
+};
+
+```

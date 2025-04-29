@@ -16,8 +16,17 @@
   "files": [
     "app.js",
     "app.d.ts",
+    "agent.js",
+    "agent.d.ts",
+    "index.js",
+    "index.d.ts",
+    "config/**/*.js",
+    "config/**/*.d.ts",
     "lib/**/*.js",
-    "lib/**/*.d.ts"
+    "lib/**/*.d.ts",
+    "app/**/*.js",
+    "app/**/*.d.ts",
+    "typings/*.d.ts"
   ],
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
