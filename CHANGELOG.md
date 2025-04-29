@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.54.0](https://github.com/eggjs/tegg/compare/v3.53.0...v3.54.0) (2025-04-29)
+
+
+### Features
+
+* add mcp ([#307](https://github.com/eggjs/tegg/issues/307)) ([a9a57b4](https://github.com/eggjs/tegg/commit/a9a57b4d7102dd552e09d33c3f82fc15a245790a))
+
+
+
+
+
 # [3.53.0](https://github.com/eggjs/tegg/compare/v3.52.1...v3.53.0) (2025-04-21)
 
 
