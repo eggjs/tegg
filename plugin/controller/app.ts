@@ -17,6 +17,7 @@ import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
 // 1. await add load unit is ready, controller may depend other load unit
 // 2. load ${app_base_dir}app/controller file
 // 3. ControllerRegister register controller implement
+const majorVersion = parseInt(process.versions.node.split('.')[0], 10);
 
 export default class ControllerAppBootHook {
   private readonly app: Application;
@@ -62,7 +63,7 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
-    if (this.app.mcpProxy) {
+    if (majorVersion >= 18) {
       this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
@@ -113,7 +114,7 @@ export default class ControllerAppBootHook {
   }
 
   async willReady() {
-    if (this.app.mcpProxy) {
+    if (majorVersion >= 18) {
       await MCPControllerRegister.connectStatelessStreamTransport();
     }
   }
