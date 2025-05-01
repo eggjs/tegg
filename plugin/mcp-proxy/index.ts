@@ -59,9 +59,16 @@ export const MCPProxyHook: MCPControllerHook = {
     await self.app.mcpProxy.registerClient(id, process.pid);
     self.app.mcpProxy.setProxyHandler(MCPProtocols.SSE, async (req, res) => {
       const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      self.app.RequestClass = EggRequest;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      self.app.ResponseClass = EggResponse;
+      const ctx = new EggContext(self.app as any, req, res) as any;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
-          await hook.preProxy?.(self.app.currentContext, req, res);
+          await hook.preProxy?.(ctx, req, res);
         }
       }
       let transport: SSEServerTransport;
