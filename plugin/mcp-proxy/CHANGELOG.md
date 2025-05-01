@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.2](https://github.com/eggjs/tegg/compare/v3.56.1...v3.56.2) (2025-05-01)
+
+
+### Bug Fixes
+
+* mcp version check ([#311](https://github.com/eggjs/tegg/issues/311)) ([7f16c9c](https://github.com/eggjs/tegg/commit/7f16c9c361cfec8b5ffd4075b23cff317cc5207a))
+
+
+
+
+
 ## [3.56.1](https://github.com/eggjs/tegg/compare/v3.56.0...v3.56.1) (2025-04-29)
 
 **Note:** Version bump only for package @eggjs/mcp-proxy
