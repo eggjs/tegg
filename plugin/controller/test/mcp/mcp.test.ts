@@ -1,5 +1,6 @@
 import mm from 'egg-mock';
 import path from 'path';
+import fs from 'fs/promises';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -274,6 +275,10 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
       await streamableTransport.terminateSession();
       await streamableClient.close();
+
+      const logContent = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/mcp-app/mcp-app-web.log'));
+
+      assert.ok(logContent.includes('startNotificationStream finish'));
     });
 
     it('stateless streamable should work', async () => {

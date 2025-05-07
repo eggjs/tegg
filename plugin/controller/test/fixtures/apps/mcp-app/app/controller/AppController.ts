@@ -6,6 +6,8 @@ import {
   ToolExtra,
   ToolArgsSchema,
   Extra,
+  Logger,
+  Inject,
 } from '@eggjs/tegg';
 import z from 'zod';
 
@@ -22,6 +24,9 @@ export const NotificationType = {
 
 @MCPController()
 export class AppController {
+  @Inject()
+  logger: Logger;
+
   @MCPTool({
     name: 'start-notification-stream',
     description:
@@ -48,6 +53,8 @@ export class AppController {
       }
       await sleep(interval);
     }
+
+    this.logger.info('startNotificationStream finish');
 
     return {
       content: [

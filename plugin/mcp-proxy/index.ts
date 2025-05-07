@@ -13,7 +13,6 @@ import cluster from 'node:cluster';
 import { MCPControllerRegister, MCPControllerHook } from '@eggjs/tegg-controller-plugin/lib/impl/mcp/MCPControllerRegister';
 import querystring from 'node:querystring';
 import url from 'node:url';
-import { Context as EggContext, Request as EggRequest, Response as EggResponse } from '@eggjs/core';
 
 const MAXIMUM_MESSAGE_SIZE = '4mb';
 
@@ -59,13 +58,7 @@ export const MCPProxyHook: MCPControllerHook = {
     await self.app.mcpProxy.registerClient(id, process.pid);
     self.app.mcpProxy.setProxyHandler(MCPProtocols.SSE, async (req, res) => {
       const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      self.app.RequestClass = EggRequest;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      self.app.ResponseClass = EggResponse;
-      const ctx = new EggContext(self.app as any, req, res) as any;
+      const ctx = self.app.createContext(req, res) as unknown as Context;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
           await hook.preProxy?.(ctx, req, res);
@@ -129,13 +122,8 @@ export const MCPProxyHook: MCPControllerHook = {
     const sessionId = transport.sessionId!;
     self.streamTransports[sessionId] = transport;
     self.app.mcpProxy.setProxyHandler(MCPProtocols.STREAM, async (req: http.IncomingMessage, res: http.ServerResponse) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      self.app.RequestClass = EggRequest;
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      self.app.ResponseClass = EggResponse;
-      const ctx = new EggContext(self.app as any, req, res) as any;
+      const mw = self.app.middleware.teggCtxLifecycleMiddleware();
+      const ctx = self.app.createContext(req, res) as unknown as Context;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
           await hook.preProxy?.(ctx, req, res);
@@ -171,7 +159,9 @@ export const MCPProxyHook: MCPControllerHook = {
         }
         if (transport) {
           await self.app.ctxStorage.run(ctx, async () => {
-            await transport.handleRequest(ctx.req, ctx.res);
+            await mw(ctx, async () => {
+              await transport.handleRequest(ctx.req, ctx.res);
+            });
           });
         } else {
           res.writeHead(400, { 'content-type': 'application/json' });
