@@ -20,6 +20,8 @@
     "agent.d.ts",
     "index.js",
     "index.d.ts",
+    "types.js",
+    "types.d.ts",
     "config/**/*.js",
     "config/**/*.d.ts",
     "lib/**/*.js",
@@ -54,6 +56,7 @@
     "@modelcontextprotocol/sdk": "^1.10.0",
     "cluster-client": "^3.7.0",
     "content-type": "^1.0.5",
+    "eventsource-parser": "^3.0.1",
     "raw-body": "^2.5.2",
     "sdk-base": "^5.0.1"
   },

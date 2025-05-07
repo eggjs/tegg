@@ -13,6 +13,7 @@ import cluster from 'node:cluster';
 import { MCPControllerRegister, MCPControllerHook } from '@eggjs/tegg-controller-plugin/lib/impl/mcp/MCPControllerRegister';
 import querystring from 'node:querystring';
 import url from 'node:url';
+import { MCPProtocols } from './types';
 
 const MAXIMUM_MESSAGE_SIZE = '4mb';
 
@@ -22,12 +23,6 @@ export interface MCPProxyPayload {
 }
 
 type ProxyAction = 'MCP_STDIO_PROXY' | 'MCP_SEE_PROXY' | 'MCP_STREAM_PROXY';
-
-export enum MCPProtocols {
-  STDIO = 'STDIO',
-  SSE = 'SSE',
-  STREAM = 'STREAM',
-}
 
 export interface ProxyMessageOptions {
   detail: ClientDetail;

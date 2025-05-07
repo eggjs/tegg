@@ -9,7 +9,7 @@ import getRawBody from 'raw-body';
 import contentType from 'content-type';
 import { isInitializeRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'node:crypto';
-import { MCPProtocols } from '../../../../../..';
+import { MCPProtocols } from '../../../../../../types';
 
 const mcpServer = new McpServer({
   name: 'tegg-mcp-demo-server',
