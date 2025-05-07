@@ -122,6 +122,7 @@ export class MCPControllerRegister implements ControllerRegister {
       sessionIdGenerator: undefined,
     });
     self.statelessTransport = transport;
+    const mw = self.app.middleware.teggCtxLifecycleMiddleware();
     const initHandler = async (ctx: Context) => {
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -135,7 +136,9 @@ export class MCPControllerRegister implements ControllerRegister {
       });
 
       await ctx.app.ctxStorage.run(ctx, async () => {
-        await self.statelessTransport.handleRequest(ctx.req, ctx.res);
+        await mw(ctx, async () => {
+          await self.statelessTransport.handleRequest(ctx.req, ctx.res);
+        });
       });
       return;
     };
@@ -176,6 +179,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStreamServerInit() {
     const allRouterFunc = this.router.all;
     const self = this;
+    const mw = self.app.middleware.teggCtxLifecycleMiddleware();
     const initHandler = async (ctx: Context) => {
       ctx.respond = false;
       if (MCPControllerRegister.hooks.length > 0) {
@@ -233,7 +237,9 @@ export class MCPControllerRegister implements ControllerRegister {
           await self.mcpServer.connect(transport);
 
           await ctx.app.ctxStorage.run(ctx, async () => {
-            await transport.handleRequest(ctx.req, ctx.res, body);
+            await mw(ctx, async () => {
+              await transport.handleRequest(ctx.req, ctx.res, body);
+            });
           });
         } else {
           ctx.status = 400;
@@ -261,7 +267,9 @@ export class MCPControllerRegister implements ControllerRegister {
             'transfer-encoding': 'chunked',
           });
           await ctx.app.ctxStorage.run(ctx, async () => {
-            await transport.handleRequest(ctx.req, ctx.res);
+            await mw(ctx, async () => {
+              await transport.handleRequest(ctx.req, ctx.res);
+            });
           });
           return;
         }
@@ -327,6 +335,7 @@ export class MCPControllerRegister implements ControllerRegister {
   }
 
   sseCtxStorageRun(ctx: Context, transport: SSEServerTransport | StreamableHTTPServerTransport) {
+    const mw = this.app.middleware.teggCtxLifecycleMiddleware();
     const closeFunc = transport.onclose;
     transport.onclose = (...args) => {
       closeFunc?.(...args);
@@ -337,7 +346,9 @@ export class MCPControllerRegister implements ControllerRegister {
     const messageFunc = transport.onmessage;
     transport.onmessage = async (...args: [ JSONRPCMessage ]) => {
       await ctx.app.ctxStorage.run(ctx, async () => {
-        await messageFunc!(...args);
+        await mw(ctx, async () => {
+          await messageFunc!(...args);
+        });
       });
     };
   }
