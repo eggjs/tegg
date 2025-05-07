@@ -20,7 +20,7 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { isInitializeRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
-import { MCPProtocols } from '@eggjs/mcp-proxy';
+import { MCPProtocols } from '@eggjs/mcp-proxy/types';
 
 import getRawBody from 'raw-body';
 import contentType from 'content-type';
