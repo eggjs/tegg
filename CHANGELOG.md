@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.3](https://github.com/eggjs/tegg/compare/v3.56.2...v3.56.3) (2025-05-07)
+
+
+### Bug Fixes
+
+* dep ([#313](https://github.com/eggjs/tegg/issues/313)) ([791feea](https://github.com/eggjs/tegg/commit/791feead91ad48adaa2dee4c0746bea382e61d34))
+* mcp teggCtxLifecycleMiddleware ([#312](https://github.com/eggjs/tegg/issues/312)) ([5304384](https://github.com/eggjs/tegg/commit/53043840c3aaab0e485db50b7a2d9362266eef8c))
+
+
+
+
+
 ## [3.56.2](https://github.com/eggjs/tegg/compare/v3.56.1...v3.56.2) (2025-05-01)
 
 
