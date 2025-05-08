@@ -11,11 +11,13 @@ import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
+import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
 // 2. load ${app_base_dir}app/controller file
 // 3. ControllerRegister register controller implement
+const majorVersion = parseInt(process.versions.node.split('.')[0], 10);
 
 export default class ControllerAppBootHook {
   private readonly app: Application;
@@ -61,6 +63,32 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
+    if (majorVersion >= 18) {
+      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
+      // Don't let the mcp's body be consumed
+      this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
+
+      if (this.app.config.security.csrf.ignore) {
+        if (Array.isArray(this.app.config.security.csrf.ignore)) {
+          this.app.config.security.csrf.ignore = [
+            this.app.config.mcp.sseInitPath,
+            this.app.config.mcp.sseMessagePath,
+            this.app.config.mcp.streamPath,
+            this.app.config.mcp.statelessStreamPath,
+            ...(Array.isArray(this.app.config.security.csrf.ignore)
+              ? this.app.config.security.csrf.ignore
+              : [ this.app.config.security.csrf.ignore ]),
+          ];
+        }
+      } else {
+        this.app.config.security.csrf.ignore = [
+          this.app.config.mcp.sseInitPath,
+          this.app.config.mcp.sseMessagePath,
+          this.app.config.mcp.streamPath,
+          this.app.config.mcp.statelessStreamPath,
+        ];
+      }
+    }
   }
 
   prepareMiddleware(middlewareNames: string[]) {
@@ -83,6 +111,12 @@ export default class ControllerAppBootHook {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+  }
+
+  async willReady() {
+    if (majorVersion >= 18) {
+      await MCPControllerRegister.connectStatelessStreamTransport();
+    }
   }
 
   async beforeClose() {

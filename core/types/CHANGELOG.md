@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.3](https://github.com/eggjs/tegg/compare/v3.56.2...v3.56.3) (2025-05-07)
+
+
+### Bug Fixes
+
+* mcp teggCtxLifecycleMiddleware ([#312](https://github.com/eggjs/tegg/issues/312)) ([5304384](https://github.com/eggjs/tegg/commit/53043840c3aaab0e485db50b7a2d9362266eef8c))
+
+
+
+
+
+## [3.56.2](https://github.com/eggjs/tegg/compare/v3.56.1...v3.56.2) (2025-05-01)
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
+## [3.56.1](https://github.com/eggjs/tegg/compare/v3.56.0...v3.56.1) (2025-04-29)
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
+# [3.56.0](https://github.com/eggjs/tegg/compare/v3.55.0...v3.56.0) (2025-04-29)
+
+**Note:** Version bump only for package @eggjs/tegg-types
+
+
+
+
+
+# [3.55.0](https://github.com/eggjs/tegg/compare/v3.53.0...v3.55.0) (2025-04-29)
+
+
+### Features
+
+* add mcp ([#307](https://github.com/eggjs/tegg/issues/307)) ([a9a57b4](https://github.com/eggjs/tegg/commit/a9a57b4d7102dd552e09d33c3f82fc15a245790a))
+
+
+
+
+
+# [3.54.0](https://github.com/eggjs/tegg/compare/v3.53.0...v3.54.0) (2025-04-29)
+
+
+### Features
+
+* add mcp ([#307](https://github.com/eggjs/tegg/issues/307)) ([a9a57b4](https://github.com/eggjs/tegg/commit/a9a57b4d7102dd552e09d33c3f82fc15a245790a))
+
+
+
+
+
 # [3.53.0](https://github.com/eggjs/tegg/compare/v3.52.1...v3.53.0) (2025-04-21)
 
 

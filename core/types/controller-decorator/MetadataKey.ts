@@ -23,3 +23,15 @@ export const METHOD_AOP_MIDDLEWARES = Symbol.for('EggPrototype#method#aopMiddlew
 export const METHOD_AOP_REGISTER_MAP = Symbol.for('EggPrototype#method#aopMiddlewaresRegister');
 export const METHOD_ACL = Symbol.for('EggPrototype#method#acl');
 export const METHOD_TIMEOUT_METADATA = Symbol.for('EggPrototype#method#timeout');
+
+export const CONTROLLER_MCP_NAME = Symbol.for('EggPrototype#controller#mcp#name');
+export const CONTROLLER_MCP_VERSION = Symbol.for('EggPrototype#controller#mcp#version');
+export const CONTROLLER_MCP_RESOURCE_MAP = Symbol.for('EggPrototype#controller#mcp#resource');
+export const CONTROLLER_MCP_RESOURCE_PARAMS_MAP = Symbol.for('EggPrototype#controller#mcp#resource#params');
+export const CONTROLLER_MCP_TOOL_MAP = Symbol.for('EggPrototype#controller#mcp#tool');
+export const CONTROLLER_MCP_TOOL_PARAMS_MAP = Symbol.for('EggPrototype#controller#mcp#tool#params');
+export const CONTROLLER_MCP_TOOL_ARGS_INDEX = Symbol.for('EggPrototype#controller#mcp#tool#args');
+export const CONTROLLER_MCP_EXTRA_INDEX = Symbol.for('EggPrototype#controller#mcp#tool#extra');
+export const CONTROLLER_MCP_PROMPT_MAP = Symbol.for('EggPrototype#controller#mcp#prompt');
+export const CONTROLLER_MCP_PROMPT_PARAMS_MAP = Symbol.for('EggPrototype#controller#mcp#prompt#params');
+export const CONTROLLER_MCP_PROMPT_ARGS_INDEX = Symbol.for('EggPrototype#controller#mcp#prompt#args');

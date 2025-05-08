@@ -3,6 +3,73 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.56.3](https://github.com/eggjs/tegg/compare/v3.56.2...v3.56.3) (2025-05-07)
+
+
+### Bug Fixes
+
+* dep ([#313](https://github.com/eggjs/tegg/issues/313)) ([791feea](https://github.com/eggjs/tegg/commit/791feead91ad48adaa2dee4c0746bea382e61d34))
+* mcp teggCtxLifecycleMiddleware ([#312](https://github.com/eggjs/tegg/issues/312)) ([5304384](https://github.com/eggjs/tegg/commit/53043840c3aaab0e485db50b7a2d9362266eef8c))
+
+
+
+
+
+## [3.56.2](https://github.com/eggjs/tegg/compare/v3.56.1...v3.56.2) (2025-05-01)
+
+
+### Bug Fixes
+
+* mcp version check ([#311](https://github.com/eggjs/tegg/issues/311)) ([7f16c9c](https://github.com/eggjs/tegg/commit/7f16c9c361cfec8b5ffd4075b23cff317cc5207a))
+
+
+
+
+
+## [3.56.1](https://github.com/eggjs/tegg/compare/v3.56.0...v3.56.1) (2025-04-29)
+
+
+### Bug Fixes
+
+* mock init to ready ([#310](https://github.com/eggjs/tegg/issues/310)) ([2bd6fb6](https://github.com/eggjs/tegg/commit/2bd6fb6d5e60945637358140c8d669f78ea923f7))
+
+
+
+
+
+# [3.56.0](https://github.com/eggjs/tegg/compare/v3.55.0...v3.56.0) (2025-04-29)
+
+
+### Features
+
+* add mcp stateless ([#309](https://github.com/eggjs/tegg/issues/309)) ([b79d313](https://github.com/eggjs/tegg/commit/b79d313aa8f24adc91f88ea0732f2d98c0a8ead9))
+
+
+
+
+
+# [3.55.0](https://github.com/eggjs/tegg/compare/v3.53.0...v3.55.0) (2025-04-29)
+
+
+### Features
+
+* add mcp ([#307](https://github.com/eggjs/tegg/issues/307)) ([a9a57b4](https://github.com/eggjs/tegg/commit/a9a57b4d7102dd552e09d33c3f82fc15a245790a))
+
+
+
+
+
+# [3.54.0](https://github.com/eggjs/tegg/compare/v3.53.0...v3.54.0) (2025-04-29)
+
+
+### Features
+
+* add mcp ([#307](https://github.com/eggjs/tegg/issues/307)) ([a9a57b4](https://github.com/eggjs/tegg/commit/a9a57b4d7102dd552e09d33c3f82fc15a245790a))
+
+
+
+
+
 # [3.53.0](https://github.com/eggjs/tegg/compare/v3.52.1...v3.53.0) (2025-04-21)
 
 
