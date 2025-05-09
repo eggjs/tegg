@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.57.0](https://github.com/eggjs/tegg/compare/v3.56.3...v3.57.0) (2025-05-09)
+
+
+### Features
+
+* preserve SQL hint in minify function ([#314](https://github.com/eggjs/tegg/issues/314)) ([145bcf3](https://github.com/eggjs/tegg/commit/145bcf37bcd1ba86084cc304d15f0993abf0ebc8))
+
+
+
+
+
 ## [3.56.3](https://github.com/eggjs/tegg/compare/v3.56.2...v3.56.3) (2025-05-07)
 
 
