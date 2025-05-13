@@ -8,7 +8,7 @@ export interface MCPConfigOptions {
   sseMessagePath: string;
   streamPath: string;
   statelessStreamPath: string;
-  sessionIdGenerator?: ((ctx?: Context) => string) | ((...args: any[]) => string);
+  sessionIdGenerator?: (ctx: Context) => string;
   eventStore?: EventStore;
   sseHeartTime?: number;
 }
@@ -18,12 +18,12 @@ export class MCPConfig {
   private _sseMessagePath: string;
   private _streamPath: string;
   private _statelessStreamPath: string;
-  private _sessionIdGenerator: ((ctx?: Context) => string) | ((...args: any[]) => string);
+  private _sessionIdGenerator: (ctx: Context) => string;
   private _eventStore: EventStore;
   private _sseHeartTime: number;
 
   constructor(options: MCPConfigOptions) {
-    this._sessionIdGenerator = options.sessionIdGenerator ?? randomUUID;
+    this._sessionIdGenerator = options.sessionIdGenerator ?? (() => randomUUID());
     this._sseInitPath = options.sseInitPath;
     this._sseMessagePath = options.sseMessagePath;
     this._streamPath = options.streamPath;
