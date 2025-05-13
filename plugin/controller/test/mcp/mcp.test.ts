@@ -181,7 +181,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       });
       const baseUrl = await app.httpRequest()
         .post('/mcp/stream').url;
-      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl));
+      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl), { requestInit: { headers: { 'custom-session-id': 'custom-session-id' } } });
       const streamableNotifications: { level: string, data: string }[] = [];
       streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
@@ -189,6 +189,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       await streamableClient.connect(streamableTransport);
       // tool
       const tools = await listTools(streamableClient);
+      assert.deepEqual(streamableTransport.sessionId, 'custom-session-id');
       assert.deepEqual(tools, [
         {
           name: 'start-notification-stream',

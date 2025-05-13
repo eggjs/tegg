@@ -1,4 +1,6 @@
 'use strict';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { randomUUID } = require('node:crypto');
 
 module.exports = function() {
   const config = {
@@ -6,6 +8,11 @@ module.exports = function() {
     security: {
       csrf: {
         enable: false,
+      },
+    },
+    mcp: {
+      sessionIdGenerator: ctx => {
+        return ctx.request.headers['custom-session-id'] || randomUUID();
       },
     },
   };
