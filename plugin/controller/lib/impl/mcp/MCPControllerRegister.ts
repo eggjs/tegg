@@ -19,7 +19,7 @@ import { ControllerRegister } from '../../ControllerRegister';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { isInitializeRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import { isInitializeRequest, isJSONRPCRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { MCPProtocols } from '@eggjs/mcp-proxy/types';
 
 import getRawBody from 'raw-body';
@@ -43,6 +43,28 @@ export interface MCPControllerHook {
 }
 
 
+class InnerSSEServerTransport extends SSEServerTransport {
+  async send(message: JSONRPCMessage) {
+    let res: null | Error = null;
+    try {
+      await super.send(message);
+    } catch (e) {
+      res = e as Error;
+    } finally {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      const map = MCPControllerRegister.instance?.sseTransportsRequestMap.get(this);
+      if (map && 'id' in message) {
+        const { resolve, reject } = map[message.id] ?? {};
+        if (resolve) {
+          res ? reject(res) : resolve(res);
+          delete map[message.id];
+        }
+      }
+    }
+  }
+}
+
+
 export class MCPControllerRegister implements ControllerRegister {
   static instance?: MCPControllerRegister;
   readonly app: Application;
@@ -50,7 +72,7 @@ export class MCPControllerRegister implements ControllerRegister {
   private readonly router: Router;
   private controllerProtos: EggPrototype[] = [];
   private registeredControllerProtos: EggPrototype[] = [];
-  transports: Record<string, SSEServerTransport> = {};
+  transports: Record<string, InnerSSEServerTransport> = {};
   sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
   private mcpServer: McpServer;
   private statelessMcpServer: McpServer;
@@ -58,6 +80,14 @@ export class MCPControllerRegister implements ControllerRegister {
   private mcpConfig: MCPConfig;
   statelessTransport: StreamableHTTPServerTransport;
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
+  // eslint-disable-next-line no-spaced-func
+  sseTransportsRequestMap = new Map<
+  InnerSSEServerTransport,
+  Record<string, {
+    resolve: (value: PromiseLike<null> | null) => void,
+    reject: (reason?: any) => void,
+  }
+  >>();
   static hooks: MCPControllerHook[] = [];
 
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
@@ -137,7 +167,13 @@ export class MCPControllerRegister implements ControllerRegister {
 
       await ctx.app.ctxStorage.run(ctx, async () => {
         await mw(ctx, async () => {
+          const wait = new Promise<null>(resolve => {
+            ctx.res.once('close', () => {
+              resolve(null);
+            });
+          });
           await self.statelessTransport.handleRequest(ctx.req, ctx.res);
+          await wait;
         });
       });
       return;
@@ -238,7 +274,13 @@ export class MCPControllerRegister implements ControllerRegister {
 
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
+              const wait = new Promise<null>(resolve => {
+                ctx.res.once('close', () => {
+                  resolve(null);
+                });
+              });
               await transport.handleRequest(ctx.req, ctx.res, body);
+              await wait;
             });
           });
         } else {
@@ -300,7 +342,7 @@ export class MCPControllerRegister implements ControllerRegister {
     // }
     const self = this;
     const initHandler = async (ctx: Context) => {
-      const transport = new SSEServerTransport(self.mcpConfig.sseMessagePath, ctx.res);
+      const transport = new InnerSSEServerTransport(self.mcpConfig.sseMessagePath, ctx.res);
       const id = transport.sessionId;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -334,20 +376,44 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
-  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport | StreamableHTTPServerTransport) {
+  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport) {
+    const self = this;
     const mw = this.app.middleware.teggCtxLifecycleMiddleware();
     const closeFunc = transport.onclose;
     transport.onclose = (...args) => {
       closeFunc?.(...args);
+      delete self.transports[transport.sessionId];
+      self.sseTransportsRequestMap.delete(transport);
     };
     transport.onerror = error => {
-      this.app.logger.error('session %s error %o', transport.sessionId, error);
+      self.app.logger.error('session %s error %o', transport.sessionId, error);
     };
     const messageFunc = transport.onmessage;
+    self.sseTransportsRequestMap.set(transport, {});
     transport.onmessage = async (...args: [ JSONRPCMessage ]) => {
-      await ctx.app.ctxStorage.run(ctx, async () => {
-        await mw(ctx, async () => {
-          await messageFunc!(...args);
+      // 这里需要 new 一个新的 ctx，否则 ContextProto 会未被初始化
+      const socket = new Socket();
+      const req = new IncomingMessage(socket);
+      const res = new ServerResponse(req);
+      req.method = 'POST';
+      req.url = self.mcpConfig.sseInitPath;
+      req.headers = {
+        accept: 'application/json, text/event-stream',
+        'content-type': 'application/json',
+      };
+      const newCtx = self.app.createContext(req, res) as unknown as Context;
+      await ctx.app.ctxStorage.run(newCtx, async () => {
+        await mw(newCtx, async () => {
+          messageFunc!(...args);
+          if (isJSONRPCRequest(args[0])) {
+            const map = self.sseTransportsRequestMap.get(transport)!;
+            const wait = new Promise<null>((resolve, reject) => {
+              if ('id' in args[0]) {
+                map[args[0].id] = { resolve, reject };
+              }
+            });
+            await wait;
+          }
         });
       });
     };

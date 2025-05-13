@@ -11,6 +11,7 @@ import {
   PromptArgsSchema,
   Logger,
   Inject,
+  ContextProto,
   ToolArgsSchema,
 } from '@eggjs/tegg';
 import z from 'zod';
@@ -25,12 +26,25 @@ export const ToolType = {
   }),
 };
 
+@ContextProto()
+export class CommonService {
+  @Inject()
+  logger: Logger;
+
+  async sayHello(): Promise<string> {
+    this.logger.info('hello world');
+    return 'hello world';
+  }
+}
 
 @MCPController()
 export class McpController {
 
   @Inject()
   logger: Logger;
+
+  @Inject()
+  commonService: CommonService;
 
   @MCPPrompt()
   async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
@@ -50,6 +64,7 @@ export class McpController {
 
   @MCPTool()
   async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
+    await this.commonService.sayHello();
     return {
       content: [
         {
