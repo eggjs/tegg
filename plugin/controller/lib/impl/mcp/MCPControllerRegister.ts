@@ -310,7 +310,13 @@ export class MCPControllerRegister implements ControllerRegister {
           });
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
+              const wait = new Promise<null>(resolve => {
+                ctx.res.once('close', () => {
+                  resolve(null);
+                });
+              });
               await transport.handleRequest(ctx.req, ctx.res);
+              await wait;
             });
           });
           return;
