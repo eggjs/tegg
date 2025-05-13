@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.3](https://github.com/eggjs/tegg/compare/v3.57.2...v3.57.3) (2025-05-13)
+
+**Note:** Version bump only for package @eggjs/tegg-eventbus-plugin
+
+
+
+
+
 ## [3.57.2](https://github.com/eggjs/tegg/compare/v3.57.1...v3.57.2) (2025-05-13)
 
 **Note:** Version bump only for package @eggjs/tegg-eventbus-plugin

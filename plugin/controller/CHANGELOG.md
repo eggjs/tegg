@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.3](https://github.com/eggjs/tegg/compare/v3.57.2...v3.57.3) (2025-05-13)
+
+
+### Bug Fixes
+
+* update sessionIdGenerator ([#320](https://github.com/eggjs/tegg/issues/320)) ([ffc1e19](https://github.com/eggjs/tegg/commit/ffc1e19f69c30aa21a19c8f7ecc920fece21a947))
+
+
+
+
+
 ## [3.57.2](https://github.com/eggjs/tegg/compare/v3.57.1...v3.57.2) (2025-05-13)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/aop-decorator",
-  "version": "3.57.2",
+  "version": "3.57.3",
   "description": "tegg aop decorator",
   "keywords": [
     "tegg",
@@ -16,10 +16,10 @@
     "directory": "core/aop-decorator"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.57.2",
-    "@eggjs/tegg-common-util": "^3.57.2",
-    "@eggjs/tegg-metadata": "^3.57.2",
-    "@eggjs/tegg-types": "^3.57.2"
+    "@eggjs/core-decorator": "^3.57.3",
+    "@eggjs/tegg-common-util": "^3.57.3",
+    "@eggjs/tegg-metadata": "^3.57.3",
+    "@eggjs/tegg-types": "^3.57.3"
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
