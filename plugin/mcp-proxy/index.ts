@@ -1,4 +1,5 @@
 import { APIClientBase } from 'cluster-client';
+import awaitEvent from 'await-event';
 import { MCPProxyDataClient } from './lib/MCPProxyDataClient';
 import { Application, Context, EggLogger, Messenger } from 'egg';
 import getRawBody from 'raw-body';
@@ -155,13 +156,8 @@ export const MCPProxyHook: MCPControllerHook = {
         if (transport) {
           await self.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
-              const wait = new Promise<null>(resolve => {
-                ctx.res.once('close', () => {
-                  resolve(null);
-                });
-              });
               await transport.handleRequest(ctx.req, ctx.res);
-              await wait;
+              await awaitEvent(ctx.res, 'close');
             });
           });
         } else {

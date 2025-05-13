@@ -54,6 +54,7 @@
     "@eggjs/tegg-controller-plugin": "^3.57.1",
     "@eggjs/tegg-types": "^3.57.1",
     "@modelcontextprotocol/sdk": "^1.10.0",
+    "await-event": "^2.1.0",
     "cluster-client": "^3.7.0",
     "content-type": "^1.0.5",
     "eventsource-parser": "^3.0.1",
