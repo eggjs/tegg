@@ -53,7 +53,7 @@ async function startNotificationTool(client: Client) {
   return notifications;
 }
 
-describe('plugin/controller/test/mcp/mcp.test.ts', () => {
+describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
 
 
   if (parseInt(process.version.slice(1, 3)) > 17) {
@@ -72,9 +72,19 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       mm(process, 'cwd', () => {
         return path.join(__dirname, '../..');
       });
-      app = mm.app({
+      app = mm.cluster({
         baseDir: path.join(__dirname, '../fixtures/apps/mcp-app'),
         framework: path.dirname(require.resolve('egg')),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        workers: 3,
+        sticky: false,
+        opt: {
+          env: {
+            ...process.env,
+            NODE_OPTIONS: '--require ts-node/register tsconfig-paths/register',
+          },
+        },
       });
       await app.ready();
     });

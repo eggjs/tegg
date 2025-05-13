@@ -21,6 +21,7 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { isInitializeRequest, isJSONRPCRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { MCPProtocols } from '@eggjs/mcp-proxy/types';
+import awaitEvent from 'await-event';
 
 import getRawBody from 'raw-body';
 import contentType from 'content-type';
@@ -167,13 +168,8 @@ export class MCPControllerRegister implements ControllerRegister {
 
       await ctx.app.ctxStorage.run(ctx, async () => {
         await mw(ctx, async () => {
-          const wait = new Promise<null>(resolve => {
-            ctx.res.once('close', () => {
-              resolve(null);
-            });
-          });
           await self.statelessTransport.handleRequest(ctx.req, ctx.res);
-          await wait;
+          await awaitEvent(ctx.res, 'close');
         });
       });
       return;
@@ -274,13 +270,8 @@ export class MCPControllerRegister implements ControllerRegister {
 
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
-              const wait = new Promise<null>(resolve => {
-                ctx.res.once('close', () => {
-                  resolve(null);
-                });
-              });
               await transport.handleRequest(ctx.req, ctx.res, body);
-              await wait;
+              await awaitEvent(ctx.res, 'close');
             });
           });
         } else {
@@ -310,13 +301,8 @@ export class MCPControllerRegister implements ControllerRegister {
           });
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
-              const wait = new Promise<null>(resolve => {
-                ctx.res.once('close', () => {
-                  resolve(null);
-                });
-              });
               await transport.handleRequest(ctx.req, ctx.res);
-              await wait;
+              await awaitEvent(ctx.res, 'close');
             });
           });
           return;
