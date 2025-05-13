@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.1](https://github.com/eggjs/tegg/compare/v3.57.0...v3.57.1) (2025-05-13)
+
+
+### Bug Fixes
+
+* mcp context proto ([#318](https://github.com/eggjs/tegg/issues/318)) ([4d8e107](https://github.com/eggjs/tegg/commit/4d8e107fad4414da9593dd07ab2ae888dfd6a335))
+
+
+
+
+
 # [3.57.0](https://github.com/eggjs/tegg/compare/v3.56.3...v3.57.0) (2025-05-09)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin

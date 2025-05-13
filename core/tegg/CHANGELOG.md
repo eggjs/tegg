@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.1](https://github.com/eggjs/tegg/compare/v3.57.0...v3.57.1) (2025-05-13)
+
+**Note:** Version bump only for package @eggjs/tegg
+
+
+
+
+
 # [3.57.0](https://github.com/eggjs/tegg/compare/v3.56.3...v3.57.0) (2025-05-09)
 
 **Note:** Version bump only for package @eggjs/tegg
