@@ -45,13 +45,21 @@ export interface MCPControllerHook {
 
 class InnerSSEServerTransport extends SSEServerTransport {
   async send(message: JSONRPCMessage) {
-    await super.send(message);
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    const map = MCPControllerRegister.instance?.sseTransportsRequestMap.get(this);
-    if (map && 'id' in message) {
-      const resolve = map[message.id];
-      resolve(null);
-      delete map[message.id];
+    let res: null | Error = null;
+    try {
+      await super.send(message);
+    } catch (e) {
+      res = e as Error;
+    } finally {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      const map = MCPControllerRegister.instance?.sseTransportsRequestMap.get(this);
+      if (map && 'id' in message) {
+        const { resolve, reject } = map[message.id] ?? {};
+        if (resolve) {
+          res ? reject(res) : resolve(res);
+          delete map[message.id];
+        }
+      }
     }
   }
 }
@@ -75,7 +83,10 @@ export class MCPControllerRegister implements ControllerRegister {
   // eslint-disable-next-line no-spaced-func
   sseTransportsRequestMap = new Map<
   InnerSSEServerTransport,
-  Record<string, (value: PromiseLike<null> | null) => void
+  Record<string, {
+    resolve: (value: PromiseLike<null> | null) => void,
+    reject: (reason?: any) => void,
+  }
   >>();
   static hooks: MCPControllerHook[] = [];
 
@@ -366,16 +377,18 @@ export class MCPControllerRegister implements ControllerRegister {
   }
 
   sseCtxStorageRun(ctx: Context, transport: SSEServerTransport) {
+    const self = this;
     const mw = this.app.middleware.teggCtxLifecycleMiddleware();
     const closeFunc = transport.onclose;
     transport.onclose = (...args) => {
       closeFunc?.(...args);
+      delete self.transports[transport.sessionId];
+      self.sseTransportsRequestMap.delete(transport);
     };
     transport.onerror = error => {
-      this.app.logger.error('session %s error %o', transport.sessionId, error);
+      self.app.logger.error('session %s error %o', transport.sessionId, error);
     };
     const messageFunc = transport.onmessage;
-    const self = this;
     self.sseTransportsRequestMap.set(transport, {});
     transport.onmessage = async (...args: [ JSONRPCMessage ]) => {
       // 这里需要 new 一个新的 ctx，否则 ContextProto 会未被初始化
@@ -394,9 +407,9 @@ export class MCPControllerRegister implements ControllerRegister {
           messageFunc!(...args);
           if (isJSONRPCRequest(args[0])) {
             const map = self.sseTransportsRequestMap.get(transport)!;
-            const wait = new Promise<null>(resolve => {
+            const wait = new Promise<null>((resolve, reject) => {
               if ('id' in args[0]) {
-                map[args[0].id] = resolve;
+                map[args[0].id] = { resolve, reject };
               }
             });
             await wait;
