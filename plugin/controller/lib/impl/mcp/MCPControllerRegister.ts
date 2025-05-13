@@ -250,7 +250,7 @@ export class MCPControllerRegister implements ControllerRegister {
           const eventStore = this.mcpConfig.eventStore;
           const self = this;
           const transport = new StreamableHTTPServerTransport({
-            sessionIdGenerator: () => this.mcpConfig.sessionIdGenerator(),
+            sessionIdGenerator: () => this.mcpConfig.sessionIdGenerator(ctx),
             eventStore,
             onsessioninitialized: async () => {
               if (MCPControllerRegister.hooks.length > 0) {
