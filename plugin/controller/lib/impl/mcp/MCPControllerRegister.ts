@@ -486,16 +486,16 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
       for (const prompt of metadata.prompts) {
-        await this.mcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject, proto, prompt);
-        await this.statelessMcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject, proto, prompt);
+        await this.mcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, prompt);
+        await this.statelessMcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, prompt);
       }
       for (const resource of metadata.resources) {
-        await this.mcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject, proto, resource);
-        await this.statelessMcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject, proto, resource);
+        await this.mcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, resource);
+        await this.statelessMcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, resource);
       }
       for (const tool of metadata.tools) {
-        await this.mcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject, proto, tool);
-        await this.statelessMcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject, proto, tool);
+        await this.mcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, tool);
+        await this.statelessMcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, tool);
       }
       this.registeredControllerProtos.push(proto);
     }
