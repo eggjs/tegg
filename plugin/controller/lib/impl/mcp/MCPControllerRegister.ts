@@ -146,6 +146,13 @@ export class MCPControllerRegister implements ControllerRegister {
     }
   }
 
+  static clean() {
+    if (this.instance) {
+      this.instance.controllerProtos = [];
+    }
+    this.instance = undefined;
+  }
+
   mcpStatelessStreamServerInit() {
     const postRouterFunc = this.router.post;
     const self = this;
