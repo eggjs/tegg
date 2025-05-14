@@ -9,7 +9,6 @@ import {
   MCPControllerMeta,
   CONTROLLER_META_DATA,
   MCPPromptMeta,
-  MCPResourceMeta,
   MCPToolMeta,
   ControllerType,
 } from '@eggjs/tegg';
@@ -27,6 +26,7 @@ import getRawBody from 'raw-body';
 import contentType from 'content-type';
 
 import { MCPConfig } from './MCPConfig';
+import { MCPServerHelper } from './MCPServerHelper';
 
 export interface MCPControllerHook {
   // SSE
@@ -69,14 +69,14 @@ class InnerSSEServerTransport extends SSEServerTransport {
 export class MCPControllerRegister implements ControllerRegister {
   static instance?: MCPControllerRegister;
   readonly app: Application;
-  private readonly eggContainerFactory: typeof EggContainerFactory;
+  readonly eggContainerFactory: typeof EggContainerFactory;
   private readonly router: Router;
   private controllerProtos: EggPrototype[] = [];
   private registeredControllerProtos: EggPrototype[] = [];
   transports: Record<string, InnerSSEServerTransport> = {};
   sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
-  private mcpServer: McpServer;
-  private statelessMcpServer: McpServer;
+  mcpServerHelper: MCPServerHelper;
+  statelessMcpServerHelper: MCPServerHelper;
   private controllerMeta: MCPControllerMeta;
   private mcpConfig: MCPConfig;
   statelessTransport: StreamableHTTPServerTransport;
@@ -116,7 +116,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
   static async connectStatelessStreamTransport() {
     if (MCPControllerRegister.instance && MCPControllerRegister.instance.statelessTransport) {
-      MCPControllerRegister.instance.statelessMcpServer.connect(MCPControllerRegister.instance.statelessTransport);
+      await MCPControllerRegister.instance.statelessMcpServerHelper.server.connect(MCPControllerRegister.instance.statelessTransport);
       // 由于 mcp server stateless 需要我们在这里 init
       // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
       const socket = new Socket();
@@ -266,7 +266,7 @@ export class MCPControllerRegister implements ControllerRegister {
             'transfer-encoding': 'chunked',
           });
 
-          await self.mcpServer.connect(transport);
+          await self.mcpServerHelper.server.connect(transport);
 
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
@@ -357,7 +357,7 @@ export class MCPControllerRegister implements ControllerRegister {
         'transfer-encoding': 'chunked',
       });
       ctx.respond = false;
-      await self.mcpServer.connect(transport);
+      await self.mcpServerHelper.server.connect(transport);
       return self.sseCtxStorageRun.bind(self)(ctx, transport);
     };
     Reflect.apply(routerFunc, this.router, [
@@ -463,162 +463,41 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
-  async mcpPromptRegister(controllerProto: EggPrototype, promptMeta: MCPPromptMeta) {
-    const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
-    const args: any[] = [ promptMeta.mcpName ?? promptMeta.name ];
-    if (promptMeta.description) {
-      args.push(promptMeta.description);
-    }
-    let schema;
-    if (promptMeta.detail?.argsSchema) {
-      schema = promptMeta.detail?.argsSchema;
-      args.push(schema);
-    } else if (MCPControllerRegister.hooks.length > 0) {
-      for (const hook of MCPControllerRegister.hooks) {
-        schema = await hook.schemaLoader?.(controllerMeta, promptMeta);
-        if (schema) {
-          args.push(schema);
-          break;
-        }
-      }
-    }
-    const self = this;
-    const handler = async (...args) => {
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
-      const realObj = eggObj.obj;
-      const realMethod = realObj[promptMeta.name];
-      let newArgs: any[] = [];
-      if (schema && promptMeta.detail) {
-        // 如果有 schema 则证明入参第一个就是 schema
-        newArgs[promptMeta.detail.index] = args[0];
-
-        // 如果有 schema 则证明入参第二个就是 extra
-        if (promptMeta.extra) {
-          newArgs[promptMeta.extra] = args[1];
-        }
-      } else if (promptMeta.extra) {
-        // 无 schema, 那么入参第一个就是 extra
-        newArgs[promptMeta.extra] = args[0];
-      }
-      newArgs = [ ...newArgs, ...args ];
-      return Reflect.apply(realMethod, realObj, newArgs);
-    };
-    args.push(handler);
-    this.mcpServer.prompt(...(args as unknown as [any, any, any, any]));
-    this.statelessMcpServer.prompt(...(args as unknown as [any, any, any, any]));
-  }
-
-  async mcpToolRegister(controllerProto: EggPrototype, toolMeta: MCPToolMeta) {
-    const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
-    const args: any[] = [ toolMeta.mcpName ?? toolMeta.name ];
-    if (toolMeta.description) {
-      args.push(toolMeta.description);
-    }
-    let schema;
-    if (toolMeta.detail?.argsSchema) {
-      schema = toolMeta.detail?.argsSchema;
-      args.push(toolMeta.detail?.argsSchema);
-    } else if (MCPControllerRegister.hooks.length > 0) {
-      for (const hook of MCPControllerRegister.hooks) {
-        schema = await hook.schemaLoader?.(controllerMeta, toolMeta);
-        if (schema) {
-          args.push(schema);
-          break;
-        }
-      }
-    }
-    const self = this;
-    const handler = async (...args) => {
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
-      const realObj = eggObj.obj;
-      const realMethod = realObj[toolMeta.name];
-      let newArgs: any[] = [];
-      if (schema && toolMeta.detail) {
-        // 如果有 schema 则证明入参第一个就是 schema
-        newArgs[toolMeta.detail.index] = args[0];
-
-        // 如果有 schema 则证明入参第二个就是 extra
-        if (toolMeta.extra) {
-          newArgs[toolMeta.extra] = args[1];
-        }
-      } else if (toolMeta.extra) {
-        // 无 schema, 那么入参第一个就是 extra
-        newArgs[toolMeta.extra] = args[0];
-      }
-      newArgs = [ ...newArgs, ...args ];
-      return Reflect.apply(realMethod, realObj, newArgs);
-    };
-    args.push(handler);
-    this.mcpServer.tool(...(args as unknown as [any, any, any, any]));
-    this.statelessMcpServer.tool(...(args as unknown as [any, any, any, any]));
-  }
-
-  async mcpResourceRegister(controllerProto: EggPrototype, resourceMeta: MCPResourceMeta) {
-    const args: any[] = [ resourceMeta.mcpName ?? resourceMeta.name ];
-    if (resourceMeta.uri) {
-      args.push(resourceMeta.uri);
-    }
-    if (resourceMeta.template) {
-      const template = resourceMeta.template;
-      args.push(template);
-    }
-    if (resourceMeta.metadata) {
-      args.push(resourceMeta.metadata);
-    }
-    const self = this;
-    const handler = async (...args) => {
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
-      const realObj = eggObj.obj;
-      const realMethod = realObj[resourceMeta.name];
-      return Reflect.apply(realMethod, realObj, args);
-    };
-    args.push(handler);
-    this.mcpServer.resource(...(args as unknown as [any, any, any, any]));
-    this.statelessMcpServer.resource(...(args as unknown as [any, any, any, any]));
-  }
-
   async register() {
-    const promptMap = new Map<MCPPromptMeta, EggPrototype>();
-    const resourceMap = new Map<MCPResourceMeta, EggPrototype>();
-    const toolMap = new Map<MCPToolMeta, EggPrototype>();
+    if (!this.mcpServerHelper) {
+      this.mcpServerHelper = new MCPServerHelper({
+        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
+        version: this.controllerMeta.version ?? '1.0.0',
+        hooks: MCPControllerRegister.hooks,
+      });
+      this.statelessMcpServerHelper = new MCPServerHelper({
+        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
+        version: this.controllerMeta.version ?? '1.0.0',
+        hooks: MCPControllerRegister.hooks,
+      });
+      this.mcpStatelessStreamServerInit();
+      this.mcpStreamServerInit();
+      this.mcpServerInit();
+      this.mcpServerRegister();
+    }
     for (const proto of this.controllerProtos) {
       if (this.registeredControllerProtos.includes(proto)) {
         continue;
       }
       const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
       for (const prompt of metadata.prompts) {
-        promptMap.set(prompt, proto);
+        await this.mcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, prompt);
+        await this.statelessMcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, prompt);
       }
       for (const resource of metadata.resources) {
-        resourceMap.set(resource, proto);
+        await this.mcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, resource);
+        await this.statelessMcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, resource);
       }
       for (const tool of metadata.tools) {
-        toolMap.set(tool, proto);
+        await this.mcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, tool);
+        await this.statelessMcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, tool);
       }
       this.registeredControllerProtos.push(proto);
-    }
-    if (!this.mcpServer) {
-      this.mcpServer = new McpServer({
-        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
-        version: this.controllerMeta.version ?? '1.0.0',
-      }, { capabilities: { logging: {} } });
-      this.statelessMcpServer = new McpServer({
-        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-stateless-server`,
-        version: this.controllerMeta.version ?? '1.0.0',
-      }, { capabilities: { logging: {} } });
-      this.mcpStatelessStreamServerInit();
-      this.mcpStreamServerInit();
-      this.mcpServerInit();
-      this.mcpServerRegister();
-    }
-    for (const [ prompt, controllerProto ] of promptMap.entries()) {
-      await this.mcpPromptRegister(controllerProto, prompt);
-    }
-    for (const [ tool, controllerProto ] of toolMap.entries()) {
-      await this.mcpToolRegister(controllerProto, tool);
-    }
-    for (const [ resource, controllerProto ] of resourceMap.entries()) {
-      await this.mcpResourceRegister(controllerProto, resource);
     }
   }
 }
