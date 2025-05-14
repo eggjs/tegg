@@ -116,7 +116,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
   static async connectStatelessStreamTransport() {
     if (MCPControllerRegister.instance && MCPControllerRegister.instance.statelessTransport) {
-      MCPControllerRegister.instance.statelessMcpServerHelper.server.connect(MCPControllerRegister.instance.statelessTransport);
+      await MCPControllerRegister.instance.statelessMcpServerHelper.server.connect(MCPControllerRegister.instance.statelessTransport);
       // 由于 mcp server stateless 需要我们在这里 init
       // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
       const socket = new Socket();
@@ -486,16 +486,16 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
       for (const prompt of metadata.prompts) {
-        this.mcpServerHelper.mcpPromptRegister(this, proto, prompt);
-        this.statelessMcpServerHelper.mcpPromptRegister(this, proto, prompt);
+        await this.mcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject, proto, prompt);
+        await this.statelessMcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject, proto, prompt);
       }
       for (const resource of metadata.resources) {
-        this.mcpServerHelper.mcpResourceRegister(this, proto, resource);
-        this.statelessMcpServerHelper.mcpResourceRegister(this, proto, resource);
+        await this.mcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject, proto, resource);
+        await this.statelessMcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject, proto, resource);
       }
       for (const tool of metadata.tools) {
-        this.mcpServerHelper.mcpToolRegister(this, proto, tool);
-        this.statelessMcpServerHelper.mcpToolRegister(this, proto, tool);
+        await this.mcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject, proto, tool);
+        await this.statelessMcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject, proto, tool);
       }
       this.registeredControllerProtos.push(proto);
     }

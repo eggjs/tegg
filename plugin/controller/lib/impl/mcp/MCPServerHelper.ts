@@ -8,7 +8,7 @@ import {
   MCPControllerHook,
   MCPControllerRegister,
 } from './MCPControllerRegister';
-import { CONTROLLER_META_DATA, EggPrototype } from '@eggjs/tegg-types';
+import { CONTROLLER_META_DATA, EggObject, EggObjectName, EggPrototype } from '@eggjs/tegg-types';
 import { MCPControllerMeta, MCPPromptMeta, MCPResourceMeta, MCPToolMeta } from '@eggjs/tegg';
 
 export interface MCPServerHelperOptions {
@@ -32,12 +32,12 @@ export class MCPServerHelper {
   }
 
   async mcpResourceRegister(
-    self: MCPControllerRegister,
+    getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>,
     controllerProto: EggPrototype,
     resourceMeta: MCPResourceMeta,
   ) {
     const handler = async (...args) => {
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(
+      const eggObj = await getOrCreateEggObject(
         controllerProto,
         controllerProto.name,
       );
@@ -78,7 +78,7 @@ export class MCPServerHelper {
   }
 
   async mcpToolRegister(
-    self: MCPControllerRegister,
+    getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>,
     controllerProto: EggPrototype,
     toolMeta: MCPToolMeta,
   ) {
@@ -99,7 +99,7 @@ export class MCPServerHelper {
       }
     }
     const handler = async (...args) => {
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(
+      const eggObj = await getOrCreateEggObject(
         controllerProto,
         controllerProto.name,
       );
@@ -133,7 +133,7 @@ export class MCPServerHelper {
   }
 
   async mcpPromptRegister(
-    self: MCPControllerRegister,
+    getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>,
     controllerProto: EggPrototype,
     promptMeta: MCPPromptMeta,
   ) {
@@ -152,7 +152,7 @@ export class MCPServerHelper {
       }
     }
     const handler = async (...args) => {
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(controllerProto, controllerProto.name);
+      const eggObj = await getOrCreateEggObject(controllerProto, controllerProto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[promptMeta.name];
       let newArgs: any[] = [];
