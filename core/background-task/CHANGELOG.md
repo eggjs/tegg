@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.5](https://github.com/eggjs/tegg/compare/v3.57.4...v3.57.5) (2025-05-15)
+
+**Note:** Version bump only for package @eggjs/tegg-background-task
+
+
+
+
+
 ## [3.57.4](https://github.com/eggjs/tegg/compare/v3.57.3...v3.57.4) (2025-05-14)
 
 **Note:** Version bump only for package @eggjs/tegg-background-task

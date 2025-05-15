@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.5](https://github.com/eggjs/tegg/compare/v3.57.4...v3.57.5) (2025-05-15)
+
+
+### Bug Fixes
+
+* zod phantom dependency ([#322](https://github.com/eggjs/tegg/issues/322)) ([e92372e](https://github.com/eggjs/tegg/commit/e92372eb884d0f5d8227d340a3d7db01b51267cf))
+
+
+
+
+
 ## [3.57.4](https://github.com/eggjs/tegg/compare/v3.57.3...v3.57.4) (2025-05-14)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
