@@ -127,5 +127,6 @@ export default class ControllerAppBootHook {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
     HTTPControllerRegister.clean();
+    MCPControllerRegister.clean();
   }
 }
