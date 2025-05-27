@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.6](https://github.com/eggjs/tegg/compare/v3.57.5...v3.57.6) (2025-05-27)
+
+
+### Bug Fixes
+
+* sse new ctx ([#323](https://github.com/eggjs/tegg/issues/323)) ([5716e0a](https://github.com/eggjs/tegg/commit/5716e0a33f8f58249ebdc1a3b6fb7959394ef4ee))
+
+
+
+
+
 ## [3.57.5](https://github.com/eggjs/tegg/compare/v3.57.4...v3.57.5) (2025-05-15)
 
 
