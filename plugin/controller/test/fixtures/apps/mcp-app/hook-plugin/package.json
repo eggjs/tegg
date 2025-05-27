@@ -1,0 +1,6 @@
+{
+  "name": "@eggjs/hook-plugin",
+  "eggPlugin": {
+    "name": "hookPlugin"
+  }
+}

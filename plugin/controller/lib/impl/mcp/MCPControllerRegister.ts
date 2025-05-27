@@ -397,11 +397,17 @@ export class MCPControllerRegister implements ControllerRegister {
       req.method = 'POST';
       req.url = self.mcpConfig.sseInitPath;
       req.headers = {
+        ...ctx.req.headers,
         accept: 'application/json, text/event-stream',
         'content-type': 'application/json',
       };
       const newCtx = self.app.createContext(req, res) as unknown as Context;
       await ctx.app.ctxStorage.run(newCtx, async () => {
+        if (MCPControllerRegister.hooks.length > 0) {
+          for (const hook of MCPControllerRegister.hooks) {
+            await hook.preHandle?.(newCtx);
+          }
+        }
         await mw(newCtx, async () => {
           messageFunc!(...args);
           if (isJSONRPCRequest(args[0])) {

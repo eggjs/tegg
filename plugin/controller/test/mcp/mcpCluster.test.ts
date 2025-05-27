@@ -100,7 +100,29 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       const baseUrl = await app.httpRequest()
         .get('/mcp/init').url;
-      const sseTransport = new SSEClientTransport(new URL(baseUrl));
+      const sseTransport = new SSEClientTransport(
+        new URL(baseUrl),
+        {
+          authProvider: {
+            get redirectUrl() { return 'http://localhost/callback'; },
+            get clientMetadata() { return { redirect_uris: [ 'http://localhost/callback' ] }; },
+            clientInformation: () => ({ client_id: 'test-client-id', client_secret: 'test-client-secret' }),
+            tokens: () => {
+              return {
+                access_token: Buffer.from('akita').toString('base64'),
+                token_type: 'Bearer',
+              };
+            },
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveTokens: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            redirectToAuthorization: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveCodeVerifier: () => {},
+            codeVerifier: () => '',
+          },
+        },
+      );
       const sseNotifications: { level: string, data: string }[] = [];
       sseClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         sseNotifications.push({ level: notification.params.level, data: notification.params.data as string });
@@ -117,6 +139,10 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           description: undefined,
           name: 'bar',
         },
+        {
+          description: undefined,
+          name: 'echoUser',
+        },
       ]);
 
       const toolRes = await sseClient.callTool({
@@ -127,6 +153,13 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       assert.deepEqual(toolRes, {
         content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+      const userRes = await sseClient.callTool({
+        name: 'echoUser',
+        arguments: {},
+      });
+      assert.deepEqual(userRes, {
+        content: [{ type: 'text', text: 'hello akita' }],
       });
       // notification
       const notificationResp = await startNotificationTool(sseClient);
@@ -191,7 +224,30 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       const baseUrl = await app.httpRequest()
         .post('/mcp/stream').url;
-      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl), { requestInit: { headers: { 'custom-session-id': 'custom-session-id' } } });
+      const streamableTransport = new StreamableHTTPClientTransport(
+        new URL(baseUrl),
+        {
+          authProvider: {
+            get redirectUrl() { return 'http://localhost/callback'; },
+            get clientMetadata() { return { redirect_uris: [ 'http://localhost/callback' ] }; },
+            clientInformation: () => ({ client_id: 'test-client-id', client_secret: 'test-client-secret' }),
+            tokens: () => {
+              return {
+                access_token: Buffer.from('akita').toString('base64'),
+                token_type: 'Bearer',
+              };
+            },
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveTokens: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            redirectToAuthorization: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveCodeVerifier: () => {},
+            codeVerifier: () => '',
+          },
+          requestInit: { headers: { 'custom-session-id': 'custom-session-id' } },
+        },
+      );
       const streamableNotifications: { level: string, data: string }[] = [];
       streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
@@ -209,6 +265,10 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           description: undefined,
           name: 'bar',
         },
+        {
+          description: undefined,
+          name: 'echoUser',
+        },
       ]);
 
       const toolRes = await streamableClient.callTool({
@@ -219,6 +279,13 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       assert.deepEqual(toolRes, {
         content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+      const userRes = await streamableClient.callTool({
+        name: 'echoUser',
+        arguments: {},
+      });
+      assert.deepEqual(userRes, {
+        content: [{ type: 'text', text: 'hello akita' }],
       });
       // notification
       const notificationResp = await startNotificationTool(streamableClient);
@@ -289,7 +356,29 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       const baseUrl = await app.httpRequest()
         .post('/mcp/stateless/stream').url;
-      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl));
+      const streamableTransport = new StreamableHTTPClientTransport(
+        new URL(baseUrl),
+        {
+          authProvider: {
+            get redirectUrl() { return 'http://localhost/callback'; },
+            get clientMetadata() { return { redirect_uris: [ 'http://localhost/callback' ] }; },
+            clientInformation: () => ({ client_id: 'test-client-id', client_secret: 'test-client-secret' }),
+            tokens: () => {
+              return {
+                access_token: Buffer.from('akita').toString('base64'),
+                token_type: 'Bearer',
+              };
+            },
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveTokens: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            redirectToAuthorization: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveCodeVerifier: () => {},
+            codeVerifier: () => '',
+          },
+        },
+      );
       const streamableNotifications: { level: string, data: string }[] = [];
       streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
@@ -306,6 +395,10 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           description: undefined,
           name: 'bar',
         },
+        {
+          description: undefined,
+          name: 'echoUser',
+        },
       ]);
 
       const toolRes = await streamableClient.callTool({
@@ -316,6 +409,13 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       assert.deepEqual(toolRes, {
         content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+      const userRes = await streamableClient.callTool({
+        name: 'echoUser',
+        arguments: {},
+      });
+      assert.deepEqual(userRes, {
+        content: [{ type: 'text', text: 'hello akita' }],
       });
       // notification
       const notificationResp = await startNotificationTool(streamableClient);
