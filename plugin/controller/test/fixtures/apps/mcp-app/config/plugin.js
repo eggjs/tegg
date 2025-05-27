@@ -1,4 +1,6 @@
 'use strict';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
 
 exports.tracer = {
   package: 'egg-tracer',
@@ -22,5 +24,11 @@ exports.aopModule = {
 
 exports.mcpProxy = {
   package: '@eggjs/mcp-proxy',
+  enable: true,
+};
+
+
+exports.hookPlugin = {
+  path: path.join(__dirname, '../hook-plugin'),
   enable: true,
 };

@@ -46,6 +46,9 @@ export class McpController {
   @Inject()
   commonService: CommonService;
 
+  @Inject()
+  user: any;
+
   @MCPPrompt()
   async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
     this.logger.info('hello world');
@@ -70,6 +73,18 @@ export class McpController {
         {
           type: 'text',
           text: `npm package: ${args.name} not found`,
+        },
+      ],
+    };
+  }
+
+  @MCPTool()
+  async echoUser(): Promise<MCPToolResponse> {
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `hello ${this.user}`,
         },
       ],
     };

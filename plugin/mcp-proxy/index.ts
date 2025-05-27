@@ -53,7 +53,7 @@ export const MCPProxyHook: MCPControllerHook = {
     // cluster proxy
     await self.app.mcpProxy.registerClient(id, process.pid);
     self.app.mcpProxy.setProxyHandler(MCPProtocols.SSE, async (req, res) => {
-      const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
+      const sessionId = querystring.parse(url.parse(req.url!).query ?? '').sessionId as string;
       const ctx = self.app.createContext(req, res) as unknown as Context;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -66,14 +66,14 @@ export const MCPProxyHook: MCPControllerHook = {
         transport = existingTransport;
       } else {
         // https://modelcontextprotocol.io/docs/concepts/architecture#error-handling
-        res.status(400).json({
+        res.writeHead(400).end(JSON.stringify({
           jsonrpc: '2.0',
           error: {
             code: -32000,
             message: 'Bad Request: Session exists but uses a different transport protocol',
           },
           id: null,
-        });
+        }));
         return;
       }
       if (transport) {
@@ -94,14 +94,14 @@ export const MCPProxyHook: MCPControllerHook = {
           }
         }
       } else {
-        res.status(404).json({
+        res.writeHead(404).end(JSON.stringify({
           jsonrpc: '2.0',
           error: {
             code: -32602,
             message: 'Bad Request: No transport found for sessionId',
           },
           id: null,
-        });
+        }));
       }
     });
     ctx.res.once('close', () => {
