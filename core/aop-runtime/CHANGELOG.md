@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.7](https://github.com/eggjs/tegg/compare/v3.57.6...v3.57.7) (2025-05-28)
+
+
+### Bug Fixes
+
+* the loading order issue in multi-module mode ([#324](https://github.com/eggjs/tegg/issues/324)) ([c9610bd](https://github.com/eggjs/tegg/commit/c9610bd53dee7bebd069bc6766e869cb2b2f9fc9))
+
+
+
+
+
 ## [3.57.6](https://github.com/eggjs/tegg/compare/v3.57.5...v3.57.6) (2025-05-27)
 
 **Note:** Version bump only for package @eggjs/tegg-aop-runtime

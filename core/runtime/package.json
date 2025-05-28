@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-runtime",
-  "version": "3.57.6",
+  "version": "3.57.7",
   "description": "tegg runtime",
   "main": "dist/index.js",
   "files": [
@@ -36,14 +36,14 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.57.6",
-    "@eggjs/tegg-common-util": "^3.57.6",
-    "@eggjs/tegg-lifecycle": "^3.57.6",
-    "@eggjs/tegg-metadata": "^3.57.6",
-    "@eggjs/tegg-types": "^3.57.6"
+    "@eggjs/core-decorator": "^3.57.7",
+    "@eggjs/tegg-common-util": "^3.57.7",
+    "@eggjs/tegg-lifecycle": "^3.57.7",
+    "@eggjs/tegg-metadata": "^3.57.7",
+    "@eggjs/tegg-types": "^3.57.7"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^3.57.6",
+    "@eggjs/tegg-loader": "^3.57.7",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
