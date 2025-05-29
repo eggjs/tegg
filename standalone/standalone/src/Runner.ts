@@ -1,7 +1,8 @@
 import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
   EggPrototype,
-  EggPrototypeLifecycleUtil, GlobalGraph,
+  EggPrototypeLifecycleUtil,
+  GlobalGraph,
   LoadUnit,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
@@ -30,7 +31,8 @@ import {
   crossCutGraphHook,
   EggObjectAopHook,
   EggPrototypeCrossCutHook,
-  LoadUnitAopHook, pointCutGraphHook,
+  LoadUnitAopHook,
+  pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
 
 import { EggModuleLoader } from './EggModuleLoader';

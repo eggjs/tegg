@@ -23,25 +23,36 @@ export class LoaderFactory {
     const result: ModuleDescriptor[] = [];
     const multiInstanceClazzList: EggProtoImplClass[] = [];
     for (const moduleReference of moduleReferences) {
-      const loader = LoaderFactory.createLoader(moduleReference.path, moduleReference.loaderType || EggLoadUnitType.MODULE);
-      const res: ModuleDescriptor = {
-        name: moduleReference.name,
-        unitPath: moduleReference.path,
-        clazzList: [],
-        protos: [],
-        multiInstanceClazzList,
-        optional: moduleReference.optional,
-      };
-      result.push(res);
-      const clazzList = loader.load();
-      for (const clazz of clazzList) {
-        if (PrototypeUtil.isEggPrototype(clazz)) {
-          res.clazzList.push(clazz);
-        } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
-          res.multiInstanceClazzList.push(clazz);
-        }
-      }
+      const module = LoaderFactory.loadModule(moduleReference, multiInstanceClazzList);
+      result.push(module);
     }
     return result;
+  }
+
+  static loadModule(moduleReference: ModuleReference, multiInstanceClazzList?: EggProtoImplClass[]): ModuleDescriptor {
+    const loader = LoaderFactory.createLoader(moduleReference.path, moduleReference.loaderType || EggLoadUnitType.MODULE);
+
+    const res: ModuleDescriptor = {
+      name: moduleReference.name,
+      unitPath: moduleReference.path,
+      clazzList: [],
+      protos: [],
+      multiInstanceClazzList: multiInstanceClazzList || [],
+      innerObjectClazzList: [],
+      optional: moduleReference.optional,
+    };
+
+    const clazzList = loader.load();
+    for (const clazz of clazzList) {
+      if (PrototypeUtil.isEggInnerObject(clazz)) {
+        res.innerObjectClazzList?.push(clazz);
+      } else if (PrototypeUtil.isEggPrototype(clazz)) {
+        res.clazzList.push(clazz);
+      } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
+        res.multiInstanceClazzList.push(clazz);
+      }
+    }
+
+    return res;
   }
 }

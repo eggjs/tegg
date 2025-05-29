@@ -1,12 +1,15 @@
 import {
+  EggLifecycleInfo,
   EggMultiInstanceCallbackPrototypeInfo,
   EggMultiInstancePrototypeInfo,
   EggProtoImplClass,
   EggPrototypeInfo,
-  EggPrototypeName, InitTypeQualifierAttribute,
+  EggPrototypeName,
+  InitTypeQualifierAttribute,
   InjectConstructorInfo,
   InjectObjectInfo,
-  InjectType, LoadUnitNameQualifierAttribute,
+  InjectType,
+  LoadUnitNameQualifierAttribute,
   MultiInstancePrototypeGetObjectsContext,
   MultiInstanceType,
   QualifierAttribute,
@@ -16,6 +19,10 @@ import { MetadataUtil } from './MetadataUtil';
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE = Symbol.for('EggPrototype#isEggPrototype');
   static readonly IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE = Symbol.for('EggPrototype#isEggMultiInstancePrototype');
+  static readonly IS_EGG_LIFECYCLE_PROTOTYPE = Symbol.for('EggPrototype#isEggLifecyclePrototype');
+  static readonly EGG_LIFECYCLE_PROTOTYPE_METADATA = Symbol.for('EggPrototype#eggLifecyclePrototype#metadata');
+  static readonly IS_EGG_INNER_OBJECT = Symbol.for('EggPrototype#isEggInnerObject');
+  static readonly EGG_INNER_OBJECT_METADATA = Symbol.for('EggPrototype#eggInnerObject#metadata');
   static readonly FILE_PATH = Symbol.for('EggPrototype.filePath');
   static readonly PROTOTYPE_PROPERTY = Symbol.for('EggPrototype.Property');
   static readonly MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY = Symbol.for('EggPrototype.MultiInstanceStaticProperty');
@@ -72,6 +79,33 @@ export class PrototypeUtil {
       return MultiInstanceType.STATIC;
     }
     return MultiInstanceType.DYNAMIC;
+  }
+
+  static setIsEggLifecyclePrototype(clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_LIFECYCLE_PROTOTYPE, true, clazz);
+  }
+
+  static isEggLifecyclePrototype(clazz: EggProtoImplClass): boolean {
+    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_LIFECYCLE_PROTOTYPE, clazz);
+  }
+
+  static setEggLifecyclePrototypeMetadata(clazz: EggProtoImplClass, metadata: EggLifecycleInfo) {
+    MetadataUtil.defineMetaData(PrototypeUtil.EGG_LIFECYCLE_PROTOTYPE_METADATA, metadata, clazz);
+  }
+
+  static getEggLifecyclePrototypeMetadata(clazz: EggProtoImplClass): EggLifecycleInfo | undefined {
+    if (!PrototypeUtil.isEggLifecyclePrototype(clazz)) {
+      return undefined;
+    }
+    return MetadataUtil.getOwnMetaData<EggLifecycleInfo>(PrototypeUtil.EGG_LIFECYCLE_PROTOTYPE_METADATA, clazz);
+  }
+
+  static setIsEggInnerObject(clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, true, clazz);
+  }
+
+  static isEggInnerObject(clazz: EggProtoImplClass): boolean {
+    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, clazz);
   }
 
   /**
