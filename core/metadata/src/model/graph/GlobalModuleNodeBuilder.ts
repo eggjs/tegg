@@ -27,10 +27,10 @@ export class GlobalModuleNodeBuilder {
 
   addMultiInstanceClazz(clazz: EggProtoImplClass, defineModuleName: string, defineUnitPath: string) {
     const protos = ProtoDescriptorHelper.createByMultiInstanceClazz(clazz, {
+      moduleName: this.name,
+      unitPath: this.unitPath,
       defineModuleName,
       defineUnitPath,
-      instanceModuleName: this.name,
-      instanceDefineUnitPath: this.unitPath,
     });
     this.protos.push(...protos);
     return this;
