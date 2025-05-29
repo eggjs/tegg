@@ -1,6 +1,7 @@
 import { GraphNode, GraphNodeObj, EdgeMeta } from '@eggjs/tegg-common-util';
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode';
-import { ProtoDescriptor } from '@eggjs/tegg-types';
+import { ProtoDependencyMeta, ProtoGraphNode, ProtoNode } from './ProtoNode';
+import { EggProtoImplClass, ProtoDescriptor } from '@eggjs/tegg-types';
+import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper';
 
 export interface GlobalModuleNodeOptions {
   name: string;
@@ -27,7 +28,7 @@ export class GlobalModuleNode implements GraphNodeObj {
   readonly name: string;
   readonly unitPath: string;
   readonly optional: boolean;
-  readonly protos: GraphNode<ProtoNode, ProtoDependencyMeta>[];
+  readonly protos: ProtoGraphNode[];
 
   constructor(options: GlobalModuleNodeOptions) {
     this.id = options.unitPath;
@@ -37,8 +38,32 @@ export class GlobalModuleNode implements GraphNodeObj {
     this.protos = [];
   }
 
+  addProtoByClazz(clazz: EggProtoImplClass) {
+    const proto = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
+      moduleName: this.name,
+      unitPath: this.unitPath,
+    });
+    return this.addProto(proto);
+  }
+
+  addProtoByMultiInstanceClazz(clazz: EggProtoImplClass, defineModuleName: string, defineUnitPath: string) {
+    const protos = ProtoDescriptorHelper.createByMultiInstanceClazz(clazz, {
+      moduleName: this.name,
+      unitPath: this.unitPath,
+      defineModuleName,
+      defineUnitPath,
+    });
+    const result: ProtoGraphNode[] = [];
+    for (const proto of protos) {
+      result.push(this.addProto(proto));
+    }
+    return result;
+  }
+
   addProto(proto: ProtoDescriptor) {
-    this.protos.push(new GraphNode(new ProtoNode(proto)));
+    const protoGraphNode = new GraphNode<ProtoNode, ProtoDependencyMeta>(new ProtoNode(proto));
+    this.protos.push(protoGraphNode);
+    return protoGraphNode;
   }
 
   toString() {

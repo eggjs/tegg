@@ -21,7 +21,6 @@ function createStaticLifecycle(hookName: LifecycleHookName) {
   };
 }
 
-
 export const LifecyclePostConstruct = createLifecycle('postConstruct');
 export const LifecyclePreInject = createLifecycle('preInject');
 export const LifecyclePostInject = createLifecycle('postInject');
