@@ -4,6 +4,7 @@ import {
   EggPrototype,
   LoadUnit,
   LoadUnitInstance,
+  Logger,
   ModuleConfigHolder,
   ModuleReference,
   RuntimeConfig,
@@ -25,6 +26,7 @@ export interface StandaloneRunnerInit {
   timing?: Timing;
   dump?: boolean;
   innerObjects?: Record<string, InnerObject[]>;
+  logger?: Logger;
 }
 
 export interface LoadStandaloneModuleOptions {
@@ -44,6 +46,7 @@ export class StandaloneApp {
   readonly #moduleLoadUnitInitializer: ModuleLoadUnitInitializer;
   readonly #loadUnits: LoadUnit[];
   readonly #loadUnitInstances: LoadUnitInstance[];
+  readonly #logger?: Logger;
   readonly timing: Timing;
   #runnerProto: EggPrototype;
 
@@ -55,6 +58,7 @@ export class StandaloneApp {
     this.#runtimeConfig = {} as any;
     this.#loadUnits = [];
     this.#loadUnitInstances = [];
+    this.#logger = init.logger;
     this.timing = init.timing || new Timing();
     const classLoader = new StandaloneClassLoader({
       timing: this.timing,
@@ -66,11 +70,11 @@ export class StandaloneApp {
     GlobalGraph.instance = globalGraph;
     this.#moduleLoadUnitInitializer = new ModuleLoadUnitInitializer({ classLoader, globalGraph });
 
-    this.#innerObjects = this.#createInnerObjects(init.innerObjects);
+    this.#innerObjects = this.#createInnerObjects(init);
   }
 
-  #createInnerObjects(initialInnerObjects?: Record<string, InnerObject[]>) {
-    return Object.assign({}, initialInnerObjects, {
+  #createInnerObjects(init: StandaloneRunnerInit) {
+    return Object.assign({}, init.innerObjects, {
       moduleConfigs: [{
         obj: new ModuleConfigs(this.#moduleConfigs),
       }],
@@ -85,11 +89,13 @@ export class StandaloneApp {
     this.#runtimeConfig.name = opts.name;
     this.#runtimeConfig.env = opts.env;
     this.#runtimeConfig.baseDir = opts.baseDir;
+    this.#logger?.debug('init runtime config: %j', this.#runtimeConfig);
 
     // load module.yml and module.env.yml by default
     if (!ModuleConfigUtil.configNames) {
       ModuleConfigUtil.configNames = [ 'module.default', `module.${this.#runtimeConfig.env}` ];
     }
+    this.#logger?.debug('use module config names: %j', ModuleConfigUtil.configNames);
   }
 
   @TimeConsuming()
@@ -110,6 +116,7 @@ export class StandaloneApp {
         reference,
         config: ModuleConfigUtil.loadModuleConfig(reference.path),
       };
+      this.#logger?.debug('load module config %j', moduleConfig);
 
       this.#moduleConfigs[reference.name] = moduleConfig;
 
@@ -156,6 +163,7 @@ export class StandaloneApp {
     const moduleScanProcess = this.timing.start('scan module reference');
     const moduleReferences = ModuleConfigUtil.readModuleReference(baseDir);
     moduleScanProcess.end();
+    this.#logger?.debug('scan module references in %s, find %j', baseDir, moduleReferences);
 
     for (const module of moduleReferences) {
       this.#moduleReferences.push(module);
