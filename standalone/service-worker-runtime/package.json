@@ -1,13 +1,18 @@
 {
-  "name": "@eggjs/standalone-decorator",
-  "version": "3.57.12",
-  "description": "tegg standalone decorator",
+  "name": "@eggjs/tegg-service-worker-runtime",
+  "description": "tegg service worker runtime",
+  "eggModule": {
+    "name": "serviceWorkerRuntime"
+  },
+  "version": "3.57.7",
   "keywords": [
     "egg",
     "typescript",
-    "decorator",
+    "background",
+    "async",
     "tegg",
-    "standalone"
+    "standalone",
+    "service worker"
   ],
   "main": "dist/index.js",
   "files": [
@@ -16,13 +21,12 @@
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
     "prepublishOnly": "npm run tsc:pub"
   },
-  "author": "killagu <killa123@126.com>",
-  "license": "MIT",
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
@@ -30,15 +34,13 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/standalone-decorator"
+    "directory": "standalone/standalone"
   },
   "engines": {
     "node": ">=14.0.0"
   },
-  "dependencies": {
-    "@eggjs/tegg-common-util": "^3.57.12",
-    "reflect-metadata": "^0.1.13"
-  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
@@ -46,12 +48,13 @@
     "@eggjs/tegg": "^3"
   },
   "devDependencies": {
+    "@eggjs/tegg": "^3.52.1",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
+    "mm": "^3.2.1",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4",
-    "@eggjs/tegg": "^3.57.7"
+    "typescript": "^5.0.4"
   }
 }

@@ -1,12 +1,18 @@
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
-import type {
+import {
   EggObject,
   EggObjectLifecycle,
   EggObjectLifeCycleContext,
   EggObjectName,
-  EggPrototype, ObjectInfo, QualifierInfo,
+  EggObjectStatus,
+  EggPrototype,
+  InjectType,
+  LifecycleHookName,
+  ObjectInfo,
+  ObjectInitType,
+  QualifierInfo,
 } from '@eggjs/tegg-types';
-import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
+import { PrototypeUtil } from '@eggjs/core-decorator';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { EggObjectLifecycleUtil } from '../model/EggObject';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
@@ -16,6 +22,7 @@ import { ContextHandler } from '../model/ContextHandler';
 export default class EggObjectImpl implements EggObject {
   private _obj: object;
   private status: EggObjectStatus = EggObjectStatus.PENDING;
+  private readonly decoratorLifecycleOnly: boolean;
 
   readonly proto: EggPrototype;
   readonly name: EggObjectName;
@@ -26,6 +33,7 @@ export default class EggObjectImpl implements EggObject {
     this.proto = proto;
     const ctx = ContextHandler.getContext();
     this.id = IdenticalUtil.createObjectId(this.proto.id, ctx?.id);
+    this.decoratorLifecycleOnly = proto.getMetaData<boolean>(PrototypeUtil.OBJECT_DECORATOR_LIFECYCLE_ONLY) === true;
   }
 
   async initWithInjectProperty(ctx: EggObjectLifeCycleContext) {
@@ -36,20 +44,13 @@ export default class EggObjectImpl implements EggObject {
     // 5. success create
     try {
       this._obj = this.proto.constructEggObject();
-      const objLifecycleHook = this._obj as EggObjectLifecycle;
 
       // global hook
       await EggObjectLifecycleUtil.objectPreCreate(ctx, this);
       // self hook
-      const postConstructMethod = EggObjectLifecycleUtil.getLifecycleHook('postConstruct', this.proto) ?? 'postConstruct';
-      if (objLifecycleHook[postConstructMethod]) {
-        await objLifecycleHook[postConstructMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('postConstruct', ctx);
 
-      const preInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('preInject', this.proto) ?? 'preInject';
-      if (objLifecycleHook[preInjectMethod]) {
-        await objLifecycleHook[preInjectMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('preInject', ctx);
       await Promise.all(this.proto.injectObjects.map(async injectObject => {
         const proto = injectObject.proto;
         const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
@@ -68,15 +69,9 @@ export default class EggObjectImpl implements EggObject {
       await EggObjectLifecycleUtil.objectPostCreate(ctx, this);
 
       // self hook
-      const postInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('postInject', this.proto) ?? 'postInject';
-      if (objLifecycleHook[postInjectMethod]) {
-        await objLifecycleHook[postInjectMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('postInject', ctx);
 
-      const initMethod = EggObjectLifecycleUtil.getLifecycleHook('init', this.proto) ?? 'init';
-      if (objLifecycleHook[initMethod]) {
-        await objLifecycleHook[initMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('init', ctx);
 
       this.status = EggObjectStatus.READY;
     } catch (e) {
@@ -122,34 +117,21 @@ export default class EggObjectImpl implements EggObject {
       }
 
       this._obj = this.proto.constructEggObject(...constructArgs);
-      const objLifecycleHook = this._obj as EggObjectLifecycle;
 
       // global hook
       await EggObjectLifecycleUtil.objectPreCreate(ctx, this);
       // self hook
-      const postConstructMethod = EggObjectLifecycleUtil.getLifecycleHook('postConstruct', this.proto) ?? 'postConstruct';
-      if (objLifecycleHook[postConstructMethod]) {
-        await objLifecycleHook[postConstructMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('postConstruct', ctx);
 
-      const preInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('preInject', this.proto) ?? 'preInject';
-      if (objLifecycleHook[preInjectMethod]) {
-        await objLifecycleHook[preInjectMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('preInject', ctx);
 
       // global hook
       await EggObjectLifecycleUtil.objectPostCreate(ctx, this);
 
       // self hook
-      const postInjectMethod = EggObjectLifecycleUtil.getLifecycleHook('postInject', this.proto) ?? 'postInject';
-      if (objLifecycleHook[postInjectMethod]) {
-        await objLifecycleHook[postInjectMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('postInject', ctx);
 
-      const initMethod = EggObjectLifecycleUtil.getLifecycleHook('init', this.proto) ?? 'init';
-      if (objLifecycleHook[initMethod]) {
-        await objLifecycleHook[initMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('init', ctx);
 
       this.status = EggObjectStatus.READY;
     } catch (e) {
@@ -173,16 +155,9 @@ export default class EggObjectImpl implements EggObject {
       await EggObjectLifecycleUtil.objectPreDestroy(ctx, this);
 
       // self hook
-      const objLifecycleHook = this._obj as EggObjectLifecycle;
-      const preDestroyMethod = EggObjectLifecycleUtil.getLifecycleHook('preDestroy', this.proto) ?? 'preDestroy';
-      if (objLifecycleHook[preDestroyMethod]) {
-        await objLifecycleHook[preDestroyMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('preDestroy', ctx);
 
-      const destroyMethod = EggObjectLifecycleUtil.getLifecycleHook('destroy', this.proto) ?? 'destroy';
-      if (objLifecycleHook[destroyMethod]) {
-        await objLifecycleHook[destroyMethod](ctx, this);
-      }
+      await this.callObjectLifecycle('destroy', ctx);
 
       this.status = EggObjectStatus.DESTROYED;
     }
@@ -198,6 +173,21 @@ export default class EggObjectImpl implements EggObject {
 
   get isReady() {
     return this.status === EggObjectStatus.READY;
+  }
+
+  private async callObjectLifecycle(hookName: LifecycleHookName, ctx: EggObjectLifeCycleContext) {
+    const objLifecycleHook = this._obj as EggObjectLifecycle;
+    const lifecycleHook = EggObjectLifecycleUtil.getLifecycleHook(hookName, this.proto);
+    if (lifecycleHook) {
+      await objLifecycleHook[lifecycleHook]?.(ctx, this);
+      return;
+    }
+    if (this.decoratorLifecycleOnly) {
+      return;
+    }
+    if (objLifecycleHook[hookName]) {
+      await objLifecycleHook[hookName](ctx, this);
+    }
   }
 
   static async createObject(name: EggObjectName, proto: EggPrototype, lifecycleContext: EggObjectLifeCycleContext): Promise<EggObjectImpl> {

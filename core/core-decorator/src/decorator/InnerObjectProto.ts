@@ -4,7 +4,8 @@ import { SingletonProto } from './SingletonProto';
 
 export function InnerObjectProto(params?: InnerObjectProtoParams) {
   return function(clazz: EggProtoImplClass) {
-    SingletonProto(params);
+    SingletonProto(params)(clazz);
     PrototypeUtil.setIsEggInnerObject(clazz);
+    PrototypeUtil.setObjectDecoratorLifecycleOnly(clazz);
   };
 }
