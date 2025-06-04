@@ -50,7 +50,7 @@ export class StandaloneLoadUnitInitializer {
         if (!injectProto) {
           continue;
         }
-        this.#protoGraph.addEdge(protoNode, protoNode, new ProtoDependencyMeta({ injectObj: injectObj.objName }));
+        this.#protoGraph.addEdge(protoNode, injectProto, new ProtoDependencyMeta({ injectObj: injectObj.objName }));
       }
     }
     const loopPath = this.#protoGraph.loopPath();

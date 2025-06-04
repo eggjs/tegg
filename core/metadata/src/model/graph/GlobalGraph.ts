@@ -102,7 +102,7 @@ export class GlobalGraph {
   }
 
   buildInjectEdge(moduleNode: GraphNode<GlobalModuleNode, ModuleDependencyMeta>, protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>, injectObj: InjectObjectDescriptor) {
-    const injectProto = ProtoGraphUtils.findDependencyProtoNode(this.protoGraph, protoNode.val.proto, injectObj);
+    const injectProto = this.findDependencyProtoNode(protoNode.val.proto, injectObj);
     if (!injectProto) {
       if (!this.strict) {
         return;
@@ -138,6 +138,10 @@ export class GlobalGraph {
       injectObj: injectObject.objName,
     }));
     return edge?.val.proto;
+  }
+
+  findDependencyProtoNode(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): ProtoGraphNode | undefined {
+    return ProtoGraphUtils.findDependencyProtoNode(this.protoGraph, proto, injectObject);
   }
 
   findModuleNode(moduleName: string) {

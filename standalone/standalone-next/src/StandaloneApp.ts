@@ -7,6 +7,7 @@ import {
   Logger,
   ModuleConfigHolder,
   ModuleReference,
+  type ReadModuleReferenceOptions,
   RuntimeConfig,
 } from '@eggjs/tegg-types';
 import { ModuleConfigs, ModuleConfigUtil } from '@eggjs/tegg-common-util';
@@ -20,8 +21,10 @@ import { InnerObject } from './common/types';
 import { StandaloneLoadUnitInitializer } from './loadUnit/StandaloneLoadUnitInitializer';
 import { ModuleLoadUnitInitializer } from './loadUnit/ModuleLoadUnitInitializer';
 import { StandaloneContext } from './StandaloneContext';
+import { StandaloneContextHandler } from './StandaloneContextHandler';
+import './loadUnit/StandaloneLoadUnitInstance';
 
-export interface StandaloneRunnerInit {
+export interface StandaloneAppInit {
   frameworkPath?: string;
   timing?: Timing;
   dump?: boolean;
@@ -29,7 +32,7 @@ export interface StandaloneRunnerInit {
   logger?: Logger;
 }
 
-export interface LoadStandaloneModuleOptions {
+export interface InitStandaloneAppOptions {
   name: string;
   env: string;
   baseDir: string;
@@ -50,19 +53,19 @@ export class StandaloneApp {
   readonly timing: Timing;
   #runnerProto: EggPrototype;
 
-  constructor(init: StandaloneRunnerInit) {
-    this.#frameworkPath = init.frameworkPath || path.join(__dirname, '..');
+  constructor(init?: StandaloneAppInit) {
+    this.#frameworkPath = init?.frameworkPath || path.join(__dirname, '..');
     this.#moduleReferences = [];
     this.#moduleConfigs = {};
     // in constructor, there is no runtime config yet, pre-create the object first
     this.#runtimeConfig = {} as any;
     this.#loadUnits = [];
     this.#loadUnitInstances = [];
-    this.#logger = init.logger;
-    this.timing = init.timing || new Timing();
+    this.#logger = init?.logger;
+    this.timing = init?.timing || new Timing();
     const classLoader = new StandaloneClassLoader({
       timing: this.timing,
-      dump: init.dump,
+      dump: init?.dump,
     });
     this.#classLoader = classLoader;
     this.#standaloneLoadUnitInitializer = new StandaloneLoadUnitInitializer({ classLoader });
@@ -73,8 +76,8 @@ export class StandaloneApp {
     this.#innerObjects = this.#createInnerObjects(init);
   }
 
-  #createInnerObjects(init: StandaloneRunnerInit) {
-    return Object.assign({}, init.innerObjects, {
+  #createInnerObjects(init?: StandaloneAppInit) {
+    return Object.assign({}, init?.innerObjects, {
       moduleConfigs: [{
         obj: new ModuleConfigs(this.#moduleConfigs),
       }],
@@ -85,7 +88,7 @@ export class StandaloneApp {
     });
   }
 
-  initRuntime(opts: LoadStandaloneModuleOptions) {
+  initRuntime(opts: InitStandaloneAppOptions) {
     this.#runtimeConfig.name = opts.name;
     this.#runtimeConfig.env = opts.env;
     this.#runtimeConfig.baseDir = opts.baseDir;
@@ -96,15 +99,17 @@ export class StandaloneApp {
       ModuleConfigUtil.configNames = [ 'module.default', `module.${this.#runtimeConfig.env}` ];
     }
     this.#logger?.debug('use module config names: %j', ModuleConfigUtil.configNames);
+
+    StandaloneContextHandler.register();
   }
 
   @TimeConsuming()
   async loadFramework() {
-    this.#loadModule(this.#frameworkPath);
+    this.#loadModule(this.#frameworkPath, { extraFilePattern: [ '!**/test' ] });
   }
 
   @TimeConsuming()
-  async loadStandaloneModule(opts: LoadStandaloneModuleOptions) {
+  async loadStandaloneModule(opts: InitStandaloneAppOptions) {
     this.#loadModule(opts.baseDir);
   }
 
@@ -134,10 +139,13 @@ export class StandaloneApp {
   async instantiate() {
     const createLoadUnitProcess = this.timing.start('create load unit');
     const standaloneLoadUnit = await this.#standaloneLoadUnitInitializer.createLoadUnit({ innerObjects: this.#innerObjects });
-    const moduleLoadUnits = await this.#moduleLoadUnitInitializer.createModuleLoadUnits();
+    this.#loadUnits.push(standaloneLoadUnit);
+    const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(standaloneLoadUnit);
+    this.#loadUnitInstances.push(instance);
+
+    const loadUnits = await this.#moduleLoadUnitInitializer.createModuleLoadUnits();
     createLoadUnitProcess.end();
 
-    const loadUnits = [ standaloneLoadUnit, ...moduleLoadUnits ];
     for (const loadUnit of loadUnits) {
       const createLoadUnitInstanceProcess = this.timing.start(`create load unit instance ${loadUnit.name}`);
       this.#loadUnits.push(loadUnit);
@@ -159,9 +167,9 @@ export class StandaloneApp {
     this.#runnerProto = proto as EggPrototype;
   }
 
-  #loadModule(baseDir: string) {
+  #loadModule(baseDir: string, options?: ReadModuleReferenceOptions) {
     const moduleScanProcess = this.timing.start('scan module reference');
-    const moduleReferences = ModuleConfigUtil.readModuleReference(baseDir);
+    const moduleReferences = ModuleConfigUtil.readModuleReference(baseDir, options);
     moduleScanProcess.end();
     this.#logger?.debug('scan module references in %s, find %j', baseDir, moduleReferences);
 
@@ -173,7 +181,7 @@ export class StandaloneApp {
     }
   }
 
-  async init(opts: LoadStandaloneModuleOptions) {
+  async init(opts: InitStandaloneAppOptions) {
     this.initRuntime(opts);
     await this.loadFramework();
     await this.loadStandaloneModule(opts);

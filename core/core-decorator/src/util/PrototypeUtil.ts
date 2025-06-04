@@ -22,7 +22,6 @@ export class PrototypeUtil {
   static readonly IS_EGG_LIFECYCLE_PROTOTYPE = Symbol.for('EggPrototype#isEggLifecyclePrototype');
   static readonly EGG_LIFECYCLE_PROTOTYPE_METADATA = Symbol.for('EggPrototype#eggLifecyclePrototype#metadata');
   static readonly IS_EGG_INNER_OBJECT = Symbol.for('EggPrototype#isEggInnerObject');
-  static readonly EGG_INNER_OBJECT_METADATA = Symbol.for('EggPrototype#eggInnerObject#metadata');
   static readonly FILE_PATH = Symbol.for('EggPrototype.filePath');
   static readonly PROTOTYPE_PROPERTY = Symbol.for('EggPrototype.Property');
   static readonly MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY = Symbol.for('EggPrototype.MultiInstanceStaticProperty');
@@ -33,6 +32,7 @@ export class PrototypeUtil {
   static readonly CLAZZ_PROTO = Symbol.for('EggPrototype.clazzProto');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_INDEX = Symbol.for('EggPrototype#multiInstanceConstructorIndex');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES = Symbol.for('EggPrototype#multiInstanceConstructorAttributes');
+  static readonly OBJECT_DECORATOR_LIFECYCLE_ONLY = Symbol.for('EggPrototype#objectDecoratorLifecycleOnly');
 
   /**
    * Mark class is egg object prototype
@@ -106,6 +106,10 @@ export class PrototypeUtil {
 
   static isEggInnerObject(clazz: EggProtoImplClass): boolean {
     return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, clazz);
+  }
+
+  static setObjectDecoratorLifecycleOnly(clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(PrototypeUtil.OBJECT_DECORATOR_LIFECYCLE_ONLY, true, clazz);
   }
 
   /**

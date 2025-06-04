@@ -1,10 +1,10 @@
-import Profile from 'time-profile';
+import { getProfiler } from 'time-profile';
 
 export class Timing {
-  #profile: Profile;
+  #profile: any;
 
   constructor() {
-    this.#profile = new Profile();
+    this.#profile = new getProfiler();
   }
 
   start(name: string) {
