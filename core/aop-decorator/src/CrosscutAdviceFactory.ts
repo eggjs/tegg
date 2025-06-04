@@ -2,7 +2,6 @@ import assert from 'node:assert';
 import type { EggProtoImplClass, IAdvice, AdviceInfo } from '@eggjs/tegg-types';
 import { CrosscutInfoUtil } from './util/CrosscutInfoUtil';
 
-@LifecycleLoadUnitContext()
 export class CrosscutAdviceFactory {
   private readonly crosscutAdviceClazzList: Array<EggProtoImplClass<IAdvice>> = [];
 

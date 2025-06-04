@@ -13,7 +13,6 @@ export * from './src/model/AppGraph';
 export * from './src/model/graph/GlobalGraph';
 export * from './src/model/graph/GlobalModuleNode';
 export * from './src/model/graph/GlobalModuleNodeBuilder';
-export * from './src/model/graph/GlobalModuleNodeFactory';
 export * from './src/model/graph/ProtoNode';
 export * from './src/model/graph/ProtoSelector';
 export * from './src/model/graph/ProtoGraphUtils';

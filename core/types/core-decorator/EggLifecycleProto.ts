@@ -1,6 +1,6 @@
-import { SingletonProtoParams } from './SingletonProto';
+import { InnerObjectProtoParams } from './InnerObjectProto';
 
-export interface CommonEggLifecycleProtoParams extends SingletonProtoParams {
+export interface CommonEggLifecycleProtoParams extends InnerObjectProtoParams {
   type: 'LoadUnit' | 'EggObject' | 'EggPrototype' | string;
 }
 
