@@ -1,4 +1,10 @@
-import { AccessLevel, EggPrototypeInfo, ObjectInitTypeLike, QualifierInfo } from '../../core-decorator';
+import {
+  AccessLevel,
+  EggProtoImplClass,
+  EggPrototypeInfo,
+  ObjectInitTypeLike,
+  QualifierInfo,
+} from '../../core-decorator';
 import { ProtoDescriptorType } from '../enum/ProtoDescriptorType';
 
 export type ProtoDescriptorTypeLike = ProtoDescriptorType | string;
@@ -28,4 +34,24 @@ export interface ProtoDescriptor extends EggPrototypeInfo {
 
   // test is the same proto
   equal(protoDescriptor: ProtoDescriptor): boolean;
+}
+
+export interface CreateProtoDescriptorContext {
+  moduleName: string;
+  unitPath: string;
+  defineModuleName?: string;
+  defineUnitPath?: string;
+}
+
+export interface CreateMultiInstanceProtoDescriptorContext {
+  moduleName: string;
+  unitPath: string;
+  defineModuleName: string;
+  defineUnitPath: string;
+}
+
+export interface PrototypeClassDefinition {
+  clazz: EggProtoImplClass;
+  defineModuleName: string;
+  defineUnitPath: string;
 }
