@@ -45,7 +45,7 @@ export class LoaderFactory {
     const clazzList = loader.load();
     for (const clazz of clazzList) {
       if (PrototypeUtil.isEggInnerObject(clazz)) {
-        res.innerObjectClazzList?.push(clazz);
+        res.innerObjectClazzList.push(clazz);
       } else if (PrototypeUtil.isEggPrototype(clazz)) {
         res.clazzList.push(clazz);
       } else if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {

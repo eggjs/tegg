@@ -1,3 +1,4 @@
+import { EggProtoImplClass } from '@eggjs/tegg-types';
 import { Graph, GraphNode, ModuleReference } from '@eggjs/tegg-common-util';
 import {
   LoadUnitFactory,
@@ -9,8 +10,7 @@ import {
 import { StandaloneClassLoader } from '../StandaloneClassLoader';
 import { InnerObject } from '../common/types';
 import { StandaloneLoadUnitName, StandaloneLoadUnitPath, StandaloneLoadUnitType } from '../common/constant';
-import { StandaloneLoadUnit } from './StandaloneLoadUnit';
-import { EggProtoImplClass } from '@eggjs/tegg-types';
+import { StandaloneLoadUnit } from '../loadUnit/StandaloneLoadUnit';
 
 export interface StandaloneLoadUnitInitializerOptions {
   classLoader: StandaloneClassLoader;
