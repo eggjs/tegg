@@ -1,4 +1,3 @@
-import path from 'node:path';
 import {
   ConfigSourceQualifierAttribute,
   EggPrototype,
@@ -23,7 +22,7 @@ import {
 import { MainRunner, StandaloneUtil } from '@eggjs/tegg/standalone';
 import { TimeConsuming, Timing } from './common/utils/Timing';
 import { StandaloneClassLoader } from './StandaloneClassLoader';
-import { InnerObject } from './common/types';
+import { InnerObject, ModuleDependency } from './common/types';
 import { StandaloneLoadUnitInitializer } from './initializer/StandaloneLoadUnitInitializer';
 import { ModuleLoadUnitInitializer } from './initializer/ModuleLoadUnitInitializer';
 import { StandaloneContext } from './StandaloneContext';
@@ -46,7 +45,7 @@ import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
 import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
 
 export interface StandaloneAppInit {
-  frameworkPath?: string;
+  frameworkDeps?: Array<string | ModuleDependency>;
   timing?: Timing;
   dump?: boolean;
   innerObjects?: Record<string, InnerObject[]>;
@@ -60,7 +59,7 @@ export interface InitStandaloneAppOptions {
 }
 
 export class StandaloneApp {
-  readonly #frameworkPath: string;
+  readonly #frameworkDeps: ModuleDependency[];
   readonly #moduleReferences: ModuleReference[];
   readonly #classLoader: StandaloneClassLoader;
   readonly #innerObjects: Record<string, InnerObject[]>;
@@ -77,7 +76,7 @@ export class StandaloneApp {
   #runnerProto: EggPrototype;
 
   constructor(init?: StandaloneAppInit) {
-    this.#frameworkPath = init?.frameworkPath || path.join(__dirname, '..');
+    this.#frameworkDeps = (init?.frameworkDeps || []).map(baseDir => (typeof baseDir === 'string' ? { baseDir } : baseDir));
     this.#moduleReferences = [];
     this.#moduleConfigs = {};
     // in constructor, there is no runtime config yet, pre-create the object first
@@ -165,7 +164,9 @@ export class StandaloneApp {
 
   @TimeConsuming()
   loadFramework() {
-    this.#loadModule(this.#frameworkPath, { extraFilePattern: [ '!**/test' ] });
+    for (const dep of this.#frameworkDeps) {
+      this.#loadModule(dep.baseDir, dep);
+    }
   }
 
   @TimeConsuming()
@@ -179,7 +180,29 @@ export class StandaloneApp {
       const moduleConfig = {
         name: reference.name,
         reference,
-        config: ModuleConfigUtil.loadModuleConfig(reference.path),
+        config: await ModuleConfigUtil.loadModuleConfig(reference.path),
+      };
+      this.#logger?.debug('load module config %j', moduleConfig);
+
+      this.#moduleConfigs[reference.name] = moduleConfig;
+
+      this.#innerObjects.moduleConfig.push({
+        obj: moduleConfig.config,
+        qualifiers: [{
+          attribute: ConfigSourceQualifierAttribute,
+          value: moduleConfig.name,
+        }],
+      });
+    }
+  }
+
+  @TimeConsuming()
+  loadModuleConfigSync() {
+    for (const reference of this.#moduleReferences) {
+      const moduleConfig = {
+        name: reference.name,
+        reference,
+        config: ModuleConfigUtil.loadModuleConfigSync(reference.path),
       };
       this.#logger?.debug('load module config %j', moduleConfig);
 
@@ -258,7 +281,7 @@ export class StandaloneApp {
     this.loadFramework();
     this.loadStandaloneModule(opts);
     await this.loadModuleConfig();
-    await this.dump(opts);
+    this.dump(opts);
     await this.instantiate();
     this.initRunner();
   }

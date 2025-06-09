@@ -18,11 +18,6 @@ import {
   StandaloneLoadUnitType,
 } from '../common/constant';
 
-export interface StandaloneLoadUnitInit {
-  innerObject: Record<string, InnerObject[]>;
-  protos: ProtoDescriptor[];
-}
-
 export class StandaloneLoadUnit implements LoadUnit {
   readonly id: string = StandaloneLoadUnitId;
   readonly name: string = StandaloneLoadUnitName;
@@ -33,9 +28,9 @@ export class StandaloneLoadUnit implements LoadUnit {
   #protos: ProtoDescriptor[];
   #protoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
 
-  constructor(init: StandaloneLoadUnitInit) {
-    this.#innerObject = init.innerObject;
-    this.#protos = init.protos;
+  constructor(innerObject: Record<string, InnerObject[]>, protos?: ProtoDescriptor[]) {
+    this.#innerObject = innerObject;
+    this.#protos = protos || [];
   }
 
   async init() {

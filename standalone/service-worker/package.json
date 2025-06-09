@@ -54,7 +54,7 @@
     "@eggjs/tegg": "^3"
   },
   "devDependencies": {
-    "@eggjs/tegg": "^3.52.1",
+    "@eggjs/tegg": "^3.57.7",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
