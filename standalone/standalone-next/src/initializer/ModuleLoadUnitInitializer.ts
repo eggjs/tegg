@@ -4,10 +4,10 @@ import {
   GlobalModuleNode,
   LoadUnit,
   LoadUnitFactory,
-  ModuleDescriptor,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { StandaloneClassLoader } from '../StandaloneClassLoader';
+import { ModuleReference } from '@eggjs/tegg-types';
 
 export interface ModuleLoadUnitInitializerInit {
   globalGraph?: GlobalGraph;
@@ -23,7 +23,8 @@ export class ModuleLoadUnitInitializer {
     this.#classLoader = init.classLoader;
   }
 
-  addModule(descriptor: ModuleDescriptor) {
+  addModule(moduleReference: ModuleReference) {
+    const descriptor = this.#classLoader.loadModule(moduleReference);
     const moduleNode = new GlobalModuleNode({
       name: descriptor.name,
       unitPath: descriptor.unitPath,

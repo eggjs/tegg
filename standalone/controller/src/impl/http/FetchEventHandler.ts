@@ -21,7 +21,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   #routes: MiddlewareFuncWithRouter<FetchRouter>;
 
   @LifecyclePostInject()
-  _postInject() {
+  initRoutes() {
     this.#routes = this.fetchRouter.middleware();
   }
 
