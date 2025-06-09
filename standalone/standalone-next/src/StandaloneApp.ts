@@ -12,8 +12,14 @@ import {
 } from '@eggjs/tegg-types';
 import { ModuleConfigs, ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { PrototypeUtil } from '@eggjs/core-decorator';
-import { GlobalGraph, LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { ContextHandler, EggContainerFactory, EggContext, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+import { EggPrototypeLifecycleUtil, GlobalGraph, LoadUnitFactory, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
+import {
+  ContextHandler,
+  EggContainerFactory,
+  EggContext,
+  EggObjectLifecycleUtil,
+  LoadUnitInstanceFactory,
+} from '@eggjs/tegg-runtime';
 import { MainRunner, StandaloneUtil } from '@eggjs/tegg/standalone';
 import { TimeConsuming, Timing } from './common/utils/Timing';
 import { StandaloneClassLoader } from './StandaloneClassLoader';
@@ -23,6 +29,21 @@ import { ModuleLoadUnitInitializer } from './initializer/ModuleLoadUnitInitializ
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
 import './loadUnit/StandaloneLoadUnitInstance';
+import {
+  crossCutGraphHook,
+  EggObjectAopHook,
+  EggPrototypeCrossCutHook,
+  LoadUnitAopHook,
+  pointCutGraphHook,
+} from '@eggjs/tegg-aop-runtime';
+import { ConfigSourceLoadUnitHook } from './loadUnit/ConfigSourceLoadUnitHook';
+import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
+import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
+import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
+import { TransactionPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/TransactionPrototypeHook';
+import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSourceManager';
+import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
+import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
 
 export interface StandaloneAppInit {
   frameworkPath?: string;
@@ -52,6 +73,7 @@ export class StandaloneApp {
   readonly #dump: boolean;
   readonly #logger?: Logger;
   readonly timing: Timing;
+  #handleDestroy?: () => void;
   #runnerProto: EggPrototype;
 
   constructor(init?: StandaloneAppInit) {
@@ -87,6 +109,40 @@ export class StandaloneApp {
     });
   }
 
+  // TODO, should be revamped to LifecycleProto
+  #handleCompatibility(opts: InitStandaloneAppOptions) {
+    const configSourceEggPrototypeHook = new ConfigSourceLoadUnitHook();
+    LoadUnitLifecycleUtil.registerLifecycle(configSourceEggPrototypeHook);
+
+    const crosscutAdviceFactory = new CrosscutAdviceFactory();
+    const loadUnitAopHook = new LoadUnitAopHook(crosscutAdviceFactory);
+    const eggPrototypeCrossCutHook = new EggPrototypeCrossCutHook(crosscutAdviceFactory);
+    const eggObjectAopHook = new EggObjectAopHook();
+
+    EggPrototypeLifecycleUtil.registerLifecycle(eggPrototypeCrossCutHook);
+    LoadUnitLifecycleUtil.registerLifecycle(loadUnitAopHook);
+    EggObjectLifecycleUtil.registerLifecycle(eggObjectAopHook);
+
+    const dalModuleLoadUnitHook = new DalModuleLoadUnitHook(opts.env ?? '', this.#moduleConfigs, this.#logger);
+    const dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.#logger || console);
+    const transactionPrototypeHook = new TransactionPrototypeHook(this.#moduleConfigs, this.#logger);
+    EggPrototypeLifecycleUtil.registerLifecycle(dalTableEggPrototypeHook);
+    EggPrototypeLifecycleUtil.registerLifecycle(transactionPrototypeHook);
+    LoadUnitLifecycleUtil.registerLifecycle(dalModuleLoadUnitHook);
+
+    return () => {
+      LoadUnitLifecycleUtil.deleteLifecycle(configSourceEggPrototypeHook);
+
+      EggPrototypeLifecycleUtil.deleteLifecycle(eggPrototypeCrossCutHook);
+      LoadUnitLifecycleUtil.deleteLifecycle(loadUnitAopHook);
+      EggObjectLifecycleUtil.deleteLifecycle(eggObjectAopHook);
+
+      EggPrototypeLifecycleUtil.deleteLifecycle(dalTableEggPrototypeHook);
+      EggPrototypeLifecycleUtil.deleteLifecycle(transactionPrototypeHook);
+      LoadUnitLifecycleUtil.deleteLifecycle(dalModuleLoadUnitHook);
+    };
+  }
+
   initRuntime(opts: InitStandaloneAppOptions) {
     this.#runtimeConfig.name = opts.name;
     this.#runtimeConfig.env = opts.env;
@@ -99,16 +155,21 @@ export class StandaloneApp {
     }
     this.#logger?.debug('use module config names: %j', ModuleConfigUtil.configNames);
 
+    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
+    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
+
+    this.#handleDestroy = this.#handleCompatibility(opts);
+
     StandaloneContextHandler.register();
   }
 
   @TimeConsuming()
-  async loadFramework() {
+  loadFramework() {
     this.#loadModule(this.#frameworkPath, { extraFilePattern: [ '!**/test' ] });
   }
 
   @TimeConsuming()
-  async loadStandaloneModule(opts: InitStandaloneAppOptions) {
+  loadStandaloneModule(opts: InitStandaloneAppOptions) {
     this.#loadModule(opts.baseDir);
   }
 
@@ -194,8 +255,8 @@ export class StandaloneApp {
 
   async init(opts: InitStandaloneAppOptions) {
     this.initRuntime(opts);
-    await this.loadFramework();
-    await this.loadStandaloneModule(opts);
+    this.loadFramework();
+    this.loadStandaloneModule(opts);
     await this.loadModuleConfig();
     await this.dump(opts);
     await this.instantiate();
@@ -232,5 +293,13 @@ export class StandaloneApp {
         await LoadUnitFactory.destroyLoadUnit(loadUnit);
       }
     }
+
+    this.#handleDestroy?.();
+
+    MysqlDataSourceManager.instance.clear();
+    SqlMapManager.instance.clear();
+    TableModelManager.instance.clear();
+    // clear configNames
+    ModuleConfigUtil.setConfigNames(undefined);
   }
 }
