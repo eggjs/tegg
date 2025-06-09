@@ -20,5 +20,7 @@ const createLifecycleProto = (type: CommonEggLifecycleProtoParams['type']) => {
 };
 
 export const LoadUnitLifecycleProto = createLifecycleProto('LoadUnit');
+export const LoadUnitInstanceLifecycleProto = createLifecycleProto('LoadUnitInstance');
 export const EggObjectLifecycleProto = createLifecycleProto('EggObject');
 export const EggPrototypeLifecycleProto = createLifecycleProto('EggPrototype');
+export const EggContextLifecycleProto = createLifecycleProto('EggContext');

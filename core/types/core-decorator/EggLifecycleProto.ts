@@ -1,7 +1,7 @@
 import { InnerObjectProtoParams } from './InnerObjectProto';
 
 export interface CommonEggLifecycleProtoParams extends InnerObjectProtoParams {
-  type: 'LoadUnit' | 'EggObject' | 'EggPrototype' | string;
+  type: 'LoadUnit' | 'LoadUnitInstance' | 'EggObject' | 'EggPrototype' | 'EggContext' | string;
 }
 
 export type EggLifecycleProtoParams = Omit<CommonEggLifecycleProtoParams, 'type'>;

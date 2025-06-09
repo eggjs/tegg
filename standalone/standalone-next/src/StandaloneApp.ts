@@ -49,6 +49,7 @@ export class StandaloneApp {
   readonly #moduleLoadUnitInitializer: ModuleLoadUnitInitializer;
   readonly #loadUnits: LoadUnit[];
   readonly #loadUnitInstances: LoadUnitInstance[];
+  readonly #dump: boolean;
   readonly #logger?: Logger;
   readonly timing: Timing;
   #runnerProto: EggPrototype;
@@ -61,12 +62,10 @@ export class StandaloneApp {
     this.#runtimeConfig = {} as any;
     this.#loadUnits = [];
     this.#loadUnitInstances = [];
+    this.#dump = init?.dump !== false;
     this.#logger = init?.logger;
     this.timing = init?.timing || new Timing();
-    const classLoader = new StandaloneClassLoader({
-      timing: this.timing,
-      dump: init?.dump,
-    });
+    const classLoader = new StandaloneClassLoader();
     this.#classLoader = classLoader;
     this.#standaloneLoadUnitInitializer = new StandaloneLoadUnitInitializer({ classLoader });
     const globalGraph = new GlobalGraph();
@@ -136,6 +135,16 @@ export class StandaloneApp {
   }
 
   @TimeConsuming()
+  async dump(opts: InitStandaloneAppOptions) {
+    if (this.#dump) {
+      await this.#classLoader.dump({
+        baseDir: opts.baseDir,
+        logger: this.#logger,
+      });
+    }
+  }
+
+  @TimeConsuming()
   async instantiate() {
     const createLoadUnitProcess = this.timing.start('create load unit');
     const standaloneLoadUnit = await this.#standaloneLoadUnitInitializer.createLoadUnit({ innerObjects: this.#innerObjects });
@@ -175,9 +184,11 @@ export class StandaloneApp {
 
     for (const module of moduleReferences) {
       this.#moduleReferences.push(module);
-      const moduleDescriptor = this.#classLoader.loadModule(module);
+      const loadModuleProcess = this.timing.start(`load module ${module.name}`);
+      this.#classLoader.loadModule(module);
+      loadModuleProcess.end();
       this.#standaloneLoadUnitInitializer.addInnerObjectProto(module);
-      this.#moduleLoadUnitInitializer.addModule(moduleDescriptor);
+      this.#moduleLoadUnitInitializer.addModule(module);
     }
   }
 
@@ -186,6 +197,7 @@ export class StandaloneApp {
     await this.loadFramework();
     await this.loadStandaloneModule(opts);
     await this.loadModuleConfig();
+    await this.dump(opts);
     await this.instantiate();
     this.initRunner();
   }

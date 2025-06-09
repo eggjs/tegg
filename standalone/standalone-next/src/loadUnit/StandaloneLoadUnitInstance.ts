@@ -1,10 +1,12 @@
 import { EggLifecycleInfo, PrototypeUtil } from '@eggjs/core-decorator';
 import { EggPrototypeLifecycleUtil, LoadUnitLifecycleUtil } from '@eggjs/tegg-metadata';
 import {
+  EggContextLifecycleUtil,
   EggObjectLifecycleUtil,
   type LoadUnitInstance,
   LoadUnitInstanceFactory,
   type LoadUnitInstanceLifecycleContext,
+  LoadUnitInstanceLifecycleUtil,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
 import { StandaloneLoadUnitType } from '../common/constant';
@@ -13,8 +15,10 @@ import { LifecycleUtil } from '@eggjs/tegg-lifecycle';
 export class StandaloneLoadUnitInstance extends ModuleLoadUnitInstance {
   static LifecycleUtils: Record<string, LifecycleUtil<any, any>> = {
     LoadUnit: LoadUnitLifecycleUtil,
+    LoadUnitInstance: LoadUnitInstanceLifecycleUtil,
     EggPrototype: EggPrototypeLifecycleUtil,
     EggObject: EggObjectLifecycleUtil,
+    EggContext: EggContextLifecycleUtil,
   };
 
   readonly #lifecycleObjects: [string, object][] = [];
