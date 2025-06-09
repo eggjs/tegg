@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { IdenticalUtil, LifecycleHook } from '@eggjs/tegg-lifecycle';
 import { ContextHandler, EggPrototypeFactory, LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
-import { StandaloneInnerObjectProto } from '@eggjs/tegg-standalone-next';
+import { StandaloneInnerObjectProto } from '@eggjs/tegg-standalone';
 import { ObjectInitType } from '@eggjs/tegg-types';
 import { LoadUnitLifecycleProto } from '@eggjs/tegg';
 import { ProtoMeta } from './types';

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { StandaloneApp, StandaloneAppInit, StandaloneContext } from '@eggjs/tegg-standalone-next';
+import { StandaloneApp, StandaloneAppInit, StandaloneContext } from '@eggjs/tegg-standalone';
 import { ContextProtoProperty } from '@eggjs/tegg-service-worker-runtime';
 
 export type ServiceWorkerAppInit = Omit<StandaloneAppInit, 'frameworkPath'>;

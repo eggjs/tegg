@@ -4,7 +4,7 @@
   "eggModule": {
     "name": "serviceWorkerRuntime"
   },
-  "version": "3.57.7",
+  "version": "3.57.9",
   "keywords": [
     "egg",
     "typescript",
@@ -48,7 +48,7 @@
     "@eggjs/tegg": "^3"
   },
   "devDependencies": {
-    "@eggjs/tegg": "^3.57.7",
+    "@eggjs/tegg": "^3.57.9",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
