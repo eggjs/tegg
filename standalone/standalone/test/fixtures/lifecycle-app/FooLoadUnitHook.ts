@@ -1,8 +1,7 @@
-import { Inject, LoadUnitLifecycleProto } from '@eggjs/tegg';
+import { Inject, LoadUnitLifecycleProto, SingletonProto } from '@eggjs/tegg';
 import { LifecycleHook, LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-types';
-import { Foo } from './Foo';
-import { SingletonProto } from '@eggjs/tegg';
 import { EggPrototypeCreatorFactory, EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import { Foo } from './Foo';
 
 @LoadUnitLifecycleProto()
 export class LoadUnitControllerHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {

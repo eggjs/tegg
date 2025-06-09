@@ -64,10 +64,7 @@ export class StandaloneLoadUnitInitializer {
   async createLoadUnit(opts: CreateStandaloneLoadUnitOptions) {
     const protos = this.#buildProtoGraph().map(n => n.val.proto);
     LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
-      return new StandaloneLoadUnit({
-        innerObject: opts.innerObjects,
-        protos,
-      });
+      return new StandaloneLoadUnit(opts.innerObjects, protos);
     });
 
     return await LoadUnitFactory.createLoadUnit('MockStandaloneLoadUnitPath', StandaloneLoadUnitType, {
