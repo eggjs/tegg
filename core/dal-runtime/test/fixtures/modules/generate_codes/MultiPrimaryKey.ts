@@ -1,18 +1,18 @@
-import {
-  Column,
-  ColumnType,
-  Table,
-} from '@eggjs/dal-decorator';
+import { Column, ColumnType, Index, IndexType, Table } from '@eggjs/dal-decorator';
 
 @Table({
   name: 'multi_primary_key_table',
   comment: 'multi primary key table',
 })
+@Index({
+  name: 'pk_id1_id2',
+  type: IndexType.PRIMARY,
+  keys: ['id1', 'id2'],
+})
 export class MultiPrimaryKey {
   @Column({
     type: ColumnType.INT,
   }, {
-    primaryKey: true,
     autoIncrement: true,
     comment: 'the primary key',
   })
@@ -21,8 +21,6 @@ export class MultiPrimaryKey {
   @Column({
     type: ColumnType.INT,
   }, {
-    primaryKey: true,
-    autoIncrement: true,
     comment: 'the primary key',
   })
   id2: number;
