@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "3.57.9",
+  "version": "3.57.10",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -48,14 +48,14 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.57.9",
-    "@eggjs/mcp-proxy": "^3.57.9",
+    "@eggjs/egg-module-common": "^3.57.10",
+    "@eggjs/mcp-proxy": "^3.57.10",
     "@eggjs/router": "^2.0.1",
-    "@eggjs/tegg": "^3.57.9",
-    "@eggjs/tegg-common-util": "^3.57.9",
-    "@eggjs/tegg-loader": "^3.57.9",
-    "@eggjs/tegg-metadata": "^3.57.9",
-    "@eggjs/tegg-runtime": "^3.57.9",
+    "@eggjs/tegg": "^3.57.10",
+    "@eggjs/tegg-common-util": "^3.57.10",
+    "@eggjs/tegg-loader": "^3.57.10",
+    "@eggjs/tegg-metadata": "^3.57.10",
+    "@eggjs/tegg-runtime": "^3.57.10",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "await-event": "^2.1.0",
     "content-type": "^1.0.5",
@@ -68,9 +68,9 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.57.9",
-    "@eggjs/tegg-config": "^3.57.9",
-    "@eggjs/tegg-plugin": "^3.57.9",
+    "@eggjs/module-test-util": "^3.57.10",
+    "@eggjs/tegg-config": "^3.57.10",
+    "@eggjs/tegg-plugin": "^3.57.10",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

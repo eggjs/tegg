@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.10](https://github.com/eggjs/tegg/compare/v3.57.9...v3.57.10) (2025-06-12)
+
+
+### Bug Fixes
+
+* muliti column primary generator code error ([#326](https://github.com/eggjs/tegg/issues/326)) ([7b8e1de](https://github.com/eggjs/tegg/commit/7b8e1de5b990574f7b907f3d7a3f68ecd54f8a86))
+
+
+
+
+
 ## [3.57.9](https://github.com/eggjs/tegg/compare/v3.57.8...v3.57.9) (2025-05-29)
 
 **Note:** Version bump only for package @eggjs/dal-runtime
