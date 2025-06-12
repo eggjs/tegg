@@ -10,8 +10,7 @@
       },
       "canNull": false,
       "comment": "the primary key",
-      "autoIncrement": true,
-      "primaryKey": true
+      "autoIncrement": true
     },
     {
       "columnName": "id_2",
@@ -20,9 +19,7 @@
         "type": "INT"
       },
       "canNull": false,
-      "comment": "the primary key",
-      "autoIncrement": true,
-      "primaryKey": true
+      "comment": "the primary key"
     },
     {
       "columnName": "name",
@@ -35,6 +32,21 @@
       "uniqueKey": true
     }
   ],
-  "indices": [],
+  "indices": [
+    {
+      "name": "pk_id1_id2",
+      "keys": [
+        {
+          "propertyName": "id1",
+          "columnName": "id_1"
+        },
+        {
+          "propertyName": "id2",
+          "columnName": "id_2"
+        }
+      ],
+      "type": "PRIMARY"
+    }
+  ],
   "comment": "multi primary key table"
 }

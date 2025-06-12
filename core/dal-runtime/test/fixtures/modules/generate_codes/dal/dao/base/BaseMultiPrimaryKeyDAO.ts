@@ -97,6 +97,14 @@ export class BaseMultiPrimaryKeyDAO {
     return this.dataSource.executeRawScalar('delete', primary);
   }
 
+
+  public async findByPkId1Id2($id1: ColumnTsType['INT'], $id2: ColumnTsType['INT']): Promise<MultiPrimaryKey | null> {
+    return this.dataSource.executeScalar('findByPrimary', {
+      $id1,
+      $id2,
+    });
+  }
+
   public async findByPrimary($id1: ColumnTsType['INT'], $id2: ColumnTsType['INT']): Promise<MultiPrimaryKey | null> {
     return this.dataSource.executeScalar('findByPrimary', {
       $id1,
