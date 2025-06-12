@@ -35,7 +35,7 @@ import {
   LoadUnitAopHook,
   pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
-import { ConfigSourceLoadUnitHook } from './loadUnit/ConfigSourceLoadUnitHook';
+import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
 import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
