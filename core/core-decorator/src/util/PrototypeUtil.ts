@@ -32,6 +32,7 @@ export class PrototypeUtil {
   static readonly CLAZZ_PROTO = Symbol.for('EggPrototype.clazzProto');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_INDEX = Symbol.for('EggPrototype#multiInstanceConstructorIndex');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES = Symbol.for('EggPrototype#multiInstanceConstructorAttributes');
+  // Marks that only decorator-declared lifecycle methods will be triggered
   static readonly OBJECT_DECORATOR_LIFECYCLE_ONLY = Symbol.for('EggPrototype#objectDecoratorLifecycleOnly');
 
   /**
@@ -81,18 +82,35 @@ export class PrototypeUtil {
     return MultiInstanceType.DYNAMIC;
   }
 
+  /**
+   * Mark class is egg lifecycle prototype
+   * @param clazz -
+   */
   static setIsEggLifecyclePrototype(clazz: EggProtoImplClass) {
     MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_LIFECYCLE_PROTOTYPE, true, clazz);
   }
 
+  /**
+   * If class is egg lifecycle prototype, return true
+   * @param clazz -
+   */
   static isEggLifecyclePrototype(clazz: EggProtoImplClass): boolean {
     return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_LIFECYCLE_PROTOTYPE, clazz);
   }
 
+  /**
+   * Set egg lifecycle prototype metadata, like the lifecycle type
+   * @param clazz -
+   * @param metadata -
+   */
   static setEggLifecyclePrototypeMetadata(clazz: EggProtoImplClass, metadata: EggLifecycleInfo) {
     MetadataUtil.defineMetaData(PrototypeUtil.EGG_LIFECYCLE_PROTOTYPE_METADATA, metadata, clazz);
   }
 
+  /**
+   * Get egg lifecycle prototype metadata
+   * @param clazz -
+   */
   static getEggLifecyclePrototypeMetadata(clazz: EggProtoImplClass): EggLifecycleInfo | undefined {
     if (!PrototypeUtil.isEggLifecyclePrototype(clazz)) {
       return undefined;
@@ -100,16 +118,36 @@ export class PrototypeUtil {
     return MetadataUtil.getOwnMetaData<EggLifecycleInfo>(PrototypeUtil.EGG_LIFECYCLE_PROTOTYPE_METADATA, clazz);
   }
 
+  /**
+   * Mark class is egg inner object prototype
+   * @param clazz -
+   */
   static setIsEggInnerObject(clazz: EggProtoImplClass) {
     MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, true, clazz);
   }
 
+  /**
+   * If class is egg inner object prototype, return true
+   * @param clazz -
+   */
   static isEggInnerObject(clazz: EggProtoImplClass): boolean {
     return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, clazz);
   }
 
+  /**
+   * Mark only decorator-declared lifecycle methods will be triggered when the class is instantiated.
+   * @param clazz -
+   */
   static setObjectDecoratorLifecycleOnly(clazz: EggProtoImplClass) {
     MetadataUtil.defineMetaData(PrototypeUtil.OBJECT_DECORATOR_LIFECYCLE_ONLY, true, clazz);
+  }
+
+  /**
+   * If only decorator-declared lifecycle methods are triggered when the class is instantiated, return true
+   * @param clazz -
+   */
+  static isObjectDecoratorLifecycleOnly(clazz: EggProtoImplClass): boolean {
+    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.OBJECT_DECORATOR_LIFECYCLE_ONLY, clazz);
   }
 
   /**
