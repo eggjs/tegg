@@ -11,6 +11,7 @@ import { StandaloneClassLoader } from '../StandaloneClassLoader';
 import { InnerObject } from '../common/types';
 import { StandaloneLoadUnitName, StandaloneLoadUnitPath, StandaloneLoadUnitType } from '../common/constant';
 import { StandaloneLoadUnit } from '../loadUnit/StandaloneLoadUnit';
+import { Timing } from '../common/utils/Timing';
 
 export interface StandaloneLoadUnitInitializerOptions {
   classLoader: StandaloneClassLoader;
@@ -62,7 +63,7 @@ export class StandaloneLoadUnitInitializer {
   }
 
   async createLoadUnit(opts: CreateStandaloneLoadUnitOptions) {
-    const protos = this.#buildProtoGraph().map(n => n.val.proto);
+    const protos = Timing.profile(() => this.#buildProtoGraph(), 'buildInnerObjectProtoGraph').map(n => n.val.proto);
     LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
       return new StandaloneLoadUnit(opts.innerObjects, protos);
     });

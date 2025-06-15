@@ -1,64 +1,55 @@
 import { getProfiler } from 'time-profile';
 
 export class Timing {
-  #profile: any;
+  static #profile?: any;
 
-  constructor() {
-    this.#profile = new getProfiler();
+  static enable(profile: string | any) {
+    if (typeof profile === 'string') {
+      Timing.#profile = getProfiler(profile);
+    } else if (typeof profile === 'object') {
+      Timing.#profile = profile;
+    }
   }
 
-  start(name: string) {
-    this.#profile.start(name);
+  static start(name: string) {
+    this.#profile?.start(name);
 
     return {
       end: () => this.end(name),
     };
   }
 
-  end(name: string) {
-    this.#profile.end(name);
+  static end(name: string) {
+    this.#profile?.end(name);
   }
 
-  runSync<T>(fn: () => T, name: string): T {
-    this.start(name);
-    try {
+  static profile<F extends() => any>(fn: F, name: string): ReturnType<F> {
+    if (!this.#profile) {
       return fn();
-    } finally {
-      this.end(name);
     }
+    return this.#profile.profileTagged(fn, name);
   }
 
-  async run<T>(fn: () => Promise<T>, name: string): Promise<T> {
-    this.start(name);
-    try {
-      return await fn();
-    } finally {
-      this.end(name);
+  static toString(destroy?: boolean) {
+    const str = this.#profile?.toString();
+    if (destroy) {
+      this.#profile?.destroy();
     }
-  }
-
-  toString() {
-    return this.#profile.toString();
+    return str;
   }
 }
 
-interface TimingTarget {
-  timing: Timing;
-}
-
-export function TimeConsuming<F extends(...args: any) => any>(name?: ((...args: Parameters<F>) => string) | string) {
-  return function(_: TimingTarget, propertyKey: string, descriptor: TypedPropertyDescriptor<F>) {
+export function TimeProfile() {
+  return function(_: any, propertyKey: string, descriptor: TypedPropertyDescriptor<any>) {
     const originalMethod = descriptor.value!;
 
-    const possibleName = name || propertyKey;
-    descriptor.value = function(this: TimingTarget, ...args: Parameters<F>) {
-      const timingName = typeof possibleName === 'function' ? possibleName(...args) : possibleName;
+    descriptor.value = function(this: any, ...args: any[]) {
       try {
-        this.timing.start(timingName);
+        Timing.start(propertyKey);
         return originalMethod.apply(this, args);
       } finally {
-        this.timing.end(timingName);
+        Timing.end(propertyKey);
       }
-    } as F;
+    };
   };
 }

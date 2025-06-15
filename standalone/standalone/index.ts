@@ -1,4 +1,6 @@
 export * from './src/common/constant';
+export * from './src/common/types';
+export * from './src/common/utils/Timing';
 export * from './src/EggModuleLoader';
 export * from './src/Runner';
 export * from './src/StandaloneApp';

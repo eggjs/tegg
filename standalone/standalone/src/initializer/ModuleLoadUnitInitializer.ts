@@ -8,6 +8,7 @@ import {
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { StandaloneClassLoader } from '../StandaloneClassLoader';
 import { ModuleReference } from '@eggjs/tegg-types';
+import { Timing } from '../common/utils/Timing';
 
 export interface ModuleLoadUnitInitializerInit {
   globalGraph?: GlobalGraph;
@@ -55,12 +56,11 @@ export class ModuleLoadUnitInitializer {
     this.#buildMultiInstanceProtos();
     this.#globalGraph.build();
     this.#globalGraph.sort();
-
     return this.#globalGraph.moduleConfigList;
   }
 
   async createModuleLoadUnits() {
-    const moduleReferences = this.#buildGlobalGraph();
+    const moduleReferences = Timing.profile(() => this.#buildGlobalGraph(), 'buildGlobalGraph');
 
     const loadUnits: LoadUnit[] = [];
     for (const reference of moduleReferences) {

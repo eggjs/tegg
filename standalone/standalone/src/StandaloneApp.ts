@@ -20,7 +20,7 @@ import {
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
 import { MainRunner, StandaloneUtil } from '@eggjs/tegg/standalone';
-import { TimeConsuming, Timing } from './common/utils/Timing';
+import { TimeProfile, Timing } from './common/utils/Timing';
 import { StandaloneClassLoader } from './StandaloneClassLoader';
 import { InnerObject, ModuleDependency } from './common/types';
 import { StandaloneLoadUnitInitializer } from './initializer/StandaloneLoadUnitInitializer';
@@ -46,7 +46,6 @@ import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager'
 
 export interface StandaloneAppInit {
   frameworkDeps?: Array<string | ModuleDependency>;
-  timing?: Timing;
   dump?: boolean;
   innerObjects?: Record<string, InnerObject[]>;
   logger?: Logger;
@@ -71,7 +70,6 @@ export class StandaloneApp {
   readonly #loadUnitInstances: LoadUnitInstance[];
   readonly #dump: boolean;
   readonly #logger?: Logger;
-  readonly timing: Timing;
   #handleDestroy?: () => void;
   #runnerProto: EggPrototype;
 
@@ -85,7 +83,6 @@ export class StandaloneApp {
     this.#loadUnitInstances = [];
     this.#dump = init?.dump !== false;
     this.#logger = init?.logger;
-    this.timing = init?.timing || new Timing();
     const classLoader = new StandaloneClassLoader();
     this.#classLoader = classLoader;
     this.#standaloneLoadUnitInitializer = new StandaloneLoadUnitInitializer({ classLoader });
@@ -162,19 +159,19 @@ export class StandaloneApp {
     StandaloneContextHandler.register();
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   loadFramework() {
     for (const dep of this.#frameworkDeps) {
       this.#loadModule(dep.baseDir, dep);
     }
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   loadStandaloneModule(opts: InitStandaloneAppOptions) {
     this.#loadModule(opts.baseDir);
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   async loadModuleConfig() {
     for (const reference of this.#moduleReferences) {
       const moduleConfig = {
@@ -196,7 +193,7 @@ export class StandaloneApp {
     }
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   loadModuleConfigSync() {
     for (const reference of this.#moduleReferences) {
       const moduleConfig = {
@@ -218,7 +215,7 @@ export class StandaloneApp {
     }
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   async dump(opts: InitStandaloneAppOptions) {
     if (this.#dump) {
       await this.#classLoader.dump({
@@ -228,13 +225,13 @@ export class StandaloneApp {
     }
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   async instantiate() {
     await this.instantiateStandaloneLoadUnit();
     await this.instantiateModuleLoadUnit();
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   async instantiateStandaloneLoadUnit() {
     const standaloneLoadUnit = await this.#standaloneLoadUnitInitializer.createLoadUnit({ innerObjects: this.#innerObjects });
     this.#loadUnits.push(standaloneLoadUnit);
@@ -242,18 +239,18 @@ export class StandaloneApp {
     this.#loadUnitInstances.push(instance);
   }
 
-  @TimeConsuming()
+  @TimeProfile()
   async instantiateModuleLoadUnit() {
-    const createLoadUnitProcess = this.timing.start('create load unit');
-    const loadUnits = await this.#moduleLoadUnitInitializer.createModuleLoadUnits();
-    createLoadUnitProcess.end();
+    const loadUnits = await Timing.profile(async () => {
+      return await this.#moduleLoadUnitInitializer.createModuleLoadUnits();
+    }, 'createLoadUnits');
 
     for (const loadUnit of loadUnits) {
-      const createLoadUnitInstanceProcess = this.timing.start(`create load unit instance ${loadUnit.name}`);
       this.#loadUnits.push(loadUnit);
-      const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
-      this.#loadUnitInstances.push(instance);
-      createLoadUnitInstanceProcess.end();
+      await Timing.profile(async () => {
+        const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
+        this.#loadUnitInstances.push(instance);
+      }, `create ${loadUnit.name} load unit instance`);
     }
   }
 
@@ -270,16 +267,14 @@ export class StandaloneApp {
   }
 
   #loadModule(baseDir: string, options?: ReadModuleReferenceOptions) {
-    const moduleScanProcess = this.timing.start('scan module reference');
-    const moduleReferences = ModuleConfigUtil.readModuleReference(baseDir, options);
-    moduleScanProcess.end();
+    const moduleReferences = Timing.profile(() => {
+      return ModuleConfigUtil.readModuleReference(baseDir, options);
+    }, 'scanModuleReference');
     this.#logger?.debug('scan module references in %s, find %j', baseDir, moduleReferences);
 
     for (const module of moduleReferences) {
       this.#moduleReferences.push(module);
-      const loadModuleProcess = this.timing.start(`load module ${module.name}`);
-      this.#classLoader.loadModule(module);
-      loadModuleProcess.end();
+      Timing.profile(() => this.#classLoader.loadModule(module), `load module ${module.name}`);
       this.#standaloneLoadUnitInitializer.addInnerObjectProto(module);
       this.#moduleLoadUnitInitializer.addModule(module);
     }
