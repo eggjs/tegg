@@ -3,7 +3,6 @@ import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 import FooDAO from './dal/dao/FooDAO';
 import { Foo } from './Foo';
 
-
 @Runner()
 @ContextProto()
 export class FooRunner implements MainRunner<Foo | null> {
@@ -88,6 +87,10 @@ export class FooRunner implements MainRunner<Foo | null> {
       hello: 'json',
     };
     await this.fooDAO.insert(foo);
-    return this.fooDAO.findOneByCol1('2333');
+    const res = await this.fooDAO.findOneByCol1('2333');
+    if (res) {
+      await this.fooDAO.delete(res.id);
+    }
+    return res;
   }
 }

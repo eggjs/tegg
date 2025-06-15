@@ -4,12 +4,12 @@ import { EggPrototypeCreatorFactory, EggPrototypeFactory } from '@eggjs/tegg-met
 import { Foo } from './Foo';
 
 @LoadUnitLifecycleProto()
-export class LoadUnitControllerHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
+export class FooLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   @Inject()
   foo: Foo;
 
   async preCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
-    if (loadUnit.name !== 'lifecycleApp') {
+    if (loadUnit.name !== 'loadUnitLifecycleApp') {
       return;
     }
     const fooName = this.foo.getName();

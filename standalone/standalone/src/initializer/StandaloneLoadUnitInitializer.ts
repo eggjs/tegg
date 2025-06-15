@@ -68,7 +68,7 @@ export class StandaloneLoadUnitInitializer {
       return new StandaloneLoadUnit(opts.innerObjects, protos);
     });
 
-    return await LoadUnitFactory.createLoadUnit('MockStandaloneLoadUnitPath', StandaloneLoadUnitType, {
+    return await LoadUnitFactory.createLoadUnit(StandaloneLoadUnitPath, StandaloneLoadUnitType, {
       load(): EggProtoImplClass[] {
         return [];
       },
