@@ -1,21 +1,23 @@
-import path from 'node:path';
+import { strict as assert } from 'node:assert';
 import { ServiceWorkerApp } from '../src/ServiceWorkerApp';
+import { TestUtils } from './Utils';
 
 describe('http', () => {
+  let app: ServiceWorkerApp;
+
+  afterEach(async () => {
+    await app?.destroy();
+  });
+
   it('should get work', async () => {
-    const fixture = path.join(__dirname, './fixtures/get-app');
-    const app = new ServiceWorkerApp();
-    await app.init({
-      baseDir: fixture,
-      env: 'dev',
-      name: 'getApp',
+    app = await TestUtils.createApp('http');
+
+    const event = TestUtils.createFetchEvent('http://127.0.0.1/echo?name=foo', { method: 'GET' });
+
+    const res: Response = await app.handleEvent(event);
+    assert.deepEqual(await res.json(), {
+      success: true,
+      message: 'hello foo',
     });
-
-    const request = new Request('http://127.0.0.1/echo?name=foo', { method: 'GET' });
-    const e: any = new Event('fetch');
-    e.request = request;
-
-    const res: any = await app.handleEvent(e);
-    console.log(res, await res.json());
   });
 });
