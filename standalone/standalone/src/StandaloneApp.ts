@@ -53,7 +53,7 @@ export interface StandaloneAppInit {
 
 export interface InitStandaloneAppOptions {
   name: string;
-  env: string;
+  env?: string;
   baseDir: string;
 }
 
@@ -141,12 +141,12 @@ export class StandaloneApp {
 
   initRuntime(opts: InitStandaloneAppOptions) {
     this.#runtimeConfig.name = opts.name;
-    this.#runtimeConfig.env = opts.env;
+    this.#runtimeConfig.env = opts.env || '';
     this.#runtimeConfig.baseDir = opts.baseDir;
     this.#logger?.debug('init runtime config: %j', this.#runtimeConfig);
 
     // load module.yml and module.env.yml by default
-    if (!ModuleConfigUtil.configNames) {
+    if (!ModuleConfigUtil.configNames && this.#runtimeConfig.env) {
       ModuleConfigUtil.configNames = [ 'module.default', `module.${this.#runtimeConfig.env}` ];
     }
     this.#logger?.debug('use module config names: %j', ModuleConfigUtil.configNames);

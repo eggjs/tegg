@@ -1,5 +1,6 @@
 import { InitStandaloneAppOptions, StandaloneApp, StandaloneAppInit } from './StandaloneApp';
 import { Runner, RunnerOptions } from './Runner';
+import type { EggContext } from '@eggjs/tegg-runtime';
 
 export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
   try {
@@ -28,7 +29,7 @@ export async function main<T = void>(cwd: string, options?: RunnerOptions): Prom
   }
 }
 
-export async function appMain<T = void>(options: InitStandaloneAppOptions, init?: StandaloneAppInit): Promise<T> {
+export async function appMain<T = void>(options: InitStandaloneAppOptions, init?: StandaloneAppInit, ctx?: EggContext): Promise<T> {
   const app = new StandaloneApp(init);
   try {
     await app.init(options);
@@ -37,7 +38,7 @@ export async function appMain<T = void>(options: InitStandaloneAppOptions, init?
     throw e;
   }
   try {
-    return await app.run<T>();
+    return await app.run<T>(ctx);
   } finally {
     app.destroy().catch(e => {
       e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
