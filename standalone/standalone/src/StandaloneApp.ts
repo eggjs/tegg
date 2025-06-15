@@ -230,12 +230,21 @@ export class StandaloneApp {
 
   @TimeConsuming()
   async instantiate() {
-    const createLoadUnitProcess = this.timing.start('create load unit');
+    await this.instantiateStandaloneLoadUnit();
+    await this.instantiateModuleLoadUnit();
+  }
+
+  @TimeConsuming()
+  async instantiateStandaloneLoadUnit() {
     const standaloneLoadUnit = await this.#standaloneLoadUnitInitializer.createLoadUnit({ innerObjects: this.#innerObjects });
     this.#loadUnits.push(standaloneLoadUnit);
     const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(standaloneLoadUnit);
     this.#loadUnitInstances.push(instance);
+  }
 
+  @TimeConsuming()
+  async instantiateModuleLoadUnit() {
+    const createLoadUnitProcess = this.timing.start('create load unit');
     const loadUnits = await this.#moduleLoadUnitInitializer.createModuleLoadUnits();
     createLoadUnitProcess.end();
 
