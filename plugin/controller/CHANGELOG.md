@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.11](https://github.com/eggjs/tegg/compare/v3.57.10...v3.57.11) (2025-06-16)
+
+
+### Bug Fixes
+
+* mcp mem leak ([#329](https://github.com/eggjs/tegg/issues/329)) ([bddf8ed](https://github.com/eggjs/tegg/commit/bddf8ed45ea477f59c4d3b7d63bb81ca89484e56))
+
+
+
+
+
 ## [3.57.10](https://github.com/eggjs/tegg/compare/v3.57.9...v3.57.10) (2025-06-12)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
