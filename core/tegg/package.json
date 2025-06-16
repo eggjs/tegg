@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.57.11",
+  "version": "3.57.12",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -35,24 +35,24 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/ajv-decorator": "^3.57.11",
-    "@eggjs/aop-decorator": "^3.57.11",
-    "@eggjs/controller-decorator": "^3.57.11",
-    "@eggjs/core-decorator": "^3.57.11",
-    "@eggjs/dal-decorator": "^3.57.11",
-    "@eggjs/eventbus-decorator": "^3.57.11",
-    "@eggjs/standalone-decorator": "^3.57.11",
-    "@eggjs/tegg-background-task": "^3.57.11",
-    "@eggjs/tegg-common-util": "^3.57.11",
-    "@eggjs/tegg-dynamic-inject": "^3.57.11",
-    "@eggjs/tegg-lifecycle": "^3.57.11",
-    "@eggjs/tegg-loader": "^3.57.11",
-    "@eggjs/tegg-metadata": "^3.57.11",
-    "@eggjs/tegg-orm-decorator": "^3.57.11",
-    "@eggjs/tegg-runtime": "^3.57.11",
-    "@eggjs/tegg-schedule-decorator": "^3.57.11",
-    "@eggjs/tegg-transaction-decorator": "^3.57.11",
-    "@eggjs/tegg-types": "^3.57.11"
+    "@eggjs/ajv-decorator": "^3.57.12",
+    "@eggjs/aop-decorator": "^3.57.12",
+    "@eggjs/controller-decorator": "^3.57.12",
+    "@eggjs/core-decorator": "^3.57.12",
+    "@eggjs/dal-decorator": "^3.57.12",
+    "@eggjs/eventbus-decorator": "^3.57.12",
+    "@eggjs/standalone-decorator": "^3.57.12",
+    "@eggjs/tegg-background-task": "^3.57.12",
+    "@eggjs/tegg-common-util": "^3.57.12",
+    "@eggjs/tegg-dynamic-inject": "^3.57.12",
+    "@eggjs/tegg-lifecycle": "^3.57.12",
+    "@eggjs/tegg-loader": "^3.57.12",
+    "@eggjs/tegg-metadata": "^3.57.12",
+    "@eggjs/tegg-orm-decorator": "^3.57.12",
+    "@eggjs/tegg-runtime": "^3.57.12",
+    "@eggjs/tegg-schedule-decorator": "^3.57.12",
+    "@eggjs/tegg-transaction-decorator": "^3.57.12",
+    "@eggjs/tegg-types": "^3.57.12"
   },
   "publishConfig": {
     "access": "public"
@@ -64,5 +64,6 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
-  }
+  },
+  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
 }

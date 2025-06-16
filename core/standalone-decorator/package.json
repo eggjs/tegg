@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/standalone-decorator",
-  "version": "3.57.11",
+  "version": "3.57.12",
   "description": "tegg standalone decorator",
   "keywords": [
     "egg",
@@ -36,7 +36,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-common-util": "^3.57.11",
+    "@eggjs/tegg-common-util": "^3.57.12",
     "reflect-metadata": "^0.1.13"
   },
   "publishConfig": {
@@ -49,5 +49,6 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
-  }
+  },
+  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
 }

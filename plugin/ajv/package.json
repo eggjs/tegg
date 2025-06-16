@@ -10,7 +10,7 @@
   "eggModule": {
     "name": "teggAjv"
   },
-  "version": "3.57.11",
+  "version": "3.57.12",
   "description": "ajv plugin for egg and tegg",
   "keywords": [
     "egg",
@@ -48,14 +48,14 @@
   "dependencies": {
     "@eggjs/ajv-formats": "^3.0.1",
     "@eggjs/ajv-keywords": "^5.1.0",
-    "@eggjs/tegg": "^3.57.11",
+    "@eggjs/tegg": "^3.57.12",
     "@sinclair/typebox": "^0.32.20",
     "ajv": "^8.12.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^3.57.11",
-    "@eggjs/tegg-controller-plugin": "^3.57.11",
-    "@eggjs/tegg-plugin": "^3.57.11",
+    "@eggjs/tegg-config": "^3.57.12",
+    "@eggjs/tegg-controller-plugin": "^3.57.12",
+    "@eggjs/tegg-plugin": "^3.57.12",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
@@ -67,5 +67,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
 }

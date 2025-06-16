@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-runtime",
-  "version": "3.57.11",
+  "version": "3.57.12",
   "description": "tegg runtime",
   "main": "dist/index.js",
   "files": [
@@ -36,14 +36,14 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.57.11",
-    "@eggjs/tegg-common-util": "^3.57.11",
-    "@eggjs/tegg-lifecycle": "^3.57.11",
-    "@eggjs/tegg-metadata": "^3.57.11",
-    "@eggjs/tegg-types": "^3.57.11"
+    "@eggjs/core-decorator": "^3.57.12",
+    "@eggjs/tegg-common-util": "^3.57.12",
+    "@eggjs/tegg-lifecycle": "^3.57.12",
+    "@eggjs/tegg-metadata": "^3.57.12",
+    "@eggjs/tegg-types": "^3.57.12"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^3.57.11",
+    "@eggjs/tegg-loader": "^3.57.12",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
@@ -54,5 +54,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
 }
