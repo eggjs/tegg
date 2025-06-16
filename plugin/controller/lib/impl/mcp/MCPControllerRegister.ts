@@ -383,6 +383,7 @@ export class MCPControllerRegister implements ControllerRegister {
       closeFunc?.(...args);
       delete self.transports[transport.sessionId];
       self.sseTransportsRequestMap.delete(transport);
+      self.sseConnections.delete(transport.sessionId);
     };
     transport.onerror = error => {
       self.app.logger.error('session %s error %o', transport.sessionId, error);
