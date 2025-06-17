@@ -52,6 +52,6 @@
     "mocha": "^10.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4",
-    "@eggjs/tegg": "^3.57.9"
+    "@eggjs/tegg": "^3.57.12"
   }
 }
