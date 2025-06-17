@@ -13,3 +13,4 @@ export * from './src/model/ContextHandler';
 
 import './src/impl/EggAlwaysNewObjectContainer';
 import './src/impl/ModuleLoadUnitInstance';
+import './src/impl/EggInnerobjectImpl';

@@ -32,8 +32,6 @@ export class PrototypeUtil {
   static readonly CLAZZ_PROTO = Symbol.for('EggPrototype.clazzProto');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_INDEX = Symbol.for('EggPrototype#multiInstanceConstructorIndex');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES = Symbol.for('EggPrototype#multiInstanceConstructorAttributes');
-  // Marks that only decorator-declared lifecycle methods will be triggered
-  static readonly OBJECT_DECORATOR_LIFECYCLE_ONLY = Symbol.for('EggPrototype#objectDecoratorLifecycleOnly');
 
   /**
    * Mark class is egg object prototype
@@ -132,22 +130,6 @@ export class PrototypeUtil {
    */
   static isEggInnerObject(clazz: EggProtoImplClass): boolean {
     return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, clazz);
-  }
-
-  /**
-   * Mark only decorator-declared lifecycle methods will be triggered when the class is instantiated.
-   * @param clazz -
-   */
-  static setObjectDecoratorLifecycleOnly(clazz: EggProtoImplClass) {
-    MetadataUtil.defineMetaData(PrototypeUtil.OBJECT_DECORATOR_LIFECYCLE_ONLY, true, clazz);
-  }
-
-  /**
-   * If only decorator-declared lifecycle methods are triggered when the class is instantiated, return true
-   * @param clazz -
-   */
-  static isObjectDecoratorLifecycleOnly(clazz: EggProtoImplClass): boolean {
-    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.OBJECT_DECORATOR_LIFECYCLE_ONLY, clazz);
   }
 
   /**

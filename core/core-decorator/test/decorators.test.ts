@@ -206,7 +206,6 @@ describe('test/decorator.test.ts', () => {
     it('should work', () => {
       assert(PrototypeUtil.isEggPrototype(Router));
       assert(PrototypeUtil.isEggInnerObject(Router));
-      assert(PrototypeUtil.isObjectDecoratorLifecycleOnly(Router));
       const expectObjectProperty: EggPrototypeInfo = {
         name: 'router',
         initType: ObjectInitType.SINGLETON,
@@ -233,7 +232,6 @@ describe('test/decorator.test.ts', () => {
     const assertLifecycleProtoMetadata = (clazz: EggProtoImplClass, type: string) => {
       assert(PrototypeUtil.isEggPrototype(clazz));
       assert(PrototypeUtil.isEggInnerObject(clazz));
-      assert(PrototypeUtil.isObjectDecoratorLifecycleOnly(clazz));
       const expectObjectProperty: EggPrototypeInfo = {
         name: clazz.name.replace(/^./, c => c.toLowerCase()),
         initType: ObjectInitType.SINGLETON,
