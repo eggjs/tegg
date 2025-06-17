@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { ServiceWorkerApp } from '../src/ServiceWorkerApp';
 import { TestUtils } from './Utils';
 
-describe('http', () => {
+describe('standalone/service-worker/test/http.test.ts', () => {
   let app: ServiceWorkerApp;
 
   afterEach(async () => {

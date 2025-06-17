@@ -1,7 +1,7 @@
+import { MiddlewareFuncWithRouter } from '@eggjs/router';
 import { FetchEvent } from '@eggjs/tegg-types/standalone';
 import { AccessLevel, Inject, InjectOptional, LifecycleInit, LifecyclePostInject, Logger } from '@eggjs/tegg';
 import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
-import { MiddlewareFuncWithRouter } from '@eggjs/router/src/types';
 import { FetchRouter } from './FetchRouter';
 import { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext';
 import { RootProtoManager } from '../../RootProtoManager';
