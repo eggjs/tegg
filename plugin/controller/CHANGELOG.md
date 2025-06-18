@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.13](https://github.com/eggjs/tegg/compare/v3.57.12...v3.57.13) (2025-06-18)
+
+
+### Bug Fixes
+
+* add mcp clearInterval ([#332](https://github.com/eggjs/tegg/issues/332)) ([b29d68b](https://github.com/eggjs/tegg/commit/b29d68bd4ec4cdbef5b8246426fa0391208e8ded))
+
+
+
+
+
 ## [3.57.12](https://github.com/eggjs/tegg/compare/v3.57.11...v3.57.12) (2025-06-16)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
