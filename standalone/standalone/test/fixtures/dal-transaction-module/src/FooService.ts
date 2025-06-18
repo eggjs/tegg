@@ -30,4 +30,20 @@ export class FooService {
     await this.fooDAO.insert(foo2);
     throw new Error('mock error');
   }
+
+  async clear() {
+    await Promise.all(
+      [
+        'insert_succeed_transaction_1',
+        'insert_succeed_transaction_2',
+        'insert_failed_transaction_1',
+        'insert_failed_transaction_2',
+      ].map(async name => {
+        const res = await this.fooDAO.findByName(name);
+        if (res.length === 1) {
+          await this.fooDAO.delete(res[0].id);
+        }
+      }),
+    );
+  }
 }

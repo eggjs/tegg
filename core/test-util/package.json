@@ -41,7 +41,8 @@
     "@eggjs/tegg-metadata": "^3.57.12",
     "@eggjs/tegg-runtime": "^3.57.12",
     "globby": "^11.1.0",
-    "mm": "^3.2.1"
+    "mm": "^3.2.1",
+    "undici": "^5.26.5"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",

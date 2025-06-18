@@ -11,6 +11,7 @@ export interface ModuleDescriptor {
   optional?: boolean;
   clazzList: EggProtoImplClass[];
   multiInstanceClazzList: EggProtoImplClass[];
+  innerObjectClazzList: EggProtoImplClass[];
   protos: ProtoDescriptor[];
 }
 

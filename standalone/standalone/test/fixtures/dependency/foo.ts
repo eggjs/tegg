@@ -1,7 +1,6 @@
-import { ContextProto, Inject } from '@eggjs/tegg';
+import { ContextProto, Inject, ConfigSourceQualifier } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 import { Hello } from 'dependency-2/foo';
-import { ConfigSourceQualifier } from '../../../../../core/core-decorator/src/decorator/ConfigSource';
 
 @ContextProto()
 @Runner()
