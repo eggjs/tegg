@@ -1,0 +1,6 @@
+{
+  "name": "invalid-inner-object-inject",
+  "eggModule": {
+    "name": "invalidInnerObjectInject"
+  }
+}

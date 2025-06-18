@@ -1,7 +1,8 @@
-import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
+import { ModuleConfigUtil, ModuleReference, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
   EggPrototype,
-  EggPrototypeLifecycleUtil, GlobalGraph,
+  EggPrototypeLifecycleUtil,
+  GlobalGraph,
   LoadUnit,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
@@ -30,11 +31,11 @@ import {
   crossCutGraphHook,
   EggObjectAopHook,
   EggPrototypeCrossCutHook,
-  LoadUnitAopHook, pointCutGraphHook,
+  LoadUnitAopHook,
+  pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
-
 import { EggModuleLoader } from './EggModuleLoader';
-import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit';
+import { StandaloneLoadUnit } from './loadUnit/StandaloneLoadUnit';
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
@@ -44,10 +45,8 @@ import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSour
 import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
 import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
 import { TransactionPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/TransactionPrototypeHook';
-
-export interface ModuleDependency extends ReadModuleReferenceOptions {
-  baseDir: string;
-}
+import { InnerObject, ModuleDependency } from './common/types';
+import { StandaloneLoadUnitType } from './common/constant';
 
 export interface RunnerOptions {
   /**

@@ -1,6 +1,7 @@
 import { ContextProto, Inject, SingletonProto, ModuleConfigs, ConfigSourceQualifier } from '@eggjs/tegg';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 import { ModuleConfig } from 'egg';
+import { Bar } from '../bar/bar';
 
 @SingletonProto()
 export class Hello {
@@ -31,11 +32,15 @@ export class Foo implements MainRunner<object> {
   @ConfigSourceQualifier('bar')
   barModuleConfig: ModuleConfig;
 
+  @Inject()
+  bar: Bar;
+
   async main(): Promise<object> {
     return {
       configs: this.moduleConfigs,
       foo: this.moduleConfig,
       bar: this.barModuleConfig,
+      configFromBar: this.bar.moduleConfig,
     };
   }
 }

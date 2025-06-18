@@ -6,6 +6,7 @@ import {
   InitTypeQualifierAttribute,
   DEFAULT_PROTO_IMPL_TYPE,
   MultiInstanceType,
+  EggProtoImplClass,
 } from '@eggjs/tegg-types';
 import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
 
@@ -25,6 +26,15 @@ import {
   ParentSingletonProto,
   ParentStaticMultiInstanceProto,
 } from './fixtures/decators/ChildService';
+import { OtherRouter, Router } from './fixtures/decators/Router';
+import {
+  ControllerContextLifecycle,
+  ControllerLoadUnitInstanceLifecycle,
+  ControllerLoadUnitLifecycle,
+  ControllerObjectLifecycle,
+  ControllerOtherLifecycle,
+  ControllerPrototypeLifecycle,
+} from './fixtures/decators/ControllerLifecycle';
 
 describe('test/decorator.test.ts', () => {
   describe('ContextProto', () => {
@@ -189,6 +199,67 @@ describe('test/decorator.test.ts', () => {
         unitPath: 'foo',
         moduleName: '',
       }), expectObjectProperty);
+    });
+  });
+
+  describe('InnerObjectProto', () => {
+    it('should work', () => {
+      assert(PrototypeUtil.isEggPrototype(Router));
+      assert(PrototypeUtil.isEggInnerObject(Router));
+      const expectObjectProperty: EggPrototypeInfo = {
+        name: 'router',
+        initType: ObjectInitType.SINGLETON,
+        accessLevel: AccessLevel.PRIVATE,
+        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        className: 'Router',
+      };
+      assert.deepStrictEqual(PrototypeUtil.getProperty(Router), expectObjectProperty);
+    });
+
+    it('should params work', () => {
+      const expectObjectProperty: EggPrototypeInfo = {
+        name: 'customRouter',
+        initType: ObjectInitType.SINGLETON,
+        accessLevel: AccessLevel.PUBLIC,
+        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        className: 'OtherRouter',
+      };
+      assert.deepStrictEqual(PrototypeUtil.getProperty(OtherRouter), expectObjectProperty);
+    });
+  });
+
+  describe('EggLifecycleProto', () => {
+    const assertLifecycleProtoMetadata = (clazz: EggProtoImplClass, type: string) => {
+      assert(PrototypeUtil.isEggPrototype(clazz));
+      assert(PrototypeUtil.isEggInnerObject(clazz));
+      const expectObjectProperty: EggPrototypeInfo = {
+        name: clazz.name.replace(/^./, c => c.toLowerCase()),
+        initType: ObjectInitType.SINGLETON,
+        accessLevel: AccessLevel.PRIVATE,
+        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        className: clazz.name,
+      };
+      assert.deepStrictEqual(PrototypeUtil.getProperty(clazz), expectObjectProperty);
+      assert.deepStrictEqual(PrototypeUtil.getEggLifecyclePrototypeMetadata(clazz), { type });
+    };
+
+    it('should work', () => {
+      assertLifecycleProtoMetadata(ControllerLoadUnitLifecycle, 'LoadUnit');
+      assertLifecycleProtoMetadata(ControllerLoadUnitInstanceLifecycle, 'LoadUnitInstance');
+      assertLifecycleProtoMetadata(ControllerObjectLifecycle, 'EggObject');
+      assertLifecycleProtoMetadata(ControllerPrototypeLifecycle, 'EggPrototype');
+      assertLifecycleProtoMetadata(ControllerContextLifecycle, 'EggContext');
+    });
+
+    it('should params work', () => {
+      const expectObjectProperty: EggPrototypeInfo = {
+        name: 'customName',
+        initType: ObjectInitType.SINGLETON,
+        accessLevel: AccessLevel.PUBLIC,
+        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        className: 'ControllerOtherLifecycle',
+      };
+      assert.deepStrictEqual(PrototypeUtil.getProperty(ControllerOtherLifecycle), expectObjectProperty);
     });
   });
 

@@ -1,0 +1,6 @@
+{
+  "name": "egg-object-lifecycle-app",
+  "eggModule": {
+    "name": "eggObjectLifecycleApp"
+  }
+}

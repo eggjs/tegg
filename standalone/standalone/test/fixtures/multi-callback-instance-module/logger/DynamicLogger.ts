@@ -21,7 +21,6 @@ export function LogPath(name: string) {
   };
 }
 
-
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
