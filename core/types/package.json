@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-types",
-  "version": "3.57.13",
+  "version": "3.57.14",
   "description": "tegg types",
   "keywords": [
     "egg",
@@ -37,8 +37,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@eggjs/mcp-proxy": "^3.57.13",
-    "@eggjs/tegg-controller-plugin": "^3.57.13",
+    "@eggjs/mcp-proxy": "^3.57.14",
+    "@eggjs/tegg-controller-plugin": "^3.57.14",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
@@ -47,5 +47,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
-  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
+  "gitHead": "b49e4c70e7f09a073e989493b995f8dd3ce482e9"
 }

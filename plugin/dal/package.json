@@ -10,7 +10,7 @@
   "eggModule": {
     "name": "teggDal"
   },
-  "version": "3.57.13",
+  "version": "3.57.14",
   "description": "dal plugin for egg",
   "keywords": [
     "egg",
@@ -50,12 +50,12 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/dal-runtime": "^3.57.13"
+    "@eggjs/dal-runtime": "^3.57.14"
   },
   "devDependencies": {
-    "@eggjs/tegg-aop-plugin": "^3.57.13",
-    "@eggjs/tegg-config": "^3.57.13",
-    "@eggjs/tegg-plugin": "^3.57.13",
+    "@eggjs/tegg-aop-plugin": "^3.57.14",
+    "@eggjs/tegg-config": "^3.57.14",
+    "@eggjs/tegg-plugin": "^3.57.14",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
@@ -70,5 +70,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
+  "gitHead": "b49e4c70e7f09a073e989493b995f8dd3ce482e9"
 }

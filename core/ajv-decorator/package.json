@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/ajv-decorator",
-  "version": "3.57.13",
+  "version": "3.57.14",
   "description": "tegg ajv decorator",
   "keywords": [
     "egg",
@@ -50,5 +50,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
-  "gitHead": "12491e3f72f8a07739bd874753408b51aee3f0e8"
+  "gitHead": "b49e4c70e7f09a073e989493b995f8dd3ce482e9"
 }
