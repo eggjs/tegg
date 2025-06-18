@@ -1,3 +1,4 @@
+import assert from 'node:assert';
 import {
   EggMultiInstancePrototypeInfo,
   PrototypeUtil,
@@ -5,16 +6,17 @@ import {
 } from '@eggjs/core-decorator';
 import {
   EggProtoImplClass,
-  InitTypeQualifierAttribute, InjectObjectDescriptor,
+  InitTypeQualifierAttribute,
+  InjectObjectDescriptor,
   LoadUnitNameQualifierAttribute,
   ObjectInitTypeLike,
   ProtoDescriptor,
   QualifierInfo,
   AccessLevel,
-  MultiInstancePrototypeGetObjectsContext,
   MultiInstanceType,
+  CreateProtoDescriptorContext,
+  CreateMultiInstanceProtoDescriptorContext,
 } from '@eggjs/tegg-types';
-import assert from 'node:assert';
 import { ProtoSelectorContext } from './graph/ProtoSelector';
 import { ClassProtoDescriptor } from './ProtoDescriptor/ClassProtoDescriptor';
 
@@ -38,61 +40,41 @@ export class ProtoDescriptorHelper {
     return res;
   }
 
-  static createByMultiInstanceClazz(clazz: EggProtoImplClass, options: {
-    defineModuleName: string;
-    defineUnitPath: string;
-    instanceModuleName: string;
-    instanceDefineUnitPath: string;
-  }): ProtoDescriptor[] {
+  static createByMultiInstanceClazz(clazz: EggProtoImplClass, ctx: CreateMultiInstanceProtoDescriptorContext): ProtoDescriptor[] {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
     const type = PrototypeUtil.getEggMultiInstancePrototypeType(clazz);
     if (type === MultiInstanceType.DYNAMIC) {
-      return ProtoDescriptorHelper.createByDynamicMultiInstanceClazz(clazz, options);
+      return ProtoDescriptorHelper.createByDynamicMultiInstanceClazz(clazz, ctx);
     } else if (type === MultiInstanceType.STATIC) {
       // static multi instance proto create only in self module
-      if (options.defineModuleName === options.instanceModuleName) {
-        return ProtoDescriptorHelper.createByStaticMultiInstanceClazz(clazz, options);
+      if (ctx.moduleName === ctx.defineModuleName) {
+        return ProtoDescriptorHelper.createByStaticMultiInstanceClazz(clazz, ctx);
       }
     }
     return [];
   }
 
-  static createByDynamicMultiInstanceClazz(clazz: EggProtoImplClass, options: {
-    defineModuleName: string;
-    defineUnitPath: string;
-    instanceModuleName: string;
-    instanceDefineUnitPath: string;
-  }): ProtoDescriptor[] {
+  static createByDynamicMultiInstanceClazz(clazz: EggProtoImplClass, ctx: CreateMultiInstanceProtoDescriptorContext): ProtoDescriptor[] {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
 
     const instanceProperty = PrototypeUtil.getDynamicMultiInstanceProperty(clazz, {
-      moduleName: options.instanceModuleName,
-      unitPath: options.instanceDefineUnitPath,
+      moduleName: ctx.moduleName,
+      unitPath: ctx.unitPath,
     });
     assert(instanceProperty, `not found PrototypeInfo for clazz ${clazz.name}`);
-    return ProtoDescriptorHelper.#createByMultiInstanceClazz(clazz, instanceProperty, options);
+    return ProtoDescriptorHelper.#createByMultiInstanceClazz(clazz, instanceProperty, ctx);
   }
 
-  static createByStaticMultiInstanceClazz(clazz: EggProtoImplClass, options: {
-    defineModuleName: string;
-    defineUnitPath: string;
-    instanceModuleName: string;
-    instanceDefineUnitPath: string;
-  }): ProtoDescriptor[] {
+  static createByStaticMultiInstanceClazz(clazz: EggProtoImplClass, ctx: CreateMultiInstanceProtoDescriptorContext): ProtoDescriptor[] {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
 
     const instanceProperty = PrototypeUtil.getStaticMultiInstanceProperty(clazz);
     assert(instanceProperty, `not found PrototypeInfo for clazz ${clazz.name}`);
 
-    return ProtoDescriptorHelper.#createByMultiInstanceClazz(clazz, instanceProperty, options);
+    return ProtoDescriptorHelper.#createByMultiInstanceClazz(clazz, instanceProperty, ctx);
   }
 
-  static #createByMultiInstanceClazz(clazz: EggProtoImplClass, instanceProperty: EggMultiInstancePrototypeInfo, options: {
-    defineModuleName: string;
-    defineUnitPath: string;
-    instanceModuleName: string;
-    instanceDefineUnitPath: string;
-  }): ProtoDescriptor[] {
+  static #createByMultiInstanceClazz(clazz: EggProtoImplClass, instanceProperty: EggMultiInstancePrototypeInfo, ctx: CreateMultiInstanceProtoDescriptorContext): ProtoDescriptor[] {
     const res: ProtoDescriptor[] = [];
 
     for (const obj of instanceProperty.objects) {
@@ -100,7 +82,7 @@ export class ProtoDescriptorHelper {
         QualifierUtil.getProtoQualifiers(clazz),
         obj.qualifiers,
       );
-      qualifiers = ProtoDescriptorHelper.addDefaultQualifier(qualifiers, instanceProperty.initType, options.instanceModuleName);
+      qualifiers = ProtoDescriptorHelper.addDefaultQualifier(qualifiers, instanceProperty.initType, ctx.moduleName);
       const injectObjects: InjectObjectDescriptor[] = PrototypeUtil.getInjectObjects(clazz)
         .map(t => {
           const qualifiers = QualifierUtil.getProperQualifiers(clazz, t.refName);
@@ -120,10 +102,10 @@ export class ProtoDescriptorHelper {
         protoImplType: instanceProperty.protoImplType,
         qualifiers,
         injectObjects,
-        instanceModuleName: options.instanceModuleName,
-        instanceDefineUnitPath: options.instanceDefineUnitPath,
-        defineModuleName: options.defineModuleName,
-        defineUnitPath: options.defineUnitPath,
+        instanceModuleName: ctx.moduleName,
+        instanceDefineUnitPath: ctx.unitPath,
+        defineModuleName: ctx.defineModuleName,
+        defineUnitPath: ctx.defineUnitPath,
         clazz,
         properQualifiers: obj.properQualifiers || {},
       }));
@@ -131,7 +113,7 @@ export class ProtoDescriptorHelper {
     return res;
   }
 
-  static createByInstanceClazz(clazz: EggProtoImplClass, ctx: MultiInstancePrototypeGetObjectsContext): ProtoDescriptor {
+  static createByInstanceClazz(clazz: EggProtoImplClass, ctx: CreateProtoDescriptorContext): ProtoDescriptor {
     assert(PrototypeUtil.isEggPrototype(clazz), `clazz ${clazz.name} is not EggPrototype`);
     assert(!PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not Prototype`);
 
@@ -156,8 +138,8 @@ export class ProtoDescriptorHelper {
       injectObjects,
       instanceDefineUnitPath: ctx.unitPath,
       instanceModuleName: ctx.moduleName,
-      defineUnitPath: ctx.unitPath,
-      defineModuleName: ctx.moduleName,
+      defineUnitPath: ctx.defineUnitPath || ctx.unitPath,
+      defineModuleName: ctx.defineModuleName || ctx.moduleName,
       clazz,
       properQualifiers: {},
     });

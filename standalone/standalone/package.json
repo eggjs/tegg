@@ -48,7 +48,8 @@
     "@eggjs/tegg-lifecycle": "^3.57.14",
     "@eggjs/tegg-loader": "^3.57.14",
     "@eggjs/tegg-metadata": "^3.57.14",
-    "@eggjs/tegg-runtime": "^3.57.14"
+    "@eggjs/tegg-runtime": "^3.57.14",
+    "time-profile": "^2.0.0"
   },
   "publishConfig": {
     "access": "public"

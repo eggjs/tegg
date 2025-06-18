@@ -8,9 +8,9 @@ import { MysqlDataSourceManager } from './MysqlDataSourceManager';
 
 export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   private readonly moduleConfigs: Record<string, ModuleConfigHolder>;
-  private readonly logger: Logger;
+  private readonly logger?: Logger;
 
-  constructor(moduleConfigs: Record<string, ModuleConfigHolder>, logger: Logger) {
+  constructor(moduleConfigs: Record<string, ModuleConfigHolder>, logger?: Logger) {
     this.moduleConfigs = moduleConfigs;
     this.logger = logger;
   }
@@ -30,7 +30,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       if (transactionMetadata.datasourceName) {
         assert(datasourceConfigs[transactionMetadata.datasourceName], `method ${clazzName} specified datasource ${transactionMetadata.datasourceName} not exists`);
         datasourceName = transactionMetadata.datasourceName;
-        this.logger.info(`use datasource [${transactionMetadata.datasourceName}] for class ${clazzName}`);
+        this.logger?.info(`use datasource [${transactionMetadata.datasourceName}] for class ${clazzName}`);
       } else {
         const dataSources = Object.keys(datasourceConfigs);
         if (dataSources.length === 1) {
@@ -38,7 +38,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
         } else {
           throw new Error(`method ${clazzName} not specified datasource, module ${moduleName} has multi datasource, should specify datasource name`);
         }
-        this.logger.info(`use default datasource ${dataSources[0]} for class ${clazzName}`);
+        this.logger?.info(`use default datasource ${dataSources[0]} for class ${clazzName}`);
       }
       const adviceParams: TransactionalParams = {
         propagation: transactionMetadata.propagation,
@@ -54,5 +54,4 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       Pointcut(TransactionalAOP, { adviceParams })((ctx.clazz as any).prototype, transactionMetadata.method);
     }
   }
-
 }
