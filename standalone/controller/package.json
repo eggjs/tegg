@@ -4,7 +4,7 @@
   "eggModule": {
     "name": "standaloneController"
   },
-  "version": "3.57.12",
+  "version": "3.57.14",
   "keywords": [
     "egg",
     "typescript",
@@ -54,9 +54,9 @@
     "@eggjs/tegg-service-worker": "^3"
   },
   "devDependencies": {
-    "@eggjs/tegg": "^3.57.12",
-    "@eggjs/tegg-service-worker": "^3.57.12",
-    "@eggjs/module-test-util": "^3.57.12",
+    "@eggjs/tegg": "^3.57.14",
+    "@eggjs/tegg-service-worker": "^3.57.14",
+    "@eggjs/module-test-util": "^3.57.14",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "@types/type-is": "^1.6.0",
