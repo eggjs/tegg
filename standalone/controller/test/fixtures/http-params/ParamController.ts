@@ -8,7 +8,7 @@ import {
   HTTPQueries,
   HTTPQuery,
   HTTPRequest,
-  Request
+  Request,
 } from '@eggjs/tegg';
 
 @HTTPController()
