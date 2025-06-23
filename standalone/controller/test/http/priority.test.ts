@@ -1,13 +1,17 @@
 import { Server } from 'node:http';
 import httpRequest from 'supertest';
 import { ServiceWorkerApp } from '@eggjs/tegg-service-worker';
+import { StandaloneTestUtil } from '@eggjs/module-test-util/StandaloneTestUtil';
 import { TestUtils } from '../Utils';
 
-describe('standalone/service-worker-runtime/test/http/priority.test.ts', () => {
+describe('standalone/controller/test/http/priority.test.ts', () => {
   let app: ServiceWorkerApp;
   let server: Server;
 
-  before(async () => {
+  before(async function() {
+    if (StandaloneTestUtil.skipOnNode()) {
+      return this.skip();
+    }
     ({ app, server } = await TestUtils.createFetchApp('http-priority'));
   });
 

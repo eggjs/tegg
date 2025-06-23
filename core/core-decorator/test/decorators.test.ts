@@ -7,6 +7,7 @@ import {
   DEFAULT_PROTO_IMPL_TYPE,
   MultiInstanceType,
   EggProtoImplClass,
+  EGG_INNER_OBJECT_PROTO_IMPL_TYPE,
 } from '@eggjs/tegg-types';
 import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
 
@@ -210,7 +211,7 @@ describe('test/decorator.test.ts', () => {
         name: 'router',
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PRIVATE,
-        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        protoImplType: EGG_INNER_OBJECT_PROTO_IMPL_TYPE,
         className: 'Router',
       };
       assert.deepStrictEqual(PrototypeUtil.getProperty(Router), expectObjectProperty);
@@ -221,7 +222,7 @@ describe('test/decorator.test.ts', () => {
         name: 'customRouter',
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PUBLIC,
-        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        protoImplType: EGG_INNER_OBJECT_PROTO_IMPL_TYPE,
         className: 'OtherRouter',
       };
       assert.deepStrictEqual(PrototypeUtil.getProperty(OtherRouter), expectObjectProperty);
@@ -236,7 +237,7 @@ describe('test/decorator.test.ts', () => {
         name: clazz.name.replace(/^./, c => c.toLowerCase()),
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PRIVATE,
-        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        protoImplType: EGG_INNER_OBJECT_PROTO_IMPL_TYPE,
         className: clazz.name,
       };
       assert.deepStrictEqual(PrototypeUtil.getProperty(clazz), expectObjectProperty);
@@ -256,7 +257,7 @@ describe('test/decorator.test.ts', () => {
         name: 'customName',
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PUBLIC,
-        protoImplType: DEFAULT_PROTO_IMPL_TYPE,
+        protoImplType: EGG_INNER_OBJECT_PROTO_IMPL_TYPE,
         className: 'ControllerOtherLifecycle',
       };
       assert.deepStrictEqual(PrototypeUtil.getProperty(ControllerOtherLifecycle), expectObjectProperty);
