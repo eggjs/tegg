@@ -1,6 +1,14 @@
 import { MiddlewareFuncWithRouter } from '@eggjs/router';
 import { FetchEvent } from '@eggjs/tegg-types/standalone';
-import { AccessLevel, Inject, InjectOptional, LifecycleInit, LifecyclePostInject, Logger } from '@eggjs/tegg';
+import {
+  AccessLevel,
+  Inject,
+  InjectOptional,
+  LifecycleDestroy,
+  LifecycleInit,
+  LifecyclePostInject,
+  Logger
+} from '@eggjs/tegg';
 import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
 import { FetchRouter } from './FetchRouter';
 import { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext';
@@ -28,6 +36,11 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   @LifecycleInit()
   doRegister() {
     HTTPControllerRegister.instance?.doRegister(this.rootProtoManager);
+  }
+
+  @LifecycleDestroy()
+  clean() {
+    HTTPControllerRegister.clean();
   }
 
   async handleEvent(event: FetchEvent): Promise<Response> {
