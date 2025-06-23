@@ -1,13 +1,17 @@
-import { ServiceWorkerApp } from '@eggjs/tegg-service-worker';
 import { Server } from 'node:http';
-import { TestUtils } from '../Utils';
 import httpRequest from 'supertest';
+import { ServiceWorkerApp } from '@eggjs/tegg-service-worker';
+import { StandaloneTestUtil } from '@eggjs/module-test-util/StandaloneTestUtil';
+import { TestUtils } from '../Utils';
 
-describe('standalone/service-worker-runtime/test/http/response.test.ts', () => {
+describe('standalone/controller/test/http/response.test.ts', () => {
   let app: ServiceWorkerApp;
   let server: Server;
 
-  before(async () => {
+  before(async function() {
+    if (StandaloneTestUtil.skipOnNode()) {
+      return this.skip();
+    }
     ({ app, server } = await TestUtils.createFetchApp('http'));
   });
 

@@ -34,7 +34,7 @@
     "directory": "standalone/standalone"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@eggjs/tegg": "^3.57.14",
+    "@eggjs/module-test-util": "^3.57.14",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

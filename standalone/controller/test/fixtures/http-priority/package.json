@@ -1,6 +1,6 @@
 {
-  "name": "http-params-app",
+  "name": "http-priority-app",
   "eggModule": {
-    "name": "httpParamsApp"
+    "name": "httpPriorityApp"
   }
 }

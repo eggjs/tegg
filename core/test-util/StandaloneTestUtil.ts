@@ -10,6 +10,11 @@ export interface StartHTTPServerOptions extends ServerOptions {
 }
 
 export class StandaloneTestUtil {
+  static skipOnNode(minVersion = 18) {
+    const version = parseInt(process.versions.node.split('.')[0], 10);
+    return version < minVersion;
+  }
+
   static #buildRequest(req: IncomingMessage): Request {
     const origin = `http://${req.headers.host ?? 'localhost'}`;
     const url = new URL(req.url ?? '', origin);
