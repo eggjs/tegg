@@ -7,7 +7,7 @@ import {
   LifecycleDestroy,
   LifecycleInit,
   LifecyclePostInject,
-  Logger
+  Logger,
 } from '@eggjs/tegg';
 import { AbstractEventHandler, EventHandlerProto } from '@eggjs/tegg/standalone';
 import { FetchRouter } from './FetchRouter';
