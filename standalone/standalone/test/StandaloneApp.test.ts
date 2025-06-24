@@ -19,7 +19,7 @@ describe('standalone/standalone/test/StandaloneApp.test.ts', () => {
     });
 
     it('should work', async () => {
-      const msg: string = await StandAloneAppTest.run('simple');
+      const msg: string = await StandAloneAppTest.run('simple', { dump: true });
       assert.equal(msg, 'hello!hello from ctx');
       await sleep(500);
       assert.equal((ModuleDescriptorDumper.dump as any).called, 1);

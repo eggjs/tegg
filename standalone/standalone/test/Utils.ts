@@ -72,8 +72,8 @@ export class StandAloneAppTest {
     await StandAloneAppTest.copyFixture(name);
 
     const app = typeof env === 'string'
-      ? await StandAloneAppTest.createApp(name, env, init)
-      : await StandAloneAppTest.createApp(name, env);
+      ? await StandAloneAppTest.createApp(name, env, { dump: false, ...init })
+      : await StandAloneAppTest.createApp(name, { dump: false, ...env });
     try {
       return await app.run<T>();
     } finally {
