@@ -31,7 +31,7 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "standalone/standalone"
+    "directory": "standalone/service-worker"
   },
   "engines": {
     "node": ">=18.0.0"
