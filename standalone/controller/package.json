@@ -1,0 +1,70 @@
+{
+  "name": "@eggjs/tegg-standalone-controller",
+  "description": "tegg standalone controller",
+  "eggModule": {
+    "name": "standaloneController"
+  },
+  "version": "3.57.15-alpha.0",
+  "keywords": [
+    "egg",
+    "typescript",
+    "background",
+    "async",
+    "tegg",
+    "standalone",
+    "controller"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "standalone/controller"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eggjs/router": "^3.0.6",
+    "path-to-regexp": "^1.8.0",
+    "type-is": "^1.6.18"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg": "^3",
+    "@eggjs/tegg-service-worker": "^3"
+  },
+  "devDependencies": {
+    "@eggjs/module-test-util": "^3.57.15-alpha.0",
+    "@eggjs/tegg": "^3.57.15-alpha.0",
+    "@eggjs/tegg-service-worker": "^3.57.15-alpha.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "@types/type-is": "^1.6.0",
+    "cross-env": "^7.0.3",
+    "mm": "^3.2.1",
+    "mocha": "^10.2.0",
+    "supertest": "^7.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject",
-  "version": "3.57.14",
+  "version": "3.57.15-alpha.0",
   "description": "tegg dyniamic inject",
   "main": "dist/index.js",
   "files": [
@@ -39,8 +39,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.57.14",
-    "@eggjs/tegg-types": "^3.57.14"
+    "@eggjs/core-decorator": "^3.57.15-alpha.0",
+    "@eggjs/tegg-types": "^3.57.15-alpha.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",

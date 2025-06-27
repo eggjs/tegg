@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.57.15-alpha.0](https://github.com/eggjs/tegg/compare/v3.57.14...v3.57.15-alpha.0) (2025-06-27)
+
+**Note:** Version bump only for package @eggjs/controller-decorator
+
+
+
+
+
 ## [3.57.14](https://github.com/eggjs/tegg/compare/v3.57.13...v3.57.14) (2025-06-18)
 
 **Note:** Version bump only for package @eggjs/controller-decorator

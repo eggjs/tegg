@@ -4,7 +4,9 @@ import type {
   EggObjectLifecycle,
   EggObjectLifeCycleContext,
   EggObjectName,
-  EggPrototype, ObjectInfo, QualifierInfo,
+  EggPrototype,
+  ObjectInfo,
+  QualifierInfo,
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';

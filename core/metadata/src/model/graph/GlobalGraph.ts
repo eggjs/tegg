@@ -1,18 +1,12 @@
 import { Graph, GraphNode, ModuleReference } from '@eggjs/tegg-common-util';
-import {
-  InitTypeQualifierAttribute,
-  InjectObjectDescriptor, LoadUnitNameQualifierAttribute,
-  ObjectInitType,
-  ProtoDescriptor,
-  QualifierInfo,
-} from '@eggjs/tegg-types';
-import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode';
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode';
+import { InjectObjectDescriptor, ProtoDescriptor } from '@eggjs/tegg-types';
+import { GlobalModuleNode, ModuleDependencyMeta } from './GlobalModuleNode';
+import { ProtoDependencyMeta, ProtoGraphNode, ProtoNode } from './ProtoNode';
 import { FrameworkErrorFormater } from 'egg-errors';
-import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors';
+import { EggPrototypeNotFound } from '../../errors';
 import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder';
 import { ModuleDescriptor } from '../ModuleDescriptor';
-import { QualifierUtil } from '@eggjs/core-decorator';
+import { ProtoGraphUtils } from './ProtoGraphUtils';
 
 export interface GlobalGraphOptions {
   // TODO next major version refactor to force strict
@@ -88,6 +82,12 @@ export class GlobalGraph {
     }
   }
 
+  addProtoNode(protoNode: ProtoGraphNode) {
+    if (!this.protoGraph.addVertex(protoNode)) {
+      throw new Error(`duplicate proto: ${protoNode}`);
+    }
+  }
+
   build() {
     for (const moduleNode of this.moduleGraph.nodes.values()) {
       for (const protoNode of moduleNode.val.protos) {
@@ -140,66 +140,8 @@ export class GlobalGraph {
     return edge?.val.proto;
   }
 
-  #findDependencyProtoWithDefaultQualifiers(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor, qualifiers: QualifierInfo[]): GraphNode<ProtoNode, ProtoDependencyMeta>[] {
-    // TODO perf O(n(proto count)*m(inject count)*n)
-    const result: GraphNode<ProtoNode, ProtoDependencyMeta>[] = [];
-    for (const node of this.protoGraph.nodes.values()) {
-      if (node.val.selectProto({
-        name: injectObject.objName,
-        qualifiers: QualifierUtil.mergeQualifiers(
-          injectObject.qualifiers,
-          qualifiers,
-        ),
-        moduleName: proto.instanceModuleName,
-      })) {
-        result.push(node);
-      }
-    }
-    return result;
-  }
-
-  findDependencyProtoNode(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): GraphNode<ProtoNode, ProtoDependencyMeta> | undefined {
-    // 1. find proto with request
-    // 2. try to add Context qualifier to find
-    // 3. try to add self init type qualifier to find
-    const protos = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, []);
-    if (protos.length === 0) {
-      return;
-      // throw FrameworkErrorFormater.formatError(new EggPrototypeNotFound(injectObject.objName, proto.instanceModuleName));
-    }
-    if (protos.length === 1) {
-      return protos[0];
-    }
-
-    const protoWithContext = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, [{
-      attribute: InitTypeQualifierAttribute,
-      value: ObjectInitType.CONTEXT,
-    }]);
-    if (protoWithContext.length === 1) {
-      return protoWithContext[0];
-    }
-
-    const protoWithSelfInitType = this.#findDependencyProtoWithDefaultQualifiers(proto, injectObject, [{
-      attribute: InitTypeQualifierAttribute,
-      value: proto.initType,
-    }]);
-    if (protoWithSelfInitType.length === 1) {
-      return protoWithSelfInitType[0];
-    }
-    const loadUnitQualifier = injectObject.qualifiers.find(t => t.attribute === LoadUnitNameQualifierAttribute);
-    if (!loadUnitQualifier) {
-      return this.findDependencyProtoNode(proto, {
-        ...injectObject,
-        qualifiers: QualifierUtil.mergeQualifiers(
-          injectObject.qualifiers,
-          [{
-            attribute: LoadUnitNameQualifierAttribute,
-            value: proto.instanceModuleName,
-          }],
-        ),
-      });
-    }
-    throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));
+  findDependencyProtoNode(proto: ProtoDescriptor, injectObject: InjectObjectDescriptor): ProtoGraphNode | undefined {
+    return ProtoGraphUtils.findDependencyProtoNode(this.protoGraph, proto, injectObject);
   }
 
   findModuleNode(moduleName: string) {

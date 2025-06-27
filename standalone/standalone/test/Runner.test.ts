@@ -8,11 +8,11 @@ import { main, StandaloneContext, Runner, preLoad } from '..';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello';
 import { Foo } from './fixtures/dal-module/src/Foo';
 
-describe('standalone/standalone/test/index.test.ts', () => {
+describe('standalone/standalone/test/Runner.test.ts', () => {
   describe('simple runner', () => {
     const fixture = path.join(__dirname, './fixtures/simple');
 
-    beforeEach(() => {
+    beforeEach(async () => {
       mm.restore();
       mm.spy(ModuleDescriptorDumper, 'dump');
     });

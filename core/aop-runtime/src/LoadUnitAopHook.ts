@@ -17,6 +17,7 @@ export class LoadUnitAopHook implements LifecycleHook<LoadUnitLifecycleContext, 
   }
 
   async postCreate(_: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
+
     for (const proto of loadUnit.iterateEggPrototype()) {
       const protoWithClazz = proto as EggPrototypeWithClazz;
       const clazz = protoWithClazz.clazz;

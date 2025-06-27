@@ -1,6 +1,6 @@
 import { GraphNodeObj, ProtoDescriptor } from '@eggjs/tegg-types';
 import { ProtoSelectorContext } from './ProtoSelector';
-import { EdgeMeta } from '@eggjs/tegg-common-util';
+import { EdgeMeta, Graph, GraphNode } from '@eggjs/tegg-common-util';
 import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper';
 
 export class ProtoDependencyMeta implements EdgeMeta {
@@ -50,3 +50,6 @@ export class ProtoNode implements GraphNodeObj {
     return id.join('@');
   }
 }
+
+export type ProtoGraph = Graph<ProtoNode, ProtoDependencyMeta>;
+export type ProtoGraphNode = GraphNode<ProtoNode, ProtoDependencyMeta>;

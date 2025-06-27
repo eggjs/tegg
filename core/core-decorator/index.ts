@@ -9,6 +9,8 @@ export * from './src/decorator/EggQualifier';
 export * from './src/decorator/MultiInstanceProto';
 export * from './src/decorator/MultiInstanceInfo';
 export * from './src/decorator/ConfigSource';
+export * from './src/decorator/EggLifecycleProto';
+export * from './src/decorator/InnerObjectProto';
 
 export * from './src/util/MetadataUtil';
 export * from './src/util/PrototypeUtil';

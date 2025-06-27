@@ -19,11 +19,13 @@ export class FooRunner implements MainRunner<Array<Array<Foo>>> {
       this.fooService.succeedTransaction(),
       this.fooService.failedTransaction(),
     ]);
-    return await Promise.all([
+    const res = await Promise.all([
       this.fooDAO.findByName('insert_succeed_transaction_1'),
       this.fooDAO.findByName('insert_succeed_transaction_2'),
       this.fooDAO.findByName('insert_failed_transaction_1'),
       this.fooDAO.findByName('insert_failed_transaction_2'),
     ]);
+    await this.fooService.clear();
+    return res;
   }
 }
