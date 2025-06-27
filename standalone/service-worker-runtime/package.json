@@ -4,7 +4,7 @@
   "eggModule": {
     "name": "serviceWorkerRuntime"
   },
-  "version": "3.57.14",
+  "version": "3.57.15-alpha.0",
   "keywords": [
     "egg",
     "typescript",
@@ -48,9 +48,9 @@
     "@eggjs/tegg": "^3"
   },
   "devDependencies": {
-    "@eggjs/tegg": "^3.57.14",
-    "@eggjs/tegg-standalone": "^3.57.14",
-    "@eggjs/module-test-util": "^3.57.14",
+    "@eggjs/module-test-util": "^3.57.15-alpha.0",
+    "@eggjs/tegg": "^3.57.15-alpha.0",
+    "@eggjs/tegg-standalone": "^3.57.15-alpha.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
