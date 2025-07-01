@@ -10,4 +10,6 @@ export type MCPPromptResponse = GetPromptResult;
 export interface MCPPromptParams {
   name?: string;
   description?: string;
+  timeout?: number;
+  title?: string;
 }

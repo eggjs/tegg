@@ -10,6 +10,7 @@ export class MCPPromptMeta {
   readonly detail?: PromptArgsSchemaDetail;
   readonly middlewares: readonly MiddlewareFunc[];
   readonly extra?: number;
+  readonly title?: string;
 
   constructor(opt: {
     name: string;
@@ -20,6 +21,7 @@ export class MCPPromptMeta {
     mcpName?: string;
     detail?: PromptArgsSchemaDetail;
     extra?: number;
+    title?: string;
   }) {
     this.name = opt.name;
     this.needAcl = !!opt.needAcl;
@@ -29,5 +31,6 @@ export class MCPPromptMeta {
     this.aclCode = opt.aclCode;
     this.detail = opt.detail;
     this.extra = opt.extra;
+    this.title = opt.title;
   }
 }

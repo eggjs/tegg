@@ -18,6 +18,7 @@ export const ToolType = {
 
 @MCPController({
   name: "HelloChairMCP",
+  timeout: 60000,
 })
 export class MCPFooController {
 

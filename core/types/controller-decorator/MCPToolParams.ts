@@ -10,5 +10,6 @@ export type MCPToolResponse = CallToolResult;
 export interface MCPToolParams {
   name?: string;
   description?: string;
+  timeout?: number;
 }
 

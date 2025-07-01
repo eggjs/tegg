@@ -73,9 +73,10 @@ export class MCPControllerMetaBuilder {
     const version = MCPInfoUtil.getMCPVersion(this.clazz) || '1.0.0';
     const needAcl = ControllerInfoUtil.hasControllerAcl(this.clazz);
     const aclCode = ControllerInfoUtil.getControllerAcl(this.clazz);
+    const meta = MCPInfoUtil.getMCPControllerParams(this.clazz);
     return new MCPControllerMeta(
       clazzName, protoName, controllerName, name, version, tools, resources,
-      prompts, mcpMiddlewares, needAcl, aclCode,
+      prompts, mcpMiddlewares, needAcl, aclCode, meta,
     );
   }
 

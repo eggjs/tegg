@@ -26,6 +26,7 @@ export const METHOD_TIMEOUT_METADATA = Symbol.for('EggPrototype#method#timeout')
 
 export const CONTROLLER_MCP_NAME = Symbol.for('EggPrototype#controller#mcp#name');
 export const CONTROLLER_MCP_VERSION = Symbol.for('EggPrototype#controller#mcp#version');
+export const CONTROLLER_MCP_CONTROLLER_PARAMS_MAP = Symbol.for('EggPrototype#controller#mcp#controller#params');
 export const CONTROLLER_MCP_RESOURCE_MAP = Symbol.for('EggPrototype#controller#mcp#resource');
 export const CONTROLLER_MCP_RESOURCE_PARAMS_MAP = Symbol.for('EggPrototype#controller#mcp#resource#params');
 export const CONTROLLER_MCP_TOOL_MAP = Symbol.for('EggPrototype#controller#mcp#tool');
