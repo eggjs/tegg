@@ -5,12 +5,14 @@ export interface MCPResourceUriParams {
   name?: string;
   uri: string;
   metadata?: ResourceMetadata;
+  timeout?: number;
 }
 
 export interface MCPResourceTemplateParams {
   name?: string;
   template: ConstructorParameters<typeof ResourceTemplate>;
   metadata?: ResourceMetadata;
+  timeout?: number;
 }
 
 export type ResourceExtra = Parameters<Parameters<McpServer['resource']>['3']>['2'];

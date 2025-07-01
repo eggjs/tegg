@@ -29,5 +29,6 @@ export function MCPController(param?: MCPControllerParams) {
     if (param?.version) {
       MCPInfoUtil.setMCPVersion(param.version, constructor);
     }
+    MCPInfoUtil.setMCPControllerParams(param, constructor);
   };
 }

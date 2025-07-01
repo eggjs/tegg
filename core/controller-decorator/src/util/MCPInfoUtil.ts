@@ -14,6 +14,8 @@ import {
   CONTROLLER_MCP_PROMPT_ARGS_INDEX,
   CONTROLLER_MCP_EXTRA_INDEX,
   CONTROLLER_MCP_PROMPT_PARAMS_MAP,
+  MCPControllerParams,
+  CONTROLLER_MCP_CONTROLLER_PARAMS_MAP,
 } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -53,6 +55,14 @@ export class MCPInfoUtil {
 
   static getMCPVersion(clazz: EggProtoImplClass): string | undefined {
     return MetadataUtil.getMetaData(CONTROLLER_MCP_VERSION, clazz);
+  }
+
+  static setMCPControllerParams(params: MCPControllerParams | undefined, clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(CONTROLLER_MCP_CONTROLLER_PARAMS_MAP, params, clazz);
+  }
+
+  static getMCPControllerParams(clazz: EggProtoImplClass): MCPControllerParams | undefined {
+    return MetadataUtil.getMetaData(CONTROLLER_MCP_CONTROLLER_PARAMS_MAP, clazz);
   }
 
   static setMCPResource(clazz: EggProtoImplClass, methodName: string) {

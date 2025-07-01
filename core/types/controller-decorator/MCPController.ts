@@ -3,4 +3,5 @@ export interface MCPControllerParams {
   controllerName?: string;
   name?: string;
   version?: string;
+  timeout?: number;
 }

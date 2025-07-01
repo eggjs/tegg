@@ -1,5 +1,5 @@
 import { ControllerType } from '@eggjs/tegg-types';
-import type { ControllerMetadata, MiddlewareFunc, EggPrototypeName } from '@eggjs/tegg-types';
+import type { ControllerMetadata, MiddlewareFunc, EggPrototypeName, MCPControllerParams } from '@eggjs/tegg-types';
 import { MCPToolMeta } from './MCPToolMeta';
 import { MCPResourceMeta } from './MCPResourceMeta';
 import { MCPPromptMeta } from './MCPPromptMeta';
@@ -18,6 +18,7 @@ export class MCPControllerMeta implements ControllerMetadata {
   readonly tools: MCPToolMeta[];
   readonly resources: MCPResourceMeta[];
   readonly prompts: MCPPromptMeta[];
+  readonly timeout?: number;
 
   get id() {
     return `${this.name}:${1.0}`;
@@ -35,6 +36,7 @@ export class MCPControllerMeta implements ControllerMetadata {
     middlewares: MiddlewareFunc[],
     needAcl?: boolean,
     aclCode?: string,
+    meta?: MCPControllerParams,
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;
@@ -48,6 +50,7 @@ export class MCPControllerMeta implements ControllerMetadata {
     this.methods = [];
     this.needAcl = !!needAcl;
     this.aclCode = aclCode;
+    this.timeout = meta?.timeout;
   }
 
   getMethodMiddlewares(method: MCPPromptMeta | MCPToolMeta | MCPResourceMeta) {

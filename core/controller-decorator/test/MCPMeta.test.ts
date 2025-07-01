@@ -21,5 +21,6 @@ describe('test/MCPMeta.test.ts', () => {
     assert(fooControllerMetaData.resources[0].template instanceof ResourceTemplate);
     assert(fooControllerMetaData.tools[0].detail?.argsSchema === ToolType);
     assert(fooControllerMetaData.prompts[0].detail?.argsSchema === PromptType);
+    assert(fooControllerMetaData.timeout === 60000);
   });
 });
