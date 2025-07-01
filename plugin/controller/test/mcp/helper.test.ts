@@ -49,6 +49,8 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       name: 'testPrompt',
       needAcl: false,
       middlewares: [],
+      description: 'description',
+      title: 'title',
       detail: {
         argsSchema: PromptType,
         index: 0,
@@ -146,7 +148,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     const prompts = await client.listPrompts();
     assert.deepEqual(prompts, {
       prompts: [
-        { name: 'testPrompt', arguments: [{ name: 'name', required: true, description: undefined }], description: undefined },
+        { name: 'testPrompt', arguments: [{ name: 'name', required: true, description: undefined }], description: 'description', title: 'description' },
       ],
     });
 
