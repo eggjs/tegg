@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.58.0](https://github.com/eggjs/tegg/compare/v3.57.14...v3.58.0) (2025-07-01)
+
+
+### Features
+
+* add timeout ([#334](https://github.com/eggjs/tegg/issues/334)) ([6d5d94b](https://github.com/eggjs/tegg/commit/6d5d94b6f319388a94b4adf4d427b95d2b851c17))
+
+
+
+
+
 ## [3.57.14](https://github.com/eggjs/tegg/compare/v3.57.13...v3.57.14) (2025-06-18)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
