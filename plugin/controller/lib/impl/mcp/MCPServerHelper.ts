@@ -50,28 +50,8 @@ export class MCPServerHelper {
       ) as ReturnType<ReadResourceCallback>;
     };
     const name = resourceMeta.mcpName ?? resourceMeta.name;
-    if (resourceMeta.uri) {
-      if (resourceMeta.metadata) {
-        this.server.resource(
-          name,
-          resourceMeta.uri,
-          resourceMeta.metadata,
-          handler,
-        );
-      } else {
-        this.server.resource(name, resourceMeta.uri, handler);
-      }
-    } else if (resourceMeta.template) {
-      if (resourceMeta.metadata) {
-        this.server.resource(
-          name,
-          resourceMeta.template,
-          resourceMeta.metadata,
-          handler,
-        );
-      } else {
-        this.server.resource(name, resourceMeta.template, handler);
-      }
+    if (resourceMeta.uri || resourceMeta.template) {
+      this.server.registerResource(name, resourceMeta.uri ?? resourceMeta.template!, resourceMeta.metadata ?? {}, handler);
     } else {
       throw new Error(`MCPResource ${name} must have uri or template`);
     }
@@ -121,15 +101,11 @@ export class MCPServerHelper {
       newArgs = [ ...newArgs, ...args ];
       return Reflect.apply(realMethod, realObj, newArgs) as ReturnType<ToolCallback>;
     };
-    if (description && schema) {
-      this.server.tool(name, description, schema, handler);
-    } else if (description) {
-      this.server.tool(name, description, handler);
-    } else if (schema) {
-      this.server.tool(name, schema, handler);
-    } else {
-      this.server.tool(name, handler);
-    }
+    this.server.registerTool(name, {
+      description,
+      inputSchema: schema,
+      // TODO: outputSchema
+    }, handler);
   }
 
   async mcpPromptRegister(
@@ -171,14 +147,10 @@ export class MCPServerHelper {
       newArgs = [ ...newArgs, ...args ];
       return Reflect.apply(realMethod, realObj, newArgs) as ReturnType<PromptCallback>;
     };
-    if (description && schema) {
-      this.server.prompt(name, description, schema, handler);
-    } else if (description) {
-      this.server.prompt(name, description, handler);
-    } else if (schema) {
-      this.server.prompt(name, schema, handler);
-    } else {
-      this.server.prompt(name, handler);
-    }
+    this.server.registerPrompt(name, {
+      title: promptMeta.title,
+      description,
+      argsSchema: schema,
+    }, handler);
   }
 }
