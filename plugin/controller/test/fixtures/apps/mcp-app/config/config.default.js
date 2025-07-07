@@ -14,6 +14,9 @@ module.exports = function() {
       sessionIdGenerator: ctx => {
         return ctx.request.headers['custom-session-id'] || randomUUID();
       },
+      middleware: [
+        'tracelog',
+      ],
     },
   };
   return config;

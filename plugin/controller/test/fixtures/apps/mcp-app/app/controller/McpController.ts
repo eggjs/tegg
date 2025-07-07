@@ -13,6 +13,8 @@ import {
   Inject,
   ContextProto,
   ToolArgsSchema,
+  Extra,
+  ToolExtra,
 } from '@eggjs/tegg';
 import z from 'zod';
 
@@ -85,6 +87,18 @@ export class McpController {
         {
           type: 'text',
           text: `hello ${this.user}`,
+        },
+      ],
+    };
+  }
+
+  @MCPTool()
+  async traceTest(@Extra() extra: ToolExtra): Promise<MCPToolResponse> {
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `hello ${extra.requestInfo?.headers.trace}`,
         },
       ],
     };

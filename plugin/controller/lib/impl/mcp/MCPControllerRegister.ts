@@ -11,6 +11,7 @@ import {
   MCPPromptMeta,
   MCPToolMeta,
   ControllerType,
+  EggContext,
 } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
@@ -21,6 +22,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { isInitializeRequest, isJSONRPCRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import { MCPProtocols } from '@eggjs/mcp-proxy/types';
 import awaitEvent from 'await-event';
+import compose from 'koa-compose';
 
 import getRawBody from 'raw-body';
 import contentType from 'content-type';
@@ -90,6 +92,7 @@ export class MCPControllerRegister implements ControllerRegister {
   }
   >>();
   static hooks: MCPControllerHook[] = [];
+  globalMiddlewares: compose.ComposedMiddleware<EggContext>;
 
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
     assert(controllerMeta.type === ControllerType.MCP, 'controller meta type is not MCP');
@@ -160,7 +163,10 @@ export class MCPControllerRegister implements ControllerRegister {
       sessionIdGenerator: undefined,
     });
     self.statelessTransport = transport;
-    const mw = self.app.middleware.teggCtxLifecycleMiddleware();
+    let mw = self.app.middleware.teggCtxLifecycleMiddleware();
+    if (self.globalMiddlewares) {
+      mw = compose([ mw, self.globalMiddlewares ]);
+    }
     const initHandler = async (ctx: Context) => {
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -218,7 +224,10 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStreamServerInit() {
     const allRouterFunc = this.router.all;
     const self = this;
-    const mw = self.app.middleware.teggCtxLifecycleMiddleware();
+    let mw = self.app.middleware.teggCtxLifecycleMiddleware();
+    if (self.globalMiddlewares) {
+      mw = compose([ mw, self.globalMiddlewares ]);
+    }
     const initHandler = async (ctx: Context) => {
       ctx.respond = false;
       if (MCPControllerRegister.hooks.length > 0) {
@@ -377,7 +386,10 @@ export class MCPControllerRegister implements ControllerRegister {
 
   sseCtxStorageRun(ctx: Context, transport: SSEServerTransport) {
     const self = this;
-    const mw = this.app.middleware.teggCtxLifecycleMiddleware();
+    let mw = this.app.middleware.teggCtxLifecycleMiddleware();
+    if (self.globalMiddlewares) {
+      mw = compose([ mw, self.globalMiddlewares ]);
+    }
     const closeFunc = transport.onclose;
     transport.onclose = (...args) => {
       closeFunc?.(...args);
@@ -436,6 +448,11 @@ export class MCPControllerRegister implements ControllerRegister {
     // if (aclMiddleware) {
     //   methodMiddlewares.push(aclMiddleware);
     // }
+
+    let mw = self.app.middleware.teggCtxLifecycleMiddleware();
+    if (self.globalMiddlewares) {
+      mw = compose([ mw, self.globalMiddlewares ]);
+    }
     const messageHander = async (ctx: Context) => {
       const sessionId = ctx.query.sessionId;
 
@@ -476,13 +493,30 @@ export class MCPControllerRegister implements ControllerRegister {
     Reflect.apply(routerFunc, this.router, [
       'chairMcpMessage',
       self.mcpConfig.sseMessagePath,
-      ...[],
+      ...[ mw ],
       messageHander,
     ]);
   }
 
+  getGlobalMiddleware() {
+    const middlewareNames = this.app.config.mcp.middleware || [];
+    const middlewares: compose.Middleware<EggContext>[] = [];
+    for (const name of middlewareNames) {
+      const middlewareFactory = (this.app as unknown as any).middlewares[name];
+      if (!middlewareFactory) {
+        throw new TypeError(`Middleware ${name} not found`);
+      }
+      const options = (this.app.config as any)[name] || {};
+      const mw = middlewareFactory(options, this.app);
+      (mw as any)._name = name;
+      middlewares.push(mw);
+    }
+    this.globalMiddlewares = compose(middlewares);
+  }
+
   async register() {
     if (!this.mcpServerHelper) {
+      this.getGlobalMiddleware();
       this.mcpServerHelper = new MCPServerHelper({
         name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
         version: this.controllerMeta.version ?? '1.0.0',
