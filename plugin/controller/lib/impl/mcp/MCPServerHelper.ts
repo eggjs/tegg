@@ -50,8 +50,10 @@ export class MCPServerHelper {
       ) as ReturnType<ReadResourceCallback>;
     };
     const name = resourceMeta.mcpName ?? resourceMeta.name;
-    if (resourceMeta.uri || resourceMeta.template) {
-      this.server.registerResource(name, resourceMeta.uri ?? resourceMeta.template!, resourceMeta.metadata ?? {}, handler);
+    if (resourceMeta.uri) {
+      this.server.registerResource(name, resourceMeta.uri, resourceMeta.metadata ?? {}, handler);
+    } else if (resourceMeta.template) {
+      this.server.registerResource(name, resourceMeta.template, resourceMeta.metadata ?? {}, handler);
     } else {
       throw new Error(`MCPResource ${name} must have uri or template`);
     }

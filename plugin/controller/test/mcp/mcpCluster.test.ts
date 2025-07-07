@@ -143,6 +143,10 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           description: undefined,
           name: 'echoUser',
         },
+        {
+          description: undefined,
+          name: 'traceTest',
+        },
       ]);
 
       const toolRes = await sseClient.callTool({
@@ -160,6 +164,14 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       assert.deepEqual(userRes, {
         content: [{ type: 'text', text: 'hello akita' }],
+      });
+
+      const traceRes = await sseClient.callTool({
+        name: 'traceTest',
+        arguments: {},
+      });
+      assert.deepEqual(traceRes, {
+        content: [{ type: 'text', text: 'hello middleware' }],
       });
       // notification
       const notificationResp = await startNotificationTool(sseClient);
@@ -269,6 +281,10 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           description: undefined,
           name: 'echoUser',
         },
+        {
+          description: undefined,
+          name: 'traceTest',
+        },
       ]);
 
       const toolRes = await streamableClient.callTool({
@@ -286,6 +302,14 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       assert.deepEqual(userRes, {
         content: [{ type: 'text', text: 'hello akita' }],
+      });
+
+      const traceRes = await streamableClient.callTool({
+        name: 'traceTest',
+        arguments: {},
+      });
+      assert.deepEqual(traceRes, {
+        content: [{ type: 'text', text: 'hello middleware' }],
       });
       // notification
       const notificationResp = await startNotificationTool(streamableClient);
@@ -399,6 +423,10 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           description: undefined,
           name: 'echoUser',
         },
+        {
+          description: undefined,
+          name: 'traceTest',
+        },
       ]);
 
       const toolRes = await streamableClient.callTool({
@@ -416,6 +444,14 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       });
       assert.deepEqual(userRes, {
         content: [{ type: 'text', text: 'hello akita' }],
+      });
+
+      const traceRes = await streamableClient.callTool({
+        name: 'traceTest',
+        arguments: {},
+      });
+      assert.deepEqual(traceRes, {
+        content: [{ type: 'text', text: 'hello middleware' }],
       });
       // notification
       const notificationResp = await startNotificationTool(streamableClient);

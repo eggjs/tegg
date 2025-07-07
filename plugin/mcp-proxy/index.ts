@@ -14,6 +14,7 @@ import cluster from 'node:cluster';
 import { MCPControllerRegister, MCPControllerHook } from '@eggjs/tegg-controller-plugin/lib/impl/mcp/MCPControllerRegister';
 import querystring from 'node:querystring';
 import url from 'node:url';
+import compose from 'koa-compose';
 import { MCPProtocols } from './types';
 
 const MAXIMUM_MESSAGE_SIZE = '4mb';
@@ -118,7 +119,10 @@ export const MCPProxyHook: MCPControllerHook = {
     const sessionId = transport.sessionId!;
     self.streamTransports[sessionId] = transport;
     self.app.mcpProxy.setProxyHandler(MCPProtocols.STREAM, async (req: http.IncomingMessage, res: http.ServerResponse) => {
-      const mw = self.app.middleware.teggCtxLifecycleMiddleware();
+      let mw = self.app.middleware.teggCtxLifecycleMiddleware();
+      if (self.globalMiddlewares) {
+        mw = compose([ mw, self.globalMiddlewares ]);
+      }
       const ctx = self.app.createContext(req, res) as unknown as Context;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
