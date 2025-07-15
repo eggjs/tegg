@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import mm from 'mm';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { EggTestContext } from './fixtures/EggTestContext';
@@ -148,6 +148,40 @@ describe('test/EggObject.test.ts', () => {
       const foo = {};
       mm(bar, 'foo', foo);
       assert(bar.foo === foo);
+
+      await TestUtil.destroyLoadUnitInstance(instance);
+      await ctx.destroy({});
+    });
+  });
+
+  describe('ContextInitiator', () => {
+    it('should work for concurrent init', async () => {
+      mm(ContextHandler, 'getContext', () => {
+        return;
+      });
+      const instance = await TestUtil.createLoadUnitInstance('inject-constructor-context-to-singleton');
+      const barProto = EggPrototypeFactory.instance.getPrototype('singletonConstructorBar');
+      mm(ContextHandler, 'getContext', () => {
+        return ctx;
+      });
+
+      const hello = async () => {
+        const barObj = await EggContainerFactory.getOrCreateEggObject(barProto, barProto.name);
+        const bar = barObj.obj as SingletonConstructorBar;
+        return await bar.hello();
+      };
+
+      // concurrent init
+      const res = await Promise.allSettled(new Array(2).fill(0).map(hello));
+
+      assert.deepEqual(res, [
+        { status: 'fulfilled', value: 'hello from depth2' },
+        { status: 'fulfilled', value: 'hello from depth2' },
+      ]);
+
+      // retry after init success
+      const res2 = await hello();
+      assert.equal(res2, 'hello from depth2');
 
       await TestUtil.destroyLoadUnitInstance(instance);
       await ctx.destroy({});
