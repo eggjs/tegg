@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.59.1](https://github.com/eggjs/tegg/compare/v3.59.0...v3.59.1) (2025-07-16)
+
+
+### Bug Fixes
+
+* concurrent init ([#336](https://github.com/eggjs/tegg/issues/336)) ([bfafeff](https://github.com/eggjs/tegg/commit/bfafeff99f1b7221de85df3890b55145a9fe2b35))
+
+
+
+
+
 # [3.59.0](https://github.com/eggjs/tegg/compare/v3.58.0...v3.59.0) (2025-07-07)
 
 **Note:** Version bump only for package @eggjs/tegg-runtime
