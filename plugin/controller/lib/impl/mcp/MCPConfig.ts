@@ -1,4 +1,4 @@
-import type { Context } from 'egg';
+import type { Application, Context } from 'egg';
 import { randomUUID } from 'node:crypto';
 import { EventStore } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
@@ -11,6 +11,7 @@ export interface MCPConfigOptions {
   sessionIdGenerator?: (ctx: Context) => string;
   eventStore?: EventStore;
   sseHeartTime?: number;
+  multipleServer?: Record<string, Partial<MCPConfigOptions>>;
 }
 
 export class MCPConfig {
@@ -22,41 +23,112 @@ export class MCPConfig {
   private _eventStore: EventStore;
   private _sseHeartTime: number;
 
+  private _multipleServer: Record<string, Partial<MCPConfigOptions>>;
+
   constructor(options: MCPConfigOptions) {
-    this._sessionIdGenerator = options.sessionIdGenerator ?? (() => randomUUID());
+    this._sessionIdGenerator =
+      options.sessionIdGenerator ?? (() => randomUUID());
     this._sseInitPath = options.sseInitPath;
     this._sseMessagePath = options.sseMessagePath;
     this._streamPath = options.streamPath;
     this._statelessStreamPath = options.statelessStreamPath;
     this._eventStore = options.eventStore ?? new InMemoryEventStore();
     this._sseHeartTime = options.sseHeartTime ?? 25000;
+
+    this._multipleServer = options.multipleServer ?? {};
   }
 
-  get sseInitPath() {
+  getSseInitPath(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.sseInitPath) {
+        return config.sseInitPath;
+      }
+      return `/mcp/${name}/sse`;
+    }
     return this._sseInitPath;
   }
 
-  get sseMessagePath() {
+  getSseMessagePath(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.sseMessagePath) {
+        return config.sseMessagePath;
+      }
+      return `/mcp/${name}/message`;
+    }
     return this._sseMessagePath;
   }
 
-  get streamPath() {
+  getStreamPath(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.streamPath) {
+        return config.streamPath;
+      }
+      return `/mcp/${name}/stream`;
+    }
     return this._streamPath;
   }
 
-  get statelessStreamPath() {
+  getStatelessStreamPath(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.statelessStreamPath) {
+        return config.statelessStreamPath;
+      }
+      return `/mcp/${name}/stateless/stream`;
+    }
     return this._statelessStreamPath;
   }
 
-  get sessionIdGenerator() {
+  getSessionIdGenerator(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.sessionIdGenerator) {
+        return config.sessionIdGenerator;
+      }
+      return () => randomUUID();
+    }
     return this._sessionIdGenerator;
   }
 
-  get eventStore() {
+  getEventStore(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.eventStore) {
+        return config.eventStore;
+      }
+      return new InMemoryEventStore();
+    }
     return this._eventStore;
   }
 
-  get sseHeartTime() {
+  getSseHeartTime(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.sseHeartTime) {
+        return config.sseHeartTime;
+      }
+      return 25000;
+    }
     return this._sseHeartTime;
+  }
+
+  getMultipleServerNames() {
+    return Object.keys(this._multipleServer);
+  }
+
+  setMultipleServerPath(app: Application, name: string) {
+     if (!(app.config.mcp as MCPConfigOptions).multipleServer) {
+       (app.config.mcp as MCPConfigOptions).multipleServer = {};
+     }
+     (app.config.mcp as MCPConfigOptions).multipleServer![name] = {
+       sseInitPath: `/mcp/${name}/sse`,
+       sseMessagePath: `/mcp/${name}/message`,
+       streamPath: `/mcp/${name}/stream`,
+       statelessStreamPath: `/mcp/${name}/stateless/stream`,
+       ...app.config.mcp.multipleServer?.[name],
+     };
   }
 }

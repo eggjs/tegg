@@ -17,6 +17,13 @@ module.exports = function() {
       middleware: [
         'tracelog',
       ],
+      multipleServer: {
+        test: {
+          sessionIdGenerator: ctx => {
+            return ctx.request.headers['custom-session-id'] || randomUUID();
+          },
+        }
+      }
     },
   };
   return config;

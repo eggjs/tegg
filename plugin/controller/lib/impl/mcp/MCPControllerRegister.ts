@@ -45,7 +45,6 @@ export interface MCPControllerHook {
   checkAndRunProxy?: (ctx: Context, type: MCPProtocols, sessionId: string) => Promise<boolean>;
 }
 
-
 class InnerSSEServerTransport extends SSEServerTransport {
   async send(message: JSONRPCMessage) {
     let res: null | Error = null;
@@ -67,7 +66,6 @@ class InnerSSEServerTransport extends SSEServerTransport {
   }
 }
 
-
 export class MCPControllerRegister implements ControllerRegister {
   static instance?: MCPControllerRegister;
   readonly app: Application;
@@ -76,21 +74,27 @@ export class MCPControllerRegister implements ControllerRegister {
   private controllerProtos: EggPrototype[] = [];
   private registeredControllerProtos: EggPrototype[] = [];
   transports: Record<string, InnerSSEServerTransport> = {};
-  sseConnections = new Map<string, { res: ServerResponse, intervalId: NodeJS.Timeout }>();
-  mcpServerHelper: MCPServerHelper;
-  statelessMcpServerHelper: MCPServerHelper;
+  sseConnections = new Map<
+  string,
+  { res: ServerResponse; intervalId: NodeJS.Timeout }
+  >();
+  mcpServerHelperMap: Record<string, MCPServerHelper> = {};
+  statelessMcpServerHelperMap: Record<string, MCPServerHelper> = {};
   private controllerMeta: MCPControllerMeta;
-  private mcpConfig: MCPConfig;
-  statelessTransport: StreamableHTTPServerTransport;
+  mcpConfig: MCPConfig;
+  statelessTransportMap: Record<string, StreamableHTTPServerTransport> = {};
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
   // eslint-disable-next-line no-spaced-func
   sseTransportsRequestMap = new Map<
   InnerSSEServerTransport,
-  Record<string, {
-    resolve: (value: PromiseLike<null> | null) => void,
-    reject: (reason?: any) => void,
+  Record<
+  string,
+  {
+    resolve: (value: PromiseLike<null> | null) => void;
+    reject: (reason?: any) => void;
   }
-  >>();
+  >
+  >();
   static hooks: MCPControllerHook[] = [];
   globalMiddlewares: compose.ComposedMiddleware<EggContext>;
 
@@ -117,16 +121,26 @@ export class MCPControllerRegister implements ControllerRegister {
     MCPControllerRegister.hooks.push(hook);
   }
 
-  static async connectStatelessStreamTransport() {
-    if (MCPControllerRegister.instance && MCPControllerRegister.instance.statelessTransport) {
-      await MCPControllerRegister.instance.statelessMcpServerHelper.server.connect(MCPControllerRegister.instance.statelessTransport);
+  static async connectStatelessStreamTransport(name?: string) {
+    if (
+      MCPControllerRegister.instance &&
+      MCPControllerRegister.instance.statelessTransportMap
+    ) {
+      const serverHelper =
+        MCPControllerRegister.instance.statelessMcpServerHelperMap[
+          name ?? 'default'
+        ];
+      const statelessTransport =
+        MCPControllerRegister.instance.statelessTransportMap[name ?? 'default'];
+      await serverHelper.server.connect(statelessTransport);
       // 由于 mcp server stateless 需要我们在这里 init
       // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
       const socket = new Socket();
       const req = new IncomingMessage(socket);
       const res = new ServerResponse(req);
       req.method = 'POST';
-      req.url = MCPControllerRegister.instance.mcpConfig.statelessStreamPath;
+      req.url =
+        MCPControllerRegister.instance.mcpConfig.getStatelessStreamPath(name);
       req.headers = {
         accept: 'application/json, text/event-stream',
         'content-type': 'application/json',
@@ -137,15 +151,14 @@ export class MCPControllerRegister implements ControllerRegister {
         method: 'initialize',
         params: {
           protocolVersion: '2024-11-05',
-          capabilities: {
-          },
+          capabilities: {},
           clientInfo: {
             name: 'init-client',
             version: '1.0.0',
           },
         },
       };
-      await MCPControllerRegister.instance.statelessTransport.handleRequest(req, res, initBody);
+      await statelessTransport.handleRequest(req, res, initBody);
     }
   }
 
@@ -156,13 +169,14 @@ export class MCPControllerRegister implements ControllerRegister {
     this.instance = undefined;
   }
 
-  mcpStatelessStreamServerInit() {
+  mcpStatelessStreamServerInit(name?: string) {
     const postRouterFunc = this.router.post;
     const self = this;
-    const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
-      sessionIdGenerator: undefined,
-    });
-    self.statelessTransport = transport;
+    const transport: StreamableHTTPServerTransport =
+      new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined,
+      });
+    self.statelessTransportMap[name ?? 'default'] = transport;
     let mw = self.app.middleware.teggCtxLifecycleMiddleware();
     if (self.globalMiddlewares) {
       mw = compose([ mw, self.globalMiddlewares ]);
@@ -181,7 +195,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
       await ctx.app.ctxStorage.run(ctx, async () => {
         await mw(ctx, async () => {
-          await self.statelessTransport.handleRequest(ctx.req, ctx.res);
+          await transport.handleRequest(ctx.req, ctx.res);
           await awaitEvent(ctx.res, 'close');
         });
       });
@@ -189,7 +203,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(postRouterFunc, this.router, [
       'chairMcpStatelessStreamInit',
-      this.mcpConfig.statelessStreamPath,
+      self.mcpConfig.getStatelessStreamPath(name),
       ...[],
       initHandler,
     ]);
@@ -209,19 +223,19 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(getRouterFunc, this.router, [
       'chairMcpStatelessStreamInit',
-      this.mcpConfig.statelessStreamPath,
+      self.mcpConfig.getStatelessStreamPath(name),
       ...[],
       notHandler,
     ]);
     Reflect.apply(delRouterFunc, this.router, [
       'chairMcpStatelessStreamInit',
-      this.mcpConfig.statelessStreamPath,
+      self.mcpConfig.getStatelessStreamPath(name),
       ...[],
       notHandler,
     ]);
   }
 
-  mcpStreamServerInit() {
+  mcpStreamServerInit(name?: string) {
     const allRouterFunc = this.router.all;
     const self = this;
     let mw = self.app.middleware.teggCtxLifecycleMiddleware();
@@ -263,15 +277,20 @@ export class MCPControllerRegister implements ControllerRegister {
 
         if (isInitializeRequest(body)) {
           ctx.respond = false;
-          const eventStore = this.mcpConfig.eventStore;
+          const eventStore = this.mcpConfig.getEventStore();
           const self = this;
           const transport = new StreamableHTTPServerTransport({
-            sessionIdGenerator: () => this.mcpConfig.sessionIdGenerator(ctx),
+            sessionIdGenerator: () =>
+              this.mcpConfig.getSessionIdGenerator(name)(ctx),
             eventStore,
             onsessioninitialized: async () => {
               if (MCPControllerRegister.hooks.length > 0) {
                 for (const hook of MCPControllerRegister.hooks) {
-                  await hook.onStreamSessionInitialized?.(self.app.currentContext, transport, self);
+                  await hook.onStreamSessionInitialized?.(
+                    self.app.currentContext,
+                    transport,
+                    self,
+                  );
                 }
               }
             },
@@ -282,7 +301,9 @@ export class MCPControllerRegister implements ControllerRegister {
             'transfer-encoding': 'chunked',
           });
 
-          await self.mcpServerHelper.server.connect(transport);
+          await self.mcpServerHelperMap[name ?? 'default'].server.connect(
+            transport,
+          );
 
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
@@ -325,7 +346,11 @@ export class MCPControllerRegister implements ControllerRegister {
         }
         if (MCPControllerRegister.hooks.length > 0) {
           for (const hook of MCPControllerRegister.hooks) {
-            const checked = await hook.checkAndRunProxy?.(self.app.currentContext, MCPProtocols.STREAM, sessionId);
+            const checked = await hook.checkAndRunProxy?.(
+              self.app.currentContext,
+              MCPProtocols.STREAM,
+              sessionId,
+            );
             if (checked) {
               return;
             }
@@ -336,13 +361,13 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(allRouterFunc, this.router, [
       'chairMcpStreamInit',
-      self.mcpConfig.streamPath,
+      self.mcpConfig.getStreamPath(name),
       ...[],
       initHandler,
     ]);
   }
 
-  mcpServerInit() {
+  mcpServerInit(name?: string) {
     const routerFunc = this.router.get;
     // const aclMiddleware = aclMiddlewareFactory(this.controllerMeta, this.methodMeta);
     // if (aclMiddleware) {
@@ -350,11 +375,18 @@ export class MCPControllerRegister implements ControllerRegister {
     // }
     const self = this;
     const initHandler = async (ctx: Context) => {
-      const transport = new InnerSSEServerTransport(self.mcpConfig.sseMessagePath, ctx.res);
+      const transport = new InnerSSEServerTransport(
+        self.mcpConfig.getSseMessagePath(name),
+        ctx.res,
+      );
       const id = transport.sessionId;
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
-          await hook.preSSEInitHandle?.(self.app.currentContext, transport, self);
+          await hook.preSSEInitHandle?.(
+            self.app.currentContext,
+            transport,
+            self,
+          );
         }
       }
       // https://github.com/modelcontextprotocol/typescript-sdk/issues/270#issuecomment-2789526821
@@ -365,7 +397,7 @@ export class MCPControllerRegister implements ControllerRegister {
           clearInterval(intervalId);
           self.sseConnections.delete(id);
         }
-      }, self.mcpConfig.sseHeartTime);
+      }, self.mcpConfig.getSseHeartTime(name));
       self.sseConnections.set(id, { res: ctx.res, intervalId });
       self.transports[id] = transport;
       ctx.set({
@@ -373,18 +405,20 @@ export class MCPControllerRegister implements ControllerRegister {
         'transfer-encoding': 'chunked',
       });
       ctx.respond = false;
-      await self.mcpServerHelper.server.connect(transport);
-      return self.sseCtxStorageRun.bind(self)(ctx, transport);
+      await self.mcpServerHelperMap[name ?? 'default'].server.connect(
+        transport,
+      );
+      return self.sseCtxStorageRun.bind(self)(ctx, transport, name);
     };
     Reflect.apply(routerFunc, this.router, [
       'chairMcpInit',
-      self.mcpConfig.sseInitPath,
+      self.mcpConfig.getSseInitPath(name),
       ...[],
       initHandler,
     ]);
   }
 
-  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport) {
+  sseCtxStorageRun(ctx: Context, transport: SSEServerTransport, name?: string) {
     const self = this;
     let mw = this.app.middleware.teggCtxLifecycleMiddleware();
     if (self.globalMiddlewares) {
@@ -406,13 +440,13 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     const messageFunc = transport.onmessage;
     self.sseTransportsRequestMap.set(transport, {});
-    transport.onmessage = async (...args: [ JSONRPCMessage ]) => {
+    transport.onmessage = async (...args: [JSONRPCMessage]) => {
       // 这里需要 new 一个新的 ctx，否则 ContextProto 会未被初始化
       const socket = new Socket();
       const req = new IncomingMessage(socket);
       const res = new ServerResponse(req);
       req.method = 'POST';
-      req.url = self.mcpConfig.sseInitPath;
+      req.url = self.mcpConfig.getSseInitPath(name);
       req.headers = {
         ...ctx.req.headers,
         accept: 'application/json, text/event-stream',
@@ -441,7 +475,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
   }
 
-  mcpServerRegister() {
+  mcpServerRegister(name?: string) {
     const routerFunc = this.router.post;
     const self = this;
     // const aclMiddleware = aclMiddlewareFactory(this.controllerMeta, this.methodMeta);
@@ -483,7 +517,11 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
-          const checked = await hook.checkAndRunProxy?.(self.app.currentContext, MCPProtocols.SSE, sessionId);
+          const checked = await hook.checkAndRunProxy?.(
+            self.app.currentContext,
+            MCPProtocols.SSE,
+            sessionId,
+          );
           if (checked) {
             return;
           }
@@ -492,7 +530,7 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     Reflect.apply(routerFunc, this.router, [
       'chairMcpMessage',
-      self.mcpConfig.sseMessagePath,
+      self.mcpConfig.getSseMessagePath(name),
       ...[ mw ],
       messageHander,
     ]);
@@ -515,39 +553,90 @@ export class MCPControllerRegister implements ControllerRegister {
   }
 
   async register() {
-    if (!this.mcpServerHelper) {
-      this.getGlobalMiddleware();
-      this.mcpServerHelper = new MCPServerHelper({
-        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
-        version: this.controllerMeta.version ?? '1.0.0',
-        hooks: MCPControllerRegister.hooks,
-      });
-      this.statelessMcpServerHelper = new MCPServerHelper({
-        name: this.controllerMeta.name ?? `chair-mcp-${this.app.name}-server`,
-        version: this.controllerMeta.version ?? '1.0.0',
-        hooks: MCPControllerRegister.hooks,
-      });
-      this.mcpStatelessStreamServerInit();
-      this.mcpStreamServerInit();
-      this.mcpServerInit();
-      this.mcpServerRegister();
-    }
     for (const proto of this.controllerProtos) {
       if (this.registeredControllerProtos.includes(proto)) {
         continue;
       }
-      const metadata = proto.getMetaData(CONTROLLER_META_DATA) as MCPControllerMeta;
+      const metadata = proto.getMetaData(
+        CONTROLLER_META_DATA,
+      ) as MCPControllerMeta;
+      if (!this.mcpServerHelperMap[metadata.name ?? 'default']) {
+        this.getGlobalMiddleware();
+        this.mcpServerHelperMap[metadata.name ?? 'default'] =
+          new MCPServerHelper({
+            name:
+              this.controllerMeta.name ??
+              `chair-mcp-${metadata.name ?? this.app.name}-server`,
+            version: this.controllerMeta.version ?? '1.0.0',
+            hooks: MCPControllerRegister.hooks,
+          });
+        this.statelessMcpServerHelperMap[metadata.name ?? 'default'] =
+          new MCPServerHelper({
+            name:
+              this.controllerMeta.name ??
+              `chair-mcp-${metadata.name ?? this.app.name}-server`,
+            version: this.controllerMeta.version ?? '1.0.0',
+            hooks: MCPControllerRegister.hooks,
+          });
+        this.mcpStatelessStreamServerInit(metadata.name);
+        this.mcpStreamServerInit(metadata.name);
+        this.mcpServerInit(metadata.name);
+        this.mcpServerRegister(metadata.name);
+        if (metadata.name) {
+          this.mcpConfig.setMultipleServerPath(this.app, metadata.name);
+        }
+      }
+      const mcpServerHelper =
+        this.mcpServerHelperMap[metadata.name ?? 'default'];
+      const statelessMcpServerHelper =
+        this.statelessMcpServerHelperMap[metadata.name ?? 'default'];
       for (const prompt of metadata.prompts) {
-        await this.mcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, prompt);
-        await this.statelessMcpServerHelper.mcpPromptRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, prompt);
+        await mcpServerHelper.mcpPromptRegister(
+          this.eggContainerFactory.getOrCreateEggObject.bind(
+            this.eggContainerFactory,
+          ),
+          proto,
+          prompt,
+        );
+        await statelessMcpServerHelper.mcpPromptRegister(
+          this.eggContainerFactory.getOrCreateEggObject.bind(
+            this.eggContainerFactory,
+          ),
+          proto,
+          prompt,
+        );
       }
       for (const resource of metadata.resources) {
-        await this.mcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, resource);
-        await this.statelessMcpServerHelper.mcpResourceRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, resource);
+        await mcpServerHelper.mcpResourceRegister(
+          this.eggContainerFactory.getOrCreateEggObject.bind(
+            this.eggContainerFactory,
+          ),
+          proto,
+          resource,
+        );
+        await statelessMcpServerHelper.mcpResourceRegister(
+          this.eggContainerFactory.getOrCreateEggObject.bind(
+            this.eggContainerFactory,
+          ),
+          proto,
+          resource,
+        );
       }
       for (const tool of metadata.tools) {
-        await this.mcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, tool);
-        await this.statelessMcpServerHelper.mcpToolRegister(this.eggContainerFactory.getOrCreateEggObject.bind(this.eggContainerFactory), proto, tool);
+        await mcpServerHelper.mcpToolRegister(
+          this.eggContainerFactory.getOrCreateEggObject.bind(
+            this.eggContainerFactory,
+          ),
+          proto,
+          tool,
+        );
+        await statelessMcpServerHelper.mcpToolRegister(
+          this.eggContainerFactory.getOrCreateEggObject.bind(
+            this.eggContainerFactory,
+          ),
+          proto,
+          tool,
+        );
       }
       this.registeredControllerProtos.push(proto);
     }

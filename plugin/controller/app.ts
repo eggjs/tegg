@@ -116,6 +116,16 @@ export default class ControllerAppBootHook {
   async willReady() {
     if (majorVersion >= 18) {
       await MCPControllerRegister.connectStatelessStreamTransport();
+      const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
+      if (names && names.length > 0) {
+        for (const name of names) {
+          await MCPControllerRegister.connectStatelessStreamTransport(name);
+          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].sseInitPath);
+          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].sseMessagePath);
+          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].streamPath);
+          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].statelessStreamPath);
+        }
+      }
     }
   }
 
