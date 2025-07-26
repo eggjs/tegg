@@ -510,7 +510,7 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       await streamableTransport.terminateSession();
       await streamableClient.close();
     });
-    
+
     it('multiple sse should work', async () => {
       const sseClient = new Client({
         name: 'sse-demo-client',

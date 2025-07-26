@@ -22,7 +22,10 @@ export class MCPControllerMetaBuilder {
     const methodNames = MCPInfoUtil.getMCPResource(this.clazz);
     const methods: MCPResourceMeta[] = [];
     for (const methodName of methodNames) {
-      const builder = new MCPControllerResourceMetaBuilder(this.clazz, methodName);
+      const builder = new MCPControllerResourceMetaBuilder(
+        this.clazz,
+        methodName,
+      );
       const methodMeta = builder.build();
       if (methodMeta) {
         methods.push(methodMeta);
@@ -35,7 +38,10 @@ export class MCPControllerMetaBuilder {
     const methodNames = MCPInfoUtil.getMCPPrompt(this.clazz);
     const methods: MCPPromptMeta[] = [];
     for (const methodName of methodNames) {
-      const builder = new MCPControllerPromptMetaBuilder(this.clazz, methodName);
+      const builder = new MCPControllerPromptMetaBuilder(
+        this.clazz,
+        methodName,
+      );
       const methodMeta = builder.build();
       if (methodMeta) {
         methods.push(methodMeta);
@@ -61,22 +67,35 @@ export class MCPControllerMetaBuilder {
     ControllerValidator.validate(this.clazz);
     const controllerType = ControllerInfoUtil.getControllerType(this.clazz);
     assert(controllerType === ControllerType.MCP, 'invalidate controller type');
-    const mcpMiddlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
+    const mcpMiddlewares = ControllerInfoUtil.getControllerMiddlewares(
+      this.clazz,
+    );
     const resources = this.buildResource();
     const prompts = this.buildPrompt();
     const tools = this.buildTool();
     const property = PrototypeUtil.getProperty(this.clazz);
     const protoName = property!.name as string;
     const clazzName = this.clazz.name;
-    const controllerName = ControllerInfoUtil.getControllerName(this.clazz) || clazzName;
-    const name = MCPInfoUtil.getMCPName(this.clazz) || controllerName;
+    const controllerName =
+      ControllerInfoUtil.getControllerName(this.clazz) || clazzName;
+    const name = MCPInfoUtil.getMCPName(this.clazz);
     const version = MCPInfoUtil.getMCPVersion(this.clazz) || '1.0.0';
     const needAcl = ControllerInfoUtil.hasControllerAcl(this.clazz);
     const aclCode = ControllerInfoUtil.getControllerAcl(this.clazz);
     const meta = MCPInfoUtil.getMCPControllerParams(this.clazz);
     return new MCPControllerMeta(
-      clazzName, protoName, controllerName, name, version, tools, resources,
-      prompts, mcpMiddlewares, needAcl, aclCode, meta,
+      clazzName,
+      protoName,
+      controllerName,
+      version,
+      tools,
+      resources,
+      prompts,
+      mcpMiddlewares,
+      name,
+      needAcl,
+      aclCode,
+      meta,
     );
   }
 
@@ -85,4 +104,7 @@ export class MCPControllerMetaBuilder {
   }
 }
 
-ControllerMetaBuilderFactory.registerControllerMetaBuilder(ControllerType.MCP, MCPControllerMetaBuilder.create);
+ControllerMetaBuilderFactory.registerControllerMetaBuilder(
+  ControllerType.MCP,
+  MCPControllerMetaBuilder.create,
+);

@@ -120,15 +120,15 @@ export class MCPConfig {
   }
 
   setMultipleServerPath(app: Application, name: string) {
-     if (!(app.config.mcp as MCPConfigOptions).multipleServer) {
-       (app.config.mcp as MCPConfigOptions).multipleServer = {};
-     }
-     (app.config.mcp as MCPConfigOptions).multipleServer![name] = {
-       sseInitPath: `/mcp/${name}/sse`,
-       sseMessagePath: `/mcp/${name}/message`,
-       streamPath: `/mcp/${name}/stream`,
-       statelessStreamPath: `/mcp/${name}/stateless/stream`,
-       ...app.config.mcp.multipleServer?.[name],
-     };
+    if (!(app.config.mcp as MCPConfigOptions).multipleServer) {
+      (app.config.mcp as MCPConfigOptions).multipleServer = {};
+    }
+    (app.config.mcp as MCPConfigOptions).multipleServer![name] = {
+      sseInitPath: `/mcp/${name}/sse`,
+      sseMessagePath: `/mcp/${name}/message`,
+      streamPath: `/mcp/${name}/stream`,
+      statelessStreamPath: `/mcp/${name}/stateless/stream`,
+      ...app.config.mcp.multipleServer?.[name],
+    };
   }
 }

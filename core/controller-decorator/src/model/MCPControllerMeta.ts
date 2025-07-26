@@ -1,5 +1,10 @@
 import { ControllerType } from '@eggjs/tegg-types';
-import type { ControllerMetadata, MiddlewareFunc, EggPrototypeName, MCPControllerParams } from '@eggjs/tegg-types';
+import type {
+  ControllerMetadata,
+  MiddlewareFunc,
+  EggPrototypeName,
+  MCPControllerParams,
+} from '@eggjs/tegg-types';
 import { MCPToolMeta } from './MCPToolMeta';
 import { MCPResourceMeta } from './MCPResourceMeta';
 import { MCPPromptMeta } from './MCPPromptMeta';
@@ -11,7 +16,7 @@ export class MCPControllerMeta implements ControllerMetadata {
   readonly methods: never[];
   readonly middlewares: readonly MiddlewareFunc[];
   readonly type = ControllerType.MCP;
-  readonly name: string;
+  readonly name?: string;
   readonly version: string;
   readonly needAcl: boolean;
   readonly aclCode?: string;
@@ -21,19 +26,19 @@ export class MCPControllerMeta implements ControllerMetadata {
   readonly timeout?: number;
 
   get id() {
-    return `${this.name}:${1.0}`;
+    return `${this.name ?? this.controllerName}:${1.0}`;
   }
 
   constructor(
     className: string,
     protoName: EggPrototypeName,
     controllerName: string,
-    name: string,
     version: string,
     tools: MCPToolMeta[],
     resources: MCPResourceMeta[],
     prompts: MCPPromptMeta[],
     middlewares: MiddlewareFunc[],
+    name?: string,
     needAcl?: boolean,
     aclCode?: string,
     meta?: MCPControllerParams,
@@ -55,10 +60,7 @@ export class MCPControllerMeta implements ControllerMetadata {
 
   getMethodMiddlewares(method: MCPPromptMeta | MCPToolMeta | MCPResourceMeta) {
     if (this.middlewares.length) {
-      return [
-        ...this.middlewares,
-        ...method.middlewares,
-      ];
+      return [ ...this.middlewares, ...method.middlewares ];
     }
     return method.middlewares;
   }
@@ -67,7 +69,9 @@ export class MCPControllerMeta implements ControllerMetadata {
     return method.needAcl || this.needAcl;
   }
 
-  getMethodAcl(method: MCPPromptMeta | MCPToolMeta | MCPResourceMeta): string | undefined {
+  getMethodAcl(
+    method: MCPPromptMeta | MCPToolMeta | MCPResourceMeta,
+  ): string | undefined {
     return method.aclCode || this.aclCode;
   }
 }
