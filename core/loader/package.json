@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-loader",
-  "version": "3.59.1",
+  "version": "3.60.0",
   "description": "tegg default loader implement",
   "keywords": [
     "egg",
@@ -36,9 +36,9 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.59.1",
-    "@eggjs/tegg-common-util": "^3.59.1",
-    "@eggjs/tegg-types": "^3.59.1",
+    "@eggjs/core-decorator": "^3.60.0",
+    "@eggjs/tegg-common-util": "^3.60.0",
+    "@eggjs/tegg-types": "^3.60.0",
     "globby": "^11.1.0",
     "is-type-of": "^1.2.1"
   },
@@ -46,7 +46,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@eggjs/tegg-metadata": "^3.59.1",
+    "@eggjs/tegg-metadata": "^3.60.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
