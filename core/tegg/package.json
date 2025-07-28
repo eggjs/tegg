@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.60.0",
+  "version": "3.60.1",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -35,24 +35,24 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/ajv-decorator": "^3.60.0",
-    "@eggjs/aop-decorator": "^3.60.0",
-    "@eggjs/controller-decorator": "^3.60.0",
-    "@eggjs/core-decorator": "^3.60.0",
-    "@eggjs/dal-decorator": "^3.60.0",
-    "@eggjs/eventbus-decorator": "^3.60.0",
-    "@eggjs/standalone-decorator": "^3.60.0",
-    "@eggjs/tegg-background-task": "^3.60.0",
-    "@eggjs/tegg-common-util": "^3.60.0",
-    "@eggjs/tegg-dynamic-inject": "^3.60.0",
-    "@eggjs/tegg-lifecycle": "^3.60.0",
-    "@eggjs/tegg-loader": "^3.60.0",
-    "@eggjs/tegg-metadata": "^3.60.0",
-    "@eggjs/tegg-orm-decorator": "^3.60.0",
-    "@eggjs/tegg-runtime": "^3.60.0",
-    "@eggjs/tegg-schedule-decorator": "^3.60.0",
-    "@eggjs/tegg-transaction-decorator": "^3.60.0",
-    "@eggjs/tegg-types": "^3.60.0"
+    "@eggjs/ajv-decorator": "^3.60.1",
+    "@eggjs/aop-decorator": "^3.60.1",
+    "@eggjs/controller-decorator": "^3.60.1",
+    "@eggjs/core-decorator": "^3.60.1",
+    "@eggjs/dal-decorator": "^3.60.1",
+    "@eggjs/eventbus-decorator": "^3.60.1",
+    "@eggjs/standalone-decorator": "^3.60.1",
+    "@eggjs/tegg-background-task": "^3.60.1",
+    "@eggjs/tegg-common-util": "^3.60.1",
+    "@eggjs/tegg-dynamic-inject": "^3.60.1",
+    "@eggjs/tegg-lifecycle": "^3.60.1",
+    "@eggjs/tegg-loader": "^3.60.1",
+    "@eggjs/tegg-metadata": "^3.60.1",
+    "@eggjs/tegg-orm-decorator": "^3.60.1",
+    "@eggjs/tegg-runtime": "^3.60.1",
+    "@eggjs/tegg-schedule-decorator": "^3.60.1",
+    "@eggjs/tegg-transaction-decorator": "^3.60.1",
+    "@eggjs/tegg-types": "^3.60.1"
   },
   "publishConfig": {
     "access": "public"
@@ -65,5 +65,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
-  "gitHead": "b49e4c70e7f09a073e989493b995f8dd3ce482e9"
+  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
 }
