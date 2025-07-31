@@ -68,25 +68,27 @@ export default class ControllerAppBootHook {
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
-      if (this.app.config.security.csrf.ignore) {
-        if (Array.isArray(this.app.config.security.csrf.ignore)) {
+      if (this.app.config.security.csrf || this.app.config.security.csrf.enable) {
+        if (this.app.config.security.csrf.ignore) {
+          if (Array.isArray(this.app.config.security.csrf.ignore)) {
+            this.app.config.security.csrf.ignore = [
+              this.app.config.mcp.sseInitPath,
+              this.app.config.mcp.sseMessagePath,
+              this.app.config.mcp.streamPath,
+              this.app.config.mcp.statelessStreamPath,
+              ...(Array.isArray(this.app.config.security.csrf.ignore)
+                ? this.app.config.security.csrf.ignore
+                : [ this.app.config.security.csrf.ignore ]),
+            ];
+          }
+        } else {
           this.app.config.security.csrf.ignore = [
             this.app.config.mcp.sseInitPath,
             this.app.config.mcp.sseMessagePath,
             this.app.config.mcp.streamPath,
             this.app.config.mcp.statelessStreamPath,
-            ...(Array.isArray(this.app.config.security.csrf.ignore)
-              ? this.app.config.security.csrf.ignore
-              : [ this.app.config.security.csrf.ignore ]),
           ];
         }
-      } else {
-        this.app.config.security.csrf.ignore = [
-          this.app.config.mcp.sseInitPath,
-          this.app.config.mcp.sseMessagePath,
-          this.app.config.mcp.streamPath,
-          this.app.config.mcp.statelessStreamPath,
-        ];
       }
     }
   }
@@ -114,7 +116,7 @@ export default class ControllerAppBootHook {
   }
 
   async willReady() {
-    if (majorVersion >= 18) {
+    if (majorVersion >= 18 && (this.app.config.security.csrf || this.app.config.security.csrf.enable)) {
       await MCPControllerRegister.connectStatelessStreamTransport();
       const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
       if (names && names.length > 0) {

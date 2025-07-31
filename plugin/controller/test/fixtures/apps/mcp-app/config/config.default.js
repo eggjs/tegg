@@ -6,9 +6,7 @@ module.exports = function() {
   const config = {
     keys: 'test key',
     security: {
-      csrf: {
-        enable: false,
-      },
+      csrf: false,
     },
     mcp: {
       sessionIdGenerator: ctx => {
@@ -22,8 +20,8 @@ module.exports = function() {
           sessionIdGenerator: ctx => {
             return ctx.request.headers['custom-session-id'] || randomUUID();
           },
-        }
-      }
+        },
+      },
     },
   };
   return config;
