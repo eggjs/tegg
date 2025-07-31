@@ -4,9 +4,7 @@ module.exports = function() {
   const config = {
     keys: 'test key',
     security: {
-      csrf: {
-        ignoreJSON: false,
-      },
+      csrf: false,
     },
     controller: {
       supportParams: true,
