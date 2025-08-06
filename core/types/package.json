@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-types",
-  "version": "3.60.1",
+  "version": "3.60.2",
   "description": "tegg types",
   "keywords": [
     "egg",
@@ -37,8 +37,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "@eggjs/mcp-proxy": "^3.60.1",
-    "@eggjs/tegg-controller-plugin": "^3.60.1",
+    "@eggjs/mcp-proxy": "^3.60.2",
+    "@eggjs/tegg-controller-plugin": "^3.60.2",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
