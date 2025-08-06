@@ -74,7 +74,7 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
-    if (majorVersion >= 18) {
+    if (this.mcpEnable()) {
       this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
@@ -135,7 +135,7 @@ export default class ControllerAppBootHook {
   }
 
   async willReady() {
-    if (majorVersion >= 18) {
+    if (this.mcpEnable()) {
       await MCPControllerRegister.connectStatelessStreamTransport();
       const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
       if (names && names.length > 0) {
@@ -144,6 +144,10 @@ export default class ControllerAppBootHook {
         }
       }
     }
+  }
+
+  mcpEnable() {
+    return majorVersion >= 18 && !!this.app.plugins.mcpProxy?.enable;
   }
 
   async beforeClose() {
