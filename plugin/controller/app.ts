@@ -12,6 +12,7 @@ import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
 import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
+import assert from 'node:assert';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
@@ -61,6 +62,16 @@ export default class ControllerAppBootHook {
       },
     );
 
+    if (this.app.config.security?.csrf !== void 0) {
+      assert(typeof this.app.config.security.csrf === 'boolean' || typeof this.app.config.security.csrf === 'object', 'csrf must be boolean or object');
+
+      if (typeof this.app.config.security.csrf === 'boolean') {
+        this.app.config.security.csrf = {
+          enable: this.app.config.security.csrf,
+        };
+      }
+    }
+
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
     if (majorVersion >= 18) {
@@ -71,6 +82,7 @@ export default class ControllerAppBootHook {
       if (this.app.config.security.csrf.ignore) {
         if (Array.isArray(this.app.config.security.csrf.ignore)) {
           this.app.config.security.csrf.ignore = [
+            /^\/mcp\//,
             this.app.config.mcp.sseInitPath,
             this.app.config.mcp.sseMessagePath,
             this.app.config.mcp.streamPath,
@@ -82,11 +94,20 @@ export default class ControllerAppBootHook {
         }
       } else {
         this.app.config.security.csrf.ignore = [
+          /^\/mcp\//,
           this.app.config.mcp.sseInitPath,
           this.app.config.mcp.sseMessagePath,
           this.app.config.mcp.streamPath,
           this.app.config.mcp.statelessStreamPath,
         ];
+      }
+
+      if (this.app.config.mcp.multipleServer) {
+        for (const name of Object.keys(this.app.config.mcp.multipleServer)) {
+          [ 'sseInitPath', 'sseMessagePath', 'streamPath', 'statelessStreamPath' ].forEach(key => {
+            if (this.app.config.mcp.multipleServer[name][key]) this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name][key]);
+          });
+        }
       }
     }
   }
@@ -120,10 +141,6 @@ export default class ControllerAppBootHook {
       if (names && names.length > 0) {
         for (const name of names) {
           await MCPControllerRegister.connectStatelessStreamTransport(name);
-          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].sseInitPath);
-          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].sseMessagePath);
-          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].streamPath);
-          this.app.config.security.csrf.ignore.push(this.app.config.mcp.multipleServer[name].statelessStreamPath);
         }
       }
     }

@@ -6,7 +6,7 @@ module.exports = function() {
     security: {
       csrf: {
         ignoreJSON: false,
-      }
+      },
     },
   };
   return config;

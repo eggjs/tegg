@@ -5,11 +5,6 @@ const { randomUUID } = require('node:crypto');
 module.exports = function() {
   const config = {
     keys: 'test key',
-    security: {
-      csrf: {
-        enable: false,
-      },
-    },
     mcp: {
       sessionIdGenerator: ctx => {
         return ctx.request.headers['custom-session-id'] || randomUUID();
@@ -22,8 +17,8 @@ module.exports = function() {
           sessionIdGenerator: ctx => {
             return ctx.request.headers['custom-session-id'] || randomUUID();
           },
-        }
-      }
+        },
+      },
     },
   };
   return config;
