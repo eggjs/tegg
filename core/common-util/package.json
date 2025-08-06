@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-common-util",
   "description": "common util for tegg",
-  "version": "3.60.2",
+  "version": "3.60.3",
   "keywords": [
     "egg",
     "typescript",
@@ -36,7 +36,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/tegg-types": "^3.60.2",
+    "@eggjs/tegg-types": "^3.60.3",
     "extend2": "^1.0.0",
     "globby": "^11.1.0",
     "js-yaml": "^3.14.0"

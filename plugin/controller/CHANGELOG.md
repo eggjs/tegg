@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.60.3](https://github.com/eggjs/tegg/compare/v3.60.2...v3.60.3) (2025-08-06)
+
+
+### Bug Fixes
+
+* mcp middleware ([#340](https://github.com/eggjs/tegg/issues/340)) ([a47db22](https://github.com/eggjs/tegg/commit/a47db2295a899113aad46d7f4ca0857d91d44774))
+
+
+
+
+
 ## [3.60.2](https://github.com/eggjs/tegg/compare/v3.60.1...v3.60.2) (2025-08-06)
 
 
