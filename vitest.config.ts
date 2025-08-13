@@ -20,6 +20,8 @@ export default defineConfig({
     }),
   ],
   test: {
+    environment: 'node',
+    projects: [ 'core/*', 'plugin/*', 'standalone/*' ],
     coverage: {
       reporter: [
         'json',
