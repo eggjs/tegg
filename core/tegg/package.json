@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.60.1",
+  "version": "3.60.3",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -35,24 +35,24 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/ajv-decorator": "^3.60.1",
-    "@eggjs/aop-decorator": "^3.60.1",
-    "@eggjs/controller-decorator": "^3.60.1",
-    "@eggjs/core-decorator": "^3.60.1",
-    "@eggjs/dal-decorator": "^3.60.1",
-    "@eggjs/eventbus-decorator": "^3.60.1",
-    "@eggjs/standalone-decorator": "^3.60.1",
-    "@eggjs/tegg-background-task": "^3.60.1",
-    "@eggjs/tegg-common-util": "^3.60.1",
-    "@eggjs/tegg-dynamic-inject": "^3.60.1",
-    "@eggjs/tegg-lifecycle": "^3.60.1",
-    "@eggjs/tegg-loader": "^3.60.1",
-    "@eggjs/tegg-metadata": "^3.60.1",
-    "@eggjs/tegg-orm-decorator": "^3.60.1",
-    "@eggjs/tegg-runtime": "^3.60.1",
-    "@eggjs/tegg-schedule-decorator": "^3.60.1",
-    "@eggjs/tegg-transaction-decorator": "^3.60.1",
-    "@eggjs/tegg-types": "^3.60.1"
+    "@eggjs/ajv-decorator": "^3.60.3",
+    "@eggjs/aop-decorator": "^3.60.3",
+    "@eggjs/controller-decorator": "^3.60.3",
+    "@eggjs/core-decorator": "^3.60.3",
+    "@eggjs/dal-decorator": "^3.60.3",
+    "@eggjs/eventbus-decorator": "^3.60.3",
+    "@eggjs/standalone-decorator": "^3.60.3",
+    "@eggjs/tegg-background-task": "^3.60.3",
+    "@eggjs/tegg-common-util": "^3.60.3",
+    "@eggjs/tegg-dynamic-inject": "^3.60.3",
+    "@eggjs/tegg-lifecycle": "^3.60.3",
+    "@eggjs/tegg-loader": "^3.60.3",
+    "@eggjs/tegg-metadata": "^3.60.3",
+    "@eggjs/tegg-orm-decorator": "^3.60.3",
+    "@eggjs/tegg-runtime": "^3.60.3",
+    "@eggjs/tegg-schedule-decorator": "^3.60.3",
+    "@eggjs/tegg-transaction-decorator": "^3.60.3",
+    "@eggjs/tegg-types": "^3.60.3"
   },
   "peerDependencies": {
     "@eggjs/tegg-dal-plugin": "^3.60.1"

@@ -132,33 +132,35 @@ export class MCPControllerRegister implements ControllerRegister {
         ];
       const statelessTransport =
         MCPControllerRegister.instance.statelessTransportMap[name ?? 'default'];
-      await serverHelper.server.connect(statelessTransport);
-      // 由于 mcp server stateless 需要我们在这里 init
-      // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
-      const socket = new Socket();
-      const req = new IncomingMessage(socket);
-      const res = new ServerResponse(req);
-      req.method = 'POST';
-      req.url =
-        MCPControllerRegister.instance.mcpConfig.getStatelessStreamPath(name);
-      req.headers = {
-        accept: 'application/json, text/event-stream',
-        'content-type': 'application/json',
-      };
-      const initBody = {
-        jsonrpc: '2.0',
-        id: 0,
-        method: 'initialize',
-        params: {
-          protocolVersion: '2024-11-05',
-          capabilities: {},
-          clientInfo: {
-            name: 'init-client',
-            version: '1.0.0',
+      if (serverHelper && statelessTransport) {
+        await serverHelper.server.connect(statelessTransport);
+        // 由于 mcp server stateless 需要我们在这里 init
+        // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
+        const socket = new Socket();
+        const req = new IncomingMessage(socket);
+        const res = new ServerResponse(req);
+        req.method = 'POST';
+        req.url =
+          MCPControllerRegister.instance.mcpConfig.getStatelessStreamPath(name);
+        req.headers = {
+          accept: 'application/json, text/event-stream',
+          'content-type': 'application/json',
+        };
+        const initBody = {
+          jsonrpc: '2.0',
+          id: 0,
+          method: 'initialize',
+          params: {
+            protocolVersion: '2024-11-05',
+            capabilities: {},
+            clientInfo: {
+              name: 'init-client',
+              version: '1.0.0',
+            },
           },
-        },
-      };
-      await statelessTransport.handleRequest(req, res, initBody);
+        };
+        await statelessTransport.handleRequest(req, res, initBody);
+      }
     }
   }
 

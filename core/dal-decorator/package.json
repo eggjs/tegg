@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/dal-decorator",
-  "version": "3.60.1",
+  "version": "3.60.3",
   "description": "tegg dal decorator",
   "keywords": [
     "egg",
@@ -37,9 +37,9 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.60.1",
-    "@eggjs/tegg-common-util": "^3.60.1",
-    "@eggjs/tegg-types": "^3.60.1",
+    "@eggjs/core-decorator": "^3.60.3",
+    "@eggjs/tegg-common-util": "^3.60.3",
+    "@eggjs/tegg-types": "^3.60.3",
     "lodash.snakecase": "^4.1.1",
     "pluralize": "^8.0.0"
   },

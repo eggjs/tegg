@@ -2,7 +2,6 @@ import mm from 'egg-mock';
 import path from 'path';
 import fs from 'fs/promises';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
@@ -57,6 +56,8 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
 
   if (parseInt(process.version.slice(1, 3)) > 17) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
     let app;
 
     after(async () => {
