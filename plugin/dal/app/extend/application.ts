@@ -1,4 +1,4 @@
-import { MysqlDataSourceManager } from '../lib/MysqlDataSourceManager';
+import { MysqlDataSourceManager } from '../../lib/MysqlDataSourceManager';
 
 export default {
   get mysqlDataSourceManager() {
