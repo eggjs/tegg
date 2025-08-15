@@ -2,6 +2,7 @@ import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { Transactional } from '@eggjs/tegg/transaction';
 import FooDAO from './dal/dao/FooDAO';
 import { Foo } from './Foo';
+import { MysqlDataSourceManager } from '../../../../../../lib/MysqlDataSourceManager';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -9,6 +10,9 @@ import { Foo } from './Foo';
 export class FooService {
   @Inject()
   private readonly fooDAO: FooDAO;
+
+  @Inject()
+  private readonly mysqlDataSourceManager: MysqlDataSourceManager;
 
   @Transactional()
   async succeedTransaction() {
@@ -29,5 +33,9 @@ export class FooService {
     await this.fooDAO.insert(foo);
     await this.fooDAO.insert(foo2);
     throw new Error('mock error');
+  }
+
+  foo() {
+    return this.mysqlDataSourceManager;
   }
 }

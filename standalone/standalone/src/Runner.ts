@@ -40,7 +40,7 @@ import { StandaloneContextHandler } from './StandaloneContextHandler';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
 import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
 import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
-import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin/lib/MysqlDataSourceManager';
+import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin';
 import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
 import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
 import { TransactionPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/TransactionPrototypeHook';
@@ -96,6 +96,9 @@ export class Runner {
         obj: new ModuleConfigs(this.moduleConfigs),
       }],
       moduleConfig: [],
+      mysqlDataSourceManager: [{
+        obj: MysqlDataSourceManager.instance,
+      }],
     };
 
     const runtimeConfig: Partial<RuntimeConfig> = {
