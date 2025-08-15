@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.61.0](https://github.com/eggjs/tegg/compare/v3.60.3...v3.61.0) (2025-08-15)
+
+
+### Features
+
+* allow inject MysqlDataSourceManager ([#342](https://github.com/eggjs/tegg/issues/342)) ([d13b2d7](https://github.com/eggjs/tegg/commit/d13b2d7cd11dd36960647cb40bfc4bf92ce704fd))
+
+
+
+
+
 ## [3.60.3](https://github.com/eggjs/tegg/compare/v3.60.2...v3.60.3) (2025-08-06)
 
 
