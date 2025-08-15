@@ -1,4 +1,5 @@
 import { ContextProto, Inject } from '@eggjs/tegg';
+import { MysqlDataSourceManager } from '@eggjs/tegg/dal';
 import { Runner, MainRunner } from '@eggjs/tegg/standalone';
 import FooDAO from './dal/dao/FooDAO';
 import { Foo } from './Foo';
@@ -9,6 +10,9 @@ import { Foo } from './Foo';
 export class FooRunner implements MainRunner<Foo | null> {
   @Inject()
   fooDAO: FooDAO;
+
+  @Inject()
+  mysqlDataSourceManager: MysqlDataSourceManager;
 
   async main(): Promise<Foo | null> {
     const foo = new Foo();

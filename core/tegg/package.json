@@ -54,6 +54,9 @@
     "@eggjs/tegg-transaction-decorator": "^3.60.1",
     "@eggjs/tegg-types": "^3.60.1"
   },
+  "peerDependencies": {
+    "@eggjs/tegg-dal-plugin": "^3.60.1"
+  },
   "publishConfig": {
     "access": "public"
   },
