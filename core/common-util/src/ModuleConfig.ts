@@ -328,7 +328,7 @@ export class ModuleConfigUtil {
         // 将 undefined 视为 false（非可选）
         const existingOptional = existingRef.optional ?? false;
         const currentOptional = moduleRef.optional ?? false;
-        
+
         if (!existingOptional && currentOptional) {
           // 保留现有的非 optional 模块，跳过当前的 optional 模块
           continue;
