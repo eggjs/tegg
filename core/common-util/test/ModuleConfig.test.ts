@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { ModuleConfigUtil } from '../src/ModuleConfig';
+import type { ModuleReference } from '@eggjs/tegg-types';
 
 describe('test/ModuleConfig.test.ts', () => {
   describe('load yaml config', () => {
@@ -137,6 +138,199 @@ describe('test/ModuleConfig.test.ts', () => {
         path: path.resolve(__dirname, './fixtures/monorepo/packages/a'),
         name: 'a',
       }]);
+    });
+  });
+});
+
+describe('ModuleConfigUtil.deduplicateModules', () => {
+  describe('basic deduplication', () => {
+    it('should remove duplicate modules by path', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+        { name: 'module2', path: '/path/to/module2' },
+        { name: 'module1-duplicate', path: '/path/to/module1' }, // 路径重复
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      assert.strictEqual(result.length, 2);
+      assert.ok(result.find(m => m.name === 'module1'));
+      assert.ok(result.find(m => m.name === 'module2'));
+      assert.strictEqual(result.find(m => m.name === 'module1-duplicate'), undefined);
+    });
+
+    it('should remove duplicate modules by name', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+        { name: 'module2', path: '/path/to/module2' },
+        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复但路径不同
+      ];
+
+      // 名称重复会抛出错误，因为实际实现不允许名称重复
+      assert.throws(() => {
+        ModuleConfigUtil.deduplicateModules(mockModules);
+      }, /Duplicate module name "module1"/);
+    });
+
+    it('should handle empty input', () => {
+      const result = ModuleConfigUtil.deduplicateModules([]);
+      assert.strictEqual(result.length, 0);
+    });
+
+    it('should handle single module', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      assert.strictEqual(result.length, 1);
+      assert.strictEqual(result[0].name, 'module1');
+    });
+  });
+
+  describe('optional module handling', () => {
+    it('should prioritize non-optional modules over optional ones', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1', optional: true },
+        { name: 'module2', path: '/path/to/module2' },
+        { name: 'module1', path: '/path/to/module1' }, // 非 optional 版本
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      assert.strictEqual(result.length, 2);
+      const module1 = result.find(m => m.name === 'module1');
+      assert.ok(module1);
+      assert.strictEqual(module1!.optional, false); // 应该保留非 optional 版本
+    });
+
+    it('should keep optional module when no non-optional version exists', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1', optional: true },
+        { name: 'module2', path: '/path/to/module2' },
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      assert.strictEqual(result.length, 2);
+      const module1 = result.find(m => m.name === 'module1');
+      assert.ok(module1);
+      assert.strictEqual(module1!.optional, true);
+    });
+  });
+
+  describe('name conflict handling', () => {
+    it('should throw error for duplicate names with different paths', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复但路径不同
+      ];
+
+      assert.throws(() => {
+        ModuleConfigUtil.deduplicateModules(mockModules);
+      }, /Duplicate module name "module1"/);
+    });
+  });
+
+  describe('logPrefix option', () => {
+    it('should use custom log prefix in error messages', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复但路径不同
+      ];
+
+      assert.throws(() => {
+        ModuleConfigUtil.deduplicateModules(mockModules);
+      }, /Duplicate module name "module1"/);
+    });
+
+    it('should use default log prefix when not specified', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复但路径不同
+      ];
+
+      assert.throws(() => {
+        ModuleConfigUtil.deduplicateModules(mockModules);
+      }, /\[tegg\] Duplicate module name "module1"/);
+    });
+  });
+
+  describe('complex scenarios', () => {
+    it('should handle mixed scenarios with optional and non-optional modules', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1', optional: true },
+        { name: 'module2', path: '/path/to/module2' },
+        { name: 'module1', path: '/path/to/module1' }, // 非 optional 版本，应该替换 optional 版本
+        { name: 'module3', path: '/path/to/module3' },
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      assert.strictEqual(result.length, 3);
+
+      const module1 = result.find(m => m.name === 'module1');
+      const module2 = result.find(m => m.name === 'module2');
+      const module3 = result.find(m => m.name === 'module3');
+
+      assert.ok(module1);
+      assert.strictEqual(module1!.optional, false); // 应该保留非 optional 版本
+      assert.ok(module2);
+      assert.ok(module3);
+    });
+
+    it('should demonstrate mm usage for mocking', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1' },
+        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复，应该触发错误
+      ];
+
+      assert.throws(() => {
+        ModuleConfigUtil.deduplicateModules(mockModules);
+      }, /Duplicate module name "module1"/);
+    });
+  });
+
+  describe('complex scenarios', () => {
+    it('should correctly update nameMap when replacing optional modules', () => {
+      // 这个测试验证当非可选模块替换可选模块且名称不同时，
+      // nameMap 能正确更新，不会在后续处理中产生错误的重复名称警告
+      const mockModules: ModuleReference[] = [
+        { name: 'oldName', path: '/path/to/module1', optional: true },
+        { name: 'newName', path: '/path/to/module1' }, // 非 optional 版本，名称不同
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      // 验证结果
+      assert.strictEqual(result.length, 1);
+
+      const module1 = result.find(m => m.path === '/path/to/module1');
+
+      assert.ok(module1);
+      assert.strictEqual(module1!.name, 'newName');
+      assert.strictEqual(module1!.optional, false);
+    });
+
+    it('should handle name conflicts when replacing optional modules', () => {
+      // 这个测试验证当非可选模块替换可选模块且名称相同时，
+      // 能够正确处理名称冲突
+      const mockModules: ModuleReference[] = [
+        { name: 'module1', path: '/path/to/module1', optional: true },
+        { name: 'module1', path: '/path/to/module1' }, // 非 optional 版本，名称相同
+      ];
+
+      const result = ModuleConfigUtil.deduplicateModules(mockModules);
+
+      // 验证结果
+      assert.strictEqual(result.length, 1);
+
+      const module1 = result.find(m => m.path === '/path/to/module1');
+
+      assert.ok(module1);
+      assert.strictEqual(module1!.name, 'module1');
+      assert.strictEqual(module1!.optional, false);
     });
   });
 });

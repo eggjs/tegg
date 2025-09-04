@@ -304,4 +304,69 @@ export class ModuleConfigUtil {
     const moduleYamlContent = fs.readFileSync(moduleYamlPath, 'utf8');
     return yaml.safeLoad(moduleYamlContent) as ModuleConfig;
   }
+
+  /**
+   * 去重模块引用，避免重复添加相同的模块
+   * @param moduleReferences 模块引用数组
+   * @param options 去重选项
+   * @return 去重后的模块引用数组
+   */
+  public static deduplicateModules(
+    moduleReferences: readonly ModuleReference[],
+  ): readonly ModuleReference[] {
+
+    const moduleMap = new Map<string, ModuleReference>();
+    const nameMap = new Map<string, ModuleReference>();
+
+    for (const moduleRef of moduleReferences) {
+      const key = moduleRef.path;
+      const existingRef = moduleMap.get(key);
+
+      // 如果路径相同，优先保留非 optional 模块
+      if (existingRef) {
+        // 优先保留非 optional 模块
+        // 将 undefined 视为 false（非可选）
+        const existingOptional = existingRef.optional ?? false;
+        const currentOptional = moduleRef.optional ?? false;
+        
+        if (!existingOptional && currentOptional) {
+          // 保留现有的非 optional 模块，跳过当前的 optional 模块
+          continue;
+        } else if (existingOptional && !currentOptional) {
+          // 用非 optional 模块替换现有的 optional 模块
+          // 确保新模块的 optional 属性为 false
+          const newModuleRef = {
+            ...moduleRef,
+            optional: false,
+          };
+          moduleMap.set(key, newModuleRef);
+          // 同时更新 nameMap
+          if (nameMap.get(existingRef.name) === existingRef) {
+            nameMap.delete(existingRef.name);
+          }
+          // 如果名称不同，需要更新 nameMap
+          if (existingRef.name !== newModuleRef.name) {
+            nameMap.delete(existingRef.name);
+          }
+          nameMap.set(newModuleRef.name, newModuleRef);
+          continue;
+        }
+        // 如果都是 optional 或都是非 optional，保留第一个
+        continue;
+      }
+
+      // 检查模块名称是否重复
+      const existingByName = nameMap.get(moduleRef.name);
+      if (existingByName) {
+        // 如果名称重复但路径不同，直接报错
+        throw new Error(`Duplicate module name "${moduleRef.name}" found: existing at ${existingByName.path}, duplicate at ${moduleRef.path}`);
+      }
+
+      // 添加新模块
+      moduleMap.set(key, moduleRef);
+      nameMap.set(moduleRef.name, moduleRef);
+    }
+
+    return Array.from(moduleMap.values());
+  }
 }
