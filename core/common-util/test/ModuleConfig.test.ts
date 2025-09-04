@@ -233,30 +233,6 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
     });
   });
 
-  describe('logPrefix option', () => {
-    it('should use custom log prefix in error messages', () => {
-      const mockModules: ModuleReference[] = [
-        { name: 'module1', path: '/path/to/module1' },
-        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复但路径不同
-      ];
-
-      assert.throws(() => {
-        ModuleConfigUtil.deduplicateModules(mockModules);
-      }, /Duplicate module name "module1"/);
-    });
-
-    it('should use default log prefix when not specified', () => {
-      const mockModules: ModuleReference[] = [
-        { name: 'module1', path: '/path/to/module1' },
-        { name: 'module1', path: '/different/path/to/module1' }, // 名称重复但路径不同
-      ];
-
-      assert.throws(() => {
-        ModuleConfigUtil.deduplicateModules(mockModules);
-      }, /\[tegg\] Duplicate module name "module1"/);
-    });
-  });
-
   describe('complex scenarios', () => {
     it('should handle mixed scenarios with optional and non-optional modules', () => {
       const mockModules: ModuleReference[] = [

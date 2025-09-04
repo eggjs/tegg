@@ -308,7 +308,6 @@ export class ModuleConfigUtil {
   /**
    * 去重模块引用，避免重复添加相同的模块
    * @param moduleReferences 模块引用数组
-   * @param options 去重选项
    * @return 去重后的模块引用数组
    */
   public static deduplicateModules(
