@@ -333,6 +333,15 @@ export class ModuleConfigUtil {
           continue;
         } else if (existingOptional && !currentOptional) {
           // 用非 optional 模块替换现有的 optional 模块
+          // 在替换之前，先检查新模块的名称是否与已有的其他模块名称冲突
+          if (existingRef.name !== moduleRef.name) {
+            const existingByName = nameMap.get(moduleRef.name);
+            if (existingByName) {
+              // 如果名称重复但路径不同，直接报错
+              throw new Error(`Duplicate module name "${moduleRef.name}" found: existing at ${existingByName.path}, duplicate at ${moduleRef.path}`);
+            }
+          }
+
           // 确保新模块的 optional 属性为 false
           const newModuleRef = {
             ...moduleRef,

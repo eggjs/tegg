@@ -308,5 +308,18 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
       assert.strictEqual(module1!.name, 'module1');
       assert.strictEqual(module1!.optional, false);
     });
+
+    it('should throw when replacing optional introduces a name collision with another path', () => {
+      const mockModules: ModuleReference[] = [
+        { name: 'other', path: '/path/to/other' },
+        { name: 'oldName', path: '/path/to/module1', optional: true },
+        // 非 optional 版本替换同一路径，但名称与已有模块冲突
+        { name: 'other', path: '/path/to/module1' },
+      ];
+
+      assert.throws(() => {
+        ModuleConfigUtil.deduplicateModules(mockModules);
+      }, /Duplicate module name "other"/);
+    });
   });
 });
