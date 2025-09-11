@@ -20,7 +20,7 @@ export class ModuleScanner {
     const appPkg = require(path.join(this.baseDir, 'package.json'));
     const framework = appPkg.egg?.framework;
     if (!framework) {
-      return moduleReferences;
+      return ModuleConfigUtil.deduplicateModules(moduleReferences);
     }
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const frameworkPkg = require.resolve(`${framework}/package.json`, {
@@ -28,17 +28,13 @@ export class ModuleScanner {
     });
     const frameworkDir = path.dirname(frameworkPkg);
     const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});
-    const result = [
+
+    // 合并所有模块引用并去重
+    const allModuleReferences = [
       ...moduleReferences,
+      ...optionalModuleReferences.map(ref => ({ ...ref, optional: true })),
     ];
-    for (const optionalModuleReference of optionalModuleReferences) {
-      if (!result.some(t => t.path === optionalModuleReference.path)) {
-        result.push({
-          ...optionalModuleReference,
-          optional: true,
-        });
-      }
-    }
-    return result;
+
+    return ModuleConfigUtil.deduplicateModules(allModuleReferences);
   }
 }

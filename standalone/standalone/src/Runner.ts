@@ -198,10 +198,13 @@ export class Runner {
 
   static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']) {
     const moduleDirs = (dependencies || []).concat(cwd);
-    return moduleDirs.reduce((list, baseDir) => {
+    const allModuleReferences = moduleDirs.reduce((list, baseDir) => {
       const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
       return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
     }, [] as readonly ModuleReference[]);
+
+    // 去重模块引用，避免重复添加
+    return ModuleConfigUtil.deduplicateModules(allModuleReferences);
   }
 
   static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
