@@ -43,6 +43,10 @@ export interface MCPControllerHook {
   preProxy?: (ctx: Context, proxyReq: http.IncomingMessage, proxyResp: http.ServerResponse) => Promise<void>
   schemaLoader?: (controllerMeta: MCPControllerMeta, meta: MCPPromptMeta | MCPToolMeta) => Promise<Parameters<McpServer['tool']>['2'] | Parameters<McpServer['prompt']>['2']>
   checkAndRunProxy?: (ctx: Context, type: MCPProtocols, sessionId: string) => Promise<boolean>;
+
+  // middleware
+  middlewareStart?: (ctx: Context) => Promise<void>
+  middlewareEnd?: (ctx: Context) => Promise<void>
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {

@@ -18,7 +18,19 @@ export default () => {
     });
     if (res) {
       ctx.disableBodyParser = true;
+      if (ctx.app.config.mcp.hooks) {
+        for (const hook of ctx.app.config.mcp.hooks) {
+          await hook.middlewareStart?.(ctx);
+        }
+      }
     }
     await next();
+    if (res) {
+      if (ctx.app.config.mcp.hooks) {
+        for (const hook of ctx.app.config.mcp.hooks) {
+          await hook.middlewareEnd?.(ctx);
+        }
+      }
+    }
   };
 };

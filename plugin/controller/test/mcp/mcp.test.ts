@@ -62,6 +62,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
     after(async () => {
       await app.close();
+      await fs.rm(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog'), { recursive: true, force: true });
     });
 
     afterEach(() => {
@@ -219,6 +220,13 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
         ],
       });
       await sseTransport.close();
+
+
+      const middlewareStartTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareStart.log'), 'utf-8');
+      const middlewareEndTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareEnd.log'), 'utf-8');
+
+      assert.ok(middlewareStartTracelog.includes('mcp middleware start'));
+      assert.ok(middlewareEndTracelog.includes('mcp middleware end, time:'));
     });
 
     it('streamable should work', async () => {
@@ -364,6 +372,12 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       const logContent = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/mcp-app/mcp-app-web.log'));
 
       assert.ok(logContent.includes('startNotificationStream finish'));
+
+      const middlewareStartTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareStart.log'), 'utf-8');
+      const middlewareEndTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareEnd.log'), 'utf-8');
+
+      assert.ok(middlewareStartTracelog.includes(' POST /mcp/stream] mcp middleware start'));
+      assert.ok(middlewareEndTracelog.includes(' POST /mcp/stream] mcp middleware end, time:'));
     });
 
     it('stateless streamable should work', async () => {
@@ -503,6 +517,13 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
       await streamableTransport.terminateSession();
       await streamableClient.close();
+
+
+      const middlewareStartTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareStart.log'), 'utf-8');
+      const middlewareEndTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareEnd.log'), 'utf-8');
+
+      assert.ok(middlewareStartTracelog.includes(' POST /mcp/stateless/stream] mcp middleware start'));
+      assert.ok(middlewareEndTracelog.includes(' POST /mcp/stateless/stream] mcp middleware end, time:'));
     });
 
     it('multiple sse should work', async () => {
@@ -640,6 +661,13 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
         ],
       });
       await sseTransport.close();
+
+
+      const middlewareStartTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareStart.log'), 'utf-8');
+      const middlewareEndTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareEnd.log'), 'utf-8');
+
+      assert.ok(middlewareStartTracelog.includes('mcp middleware start'));
+      assert.ok(middlewareEndTracelog.includes('mcp middleware end, time:'));
     });
 
     it('multiple streamable should work', async () => {
@@ -785,6 +813,13 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       const logContent = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/mcp-app/mcp-app-web.log'));
 
       assert.ok(logContent.includes('startNotificationStream finish'));
+
+
+      const middlewareStartTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareStart.log'), 'utf-8');
+      const middlewareEndTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareEnd.log'), 'utf-8');
+
+      assert.ok(middlewareStartTracelog.includes(' POST /mcp/test/stream] mcp middleware start'));
+      assert.ok(middlewareEndTracelog.includes(' POST /mcp/test/stream] mcp middleware end, time:'));
     });
 
     it('multiple stateless streamable should work', async () => {
@@ -924,6 +959,13 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
       await streamableTransport.terminateSession();
       await streamableClient.close();
+
+
+      const middlewareStartTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareStart.log'), 'utf-8');
+      const middlewareEndTracelog = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/tracelog/mcpMiddlewareEnd.log'), 'utf-8');
+
+      assert.ok(middlewareStartTracelog.includes(' /mcp/test/stateless/stream] mcp middleware start'));
+      assert.ok(middlewareEndTracelog.includes(' /mcp/test/stateless/stream] mcp middleware end, time:'));
     });
   }
 });

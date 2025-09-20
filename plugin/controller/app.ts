@@ -132,6 +132,8 @@ export default class ControllerAppBootHook {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+
+    this.app.config.mcp.hooks = MCPControllerRegister.hooks;
   }
 
   async willReady() {

@@ -32,6 +32,13 @@ export const GetAlipayTeggHook = (app: Application) => {
     async preProxy(ctx) {
       setUser(ctx);
     },
+    async middlewareStart(ctx) {
+      ctx.mcpStartTime = Date.now();
+      ctx.getLogger('mcpMiddewareStartLogger').info('mcp middleware start');
+    },
+    async middlewareEnd(ctx) {
+      ctx.getLogger('mcpMiddewareEndLogger').info('mcp middleware end, time: ', Date.now() - ctx.mcpStartTime);
+    },
   };
 
   return AlipayTeggControllerHook;
