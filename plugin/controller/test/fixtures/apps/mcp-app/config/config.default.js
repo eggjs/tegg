@@ -29,6 +29,9 @@ module.exports = function(appInfo) {
       mcpMiddewareEndLogger: {
         file: path.join(appInfo.root, 'logs', 'tracelog', 'mcpMiddlewareEnd.log'),
       },
+      mcpMiddewareErrorLogger: {
+        file: path.join(appInfo.root, 'logs', 'tracelog', 'mcpMiddlewareError.log'),
+      },
     },
   };
   return config;

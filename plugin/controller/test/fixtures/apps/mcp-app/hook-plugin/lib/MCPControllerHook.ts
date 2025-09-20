@@ -37,7 +37,10 @@ export const GetAlipayTeggHook = (app: Application) => {
       ctx.getLogger('mcpMiddewareStartLogger').info('mcp middleware start');
     },
     async middlewareEnd(ctx) {
-      ctx.getLogger('mcpMiddewareEndLogger').info('mcp middleware end, time: ', Date.now() - ctx.mcpStartTime);
+      ctx.getLogger('mcpMiddewareEndLogger').info('mcp middleware end, arg: ', JSON.stringify(ctx.mcpArg), `, time: ${Date.now() - ctx.mcpStartTime}`);
+    },
+    async middlewareError(ctx, e) {
+      ctx.getLogger('mcpMiddewareErrorLogger').info('mcp middleware error: ', e);
     },
   };
 
