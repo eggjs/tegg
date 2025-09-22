@@ -19,7 +19,7 @@ import { ControllerRegister } from '../../ControllerRegister';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { isInitializeRequest, isJSONRPCRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import { isInitializeRequest, isJSONRPCRequest, JSONRPCMessage, MessageExtraInfo } from '@modelcontextprotocol/sdk/types.js';
 import { MCPProtocols } from '@eggjs/mcp-proxy/types';
 import awaitEvent from 'await-event';
 import compose from 'koa-compose';
@@ -43,6 +43,11 @@ export interface MCPControllerHook {
   preProxy?: (ctx: Context, proxyReq: http.IncomingMessage, proxyResp: http.ServerResponse) => Promise<void>
   schemaLoader?: (controllerMeta: MCPControllerMeta, meta: MCPPromptMeta | MCPToolMeta) => Promise<Parameters<McpServer['tool']>['2'] | Parameters<McpServer['prompt']>['2']>
   checkAndRunProxy?: (ctx: Context, type: MCPProtocols, sessionId: string) => Promise<boolean>;
+
+  // middleware
+  middlewareStart?: (ctx: Context) => Promise<void>
+  middlewareEnd?: (ctx: Context) => Promise<void>
+  middlewareError?: (ctx: Context, e: Error) => Promise<void>
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {
@@ -183,6 +188,14 @@ export class MCPControllerRegister implements ControllerRegister {
     if (self.globalMiddlewares) {
       mw = compose([ mw, self.globalMiddlewares ]);
     }
+    const onmessage = transport.onmessage;
+
+    transport.onmessage = async (message: JSONRPCMessage, extra?: MessageExtraInfo) => {
+      if (self.app.currentContext) {
+        self.app.currentContext.mcpArg = message;
+      }
+      onmessage && await onmessage(message, extra);
+    };
     const initHandler = async (ctx: Context) => {
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
@@ -194,7 +207,6 @@ export class MCPControllerRegister implements ControllerRegister {
         'content-type': 'text/event-stream',
         'transfer-encoding': 'chunked',
       });
-
       await ctx.app.ctxStorage.run(ctx, async () => {
         await mw(ctx, async () => {
           await transport.handleRequest(ctx.req, ctx.res);
@@ -253,7 +265,7 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       const sessionId = ctx.req.headers['mcp-session-id'] as string | undefined;
       if (!sessionId) {
-        const ct = contentType.parse(ctx.req.headers['content-type'] ?? '');
+        const ct = contentType.parse(ctx.req.headers['content-type'] || 'application/json');
 
         let body;
 
@@ -307,6 +319,15 @@ export class MCPControllerRegister implements ControllerRegister {
             transport,
           );
 
+          const onmessage = transport.onmessage;
+
+          transport.onmessage = async (message: JSONRPCMessage, extra?: MessageExtraInfo) => {
+            if (self.app.currentContext) {
+              self.app.currentContext.mcpArg = message;
+            }
+            onmessage && await onmessage(message, extra);
+          };
+
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
               await transport.handleRequest(ctx.req, ctx.res, body);
@@ -338,6 +359,7 @@ export class MCPControllerRegister implements ControllerRegister {
             'content-type': 'text/event-stream',
             'transfer-encoding': 'chunked',
           });
+
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
               await transport.handleRequest(ctx.req, ctx.res);
@@ -442,7 +464,8 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     const messageFunc = transport.onmessage;
     self.sseTransportsRequestMap.set(transport, {});
-    transport.onmessage = async (...args: [JSONRPCMessage]) => {
+    transport.onmessage = async (message: JSONRPCMessage, extra?: MessageExtraInfo) => {
+      const args = [ message, extra ];
       // 这里需要 new 一个新的 ctx，否则 ContextProto 会未被初始化
       const socket = new Socket();
       const req = new IncomingMessage(socket);
@@ -451,6 +474,7 @@ export class MCPControllerRegister implements ControllerRegister {
       req.url = self.mcpConfig.getSseInitPath(name);
       req.headers = {
         ...ctx.req.headers,
+        ...extra?.requestInfo?.headers,
         accept: 'application/json, text/event-stream',
         'content-type': 'application/json',
       };
@@ -462,12 +486,12 @@ export class MCPControllerRegister implements ControllerRegister {
           }
         }
         await mw(newCtx, async () => {
-          messageFunc!(...args);
+          messageFunc!(message, extra);
           if (isJSONRPCRequest(args[0])) {
             const map = self.sseTransportsRequestMap.get(transport)!;
             const wait = new Promise<null>((resolve, reject) => {
-              if ('id' in args[0]) {
-                map[args[0].id] = { resolve, reject };
+              if (extra && 'id' in extra) {
+                map[extra.id as string] = { resolve, reject };
               }
             });
             await wait;
@@ -500,7 +524,16 @@ export class MCPControllerRegister implements ControllerRegister {
         }
         self.app.logger.info('message coming', sessionId);
         try {
-          await self.transports[sessionId].handlePostMessage(ctx.req, ctx.res);
+          const ct = contentType.parse(ctx.req.headers['content-type'] ?? '');
+
+          const rawBody = await getRawBody(ctx.req, {
+            limit: '4mb',
+            encoding: ct.parameters.charset ?? 'utf-8',
+          });
+
+          const body = JSON.parse(rawBody);
+          ctx.mcpArg = body;
+          await self.transports[sessionId].handlePostMessage(ctx.req, ctx.res, body);
         } catch (error) {
           self.app.logger.error('Error handling MCP message', error);
           if (!ctx.res.headersSent) {

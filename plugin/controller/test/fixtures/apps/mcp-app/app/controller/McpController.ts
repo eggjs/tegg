@@ -81,6 +81,12 @@ export class McpController {
   }
 
   @MCPTool()
+  async mockError(): Promise<MCPToolResponse> {
+    throw new Error('mock error');
+  }
+
+
+  @MCPTool()
   async echoUser(): Promise<MCPToolResponse> {
     return {
       content: [

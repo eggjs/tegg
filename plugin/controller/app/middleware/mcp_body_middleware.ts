@@ -18,7 +18,24 @@ export default () => {
     });
     if (res) {
       ctx.disableBodyParser = true;
+      try {
+        for (const hook of ctx.app.config.mcp.hooks) {
+          await hook.middlewareStart?.(ctx);
+        }
+        await next();
+        if (!ctx.mcpArg) {
+          ctx.mcpArg = JSON.parse(ctx.response.header['mcp-proxy-arg'] as string ?? '{}');
+        }
+        for (const hook of ctx.app.config.mcp.hooks) {
+          await hook.middlewareEnd?.(ctx);
+        }
+      } catch (e) {
+        for (const hook of ctx.app.config.mcp.hooks) {
+          await hook.middlewareError?.(ctx, e);
+        }
+      }
+    } else {
+      await next();
     }
-    await next();
   };
 };
