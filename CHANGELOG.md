@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.62.0](https://github.com/eggjs/tegg/compare/v3.61.0...v3.62.0) (2025-09-24)
+
+
+### Bug Fixes
+
+* deduplicate modules reference ([#343](https://github.com/eggjs/tegg/issues/343)) ([aa5daf7](https://github.com/eggjs/tegg/commit/aa5daf7e8db49c8b273ba2102c127fd14a2de044))
+
+
+### Features
+
+* add mcp middleware hook ([#344](https://github.com/eggjs/tegg/issues/344)) ([7215645](https://github.com/eggjs/tegg/commit/72156452a2d69ff8f31b4fe76324dd4164761698))
+
+
+
+
+
 # [3.61.0](https://github.com/eggjs/tegg/compare/v3.60.3...v3.61.0) (2025-08-15)
 
 
