@@ -45,7 +45,7 @@
     "directory": "plugin/aop"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/aop-decorator": "^4.0.0-beta.4",
@@ -55,13 +55,13 @@
     "@eggjs/tegg-metadata": "^4.0.0-beta.4"
   },
   "devDependencies": {
-    "@eggjs/bin": "7",
-    "@eggjs/mock": "6",
+    "@eggjs/bin": "beta",
+    "@eggjs/mock": "beta",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
     "@types/mocha": "10",
-    "@types/node": "20",
-    "egg": "4",
+    "@types/node": "22",
+    "egg": "beta",
     "ts-node": "10",
     "typescript": "5"
   },

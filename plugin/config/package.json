@@ -48,16 +48,16 @@
     "directory": "plugin/config"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/utils": "^4.3.0"
+    "@eggjs/utils": "beta"
   },
   "devDependencies": {
-    "@eggjs/mock": "6",
+    "@eggjs/mock": "beta",
     "@types/node": "22",
-    "egg": "4",
+    "egg": "beta",
     "ts-node": "10",
     "typescript": "5"
   },

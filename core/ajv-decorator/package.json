@@ -37,7 +37,7 @@
     "directory": "core/ajv-decorator"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@sinclair/typebox": "^0.32.20",

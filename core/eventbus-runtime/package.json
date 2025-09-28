@@ -50,14 +50,14 @@
     "await-first": "^1.0.0"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "devDependencies": {
     "@eggjs/tegg-loader": "^4.0.0-beta.4",
     "@eggjs/tegg-metadata": "^4.0.0-beta.4",
     "@types/node": "22",
     "coffee": "5",
-    "egg": "4",
+    "egg": "beta",
     "ts-node": "10",
     "typescript": "5"
   },

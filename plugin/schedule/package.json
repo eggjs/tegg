@@ -55,10 +55,10 @@
     "directory": "plugin/schedule"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core": "^6.4.0",
+    "@eggjs/core": "beta",
     "@eggjs/egg-module-common": "^4.0.0-beta.4",
     "@eggjs/tegg": "^4.0.0-beta.4",
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
@@ -69,13 +69,13 @@
     "@eggjs/tegg-schedule-decorator": "^4.0.0-beta.4"
   },
   "devDependencies": {
-    "@eggjs/mock": "6",
+    "@eggjs/mock": "beta",
     "@eggjs/module-test-util": "^4.0.0-beta.4",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
     "@types/mocha": "10",
     "@types/node": "22",
-    "egg": "4",
+    "egg": "beta",
     "ts-node": "10",
     "typescript": "5"
   },

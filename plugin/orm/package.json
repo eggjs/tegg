@@ -56,10 +56,10 @@
     "directory": "plugin/orm"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core": "^6.4.0",
+    "@eggjs/core": "beta",
     "@eggjs/egg-module-common": "^4.0.0-beta.4",
     "@eggjs/tegg": "^4.0.0-beta.4",
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
@@ -72,14 +72,14 @@
     "sdk-base": "^5.0.1"
   },
   "devDependencies": {
-    "@eggjs/mock": "6",
+    "@eggjs/mock": "beta",
     "@eggjs/module-test-util": "^4.0.0-beta.4",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
-    "@eggjs/tracer": "3",
+    "@eggjs/tracer": "beta",
     "@types/mocha": "10",
     "@types/node": "22",
-    "egg": "4",
+    "egg": "beta",
     "mysql2": "3",
     "ts-node": "10",
     "typescript": "5"

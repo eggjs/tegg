@@ -38,7 +38,7 @@
     "directory": "core/standalone-decorator"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",

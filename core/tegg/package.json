@@ -71,7 +71,7 @@
     "directory": "core/tegg"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/ajv-decorator": "^4.0.0-beta.4",

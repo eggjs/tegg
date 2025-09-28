@@ -49,7 +49,7 @@
     "directory": "plugin/ajv"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/ajv-formats": "^3.0.1",
@@ -59,12 +59,12 @@
     "ajv": "^8.17.1"
   },
   "devDependencies": {
-    "@eggjs/mock": "6",
+    "@eggjs/mock": "beta",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-controller-plugin": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
     "@types/node": "22",
-    "egg": "4",
+    "egg": "beta",
     "ts-node": "10",
     "typescript": "5"
   },

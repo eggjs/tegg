@@ -37,7 +37,7 @@
     "directory": "core/runtime"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/core-decorator": "^4.0.0-beta.4",

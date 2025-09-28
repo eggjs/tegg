@@ -36,7 +36,7 @@
     "directory": "core/background-task"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -49,7 +49,7 @@
   "devDependencies": {
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
     "@types/node": "22",
-    "egg": "4",
+    "egg": "beta",
     "mocha": "10",
     "ts-node": "10",
     "typescript": "5"
