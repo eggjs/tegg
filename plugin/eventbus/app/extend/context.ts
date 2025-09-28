@@ -1,4 +1,5 @@
-import { Context } from '@eggjs/core';
+import { Context } from 'egg';
+
 import { EggContextEventBus } from '../../lib/EggContextEventBus.js';
 
 const EVENT_BUS = Symbol.for('context#eventBus');
@@ -14,7 +15,7 @@ export default class EventBusContext extends Context {
   }
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   interface Context {
     get eventBus(): EggContextEventBus;
   }

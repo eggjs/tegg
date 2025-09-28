@@ -1,5 +1,6 @@
 import assert from 'node:assert';
-import { Context, Router } from '@eggjs/core';
+
+import { Context, Router } from 'egg';
 import {
   EggContext,
   HTTPControllerMeta,
@@ -16,6 +17,7 @@ import { EggPrototype } from '@eggjs/tegg-metadata';
 import pathToRegexp from 'path-to-regexp';
 import { EggRouter } from '@eggjs/router';
 import { FrameworkErrorFormater } from 'egg-errors';
+
 import { RootProtoManager } from '../../RootProtoManager.js';
 import { aclMiddlewareFactory } from './Acl.js';
 import { HTTPRequest } from './Req.js';

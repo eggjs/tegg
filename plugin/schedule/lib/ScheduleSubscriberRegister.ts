@@ -1,6 +1,7 @@
-import { EggCore as Application } from '@eggjs/core';
+import { Application } from 'egg';
 import { PrototypeUtil, EggProtoImplClass } from '@eggjs/tegg';
 import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
+
 import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.js';
 
 export class ScheduleSubscriberRegister {

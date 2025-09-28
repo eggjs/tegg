@@ -1,4 +1,4 @@
-import type { Context } from '@eggjs/core';
+import type { Context } from 'egg';
 import { AbstractEggContext } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';

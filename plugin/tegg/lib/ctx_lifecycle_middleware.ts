@@ -1,6 +1,7 @@
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
+import type { Context } from 'egg';
+
 import { EggContextImpl } from './EggContextImpl.js';
-import type { Context } from '@eggjs/core';
 
 export async function ctxLifecycleMiddleware(ctx: Context, next: () => Promise<void>) {
   // should not recreate teggContext

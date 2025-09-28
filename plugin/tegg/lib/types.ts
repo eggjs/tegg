@@ -21,11 +21,11 @@ import { IdenticalUtil, QualifierInfo } from '@eggjs/tegg';
 import { ModuleHandler } from '../lib/ModuleHandler.js';
 import { EggContextHandler } from '../lib/EggContextHandler.js';
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   export interface EggModule {
   }
 
-  export interface EggCore {
+  export interface Application {
     eggPrototypeCreatorFactory: typeof EggPrototypeCreatorFactory;
     eggPrototypeFactory: EggPrototypeFactory;
     eggContainerFactory: typeof EggContainerFactory;

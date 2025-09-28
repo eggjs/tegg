@@ -1,5 +1,6 @@
 import type { MockApplication } from '@eggjs/mock';
-import type { Context } from '@eggjs/core';
+import type { Context } from 'egg';
+
 import { EggContextImpl } from '../../lib/EggContextImpl.js';
 import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 

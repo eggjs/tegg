@@ -1,4 +1,5 @@
-import { EggCore as Application } from '@eggjs/core';
+import { Application } from 'egg';
+
 import { DataSourceManager } from './lib/DataSourceManager.js';
 import { LeoricRegister } from './lib/LeoricRegister.js';
 import { ModelProtoManager } from './lib/ModelProtoManager.js';

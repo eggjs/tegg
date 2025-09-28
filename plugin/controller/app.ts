@@ -1,8 +1,9 @@
-import type { EggCore as Application, ILifecycleBoot } from '@eggjs/core';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.js';
-import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.js';
+import type { Application, ILifecycleBoot } from 'egg';
 import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
+
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.js';
+import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.js';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.js';
 import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.js';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.js';

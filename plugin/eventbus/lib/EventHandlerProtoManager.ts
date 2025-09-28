@@ -1,7 +1,8 @@
-import { EggCore as Application } from '@eggjs/core';
+import { Application } from 'egg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EventContextFactory, EventHandlerFactory } from '@eggjs/tegg-eventbus-runtime';
 import { EVENT_NAME, EventName } from '@eggjs/tegg';
+
 import { eggEventContextFactory } from './EggEventContext.js';
 
 export class EventHandlerProtoManager {

@@ -1,6 +1,6 @@
 import '@eggjs/tegg-plugin';
-
 import { AttributeOptions } from '@eggjs/tegg-orm-decorator';
+
 import { LeoricRegister } from './lib/LeoricRegister.js';
 import { Orm } from './lib/SingletonORM.js';
 import type { OrmConfig } from './lib/DataSourceManager.js';
@@ -13,14 +13,14 @@ declare module '@eggjs/tegg-orm-decorator' {
   export function Attribute(dataType: DataType, options?: AttributeOptions): (target: any, propertyKey: PropertyKey) => void;
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   interface EggAppConfig {
     orm: OrmConfig & {
       datasources?: OrmConfig[];
     };
   }
 
-  interface EggCore {
+  interface Application {
     leoricRegister: LeoricRegister;
     orm: Orm;
   }

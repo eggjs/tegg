@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { EggCore as Application, Router } from '@eggjs/core';
+
+import { Application, Router } from 'egg';
 import {
   CONTROLLER_META_DATA,
   ControllerMetadata,
@@ -9,6 +10,7 @@ import {
 } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
+
 import { ControllerRegister } from '../../ControllerRegister.js';
 import { HTTPMethodRegister } from './HTTPMethodRegister.js';
 import { RootProtoManager } from '../../RootProtoManager.js';

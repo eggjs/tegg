@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import type { Context } from '@eggjs/core';
+
+import type { Context } from 'egg';
 import { Events, PrototypeUtil, CORK_ID, ContextEventBus } from '@eggjs/tegg';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';

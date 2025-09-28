@@ -1,5 +1,5 @@
 import { Application } from 'egg';
-import type { Context } from '@eggjs/core';
+import type { Context } from 'egg';
 import { BackgroundTaskHelper, PrototypeUtil } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';

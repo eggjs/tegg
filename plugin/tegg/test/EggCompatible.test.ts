@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
 import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.js';
 import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService.js';
 

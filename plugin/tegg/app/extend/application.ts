@@ -92,7 +92,7 @@ export default {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers);
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers as QualifierInfo[]);
     return eggObject.obj;
   },
 
@@ -100,7 +100,7 @@ export default {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers);
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
     return eggObject.obj;
   },
 };

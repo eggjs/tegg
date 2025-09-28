@@ -1,6 +1,7 @@
-import type { EggCore as Application } from '@eggjs/core';
+import type { Application } from 'egg';
 import { ControllerMetadata, ControllerTypeLike } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
+
 import { ControllerRegister } from './ControllerRegister.js';
 
 export type RegisterCreator = (proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) => ControllerRegister;

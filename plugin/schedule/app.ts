@@ -1,4 +1,5 @@
-import { EggCore as Application, ILifecycleBoot } from '@eggjs/core';
+import { Application, ILifecycleBoot } from 'egg';
+
 import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister.js';
 import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook.js';
 import { SchedulePrototypeHook } from './lib/SchedulePrototypeHook.js';

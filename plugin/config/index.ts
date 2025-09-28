@@ -1,6 +1,6 @@
 import { ModuleReference as ModuleReferenceAlias } from '@eggjs/tegg-common-util';
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   export type ModuleReference = ModuleReferenceAlias;
 
   export interface ModuleConfig {
@@ -17,7 +17,9 @@ declare module '@eggjs/core' {
     moduleConfigs: Record<string, ModuleConfigHolder>;
   }
 
-  export interface EggCore extends ModuleConfigApplication {
+  export interface Application extends ModuleConfigApplication {
+  }
 
+  export interface Agent extends ModuleConfigApplication {
   }
 }

@@ -1,4 +1,5 @@
-import { EggCore as Application, ILifecycleBoot } from '@eggjs/core';
+import { Application, ILifecycleBoot } from 'egg';
+
 import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook.js';
 import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager.js';
 import { SqlMapManager } from './lib/SqlMapManager.js';

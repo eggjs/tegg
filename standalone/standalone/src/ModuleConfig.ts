@@ -1,7 +1,7 @@
 // import 'egg';
 
 // for declare merging
-declare module '@eggjs/core' {
+declare module 'egg' {
   export interface ModuleConfig {
     // ...
   }

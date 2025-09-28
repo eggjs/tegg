@@ -1,4 +1,4 @@
-import { EggCore as Application } from '@eggjs/core';
+import { Application } from 'egg';
 import { EventHandlerProtoManager } from './lib/EventHandlerProtoManager.js';
 import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook.js';
 import { EventbusProtoHook } from './lib/EventbusProtoHook.js';

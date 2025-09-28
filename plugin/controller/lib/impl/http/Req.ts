@@ -1,4 +1,4 @@
-import type { Context } from '@eggjs/core';
+import type { Context } from 'egg';
 import { HTTPRequest as BaseHTTPRequest } from '@eggjs/tegg';
 
 export class HTTPRequest extends BaseHTTPRequest {

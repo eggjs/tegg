@@ -1,6 +1,7 @@
-import { EggCore as Agent, ILifecycleBoot } from '@eggjs/core';
+import { Agent, ILifecycleBoot } from 'egg';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggLoadUnitType } from '@eggjs/tegg-metadata';
+
 import { ScheduleInfoUtil, ScheduleMetaBuilder } from '@eggjs/tegg/schedule';
 import { ScheduleSubscriberRegister } from './lib/ScheduleSubscriberRegister.js';
 

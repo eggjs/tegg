@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import os from 'node:os';
+
 import Realm from 'leoric';
-import { mm, MockApplication } from '@eggjs/mock';
-import { Context } from '@eggjs/core';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { Context } from 'egg';
+
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.js';
 import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.js';
 import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.js';

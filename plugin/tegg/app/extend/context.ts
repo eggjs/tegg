@@ -1,8 +1,9 @@
-import type { Context } from '@eggjs/core';
+import type { Context } from 'egg';
 import type { EggContext as TEggContext } from '@eggjs/tegg-runtime';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { type EggProtoImplClass, PrototypeUtil, type QualifierInfo } from '@eggjs/tegg';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
+
 import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.js';
 
 export interface TEggPluginContext extends Context {
@@ -37,7 +38,7 @@ export default {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
     }
-    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers);
+    const eggObject = await this.app.eggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
     return eggObject.obj;
   },
 };

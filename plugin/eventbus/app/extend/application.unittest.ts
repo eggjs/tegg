@@ -1,4 +1,4 @@
-import { EggCore as Application } from '@eggjs/core';
+import { Application } from 'egg';
 import { PrototypeUtil, type EventBus, type EventWaiter } from '@eggjs/tegg';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
@@ -17,7 +17,7 @@ export default {
   },
 };
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   interface EggCore {
     getEventbus(): Promise<EventBus>;
     getEventWaiter(): Promise<EventWaiter>;

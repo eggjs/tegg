@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.js';
 
 describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {

@@ -4,9 +4,9 @@ import AppService from '../../modules/multi-module-service/AppService.js';
 
 declare module 'egg' {
   export interface EggModule {
-    multiModuleService: {
-      traceService: TraceService;
-      appService: AppService;
-    }
+    // multiModuleService: {
+    //   traceService: TraceService;
+    //   appService: AppService;
+    // }
   }
 }
