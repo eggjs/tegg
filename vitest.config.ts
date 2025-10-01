@@ -8,7 +8,7 @@ export default defineConfig({
     swc({
       swcOptions: {
         jsc: {
-          target: 'es2021',
+          target: 'es2022',
           transform: {
             useDefineForClassFields: true,
             legacyDecorator: true,
@@ -21,6 +21,7 @@ export default defineConfig({
   ],
   test: {
     coverage: {
+      provider: 'v8',
       reporter: [
         'json',
         'text-summary',
