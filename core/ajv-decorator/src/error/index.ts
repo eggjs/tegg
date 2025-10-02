@@ -1,1 +1,1 @@
-export * from './AjvInvalidParamError.js';
+export * from './AjvInvalidParamError.ts';

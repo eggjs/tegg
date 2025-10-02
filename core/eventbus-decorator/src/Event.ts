@@ -4,7 +4,7 @@ import { EventHandler } from './EventBus.js';
 import { EventInfoUtil } from './EventInfoUtil.js';
 // use @eggjs/tegg as namespace
 // eslint-disable-next-line import/no-unresolved
-import type { Events } from '@eggjs/tegg';
+import type { Events } from 'src/index.ts';
 
 export function Event<E extends keyof Events>(eventName: E) {
   return function(clazz: new () => EventHandler<E>) {

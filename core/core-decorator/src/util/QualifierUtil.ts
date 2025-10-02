@@ -36,7 +36,7 @@ export class QualifierUtil {
 
   static addProperQualifier(clazz: EggProtoImplClass, property: PropertyKey, attribute: QualifierAttribute, value: QualifierValue) {
     const properQualifiers = MetadataUtil.initOwnMapMetaData(PROPERTY_QUALIFIER_META_DATA, clazz, new Map<PropertyKey, Map<QualifierAttribute, QualifierValue>>());
-    const qualifiers = MapUtil.getOrStore(properQualifiers, property, new Map());
+    const qualifiers = MapUtil.getOrStore(properQualifiers, property, new Map<PropertyKey, QualifierValue>());
     qualifiers.set(attribute, value);
   }
 

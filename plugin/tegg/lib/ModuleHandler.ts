@@ -30,8 +30,8 @@ export class ModuleHandler extends Base {
 
       await this.loadUnitLoader.load();
       const instances: LoadUnitInstance[] = [];
-      // TODO fixtures dts broken the module defintion
-      (this.app as any).module = {};
+      // @ts-expect-error TODO fixtures dts broken the module defintion
+      this.app.module = {};
 
       for (const loadUnit of this.loadUnits) {
         const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);

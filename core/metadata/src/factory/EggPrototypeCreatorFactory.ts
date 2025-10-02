@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+import { debuglog } from 'node:util';
 import { InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute, PrototypeUtil } from '@eggjs/core-decorator';
 import type {
   EggProtoImplClass,
@@ -9,6 +10,8 @@ import type {
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-types';
 import { EggPrototypeLifecycleUtil, ClassProtoDescriptor } from '../model/index.js';
+
+const debug = debuglog('tegg/core/metadata/factory/EggPrototypeCreatorFactory');
 
 export class EggPrototypeCreatorFactory {
   private static creatorMap = new Map<string, EggPrototypeCreator>();
@@ -90,6 +93,10 @@ export class EggPrototypeCreatorFactory {
       await EggPrototypeLifecycleUtil.objectPostCreate(ctx, proto);
       PrototypeUtil.setClazzProto(clazz, proto);
       protos.push(proto);
+    }
+    if (debug.enabled && loadUnit.name === 'egg-app') {
+      debug('createProto, get protos:%o, from clazz:%o, from loadUnit:%o:%o:%o',
+        protos.map(t => t.name), clazz.name, loadUnit.type, loadUnit.name, loadUnit.unitPath);
     }
     return protos;
   }

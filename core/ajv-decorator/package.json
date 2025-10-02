@@ -11,24 +11,20 @@
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./src/index.d.ts",
-      "default": "./src/index.js"
-    }
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "files": [
-    "src/**/*.js",
-    "src/**/*.d.ts"
+    "dist"
   ],
   "scripts": {
-    "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run tsc",
+    "clean": "rimraf dist",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run tsc"
+    "prepublishOnly": "npm run build"
   },
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/core/ajv-decorator",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -45,11 +41,18 @@
     "ajv": "^8.17.1"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "devDependencies": {
     "@types/node": "22",
-    "ts-node": "10",
-    "typescript": "5"
-  }
+    "typescript": "5",
+    "tsdown": "^0.15.6"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

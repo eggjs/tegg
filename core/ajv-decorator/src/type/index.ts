@@ -1,1 +1,1 @@
-export * from './Ajv.js';
+export * from './Ajv.ts';

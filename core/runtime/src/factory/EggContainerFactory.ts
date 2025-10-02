@@ -1,3 +1,4 @@
+import { debuglog } from 'node:util';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import type {
   ContainerGetMethod,
@@ -15,11 +16,16 @@ import { NameUtil } from '@eggjs/tegg-common-util';
 import { ContextHandler } from '../model/index.js';
 import type { ContextInitiator as ContextInitiatorType } from '../impl/index.js';
 
+const debug = debuglog('tegg/core/runtime/EggContainerFactory');
+
 export class EggContainerFactory {
   private static containerGetMethodMap: Map<ObjectInitTypeLike, ContainerGetMethod> = new Map();
   private static ContextInitiatorClass: typeof ContextInitiatorType;
 
   static registerContainerGetMethod(initType: ObjectInitTypeLike, method: ContainerGetMethod) {
+    if (debug.enabled) {
+      debug('registerContainerGetMethod %s %o', initType, method.toString());
+    }
     this.containerGetMethodMap.set(initType, method);
   }
 
@@ -49,6 +55,11 @@ export class EggContainerFactory {
       }
       const initiator = EggContainerFactory.ContextInitiatorClass.createContextInitiator(ctx);
       await initiator.init(obj);
+      debug('getOrCreateEggObject with context eggObject:%o, from proto:%o, name:%s',
+        obj.name, proto.name, name);
+    } else {
+      debug('getOrCreateEggObject without context, get eggObject:%o, from proto:%o, name:%s',
+        obj.name, proto.name, name);
     }
     return obj;
   }
@@ -60,7 +71,9 @@ export class EggContainerFactory {
    */
   static async getOrCreateEggObjectFromClazz(clazz: EggProtoImplClass, name?: EggObjectName, qualifiers?: QualifierInfo[]): Promise<EggObject> {
     let proto = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass) as EggPrototype | undefined;
-    if (PrototypeUtil.isEggMultiInstancePrototype(clazz as EggProtoImplClass)) {
+    const isMultiInstance = PrototypeUtil.isEggMultiInstancePrototype(clazz as EggProtoImplClass);
+    debug('getOrCreateEggObjectFromClazz:%o, isMultiInstance:%s, proto:%o', clazz.name, isMultiInstance, !!proto);
+    if (isMultiInstance) {
       const defaultName = NameUtil.getClassName(clazz as EggProtoImplClass);
       name = name ?? defaultName;
       proto = EggPrototypeFactory.instance.getPrototype(name, undefined, qualifiers);
@@ -68,6 +81,8 @@ export class EggContainerFactory {
       name = name ?? proto.name;
     }
     if (!proto) {
+      debug('getOrCreateEggObjectFromClazz:%o not found, eggObjectName:%s, qualifiers:%o, proto:%o, isMultiInstance:%s',
+        clazz.name, name, qualifiers, proto, isMultiInstance);
       throw new Error(`can not get proto for clazz ${clazz.name}`);
     }
     return await this.getOrCreateEggObject(proto, name);

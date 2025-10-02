@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import { it } from 'vitest';
+
+import { test } from 'vitest';
+
 import {
   Acl,
   Context,
@@ -11,9 +13,9 @@ import {
   BackgroundTaskHelper,
   orm,
   aop,
-} from '../index.js';
+} from '../src/index.ts';
 
-it('should exports work', async () => {
+test('should exports work', async () => {
   assert(Acl);
   assert(Context);
   assert(ContextProto);

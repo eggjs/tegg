@@ -11,24 +11,21 @@
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    }
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "files": [
-    "*.js",
-    "*.d.ts"
+    "dist"
   ],
   "scripts": {
-    "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.json",
+    "clean": "rimraf dist",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run tsc:pub"
+    "prepublishOnly": "npm run build"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/core/test-util",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -50,7 +47,16 @@
   },
   "devDependencies": {
     "@types/node": "22",
-    "ts-node": "10",
-    "typescript": "5"
+    "typescript": "5",
+    "tsdown": "^0.15.6"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   }
 }

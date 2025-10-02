@@ -29,6 +29,7 @@
     "prepare-test": "lerna run --parallel prepare-test",
     "tsc": "lerna run tsc",
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
+    "build-workspaces": "npm run build --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
     "coverage": "vitest run --coverage core/* plugin/common plugin/config",

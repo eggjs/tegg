@@ -1,3 +1,4 @@
+import { debuglog } from 'node:util';
 import { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/tegg-metadata';
 import {
   LifecycleHook,
@@ -15,6 +16,8 @@ import {
 } from './EggAppLoader.js';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 
+const debug = debuglog('tegg/plugin/tegg/lib/EggQualifierProtoHook');
+
 export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly app: Application;
 
@@ -26,8 +29,17 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
     const clazzList = await ctx.loader.load();
     const appProperties = ObjectUtils.getProperties(this.app);
     const ctxProperties = ObjectUtils.getProperties(this.app.context);
+    if (debug.enabled) {
+      debug('preCreate, get clazzList:%o, appProperties:%o, ctxProperties:%o, from unitPath:%o',
+        clazzList.map(t => t.name), appProperties.length, ctxProperties.length, ctx.unitPath);
+    }
     for (const clazz of clazzList) {
-      for (const injectObject of PrototypeUtil.getInjectObjects(clazz) || []) {
+      const inbjectObjects = PrototypeUtil.getInjectObjects(clazz) || [];
+      if (debug.enabled && inbjectObjects.length > 0) {
+        debug('preCreate, get injectObjects:%o, from clazz:%o, from unitPath:%o',
+          inbjectObjects.map(t => t.refName), clazz.name, ctx.unitPath);
+      }
+      for (const injectObject of inbjectObjects) {
         const propertyQualifiers = QualifierUtil.getProperQualifiers(clazz, injectObject.refName);
         const hasEggQualifier = propertyQualifiers.find(t => t.attribute === EggQualifierAttribute);
         if (hasEggQualifier) {
@@ -37,6 +49,8 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
           QualifierUtil.addProperQualifier(clazz, injectObject.refName, EggQualifierAttribute, EggType.CONTEXT);
         } else if (this.isAppObject(injectObject.objName, appProperties)) {
           QualifierUtil.addProperQualifier(clazz, injectObject.refName, EggQualifierAttribute, EggType.APP);
+          debug('preCreate, add proper qualifier:%o to clazz:%o, from unitPath:%o',
+            injectObject.refName, clazz.name, ctx.unitPath);
         }
       }
     }

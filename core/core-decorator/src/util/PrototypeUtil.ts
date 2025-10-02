@@ -278,7 +278,7 @@ export class PrototypeUtil {
 
   // TODO fix proto type
   static setClazzProto(clazz: EggProtoImplClass, proto: object) {
-    return MetadataUtil.defineMetaData(PrototypeUtil.CLAZZ_PROTO, proto, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.CLAZZ_PROTO, proto, clazz);
   }
 
   static getDesignType(clazz: EggProtoImplClass, propKey?: PropertyKey) {

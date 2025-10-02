@@ -4,6 +4,7 @@ import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
 import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.js';
+import ConfigService from '../../fixtures/apps/egg-app/modules/multi-module-service/ConfigService.js';
 import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.js';
 
 import { getAppBaseDir } from '../../utils.js';
@@ -28,6 +29,10 @@ describe('test/app/extend/application.test.ts', () => {
 
   describe('getEggObject', () => {
     it('should work', async () => {
+      // const configService = await app.getEggObject(ConfigService);
+      // assert(configService);
+      // assert(configService instanceof ConfigService);
+
       const persistenceService = await app.getEggObject(PersistenceService);
       assert(persistenceService);
       assert(persistenceService instanceof PersistenceService);

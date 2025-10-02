@@ -1,3 +1,5 @@
+import { debuglog } from 'node:util';
+
 import {
   EggLoadUnitType,
   EggLoadUnitTypeLike,
@@ -19,6 +21,8 @@ import {
 } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
+const debug = debuglog('tegg/plugin/tegg/lib/AppLoadUnit');
+
 export class AppLoadUnit implements LoadUnit {
   private readonly loader: Loader;
   id: Id;
@@ -36,6 +40,9 @@ export class AppLoadUnit implements LoadUnit {
 
   async init() {
     const clazzList = await this.loader.load();
+    if (debug.enabled) {
+      debug('init, get clazzList:%j, from unitPath:%o:%o:%o', clazzList.map(t => t.name), this.type, this.name, this.unitPath);
+    }
     for (const clazz of clazzList) {
       // TODO duplicate code, same in ModuleLoadUnit
       const initTypeQualifierAttributeValue = await PrototypeUtil.getInitType(clazz, {

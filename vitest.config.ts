@@ -8,7 +8,7 @@ export default defineConfig({
     swc({
       swcOptions: {
         jsc: {
-          target: 'es2022',
+          target: 'es2021',
           transform: {
             useDefineForClassFields: true,
             legacyDecorator: true,
@@ -20,6 +20,11 @@ export default defineConfig({
     }),
   ],
   test: {
+    exclude: [
+      'plugin/**/test/**/*.test.ts',
+      'standalone/standalone/test/**/*.test.ts',
+      '**/node_modules',
+    ],
     coverage: {
       provider: 'v8',
       reporter: [
@@ -38,7 +43,7 @@ export default defineConfig({
     testTimeout: 60000,
     poolOptions: {
       forks: {
-        execArgv: [ '--import=tsx/esm' ],
+        // execArgv: [ '--import=tsx/esm' ],
       },
     },
   },

@@ -135,7 +135,6 @@ exports[`should export stable 1`] = `
   },
   "MethodValidator": [Function],
   "Middleware": [Function],
-  "ModuleConfig": undefined,
   "ModuleConfigs": [Function],
   "ModuleQualifier": [Function],
   "MultiInstanceInfo": [Function],

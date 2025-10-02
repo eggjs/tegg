@@ -13,7 +13,7 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "default": "./index.js"
+      "default": "./index.ts"
     }
   },
   "files": [
