@@ -1,4 +1,4 @@
-import { Event, EventContext, IEventContext } from '@eggjs/tegg';
+import { Event, EventContext, type IEventContext } from '@eggjs/tegg';
 
 @Event('helloEgg')
 @Event('hiEgg')

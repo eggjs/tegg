@@ -1,3 +1,5 @@
+import { debuglog } from 'node:util';
+
 import {
   type EggProtoImplClass,
   type InjectObjectInfo,
@@ -9,6 +11,8 @@ import {
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 
 import { PrototypeUtil, QualifierUtil } from '../util/index.ts';
+
+const debug = debuglog('tegg/core/core-decorator/decorator/Inject');
 
 function guessInjectInfo(clazz: EggProtoImplClass, name: PropertyKey, proto: any) {
   let objName: PropertyKey | undefined;
@@ -40,9 +44,12 @@ export function Inject(param?: InjectParams | string) {
     let objName: PropertyKey | undefined;
     let initType: string | undefined;
     if (!injectParam) {
+      // `@Inject() foo: FooService`
       // try to read design:type from proto
       const proto = PrototypeUtil.getDesignType(target, propertyKey);
-      ({ objName, initType } = guessInjectInfo(target.constructor, propertyKey, proto));
+      const result = guessInjectInfo(target.constructor, propertyKey, proto);
+      objName = result.objName;
+      initType = result.initType;
     } else {
       // params allow string or object
       objName = injectParam?.name;
@@ -59,6 +66,8 @@ export function Inject(param?: InjectParams | string) {
 
     PrototypeUtil.setInjectType(target.constructor, InjectType.PROPERTY);
     PrototypeUtil.addInjectObject(target.constructor as EggProtoImplClass, injectObject);
+    debug('propertyInject, clazz: %s, propertyKey: %s, injectObject: %o', target.constructor.name, propertyKey, injectObject);
+    // console.trace();
 
     if (initType) {
       QualifierUtil.addProperQualifier(target.constructor, propertyKey, InitTypeQualifierAttribute, initType);

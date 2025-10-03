@@ -13,4 +13,9 @@ export default {
     package: '@eggjs/tegg-config',
     enable: true,
   },
+
+  eventbusModule: {
+    package: '@eggjs/tegg-eventbus-plugin',
+    enable: true,
+  },
 };

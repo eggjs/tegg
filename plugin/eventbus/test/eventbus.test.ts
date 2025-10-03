@@ -1,10 +1,13 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import path from 'node:path';
+
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
+import { type IEventContext } from '@eggjs/tegg';
+
 import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService.js';
 import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger.js';
 import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler.js';
-import { IEventContext } from '@eggjs/tegg';
 
 describe('plugin/eventbus/test/eventbus.test.ts', () => {
   let app: MockApplication;
@@ -13,14 +16,14 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/event-app',
+      baseDir: path.join(import.meta.dirname, 'fixtures/apps/event-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -36,7 +39,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       const helloEvent = eventWaiter.await('helloEgg');
       helloService.hello();
       await helloEvent;
-      assert(msg === '01');
+      expect(msg).toBe('01');
     });
   });
 
@@ -58,7 +61,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       const eventWaiter = await app.getEventWaiter();
       const helloEvent = eventWaiter.await('helloEgg');
       await helloEvent;
-      assert(helloTime >= triggerTime + 100);
+      expect(helloTime).toBeGreaterThanOrEqual(triggerTime + 100);
     });
   });
 
@@ -82,7 +85,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       helloService.uncork();
       await eventWaiter.await('helloEgg');
 
-      assert(helloCalled === 2);
+      expect(helloCalled).toBe(2);
     });
   });
 
@@ -103,7 +106,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       helloService.uncork();
       await eventWaiter.await('helloEgg');
 
-      assert(helloCalled === 1);
+      expect(helloCalled).toBe(1);
     });
   });
 
@@ -133,7 +136,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
         await eventWaiter.await('helloEgg');
       }),
     ]);
-    assert(helloCalled === 2);
+    expect(helloCalled).toBe(2);
   });
 
   it('multi event handler should work', async function() {
@@ -149,13 +152,13 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       const helloEvent = eventWaiter.await('helloEgg');
       helloService.hello();
       await helloEvent;
-      assert.equal(eventName, 'helloEgg');
-      assert.equal(msg, '01');
+      expect(eventName).toBe('helloEgg');
+      expect(msg).toBe('01');
       const hiEvent = eventWaiter.await('hiEgg');
       helloService.hi();
       await hiEvent;
-      assert.equal(eventName, 'hiEgg');
-      assert.equal(msg, 'Ydream');
+      expect(eventName).toBe('hiEgg');
+      expect(msg).toBe('Ydream');
     });
   });
 });

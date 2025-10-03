@@ -1,6 +1,7 @@
 import { AccessLevel } from '@eggjs/tegg-types';
-import { SingletonProto } from '../../../src/index.js';
-import { ICache } from './ICache.js';
+
+import { SingletonProto } from '../../../src/index.ts';
+import { type ICache } from './ICache.ts';
 
 @SingletonProto({
   name: 'cache',

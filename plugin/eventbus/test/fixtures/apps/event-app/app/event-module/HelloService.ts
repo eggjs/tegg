@@ -1,4 +1,4 @@
-import { AccessLevel, ContextProto, Inject, ContextEventBus } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject, type ContextEventBus } from '@eggjs/tegg';
 
 declare module '@eggjs/tegg' {
   interface Events {

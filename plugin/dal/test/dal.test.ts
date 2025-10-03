@@ -6,7 +6,7 @@ import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo.ts';
 import { getFixtures } from './utils.ts';
 
 // TODO: mysql service only start on CI environment
-describe.skipIf(!process.env.CI)('plugin/dal/test/dal.test.ts', () => {
+describe('plugin/dal/test/dal.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {

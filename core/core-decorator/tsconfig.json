@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "types": [
+      "mocha"
+    ]
   },
   "exclude": [
     "node_modules",

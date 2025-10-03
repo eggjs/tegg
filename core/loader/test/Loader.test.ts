@@ -45,7 +45,7 @@ describe('core/loader/test/Loader.test.ts', () => {
         const prototypes = await loader.load();
         console.log(prototypes);
       }, (err: Error) => {
-        assert.match(err.message, /Syntax Error/);
+        assert.match(err.message, /Syntax Error|ERROR: Expected ";" but found "here"/);
         return true;
       });
     });

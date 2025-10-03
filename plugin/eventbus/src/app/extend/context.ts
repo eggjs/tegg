@@ -1,6 +1,6 @@
 import { Context } from 'egg';
 
-import { EggContextEventBus } from '../../lib/EggContextEventBus.js';
+import { EggContextEventBus } from '../../lib/EggContextEventBus.ts';
 
 const EVENT_BUS = Symbol.for('context#eventBus');
 

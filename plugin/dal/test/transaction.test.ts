@@ -7,7 +7,7 @@ import { MysqlDataSourceManager } from '../src/lib/MysqlDataSourceManager.ts';
 import { getFixtures } from './utils.ts';
 
 // TODO: mysql service only start on CI environment
-describe.skipIf(!process.env.CI)('plugin/dal/test/transaction.test.ts', () => {
+describe('plugin/dal/test/transaction.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {

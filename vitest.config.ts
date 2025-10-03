@@ -1,23 +1,24 @@
 import { defineConfig } from 'vitest/config';
-// import swc from 'vite-plugin-swc-transform';
+import swc from 'vite-plugin-swc-transform';
 
 export default defineConfig({
   plugins: [
     // https://timtech.blog/posts/transform-typescript-legacy-decorators-vite-swc-plugin/
     // support legacy decorator
-    // swc({
-    //   swcOptions: {
-    //     jsc: {
-    //       target: 'es2022',
-    //       transform: {
-    //         useDefineForClassFields: true,
-    //         legacyDecorator: true,
-    //         decoratorMetadata: true,
-    //       },
-    //       // externalHelpers: true,
-    //     },
-    //   },
-    // }),
+    // MEMO: support design:type metadata https://www.typescriptlang.org/docs/handbook/decorators.html
+    swc({
+      swcOptions: {
+        jsc: {
+          target: 'es2022',
+          transform: {
+            useDefineForClassFields: true,
+            legacyDecorator: true,
+            decoratorMetadata: true,
+          },
+          // externalHelpers: true,
+        },
+      },
+    }),
   ],
   test: {
     exclude: [

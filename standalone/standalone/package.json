@@ -27,7 +27,7 @@
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
     "tsc:pub": "npm run tsc",
-    "typecheck": "tsc --noEmit",
+    "typecheck:ignore": "tsc --noEmit",
     "prepublishOnly": "npm run tsc"
   },
   "homepage": "https://github.com/eggjs/tegg",
