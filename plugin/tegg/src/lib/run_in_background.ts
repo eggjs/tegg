@@ -1,10 +1,10 @@
-import { Application } from 'egg';
-import type { Context } from 'egg';
+import { Application, type Context } from 'egg';
 import { BackgroundTaskHelper, PrototypeUtil } from '@eggjs/tegg';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import { TEggPluginContext } from '../app/extend/context.js';
-import { getCalleeFromStack } from './Utils.js';
+
+import TEggPluginContext from '../app/extend/context.ts';
+import { getCalleeFromStack } from './Utils.ts';
 
 export const LONG_STACK_DELIMITER = '\n --------------------\n';
 

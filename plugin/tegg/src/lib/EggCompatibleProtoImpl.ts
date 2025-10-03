@@ -1,21 +1,20 @@
 import {
   AccessLevel,
-  EggProtoImplClass,
-  EggPrototypeName, MetaDataKey,
+  type EggProtoImplClass,
+  type EggPrototypeName, type MetaDataKey,
   MetadataUtil,
-  ObjectInitTypeLike,
-  QualifierInfo,
+  type ObjectInitTypeLike,
+  type QualifierInfo,
   QualifierUtil,
-  Id,
+  type Id,
   IdenticalUtil,
-  QualifierValue,
+  type QualifierValue,
 } from '@eggjs/tegg';
 import {
-  EggPrototype,
-  InjectObjectProto,
-  EggPrototypeLifecycleContext,
+  type EggPrototype,
+  type InjectObjectProto,
+  type EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-metadata';
-
 
 export const COMPATIBLE_PROTO_IMPLE_TYPE = 'EGG_COMPATIBLE';
 

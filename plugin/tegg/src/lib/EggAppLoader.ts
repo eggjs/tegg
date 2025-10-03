@@ -1,8 +1,8 @@
 import { Application } from 'egg';
-import { Loader, TeggError } from '@eggjs/tegg-metadata';
+import { type Loader, TeggError } from '@eggjs/tegg-metadata';
 import {
   AccessLevel,
-  EggProtoImplClass,
+  type EggProtoImplClass,
   EggQualifierAttribute,
   EggType,
   InitTypeQualifierAttribute,
@@ -14,8 +14,9 @@ import {
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
-import { ModuleConfigLoader } from './ModuleConfigLoader.js';
-import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.js';
+
+import { ModuleConfigLoader } from './ModuleConfigLoader.ts';
+import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.ts';
 
 export const APP_CLAZZ_BLACK_LIST = [
   'eggObjectFactory',

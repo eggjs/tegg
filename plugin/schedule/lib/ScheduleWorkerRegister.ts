@@ -1,10 +1,10 @@
 import { Application } from 'egg';
 import { PrototypeUtil } from '@eggjs/tegg';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 
-import { eggScheduleAdapterFactory } from './EggScheduleAdapter.js';
-import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.js';
+import { eggScheduleAdapterFactory } from './EggScheduleAdapter.ts';
+import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.ts';
 
 export class ScheduleWorkerRegister {
   private readonly app: Application;

@@ -1,1 +1,1 @@
-export * from './ScheduleMetaBuilder.js';
+export * from './ScheduleMetaBuilder.ts';

@@ -1,3 +1,4 @@
 export * from '@eggjs/tegg-types/core-decorator';
-export * from './decorator/index.js';
-export * from './util/index.js';
+
+export * from './decorator/index.ts';
+export * from './util/index.ts';

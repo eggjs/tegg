@@ -1,6 +1,7 @@
-import { LifecycleHook, EVENT_NAME } from '@eggjs/tegg';
-import { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
-import { EventHandlerProtoManager } from './EventHandlerProtoManager.js';
+import { type LifecycleHook, EVENT_NAME } from '@eggjs/tegg';
+import { type EggPrototype, type EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+
+import { EventHandlerProtoManager } from './EventHandlerProtoManager.ts';
 
 export class EventbusProtoHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {
   private eventHandlerProtoManager: EventHandlerProtoManager;

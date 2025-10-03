@@ -1,7 +1,7 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-import { EventName } from './EventBus.ts';
+import type { EventName } from './EventBus.ts';
 
 export const EVENT_NAME = Symbol.for('EggPrototype#eventName');
 export const EVENT_CONTEXT_INJECT = Symbol.for('EggPrototype#event#handler#context#inject');

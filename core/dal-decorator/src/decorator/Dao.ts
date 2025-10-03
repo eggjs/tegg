@@ -2,7 +2,8 @@ import { Prototype, PrototypeUtil } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { DaoInfoUtil } from '../util/index.js';
+
+import { DaoInfoUtil } from '../util/index.ts';
 
 export function Dao() {
   return function(constructor: EggProtoImplClass) {

@@ -2,7 +2,8 @@ import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { StackUtil } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass, HTTPControllerParams } from '@eggjs/tegg-types';
 import { AccessLevel, ControllerType } from '@eggjs/tegg-types';
-import { ControllerInfoUtil, HTTPInfoUtil } from '../../util/index.js';
+
+import { ControllerInfoUtil, HTTPInfoUtil } from '../../util/index.ts';
 
 export function HTTPController(param?: HTTPControllerParams) {
   return function(constructor: EggProtoImplClass) {

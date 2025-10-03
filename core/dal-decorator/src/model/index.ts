@@ -1,3 +1,4 @@
-export * from './ColumnModel.js';
-export * from './IndexModel.js';
-export * from './TableModel.js';
+export * from './ColumnModel.ts';
+export * from './IndexModel.ts';
+export * from './TableModel.ts';
+

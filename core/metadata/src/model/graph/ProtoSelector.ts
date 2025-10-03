@@ -1,4 +1,4 @@
-import { QualifierInfo } from '@eggjs/tegg-types';
+import { type QualifierInfo } from '@eggjs/tegg-types';
 
 export interface ProtoSelectorContext {
   name: PropertyKey;

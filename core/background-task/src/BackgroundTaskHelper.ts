@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import type { EggLogger, EggAppConfig } from 'egg';
 import { ContextProto, Inject } from '@eggjs/core-decorator';
 import { AccessLevel } from '@eggjs/tegg-types';

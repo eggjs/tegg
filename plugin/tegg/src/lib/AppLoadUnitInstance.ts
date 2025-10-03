@@ -1,11 +1,11 @@
-import { EggLoadUnitType, EggPrototype, LoadUnit } from '@eggjs/tegg-metadata';
-import { EggObjectName, EggPrototypeName, ObjectInitType, Id, IdenticalUtil } from '@eggjs/tegg';
+import { EggLoadUnitType, type EggPrototype, type LoadUnit } from '@eggjs/tegg-metadata';
+import { type EggObjectName, type EggPrototypeName, ObjectInitType, type Id, IdenticalUtil } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import {
-  EggObject, EggObjectFactory,
-  LoadUnitInstance,
+  type EggObject, EggObjectFactory,
+  type LoadUnitInstance,
   LoadUnitInstanceFactory,
-  LoadUnitInstanceLifecycleContext, LoadUnitInstanceLifecycleUtil,
+  type LoadUnitInstanceLifecycleContext, LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 
 export class AppLoadUnitInstance implements LoadUnitInstance {

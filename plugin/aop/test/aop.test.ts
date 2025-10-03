@@ -1,10 +1,13 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import path from 'node:path';
+
+import { describe, it, afterAll, beforeAll, afterEach, expect } from 'vitest';
+// import { expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 describe('plugin/aop/test/aop.test.ts', () => {
   let app: MockApplication;
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
@@ -12,9 +15,9 @@ describe('plugin/aop/test/aop.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/aop-app',
+      baseDir: path.join(import.meta.dirname, 'fixtures/apps/aop-app'),
     });
     await app.ready();
   });
@@ -24,7 +27,7 @@ describe('plugin/aop/test/aop.test.ts', () => {
     const res = await app.httpRequest()
       .get('/aop')
       .expect(200);
-    assert.deepStrictEqual(res.body, {
+    expect(res.body).toEqual({
       msg: 'withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(foo))))',
     });
   });
@@ -34,7 +37,7 @@ describe('plugin/aop/test/aop.test.ts', () => {
     const res = await app.httpRequest()
       .get('/singletonAop')
       .expect(200);
-    assert.deepStrictEqual(res.body, {
+    expect(res.body).toEqual({
       msg: 'withContextPointAroundResult(hello withContextPointAroundParam(foo))',
     });
   });

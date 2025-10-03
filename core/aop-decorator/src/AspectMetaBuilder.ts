@@ -1,7 +1,8 @@
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { CrosscutAdviceFactory } from './CrosscutAdviceFactory.js';
-import { Aspect, AspectBuilder } from './model/index.js';
-import { PointcutAdviceInfoUtil } from './util/index.js';
+
+import { CrosscutAdviceFactory } from './CrosscutAdviceFactory.ts';
+import { Aspect, AspectBuilder } from './model/index.ts';
+import { PointcutAdviceInfoUtil } from './util/index.ts';
 
 export class AspectMetaBuilder {
   private readonly clazz: EggProtoImplClass;

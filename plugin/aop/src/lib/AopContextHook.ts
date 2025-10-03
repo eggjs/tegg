@@ -3,7 +3,7 @@ import type { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime
 import type { EggProtoImplClass, LifecycleHook } from '@eggjs/tegg';
 import { PrototypeUtil, ObjectInitType } from '@eggjs/tegg';
 import { AspectInfoUtil } from '@eggjs/aop-decorator';
-import { EggPrototype, TeggError } from '@eggjs/tegg-metadata';
+import { type EggPrototype, TeggError } from '@eggjs/tegg-metadata';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
 
 export interface EggPrototypeWithClazz extends EggPrototype {

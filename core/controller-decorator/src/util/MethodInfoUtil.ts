@@ -1,7 +1,7 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
 import { MapUtil } from '@eggjs/tegg-common-util';
 import {
-  IAdvice,
+  type IAdvice,
   METHOD_ACL, METHOD_AOP_MIDDLEWARES, METHOD_AOP_REGISTER_MAP,
   METHOD_CONTEXT_INDEX,
   METHOD_CONTROLLER_HOST,

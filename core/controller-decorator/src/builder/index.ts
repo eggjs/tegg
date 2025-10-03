@@ -1,1 +1,1 @@
-export * from './ControllerMetaBuilderFactory.js';
+export * from './ControllerMetaBuilderFactory.ts';

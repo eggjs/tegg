@@ -16,12 +16,11 @@ import {
   type EggContext as TEggContext,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { EggProtoImplClass, IdenticalUtil, RuntimeConfig, QualifierInfo } from '@eggjs/tegg';
+import { type EggProtoImplClass, IdenticalUtil, type RuntimeConfig, type QualifierInfo } from '@eggjs/tegg';
 import { Application } from 'egg';
 
 import { ModuleHandler } from '../../lib/ModuleHandler.ts';
 import { EggContextHandler } from '../../lib/EggContextHandler.ts';
-
 
 export default class TEggPluginApplication extends Application {
   // @eggjs/tegg-metadata should not depend by other egg plugins.
@@ -93,26 +92,26 @@ export default class TEggPluginApplication extends Application {
     };
   }
 
-  async getEggObject(clazz: EggProtoImplClass, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+  async getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
     }
-    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz, name, qualifiers as QualifierInfo[]);
-    return eggObject.obj;
+    const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz as EggProtoImplClass, name, qualifiers as QualifierInfo[]);
+    return eggObject.obj as T;
   }
 
-  async getEggObjectFromName(name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+  async getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [ qualifiers ];
     }
     const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
-    return eggObject.obj;
+    return eggObject.obj as T;
   }
 };
 
 
 declare module 'egg' {
-  export interface Application {
+  interface Application {
     eggPrototypeCreatorFactory: typeof EggPrototypeCreatorFactory;
     eggPrototypeFactory: EggPrototypeFactory;
     eggContainerFactory: typeof EggContainerFactory;
@@ -138,6 +137,7 @@ declare module 'egg' {
     getEggObject<T>(clazz: new (...args: any[]) => T, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
     getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
 
+    // set on ModuleHandler.init()
     module: EggModule;
   }
 }

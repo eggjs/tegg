@@ -1,6 +1,6 @@
 import { AccessLevel, ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
-import { Advice, AdviceContext, Crosscut, IAdvice, Pointcut, PointcutType } from '@eggjs/tegg/aop';
-import { EggLogger } from 'egg';
+import { Advice, type AdviceContext, Crosscut, type IAdvice, Pointcut, PointcutType } from '@eggjs/tegg/aop';
+import { type EggLogger } from 'egg';
 
 @Advice()
 export class PointcutAdvice implements IAdvice<Hello> {

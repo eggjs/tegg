@@ -6,6 +6,5 @@ import './app/extend/application.unittest.ts';
 import './app/extend/context.ts';
 
 declare module 'egg' {
-  export interface EggModule {
-  }
+  export interface EggModule {}
 }

@@ -1,10 +1,10 @@
-import { EggQualifierAttribute, EggType, LifecycleHook, QualifierUtil } from '@eggjs/tegg';
+import { EggQualifierAttribute, EggType, type LifecycleHook, QualifierUtil } from '@eggjs/tegg';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
-  LoadUnit,
-  LoadUnitLifecycleContext,
+  type LoadUnit,
+  type LoadUnitLifecycleContext,
 } from '@eggjs/tegg-metadata';
 import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
 

@@ -13,6 +13,7 @@
       "./schedule": "./dist/schedule.js",
       "./standalone": "./dist/standalone.js",
       "./transaction": "./dist/transaction.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -34,6 +35,7 @@
     "./schedule": "./src/schedule.ts",
     "./standalone": "./src/standalone.ts",
     "./transaction": "./src/transaction.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [

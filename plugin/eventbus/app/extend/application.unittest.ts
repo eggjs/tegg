@@ -1,7 +1,7 @@
 import { Application } from 'egg';
 import { PrototypeUtil, type EventBus, type EventWaiter } from '@eggjs/tegg';
 import { SingletonEventBus } from '@eggjs/tegg-eventbus-runtime';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
 
 export default {
   async getEventbus(this: Application): Promise<EventBus> {

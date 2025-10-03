@@ -1,5 +1,5 @@
 import { Application } from 'egg';
-import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
+import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
 import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
 export class EggContextHandler {

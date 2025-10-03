@@ -1,6 +1,6 @@
 import {
   AccessLevel,
-  EggProtoImplClass,
+  type EggProtoImplClass,
   EggQualifierAttribute,
   EggType,
   InitTypeQualifierAttribute,
@@ -8,12 +8,13 @@ import {
   ObjectInitType,
   PrototypeUtil,
   QualifierUtil,
-  ModuleConfigHolder, ConfigSourceQualifierAttribute,
+  type ModuleConfigHolder, ConfigSourceQualifierAttribute,
 } from '@eggjs/tegg';
 import { ModuleConfigUtil } from '@eggjs/tegg/helper';
-import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.js';
 import { Application } from 'egg';
 import { extend } from 'extend2';
+
+import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.ts';
 
 export class ModuleConfigLoader {
   readonly app: Application;

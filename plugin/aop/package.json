@@ -17,24 +17,21 @@
     "tegg"
   ],
   "files": [
-    "app.js",
-    "app.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.d.ts",
-    "typings/index.d.ts"
+    "dist"
   ],
   "type": "module",
   "exports": {
+    "./app": "./src/app.ts",
+    "./lib/AopContextHook": "./src/lib/AopContextHook.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "egg-bin test",
-    "cov": "egg-bin cov",
-    "clean": "tsc --build --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "tsc:pub": "npm run tsc",
+    "test:mocha": "egg-bin test",
+    "clean": "rimraf dist",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run tsc"
+    "prepublishOnly": "npm run build"
   },
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
@@ -60,13 +57,18 @@
     "@eggjs/mock": "beta",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
-    "@types/mocha": "10",
     "@types/node": "22",
     "egg": "beta",
-    "ts-node": "10",
-    "typescript": "5"
+    "typescript": "5",
+    "tsdown": "^0.15.6"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      "./app": "./dist/app.js",
+      "./lib/AopContextHook": "./dist/lib/AopContextHook.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Application, ILifecycleBoot } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
 
 import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister.js';
 import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook.js';

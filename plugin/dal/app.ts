@@ -1,4 +1,4 @@
-import { Application, ILifecycleBoot } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
 
 import { DalTableEggPrototypeHook } from './lib/DalTableEggPrototypeHook.js';
 import { MysqlDataSourceManager } from './lib/MysqlDataSourceManager.js';

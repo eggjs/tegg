@@ -1,4 +1,4 @@
-import { BaseDaoType, DAL_IS_DAO } from '@eggjs/tegg-types';
+import { type BaseDaoType, DAL_IS_DAO } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';
 

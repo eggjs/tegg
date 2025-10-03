@@ -2,13 +2,14 @@ import { Base } from 'sdk-base';
 import { Application, Context } from 'egg';
 import {
   EggLoadUnitType,
-  LoadUnit,
+  type LoadUnit,
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
-import { LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
-import { EggModuleLoader } from './EggModuleLoader.js';
-import { CompatibleUtil } from './CompatibleUtil.js';
-import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.js';
+import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
+
+import { EggModuleLoader } from './EggModuleLoader.ts';
+import { CompatibleUtil } from './CompatibleUtil.ts';
+import { COMPATIBLE_PROTO_IMPLE_TYPE, EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
 
 export class ModuleHandler extends Base {
   loadUnits: LoadUnit[] = [];
@@ -30,8 +31,7 @@ export class ModuleHandler extends Base {
 
       await this.loadUnitLoader.load();
       const instances: LoadUnitInstance[] = [];
-      // @ts-expect-error TODO fixtures dts broken the module defintion
-      this.app.module = {};
+      this.app.module = {} as any;
 
       for (const loadUnit of this.loadUnits) {
         const instance = await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);

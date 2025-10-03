@@ -1,7 +1,7 @@
 import { debuglog } from 'node:util';
-import { LoadUnitLifecycleContext, LoadUnit } from '@eggjs/tegg-metadata';
+import { type LoadUnitLifecycleContext, type LoadUnit } from '@eggjs/tegg-metadata';
 import {
-  LifecycleHook,
+  type LifecycleHook,
   PrototypeUtil,
   QualifierUtil,
   EggQualifierAttribute,

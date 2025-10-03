@@ -1,8 +1,8 @@
 import { Context, Application } from 'egg';
-import { AbstractEggContext, EggContext } from '@eggjs/tegg-runtime';
+import { AbstractEggContext, type EggContext } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import { ContextCreator } from '@eggjs/tegg-eventbus-runtime';
+import { type ContextCreator } from '@eggjs/tegg-eventbus-runtime';
 
 // AbstractEggContext use lots of static method
 // In chair application mode plugin is in .sff

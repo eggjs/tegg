@@ -2,20 +2,20 @@ import { debuglog } from 'node:util';
 
 import {
   EggLoadUnitType,
-  EggLoadUnitTypeLike,
-  EggPrototype,
+  type EggLoadUnitTypeLike,
+  type EggPrototype,
   EggPrototypeFactory,
-  Loader,
-  LoadUnit,
+  type Loader,
+  type LoadUnit,
   LoadUnitFactory,
-  LoadUnitLifecycleContext,
+  type LoadUnitLifecycleContext,
   EggPrototypeCreatorFactory,
 } from '@eggjs/tegg-metadata';
 import {
-  Id,
+  type Id,
   IdenticalUtil,
-  EggPrototypeName,
-  QualifierInfo,
+  type EggPrototypeName,
+  type QualifierInfo,
   PrototypeUtil,
   InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute, QualifierUtil,
 } from '@eggjs/tegg';

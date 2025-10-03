@@ -1,7 +1,8 @@
-import { LifecycleHook } from '@eggjs/tegg';
+import { type LifecycleHook } from '@eggjs/tegg';
 import { IS_SCHEDULE, SCHEDULE_METADATA, ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
-import { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
-import { ScheduleWorkerRegister } from './ScheduleWorkerRegister.js';
+import { type LoadUnit, type LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+
+import { ScheduleWorkerRegister } from './ScheduleWorkerRegister.ts';
 
 export class ScheduleWorkerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly scheduleWorkerRegister: ScheduleWorkerRegister;

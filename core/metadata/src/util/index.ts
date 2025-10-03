@@ -1,1 +1,1 @@
-export * from './ClassUtil.js';
+export * from './ClassUtil.ts';

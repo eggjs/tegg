@@ -1,13 +1,15 @@
 import assert from 'node:assert';
+
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { ClassUtil } from '@eggjs/tegg-metadata';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ControllerType } from '@eggjs/tegg-types';
-import { ControllerMetaBuilderFactory } from '../../builder/index.js';
-import { HTTPControllerMeta, HTTPMethodMeta } from '../../model/index.js';
-import { ControllerInfoUtil, ControllerMetadataUtil, HTTPInfoUtil, ControllerValidator } from '../../util/index.js';
-import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder.js';
+
+import { ControllerMetaBuilderFactory } from '../../builder/index.ts';
+import { HTTPControllerMeta, HTTPMethodMeta } from '../../model/index.ts';
+import { ControllerInfoUtil, ControllerMetadataUtil, HTTPInfoUtil, ControllerValidator } from '../../util/index.ts';
+import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder.ts';
 
 export class HTTPControllerMetaBuilder {
   private readonly clazz: EggProtoImplClass;
@@ -32,7 +34,7 @@ export class HTTPControllerMetaBuilder {
   build(): HTTPControllerMeta {
     ControllerValidator.validate(this.clazz);
     const controllerType = ControllerInfoUtil.getControllerType(this.clazz);
-    assert(controllerType === ControllerType.HTTP, 'invalidate controller type');
+    assert.equal(controllerType, ControllerType.HTTP, 'invalidate controller type');
     const httpPath = HTTPInfoUtil.getHTTPPath(this.clazz);
     const httpMiddlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
     const methods = this.buildMethod();

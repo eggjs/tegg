@@ -1,2 +1,2 @@
-export * from './ScheduleInfoUtil.js';
-export * from './ScheduleMetadataUtil.js';
+export * from './ScheduleInfoUtil.ts';
+export * from './ScheduleMetadataUtil.ts';

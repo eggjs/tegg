@@ -1,2 +1,2 @@
-export * from './HTTPControllerMetaBuilder.js';
-export * from './HTTPControllerMethodMetaBuilder.js';
+export * from './HTTPControllerMetaBuilder.ts';
+export * from './HTTPControllerMethodMetaBuilder.ts';

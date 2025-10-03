@@ -2,7 +2,8 @@ import { MapUtil } from '@eggjs/tegg-common-util';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggPrototypeName, EggPrototype, LoadUnit, QualifierInfo } from '@eggjs/tegg-types';
 import { FrameworkErrorFormater } from 'egg-errors';
-import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.js';
+
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.ts';
 
 export class EggPrototypeFactory {
   public static instance = new EggPrototypeFactory();

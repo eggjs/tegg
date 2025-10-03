@@ -7,7 +7,8 @@ import {
   InitTypeQualifierAttribute,
 } from '@eggjs/tegg-types';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { PrototypeUtil, QualifierUtil } from '../util/index.js';
+
+import { PrototypeUtil, QualifierUtil } from '../util/index.ts';
 
 function guessInjectInfo(clazz: EggProtoImplClass, name: PropertyKey, proto: any) {
   let objName: PropertyKey | undefined;

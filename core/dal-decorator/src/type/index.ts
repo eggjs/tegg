@@ -1,2 +1,2 @@
-export * from './MySql.js';
-export * from './Spatial.js';
+export * from './MySql.ts';
+export * from './Spatial.ts';

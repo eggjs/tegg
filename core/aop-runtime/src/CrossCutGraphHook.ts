@@ -1,4 +1,4 @@
-import { AspectMetaBuilder, CrosscutInfo, CrosscutInfoUtil } from '@eggjs/aop-decorator';
+import { AspectMetaBuilder, type CrosscutInfo, CrosscutInfoUtil } from '@eggjs/aop-decorator';
 import { GraphNode } from '@eggjs/tegg-common-util';
 import {
   ClassProtoDescriptor,

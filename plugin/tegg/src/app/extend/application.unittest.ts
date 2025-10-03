@@ -1,6 +1,6 @@
 import { type Context, Application } from 'egg';
 
-import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
+import { type EggContext, type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 import { EggContextImpl } from '../../lib/EggContextImpl.ts';
 

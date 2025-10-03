@@ -1,5 +1,6 @@
 import assert from 'node:assert';
 import { debuglog } from 'node:util';
+
 import { InitTypeQualifierAttribute, LoadUnitNameQualifierAttribute, PrototypeUtil } from '@eggjs/core-decorator';
 import type {
   EggProtoImplClass,
@@ -9,7 +10,8 @@ import type {
   EggPrototype,
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-types';
-import { EggPrototypeLifecycleUtil, ClassProtoDescriptor } from '../model/index.js';
+
+import { EggPrototypeLifecycleUtil, ClassProtoDescriptor } from '../model/index.ts';
 
 const debug = debuglog('tegg/core/metadata/factory/EggPrototypeCreatorFactory');
 

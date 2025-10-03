@@ -1,7 +1,8 @@
 import { PointcutType } from '@eggjs/tegg-types';
 import type { CrosscutInfo, EggProtoImplClass, IAdvice, CrosscutParam, CrosscutOptions } from '@eggjs/tegg-types';
-import { CrosscutInfoUtil } from '../util/index.js';
-import { ClassPointInfo, CustomPointInfo, NamePointInfo } from '../model/index.js';
+
+import { CrosscutInfoUtil } from '../util/index.ts';
+import { ClassPointInfo, CustomPointInfo, NamePointInfo } from '../model/index.ts';
 
 const defaultCrossOptions = {
   order: 100,

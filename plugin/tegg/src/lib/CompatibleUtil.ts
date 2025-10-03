@@ -1,7 +1,7 @@
 import { Application, Context } from 'egg';
-import { EggPrototype, EggPrototypeFactory } from '@eggjs/tegg-metadata';
+import { type EggPrototype, EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/tegg';
-import { EggContainerFactory, LoadUnitInstance } from '@eggjs/tegg-runtime';
+import { EggContainerFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
 import { ProxyUtil } from '@eggjs/tegg-common-util';
 
 export class CompatibleUtil {

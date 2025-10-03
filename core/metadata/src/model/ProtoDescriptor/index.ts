@@ -1,2 +1,2 @@
-export * from './AbstractProtoDescriptor.js';
-export * from './ClassProtoDescriptor.js';
+export * from './AbstractProtoDescriptor.ts';
+export * from './ClassProtoDescriptor.ts';

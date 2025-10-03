@@ -1,6 +1,8 @@
 import assert from 'node:assert';
+
 import type { EggProtoImplClass, HostType } from '@eggjs/tegg-types';
-import { ControllerInfoUtil, MethodInfoUtil } from '../../util/index.js';
+
+import { ControllerInfoUtil, MethodInfoUtil } from '../../util/index.ts';
 
 export function Host(host: HostType) {
 

@@ -1,6 +1,7 @@
 import type { EggProtoImplClass, ModelAttributeInfo } from '@eggjs/tegg-types';
-import { AttributeMeta } from '../model/index.js';
-import { ModelInfoUtil, NameUtil } from '../util/index.js';
+
+import { AttributeMeta } from '../model/index.ts';
+import { ModelInfoUtil, NameUtil } from '../util/index.ts';
 
 export class AttributeMetaBuilder {
   private readonly clazz: EggProtoImplClass;

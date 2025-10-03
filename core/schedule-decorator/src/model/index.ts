@@ -1,1 +1,1 @@
-export * from './ScheduleMetadata.js';
+export * from './ScheduleMetadata.ts';

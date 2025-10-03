@@ -1,6 +1,8 @@
 import assert from 'node:assert';
+
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.js';
+
+import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
 
 export function Acl(code?: string) {
   function classAcl(constructor: EggProtoImplClass) {
@@ -8,7 +10,7 @@ export function Acl(code?: string) {
   }
 
   function methodAcl(target: any, propertyKey: PropertyKey) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;

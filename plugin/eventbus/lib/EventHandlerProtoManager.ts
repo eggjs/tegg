@@ -1,9 +1,9 @@
 import { Application } from 'egg';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { EventContextFactory, EventHandlerFactory } from '@eggjs/tegg-eventbus-runtime';
-import { EVENT_NAME, EventName } from '@eggjs/tegg';
+import { EVENT_NAME, type EventName } from '@eggjs/tegg';
 
-import { eggEventContextFactory } from './EggEventContext.js';
+import { eggEventContextFactory } from './EggEventContext.ts';
 
 export class EventHandlerProtoManager {
   private readonly protos: Set<EggPrototype> = new Set();

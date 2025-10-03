@@ -1,4 +1,4 @@
-import { EventHandler, EventName, Events, Arguments, EVENT_CONTEXT_INJECT } from '@eggjs/eventbus-decorator';
+import { type EventHandler, type EventName, type Events, type Arguments, EVENT_CONTEXT_INJECT } from '@eggjs/eventbus-decorator';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { AccessLevel } from '@eggjs/tegg-types';
 import type { EggPrototype } from '@eggjs/tegg-types';

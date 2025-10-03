@@ -1,10 +1,11 @@
-import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.js';
 import {
-  EggObject,
+  type EggObject,
   EggObjectFactory,
 } from '@eggjs/tegg-runtime';
-import { IdenticalUtil, EggObjectName, EggType, EggQualifierAttribute } from '@eggjs/tegg';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { IdenticalUtil, type EggObjectName, EggType, EggQualifierAttribute } from '@eggjs/tegg';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
+
+import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
 
 const OBJ = Symbol('EggCompatibleObject#obj');
 

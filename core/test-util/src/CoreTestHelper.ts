@@ -1,21 +1,22 @@
 import {
   ContextHandler,
   EggContainerFactory,
-  EggContext,
-  LoadUnitInstance,
+  type EggContext,
+  type LoadUnitInstance,
   LoadUnitInstanceFactory,
 } from '@eggjs/tegg-runtime';
 import {
   EggLoadUnitType,
-  EggPrototype,
+  type EggPrototype,
   GlobalGraph,
-  GlobalGraphBuildHook,
+  type GlobalGraphBuildHook,
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
+import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { LoaderUtil } from './LoaderUtil.js';
+
+import { LoaderUtil } from './LoaderUtil.ts';
 
 export class EggContextStorage {
   static storage = new AsyncLocalStorage<EggContext>();

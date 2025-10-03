@@ -3,17 +3,17 @@ import assert from 'node:assert/strict';
 import { Application, Router } from 'egg';
 import {
   CONTROLLER_META_DATA,
-  ControllerMetadata,
+  type ControllerMetadata,
   ControllerType,
   HTTPControllerMeta,
   HTTPMethodMeta,
 } from '@eggjs/tegg';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 
-import { ControllerRegister } from '../../ControllerRegister.js';
-import { HTTPMethodRegister } from './HTTPMethodRegister.js';
-import { RootProtoManager } from '../../RootProtoManager.js';
+import { type ControllerRegister } from '../../ControllerRegister.ts';
+import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
+import { RootProtoManager } from '../../RootProtoManager.ts';
 
 export class HTTPControllerRegister implements ControllerRegister {
   static instance?: HTTPControllerRegister;

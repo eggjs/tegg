@@ -7,7 +7,8 @@ import type {
   LoadUnitCreator,
   LoadUnitPair,
 } from '@eggjs/tegg-types';
-import { LoadUnitLifecycleUtil } from '../model/index.js';
+
+import { LoadUnitLifecycleUtil } from '../model/index.ts';
 
 export class LoadUnitFactory {
   private static loadUnitCreatorMap: Map<EggLoadUnitTypeLike, LoadUnitCreator> = new Map();

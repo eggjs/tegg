@@ -5,7 +5,8 @@ import {
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { Application } from 'egg';
-import { EggAppLoader } from './EggAppLoader.js';
+
+import { EggAppLoader } from './EggAppLoader.ts';
 
 export class EggModuleLoader {
   app: Application;

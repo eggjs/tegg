@@ -1,7 +1,8 @@
-import { LifecycleHook, Logger, ModuleConfigHolder } from '@eggjs/tegg';
-import { DatabaseForker, DataSourceOptions } from '@eggjs/dal-runtime';
-import { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
-import { MysqlDataSourceManager } from './MysqlDataSourceManager.js';
+import { type LifecycleHook, type Logger, type ModuleConfigHolder } from '@eggjs/tegg';
+import { DatabaseForker, type DataSourceOptions } from '@eggjs/dal-runtime';
+import { type LoadUnit, type LoadUnitLifecycleContext } from '@eggjs/tegg/helper';
+
+import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
 
 export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly moduleConfigs: Record<string, ModuleConfigHolder>;

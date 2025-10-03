@@ -2,26 +2,26 @@ import assert from 'node:assert';
 
 import { Context, Router } from 'egg';
 import {
-  EggContext,
+  type EggContext,
   HTTPControllerMeta,
   HTTPMethodMeta,
   HTTPParamType,
-  Next,
+  type Next,
   PathParamMeta,
   QueriesParamMeta,
   QueryParamMeta,
   HTTPCookies,
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { EggPrototype } from '@eggjs/tegg-metadata';
+import { type EggPrototype } from '@eggjs/tegg-metadata';
 import pathToRegexp from 'path-to-regexp';
 import { EggRouter } from '@eggjs/router';
 import { FrameworkErrorFormater } from 'egg-errors';
 
-import { RootProtoManager } from '../../RootProtoManager.js';
-import { aclMiddlewareFactory } from './Acl.js';
-import { HTTPRequest } from './Req.js';
-import { RouterConflictError } from '../../errors.js';
+import { RootProtoManager } from '../../RootProtoManager.ts';
+import { aclMiddlewareFactory } from './Acl.ts';
+import { HTTPRequest } from './Req.ts';
+import { RouterConflictError } from '../../errors.ts';
 
 const noop = () => {
   // ...

@@ -1,3 +1,3 @@
-export * from './Advice.js';
-export * from './Crosscut.js';
-export * from './Pointcut.js';
+export * from './Advice.ts';
+export * from './Crosscut.ts';
+export * from './Pointcut.ts';

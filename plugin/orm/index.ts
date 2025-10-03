@@ -1,10 +1,10 @@
 import '@eggjs/tegg-plugin';
-import { AttributeOptions } from '@eggjs/tegg-orm-decorator';
+import { type AttributeOptions } from '@eggjs/tegg-orm-decorator';
 
-import { LeoricRegister } from './lib/LeoricRegister.js';
-import { Orm } from './lib/SingletonORM.js';
-import type { OrmConfig } from './lib/DataSourceManager.js';
-import type { DataType } from './lib/types.js';
+import { LeoricRegister } from './lib/LeoricRegister.ts';
+import { Orm } from './lib/SingletonORM.ts';
+import type { OrmConfig } from './lib/DataSourceManager.ts';
+import type { DataType } from './lib/types.ts';
 
 export { Orm, LeoricRegister };
 

@@ -1,5 +1,6 @@
 import assert from 'node:assert';
-import { Application, ILifecycleBoot } from 'egg';
+
+import { Application, type ILifecycleBoot } from 'egg';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import {
   crossCutGraphHook,
@@ -8,12 +9,12 @@ import {
   LoadUnitAopHook,
   pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
-import { AopContextHook } from './lib/AopContextHook.js';
 import { GlobalGraph } from '@eggjs/tegg-metadata';
+
+import { AopContextHook } from './lib/AopContextHook.ts';
 
 export default class AopAppHook implements ILifecycleBoot {
   private readonly app: Application;
-
   private readonly crosscutAdviceFactory: CrosscutAdviceFactory;
   private readonly loadUnitAopHook: LoadUnitAopHook;
   private readonly eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
