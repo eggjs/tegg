@@ -15,5 +15,9 @@ export default {
     enable: true,
     package: '@eggjs/tegg-aop-plugin',
   },
+  teggDal: {
+    package: '@eggjs/tegg-dal-plugin',
+    enable: true,
+  },
 };
 

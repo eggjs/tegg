@@ -48,6 +48,9 @@
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
     "@eggjs/utils": "beta"
   },
+  "peerDependencies": {
+    "egg": "beta"
+  },
   "devDependencies": {
     "@eggjs/mock": "beta",
     "@types/node": "22",

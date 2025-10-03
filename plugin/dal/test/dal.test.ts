@@ -1,23 +1,26 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.js';
-import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo.js';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 
-describe('plugin/dal/test/dal.test.ts', () => {
+import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
+import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo.ts';
+import { getFixtures } from './utils.ts';
+
+// TODO: mysql service only start on CI environment
+describe.skipIf(!process.env.CI)('plugin/dal/test/dal.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/dal-app',
+      baseDir: getFixtures('apps/dal-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -104,10 +107,10 @@ describe('plugin/dal/test/dal.test.ts', () => {
       foo.id = insertResult.insertId;
 
       const findFoo = await fooDAO.findByPrimary(foo.id);
-      assert(findFoo);
+      expect(findFoo).toBeDefined();
 
       const deleteResult = await fooDAO.delete(foo.id);
-      assert.equal(deleteResult.affectedRows, 1);
+      expect(deleteResult.affectedRows).toBe(1);
     });
   });
 });

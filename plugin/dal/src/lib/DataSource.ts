@@ -1,10 +1,11 @@
 import assert from 'node:assert';
+
 import {
   AccessLevel, Inject, LoadUnitNameQualifierAttribute,
   MultiInstanceInfo,
   MultiInstanceProto,
-  MultiInstancePrototypeGetObjectsContext,
-  ObjectInfo,
+  type MultiInstancePrototypeGetObjectsContext,
+  type ObjectInfo,
   ObjectInitType,
 } from '@eggjs/tegg';
 import {
@@ -19,10 +20,11 @@ import {
   TableModel,
 } from '@eggjs/tegg/dal';
 import { DataSource } from '@eggjs/dal-runtime';
-import { TableModelManager } from './TableModelManager.js';
-import { MysqlDataSourceManager } from './MysqlDataSourceManager.js';
-import { SqlMapManager } from './SqlMapManager.js';
-import { TransactionalAOP } from './TransactionalAOP.js';
+
+import { TableModelManager } from './TableModelManager.ts';
+import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
+import { SqlMapManager } from './SqlMapManager.ts';
+import { TransactionalAOP } from './TransactionalAOP.ts';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -57,8 +59,7 @@ import { TransactionalAOP } from './TransactionalAOP.js';
   },
 })
 export class DataSourceDelegate<T> extends DataSource<T> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error ignore nerver use
   private transactionalAOP: TransactionalAOP;
   objInfo: ObjectInfo;
 
@@ -67,7 +68,6 @@ export class DataSourceDelegate<T> extends DataSource<T> {
     @MultiInstanceInfo([ DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute ]) objInfo: ObjectInfo) {
     const dataSourceQualifierValue = objInfo.qualifiers.find(t => t.attribute === DataSourceQualifierAttribute)?.value;
     assert(dataSourceQualifierValue);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ moduleName, dataSource, clazzName ] = (dataSourceQualifierValue as string).split('.');
     const tableModel = TableModelManager.instance.get(moduleName, clazzName);
     assert(tableModel, `not found table ${dataSourceQualifierValue}`);

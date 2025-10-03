@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
+import { type DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
 
 export class MysqlDataSourceManager {
   static instance = new MysqlDataSourceManager();

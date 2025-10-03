@@ -21,33 +21,30 @@
     "dal"
   ],
   "files": [
-    "app.js",
-    "app.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.d.ts",
-    "app/**/*.js",
-    "app/**/*.d.ts",
-    "index.js",
-    "index.d.ts"
+    "dist"
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    },
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./lib/DalModuleLoadUnitHook": "./src/lib/DalModuleLoadUnitHook.ts",
+    "./lib/DalTableEggPrototypeHook": "./src/lib/DalTableEggPrototypeHook.ts",
+    "./lib/DataSource": "./src/lib/DataSource.ts",
+    "./lib/MysqlDataSourceManager": "./src/lib/MysqlDataSourceManager.ts",
+    "./lib/SqlMapManager": "./src/lib/SqlMapManager.ts",
+    "./lib/TableModelManager": "./src/lib/TableModelManager.ts",
+    "./lib/TransactionalAOP": "./src/lib/TransactionalAOP.ts",
+    "./lib/TransactionPrototypeHook": "./src/lib/TransactionPrototypeHook.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "egg-bin test",
-    "cov": "egg-bin cov",
-    "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "tsc:pub": "npm run tsc",
+    "clean": "rimraf dist",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run tsc"
+    "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/dal",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -60,8 +57,10 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core": "beta",
     "@eggjs/dal-runtime": "^4.0.0-beta.4"
+  },
+  "peerDependencies": {
+    "egg": "beta"
   },
   "devDependencies": {
     "@eggjs/mock": "beta",
@@ -69,14 +68,30 @@
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
     "@eggjs/tracer": "beta",
-    "@types/mocha": "10",
     "@types/node": "22",
     "egg": "beta",
     "globby": "14",
-    "ts-node": "10",
-    "typescript": "5"
+    "typescript": "5",
+    "tsdown": "^0.15.6"
   },
   "publishConfig": {
-    "access": "public"
-  }
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./lib/DalModuleLoadUnitHook": "./dist/lib/DalModuleLoadUnitHook.js",
+      "./lib/DalTableEggPrototypeHook": "./dist/lib/DalTableEggPrototypeHook.js",
+      "./lib/DataSource": "./dist/lib/DataSource.js",
+      "./lib/MysqlDataSourceManager": "./dist/lib/MysqlDataSourceManager.js",
+      "./lib/SqlMapManager": "./dist/lib/SqlMapManager.js",
+      "./lib/TableModelManager": "./dist/lib/TableModelManager.js",
+      "./lib/TransactionalAOP": "./dist/lib/TransactionalAOP.js",
+      "./lib/TransactionPrototypeHook": "./dist/lib/TransactionPrototypeHook.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

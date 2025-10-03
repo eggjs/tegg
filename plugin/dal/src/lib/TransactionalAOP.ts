@@ -1,5 +1,5 @@
-import { Advice, AdviceContext, IAdvice } from '@eggjs/tegg/aop';
-import { AccessLevel, EggProtoImplClass, ObjectInitType } from '@eggjs/tegg';
+import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
+import { AccessLevel, type EggProtoImplClass, ObjectInitType } from '@eggjs/tegg';
 import { PropagationType } from '@eggjs/tegg/transaction';
 import { MysqlDataSource } from '@eggjs/dal-runtime';
 

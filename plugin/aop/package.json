@@ -52,6 +52,9 @@
     "@eggjs/tegg-aop-runtime": "^4.0.0-beta.4",
     "@eggjs/tegg-metadata": "^4.0.0-beta.4"
   },
+  "peerDependencies": {
+    "egg": "beta"
+  },
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",

@@ -1,19 +1,22 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.js';
-import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService.js';
-import { MysqlDataSourceManager } from '../lib/MysqlDataSourceManager.js';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 
-describe('plugin/dal/test/transaction.test.ts', () => {
+import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
+import { FooService } from './fixtures/apps/dal-app/modules/dal/FooService.ts';
+import { MysqlDataSourceManager } from '../src/lib/MysqlDataSourceManager.ts';
+import { getFixtures } from './utils.ts';
+
+// TODO: mysql service only start on CI environment
+describe.skipIf(!process.env.CI)('plugin/dal/test/transaction.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/dal-app',
+      baseDir: getFixtures('apps/dal-app'),
     });
     await app.ready();
   });
@@ -23,7 +26,7 @@ describe('plugin/dal/test/transaction.test.ts', () => {
     await dataSource.query('delete from egg_foo;');
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -35,8 +38,8 @@ describe('plugin/dal/test/transaction.test.ts', () => {
         await fooService.succeedTransaction();
         const foo1 = await fooDao.findByName('insert_succeed_transaction_1');
         const foo2 = await fooDao.findByName('insert_succeed_transaction_2');
-        assert(foo1.length);
-        assert(foo2.length);
+        expect(foo1.length).toBe(1);
+        expect(foo2.length).toBe(1);
       });
     });
   });
@@ -46,13 +49,13 @@ describe('plugin/dal/test/transaction.test.ts', () => {
       await app.mockModuleContextScope(async () => {
         const fooService = await app.getEggObject(FooService);
         const fooDao = await app.getEggObject(FooDAO);
-        await assert.rejects(async () => {
+        await expect(async () => {
           await fooService.failedTransaction();
-        });
+        }).rejects.toThrow(/dddd/);
         const foo1 = await fooDao.findByName('insert_failed_transaction_1');
         const foo2 = await fooDao.findByName('insert_failed_transaction_2');
-        assert(!foo1.length);
-        assert(!foo2.length);
+        expect(foo1.length).toBe(0);
+        expect(foo2.length).toBe(0);
       });
     });
   });
@@ -66,17 +69,17 @@ describe('plugin/dal/test/transaction.test.ts', () => {
           fooService.failedTransaction(),
           fooService.succeedTransaction(),
         ]);
-        assert.equal(failedRes.status, 'rejected');
-        assert.equal(succeedRes.status, 'fulfilled');
+        expect(failedRes.status).toBe('rejected');
+        expect(succeedRes.status).toBe('fulfilled');
         const foo1 = await fooDao.findByName('insert_failed_transaction_1');
         const foo2 = await fooDao.findByName('insert_failed_transaction_2');
-        assert(!foo1.length);
-        assert(!foo2.length);
+        expect(foo1.length).toBe(0);
+        expect(foo2.length).toBe(0);
 
         const foo3 = await fooDao.findByName('insert_succeed_transaction_1');
         const foo4 = await fooDao.findByName('insert_succeed_transaction_2');
-        assert(foo3.length);
-        assert(foo4.length);
+        expect(foo3.length).toBe(1);
+        expect(foo4.length).toBe(1);
       });
     });
   });
