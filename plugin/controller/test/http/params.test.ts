@@ -1,5 +1,7 @@
-import { strict as assert } from 'node:assert';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/params.test.ts', () => {
   let app: MockApplication;
@@ -8,14 +10,14 @@ describe('plugin/controller/test/http/params.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/controller-app',
+      baseDir: getFixtures('apps/controller-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -29,8 +31,8 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       })
       .expect(200)
       .expect(res => {
-        assert(res.body.success === true);
-        assert(res.body.traceId);
+        expect(res.body.success).toBe(true);
+        expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
       });
   });
 
@@ -45,9 +47,9 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       })
       .expect(200)
       .expect(res => {
-        assert.equal(res.body.success, true);
-        assert(res.body.traceId);
-        assert.equal(res.body.sessionId, 'mock-session-id');
+        expect(res.body.success).toBe(true);
+        expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+        expect(res.body.sessionId).toBe('mock-session-id');
       });
   });
 
@@ -57,8 +59,8 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .get('/apps?name=foo')
       .expect(200)
       .expect(res => {
-        assert(res.body.traceId);
-        assert.deepStrictEqual(res.body.app, {
+        expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+        expect(res.body.app).toEqual({
           name: 'foo',
           desc: 'mock-desc',
         });
@@ -71,8 +73,8 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .get('/apps/foo')
       .expect(200)
       .expect(res => {
-        assert(res.body.traceId);
-        assert.deepStrictEqual(res.body.app, {
+        expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+        expect(res.body.app).toEqual({
           name: 'foo',
           desc: 'mock-desc',
         });
@@ -85,8 +87,8 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .get('/apps/foo')
       .expect(200)
       .expect(res => {
-        assert(res.body.traceId);
-        assert.deepStrictEqual(res.body.app, {
+        expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+        expect(res.body.app).toEqual({
           name: 'foo',
           desc: 'mock-desc',
         });
@@ -99,7 +101,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .get('/foo/fooId/bar/barId')
       .expect(200)
       .expect(res => {
-        assert.deepStrictEqual(res.body, {
+        expect(res.body).toEqual({
           fooId: 'fooId',
           barId: 'barId',
         });

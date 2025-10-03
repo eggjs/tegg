@@ -1,4 +1,4 @@
-import { Advice, AdviceContext, IAdvice } from '@eggjs/tegg/aop';
+import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
 import { AccessLevel } from '@eggjs/tegg-types';
 
 @Advice({

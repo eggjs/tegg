@@ -1,17 +1,17 @@
 import type { Application, ILifecycleBoot } from 'egg';
-import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import { type LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
+import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.js';
-import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.js';
-import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.js';
-import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.js';
-import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.js';
-import { LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
-import { ControllerMetadataManager } from './lib/ControllerMetadataManager.js';
-import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.js';
-import { RootProtoManager } from './lib/RootProtoManager.js';
-import { EggControllerLoader } from './lib/EggControllerLoader.js';
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit.ts';
+import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook.ts';
+import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister.ts';
+import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';
+import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler.ts';
+import { ControllerMetadataManager } from './lib/ControllerMetadataManager.ts';
+import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook.ts';
+import { RootProtoManager } from './lib/RootProtoManager.ts';
+import { EggControllerLoader } from './lib/EggControllerLoader.ts';
 
 // Load Controller process
 // 1. await add load unit is ready, controller may depend other load unit
@@ -94,5 +94,13 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
     HTTPControllerRegister.clean();
+  }
+}
+
+declare module 'egg' {
+  interface Application {
+    rootProtoManager: RootProtoManager;
+    controllerRegisterFactory: ControllerRegisterFactory;
+    controllerMetaBuilderFactory: typeof ControllerMetaBuilderFactory;
   }
 }

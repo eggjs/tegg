@@ -1,7 +1,7 @@
 import {
   Advice,
-  AdviceContext,
-  IAdvice,
+  type AdviceContext,
+  type IAdvice,
 } from '@eggjs/tegg/aop';
 import { AccessLevel } from '@eggjs/tegg-types';
 

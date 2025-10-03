@@ -1,23 +1,22 @@
-import assert from 'node:assert/strict';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 import { EggRouter } from '@eggjs/router';
 import {
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
   EggPrototypeLifecycleUtil,
-  LoadUnit,
+  type LoadUnit,
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
-import { EggControllerLoader } from '../../lib/EggControllerLoader.js';
-import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../lib/ControllerLoadUnit.js';
-import { EggControllerPrototypeHook } from '../../lib/EggControllerPrototypeHook.js';
-import { HTTPMethodRegister } from '../../lib/impl/http/HTTPMethodRegister.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
+import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../src/lib/ControllerLoadUnit.ts';
+import { EggControllerPrototypeHook } from '../../src/lib/EggControllerPrototypeHook.ts';
+import { HTTPMethodRegister } from '../../src/lib/impl/http/HTTPMethodRegister.ts';
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
   describe('method/path is registered', () => {
@@ -25,12 +24,12 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
     const controllerPrototypeHook = new EggControllerPrototypeHook();
     let loadUnit: LoadUnit;
 
-    before(async () => {
+    beforeAll(async () => {
       EggPrototypeLifecycleUtil.registerLifecycle(controllerPrototypeHook);
       router.get('mock_controller', '/apps/:id', () => {
         // ...
       });
-      const baseDir = path.join(__dirname, '../fixtures/apps/http-conflict-app');
+      const baseDir = getFixtures('apps/http-conflict-app');
       const controllerDir = path.join(baseDir, 'app/controller');
       const loader = new EggControllerLoader(controllerDir);
 
@@ -47,7 +46,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       loadUnit = await LoadUnitFactory.createLoadUnit(controllerDir, CONTROLLER_LOAD_UNIT, loader);
     });
 
-    after(async () => {
+    afterAll(async () => {
       EggPrototypeLifecycleUtil.deleteLifecycle(controllerPrototypeHook);
       await LoadUnitFactory.destroyLoadUnit(loadUnit);
     });
@@ -55,18 +54,18 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
     it('should throw error with same rule', async () => {
       const proto = loadUnit.getEggPrototype('appController', [])[0];
       const controllerMeta = proto.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
-      await assert.rejects(async () => {
+      await expect(async () => {
         for (const methodMeta of controllerMeta.methods) {
           const register = new HTTPMethodRegister(proto, controllerMeta, methodMeta, router, new Map(), EggContainerFactory);
           await register.checkDuplicate();
         }
-      }, /RouterConflictError: register http controller GET AppController.get failed, GET \/apps\/:id is conflict with exists rule \/apps\/:id/);
+      }).rejects.toThrow(/RouterConflictError: register http controller GET AppController.get failed, GET \/apps\/:id is conflict with exists rule \/apps\/:id/);
     });
 
     it('should throw error with sub rule', async () => {
       const proto = loadUnit.getEggPrototype('appController', [])[0];
       const controllerMeta = proto.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
-      await assert.rejects(async () => {
+      await expect(async () => {
         const register = new HTTPMethodRegister(proto, controllerMeta, {
           name: 'test',
           method: 'GET',
@@ -74,7 +73,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
         } as any, router, new Map(), EggContainerFactory);
 
         await register.checkDuplicate();
-      }, /RouterConflictError: register http controller GET AppController.test failed, GET \/apps\/123 is conflict with exists rule \/apps\/:id/);
+      }).rejects.toThrow(/RouterConflictError: register http controller GET AppController.test failed, GET \/apps\/123 is conflict with exists rule \/apps\/:id/);
     });
 
     it('should throw error with same rule with host', async () => {
@@ -82,7 +81,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       const proto2 = loadUnit.getEggPrototype('appController2', [])[0];
       const controllerMeta1 = proto1.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
       const controllerMeta2 = proto2.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
-      await assert.rejects(async () => {
+      await expect(async () => {
         const routerMap = new Map();
         for (const methodMeta of controllerMeta1.methods) {
           const register = new HTTPMethodRegister(proto1, controllerMeta1, methodMeta, router, routerMap, EggContainerFactory);
@@ -92,7 +91,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
           const register = new HTTPMethodRegister(proto2, controllerMeta2, methodMeta, router, routerMap, EggContainerFactory);
           await register.checkDuplicate();
         }
-      }, /RouterConflictError: register http controller GET AppController2\.get failed, GET \/foo\/:id is conflict with exists rule \/foo\/:id/);
+      }).rejects.toThrow(/RouterConflictError: register http controller GET AppController2\.get failed, GET \/foo\/:id is conflict with exists rule \/foo\/:id/);
     });
   });
 });

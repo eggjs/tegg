@@ -1,14 +1,14 @@
 import {
-  EggPrototype,
+  type EggPrototype,
   EggPrototypeFactory,
-  Loader,
-  LoadUnit,
-  EggPrototypeCreatorFactory,
+  type Loader,
+  type LoadUnit,
+  type EggPrototypeCreatorFactory,
 } from '@eggjs/tegg-metadata';
 import {
-  EggPrototypeName,
-  QualifierInfo,
-  Id,
+  type EggPrototypeName,
+  type QualifierInfo,
+  type Id,
   IdenticalUtil,
 } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';

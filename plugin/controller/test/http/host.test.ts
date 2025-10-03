@@ -1,5 +1,7 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/host.test.ts', () => {
   let app: MockApplication;
@@ -8,14 +10,14 @@ describe('plugin/controller/test/http/host.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/host-controller-app',
+      baseDir: getFixtures('apps/host-controller-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -27,7 +29,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .expect(200)
       .expect(res => {
         console.log('res: ', res.text, res.body);
-        assert.equal(res.text, 'foo');
+        expect(res.text).toBe('foo');
       });
   });
 
@@ -38,7 +40,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'bar.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert.equal(res.text, 'bar');
+        expect(res.text).toBe('bar');
       });
   });
 
@@ -54,7 +56,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'apple.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert.equal(res.text, 'apple');
+        expect(res.text).toBe('apple');
       });
 
     await app.httpRequest()
@@ -62,7 +64,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'a.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert.equal(res.text, 'a');
+        expect(res.text).toBe('a');
       });
   });
 
@@ -73,7 +75,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'o.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert.equal(res.text, 'orange');
+        expect(res.text).toBe('orange');
       });
 
     await app.httpRequest()
@@ -81,7 +83,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'orange.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert.equal(res.text, 'orange');
+        expect(res.text).toBe('orange');
       });
 
     await app.httpRequest()
@@ -89,7 +91,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .set('host', 'juice.eggjs.com')
       .expect(200)
       .expect(res => {
-        assert.equal(res.text, 'juice');
+        expect(res.text).toBe('juice');
       });
 
     await app.httpRequest()

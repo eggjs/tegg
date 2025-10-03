@@ -1,4 +1,4 @@
-import { EggContext } from '@eggjs/tegg';
+import { type EggContext } from '@eggjs/tegg';
 
 export default {
   acl(this: EggContext, code?: string) {

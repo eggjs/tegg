@@ -1,5 +1,7 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/acl.test.ts', () => {
   let app: MockApplication;
@@ -8,14 +10,14 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/acl-app',
+      baseDir: getFixtures('apps/acl-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -26,7 +28,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
           .get('/foo?pass=true')
           .set('accept', 'application/json')
           .expect(res => {
-            assert.deepStrictEqual(res.text, 'hello, foo');
+            expect(res.text).toBe('hello, foo');
           });
       });
     });
@@ -38,7 +40,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
             .get('/foo')
             .set('accept', 'application/json')
             .expect(res => {
-              assert.deepStrictEqual(res.body, {
+              expect(res.body).toEqual({
                 target: 'http://alipay.com/401',
                 stat: 'deny',
               });
@@ -64,7 +66,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
           .get('/bar?pass=true&code=mock1')
           .set('accept', 'application/json')
           .expect(res => {
-            assert.deepStrictEqual(res.text, 'hello, bar');
+            expect(res.text).toBe('hello, bar');
           });
       });
     });
@@ -76,7 +78,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
             .get('/bar?pass=true&code=mock2')
             .set('accept', 'application/json')
             .expect(res => {
-              assert.deepStrictEqual(res.body, {
+              expect(res.body).toEqual({
                 target: 'http://alipay.com/403',
                 stat: 'deny',
               });

@@ -1,4 +1,4 @@
-import '@eggjs/tracer';
+import '@eggjs/tracer/types';
 import { Context as EggContext } from 'egg';
 import {
   Context,
@@ -9,7 +9,7 @@ import {
   HTTPParam,
   HTTPQuery,
   HTTPHeaders,
-  IncomingHttpHeaders,
+  type IncomingHttpHeaders,
   Middleware,
   Inject,
 } from '@eggjs/tegg';

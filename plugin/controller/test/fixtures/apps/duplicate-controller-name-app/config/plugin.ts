@@ -11,4 +11,8 @@ export default {
     package: '@eggjs/tegg-config',
     enable: true,
   },
+  teggController: {
+    package: '@eggjs/tegg-controller-plugin',
+    enable: true,
+  },
 };

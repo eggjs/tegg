@@ -1,4 +1,4 @@
-import { ControllerMetadata, ControllerTypeLike } from '@eggjs/tegg';
+import { type ControllerMetadata, type ControllerTypeLike } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 export class ControllerMetadataManager {
