@@ -1,8 +1,9 @@
 import { Template } from 'nunjucks';
 import { SqlType } from '@eggjs/tegg-types';
 import type { SqlMap } from '@eggjs/tegg-types';
-import { NunjucksUtils } from './NunjucksUtil.js';
-import { TemplateUtil } from './TemplateUtil.js';
+
+import { NunjucksUtils } from './NunjucksUtil.ts';
+import { TemplateUtil } from './TemplateUtil.ts';
 
 export interface SqlGenerator {
   type: SqlType;

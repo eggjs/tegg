@@ -33,7 +33,7 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/aop",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },

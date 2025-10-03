@@ -1,8 +1,10 @@
 import assert from 'node:assert';
+
 import { RDSClient } from '@eggjs/rds';
 import type { RDSConnection } from '@eggjs/rds/lib/connection.js';
-import { DataSourceOptions } from './MySqlDataSource.js';
-import { DaoLoader } from './DaoLoader.js';
+
+import { type DataSourceOptions } from './MySqlDataSource.ts';
+import { DaoLoader } from './DaoLoader.ts';
 
 export class DatabaseForker {
   private readonly env: string;

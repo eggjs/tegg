@@ -1,5 +1,5 @@
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import { EggLoadUnitType, GlobalGraph, GlobalGraphBuildHook, GlobalModuleNodeBuilder } from '@eggjs/tegg-metadata';
+import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
+import { EggLoadUnitType, GlobalGraph, type GlobalGraphBuildHook, GlobalModuleNodeBuilder } from '@eggjs/tegg-metadata';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 

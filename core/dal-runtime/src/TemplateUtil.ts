@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import { ColumnModel, SpatialHelper } from '@eggjs/dal-decorator';
 import { ColumnType } from '@eggjs/tegg-types';
 import type {

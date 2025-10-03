@@ -1,9 +1,10 @@
-import { Agent, ILifecycleBoot } from 'egg';
+import { Agent, type ILifecycleBoot } from 'egg';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggLoadUnitType } from '@eggjs/tegg-metadata';
 
 import { ScheduleInfoUtil, ScheduleMetaBuilder } from '@eggjs/tegg/schedule';
-import { ScheduleSubscriberRegister } from './lib/ScheduleSubscriberRegister.js';
+
+import { ScheduleSubscriberRegister } from './lib/ScheduleSubscriberRegister.ts';
 
 export default class ScheduleAppBootHook implements ILifecycleBoot {
   private readonly agent: Agent;

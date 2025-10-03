@@ -1,8 +1,9 @@
-import { EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
+import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import is from 'is-type-of';
-import { Loader } from '@eggjs/tegg-types';
+import { type Loader } from '@eggjs/tegg-types';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
-import { GlobalModuleNodeBuilder, GlobalGraph } from '../../src/index.js';
+
+import { GlobalModuleNodeBuilder, GlobalGraph } from '../../src/index.ts';
 
 export class LoaderUtil {
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {

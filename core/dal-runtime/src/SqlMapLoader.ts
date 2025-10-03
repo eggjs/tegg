@@ -1,7 +1,8 @@
-import { BaseDaoType, TableModel } from '@eggjs/dal-decorator';
+import { type BaseDaoType, TableModel } from '@eggjs/dal-decorator';
 import type { Logger, SqlMap } from '@eggjs/tegg-types';
-import { BaseSqlMapGenerator } from './BaseSqlMap.js';
-import { TableSqlMap } from './TableSqlMap.js';
+
+import { BaseSqlMapGenerator } from './BaseSqlMap.ts';
+import { TableSqlMap } from './TableSqlMap.ts';
 
 export class SqlMapLoader {
   private readonly logger: Logger;
