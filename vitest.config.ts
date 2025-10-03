@@ -4,6 +4,7 @@ import swc from 'vite-plugin-swc-transform';
 export default defineConfig({
   plugins: [
     // https://timtech.blog/posts/transform-typescript-legacy-decorators-vite-swc-plugin/
+    // https://github.com/ziir/vite-plugin-swc-transform
     // support legacy decorator
     // MEMO: support design:type metadata https://www.typescriptlang.org/docs/handbook/decorators.html
     swc({
@@ -22,7 +23,7 @@ export default defineConfig({
   ],
   test: {
     exclude: [
-      'plugin/(tegg|orm)/test/**/*.test.ts',
+      // 'plugin/(tegg|orm)/test/**/*.test.ts',
       'standalone/standalone/test/**/*.test.ts',
       '**/node_modules',
     ],

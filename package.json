@@ -33,7 +33,7 @@
     "build-workspaces": "npm run build --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "coverage": "vitest run --coverage core/* plugin/common plugin/config",
+    "coverage": "vitest run --coverage",
     "coverage:mocha": "npm run cov --workspaces --if-present",
     "preci": "npm run clean && npm run lint",
     "ci": "npm run coverage && npm run coverage:mocha && npm run typecheck",
@@ -53,7 +53,8 @@
     "tsx": "^4.19.2",
     "typescript": "^5.9.3",
     "vite-plugin-swc-transform": "^1.1.0",
-    "vitest": "beta"
+    "vitest": "beta",
+    "vite": "npm:rolldown-vite@latest"
   },
   "workspaces": [
     "core/*",
