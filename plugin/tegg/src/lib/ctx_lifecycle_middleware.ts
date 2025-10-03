@@ -1,17 +1,17 @@
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import type { Context } from 'egg';
+import type { Context, Next } from 'egg';
+import { EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
-import { EggContextImpl } from './EggContextImpl.js';
+import { EggContextImpl } from './EggContextImpl.ts';
 
-export async function ctxLifecycleMiddleware(ctx: Context, next: () => Promise<void>) {
+export async function ctxLifecycleMiddleware(ctx: Context, next: Next) {
   // should not recreate teggContext
   if (ctx[TEGG_CONTEXT]) {
     await next();
     return;
   }
 
-  const lifecycle = {};
-
+  const lifecycleCtx: EggContextLifecycleContext = {};
   const teggCtx = new EggContextImpl(ctx);
   // rootProto is set by tegg-controller-plugin global middleware(teggRootProto)
   // is used in EggControllerHook
@@ -21,14 +21,14 @@ export async function ctxLifecycleMiddleware(ctx: Context, next: () => Promise<v
   }
 
   if (teggCtx.init) {
-    await teggCtx.init(lifecycle);
+    await teggCtx.init(lifecycleCtx);
   }
   try {
     await next();
   } finally {
     if (teggCtx.destroy) {
-      teggCtx.destroy(lifecycle).catch(e => {
-        e.message = '[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed:' + e.message;
+      teggCtx.destroy(lifecycleCtx).catch(e => {
+        e.message = `[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed: ${e.message}`;
         ctx.logger.error(e);
       });
     }

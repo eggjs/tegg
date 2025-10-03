@@ -1,4 +1,4 @@
-import type { IndexStoreType, IndexType } from '../enum/index.js';
+import type { IndexStoreType, IndexType } from '../enum/index.ts';
 
 export interface IndexParams {
   keys: string[];
@@ -11,6 +11,6 @@ export interface IndexParams {
   parser?: string;
 }
 
-export * from './Column.js';
-export * from './DataSourceQualifier.js';
-export * from './Table.js';
+export * from './Column.ts';
+export * from './DataSourceQualifier.ts';
+export * from './Table.ts';

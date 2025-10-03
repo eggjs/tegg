@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fs, { promises as fsPromise } from 'node:fs';
 import path from 'node:path';
+
 import { extend } from 'extend2';
 import { globbySync } from 'globby';
 import { load as yamlLoad } from 'js-yaml';
@@ -13,7 +14,8 @@ import type {
   ReadModuleReferenceOptions,
 } from '@eggjs/tegg-types';
 import { importResolve } from '@eggjs/utils';
-import { FSUtil } from './FSUtil.js';
+
+import { FSUtil } from './FSUtil.ts';
 
 export class ModuleReferenceConfigHelp {
   static isInlineModuleReference(moduleReference: ModuleReferenceConfig): moduleReference is InlineModuleReferenceConfig {

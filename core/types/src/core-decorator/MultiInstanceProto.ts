@@ -1,5 +1,5 @@
-import type { AccessLevel, ObjectInitTypeLike } from './enum/index.js';
-import type { MultiInstancePrototypeGetObjectsContext, ObjectInfo } from './model/index.js';
+import type { AccessLevel, ObjectInitTypeLike } from './enum/index.ts';
+import type { MultiInstancePrototypeGetObjectsContext, ObjectInfo } from './model/index.ts';
 
 export interface BaseMultiInstancePrototypeCallbackParams {
   /**

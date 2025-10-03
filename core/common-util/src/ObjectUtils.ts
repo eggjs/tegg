@@ -1,4 +1,4 @@
-import { EggProtoImplClass } from '@eggjs/tegg-types';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 export class ObjectUtils {
   static getProperties(obj: object): string[] {

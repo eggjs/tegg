@@ -1,2 +1,2 @@
-export * from './Factory.js';
-export * from './model/index.js';
+export * from './Factory.ts';
+export * from './model/index.ts';

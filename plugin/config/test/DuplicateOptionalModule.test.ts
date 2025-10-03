@@ -1,37 +1,25 @@
-// import assert from 'node:assert/strict';
-import path from 'node:path';
-import { describe, it, afterAll as after, afterEach, beforeAll as before } from 'vitest';
-import { fileURLToPath } from 'node:url';
+import { describe, it, afterAll, beforeAll, expect } from 'vitest';
 import { mm, MockApplication } from '@eggjs/mock';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { getFixtures } from './utils.ts';
 
 describe('plugin/config/test/DuplicateOptionalModule.test.ts', () => {
   let app: MockApplication;
-  const fixturesPath = path.join(__dirname, './fixtures/apps/duplicate-optional-module');
-
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
-  afterEach(() => {
-    return mm.restore();
-  });
-
-  before(async () => {
-    mm(process.env, 'EGG_TYPESCRIPT', true);
-    mm(process, 'cwd', () => {
-      return path.join(__dirname, '..');
-    });
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: fixturesPath,
+      baseDir: getFixtures('apps/duplicate-optional-module'),
     });
     await app.ready();
   });
 
   it('should work', async () => {
-    // console.log(app.moduleReferences);
-    // assert.equal(app.moduleReferences.length, 2);
+    console.log(app.moduleReferences);
+    console.log(app.moduleConfigs);
+    expect(app.moduleReferences.length).toBe(2);
+    expect(Object.keys(app.moduleConfigs).length).toBe(2);
   });
 });

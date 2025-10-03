@@ -1,4 +1,4 @@
-import { Geometry, GeometryCollection, Line, MultiLine, MultiPoint, MultiPolygon, Point, Polygon } from './Spatial.js';
+import type { Geometry, GeometryCollection, Line, MultiLine, MultiPoint, MultiPolygon, Point, Polygon } from './Spatial.ts';
 
 export interface ColumnTsType {
   BIT: Buffer,

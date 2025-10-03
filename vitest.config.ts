@@ -21,7 +21,7 @@ export default defineConfig({
   ],
   test: {
     exclude: [
-      'plugin/**/test/**/*.test.ts',
+      'plugin/(tegg|orm)/test/**/*.test.ts',
       'standalone/standalone/test/**/*.test.ts',
       '**/node_modules',
     ],
@@ -43,7 +43,11 @@ export default defineConfig({
     testTimeout: 60000,
     poolOptions: {
       forks: {
-        // execArgv: [ '--import=tsx/esm' ],
+        execArgv: [
+          // '--import=tsx/esm',
+          // TODO: TypeScript enum is not supported in strip-only mode
+          '--experimental-transform-types',
+        ],
       },
     },
   },

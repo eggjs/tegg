@@ -1,4 +1,4 @@
-import { MainRunnerClass } from '../typing.js';
+import type { MainRunnerClass } from '../typing.js';
 
 export class StandaloneUtil {
   private static runnerClass: MainRunnerClass | undefined;

@@ -1,4 +1,4 @@
-import type { ColumnFormat, ColumnType } from '../enum/index.js';
+import type { ColumnFormat, ColumnType } from '../enum/index.ts';
 
 export interface ColumnParams {
   name?: string;

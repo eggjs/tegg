@@ -1,3 +1,3 @@
-export * from './types.js';
-export * from './ControllerMetadata.js';
-export * from './MethodMeta.js';
+export * from './types.ts';
+export * from './ControllerMetadata.ts';
+export * from './MethodMeta.ts';

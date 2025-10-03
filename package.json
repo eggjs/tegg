@@ -18,7 +18,7 @@
   "scripts": {
     "lint:fix": "npm run lint -- --fix",
     "lint": "oxlint --type-aware",
-    "typecheck": "npm run typecheck --workspaces --if-present",
+    "typecheck": "lerna run --parallel typecheck",
     "test": "vitest run",
     "test:mocha": "npm run test -w plugin/tegg",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
@@ -29,6 +29,7 @@
     "prepare-test": "lerna run --parallel prepare-test",
     "tsc": "lerna run tsc",
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
+    "build": "lerna run build",
     "build-workspaces": "npm run build --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",

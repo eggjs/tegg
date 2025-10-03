@@ -1,5 +1,5 @@
-import { EggProtoImplClass } from '../core-decorator/index.js';
-import { ControllerMetadata } from './model/index.js';
+import type { EggProtoImplClass } from '../core-decorator/index.ts';
+import type { ControllerMetadata } from './model/index.ts';
 
 export interface ControllerMetaBuilder {
   build(): ControllerMetadata | undefined;

@@ -1,4 +1,4 @@
-import { HTTPMethodEnum } from './model/index.js';
+import { HTTPMethodEnum } from './model/index.ts';
 
 export interface HTTPMethodParams {
   method: HTTPMethodEnum;

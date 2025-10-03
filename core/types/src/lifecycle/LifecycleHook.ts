@@ -1,4 +1,4 @@
-import type { IdenticalObject } from './IdenticalObject.js';
+import type { IdenticalObject } from './IdenticalObject.ts';
 
 export interface LifecycleContext {
 }

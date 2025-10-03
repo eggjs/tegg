@@ -9,7 +9,12 @@ export interface GlobalModuleNodeOptions {
 }
 
 export class ModuleDependencyMeta implements EdgeMeta {
-  constructor(readonly obj: ProtoDescriptor, readonly injectObj: PropertyKey) {
+  readonly obj: ProtoDescriptor;
+  readonly injectObj: PropertyKey;
+
+  constructor(obj: ProtoDescriptor, injectObj: PropertyKey) {
+    this.obj = obj;
+    this.injectObj = injectObj;
   }
 
   equal(meta: ModuleDependencyMeta): boolean {

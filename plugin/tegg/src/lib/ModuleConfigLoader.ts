@@ -16,7 +16,9 @@ import { Application } from 'egg';
 import { extend } from 'extend2';
 
 export class ModuleConfigLoader {
-  constructor(readonly app: Application) {
+  readonly app: Application;
+  constructor(app: Application) {
+    this.app = app;
   }
 
   private loadModuleConfigs(moduleConfigMap: Record<string, ModuleConfigHolder>): EggProtoImplClass {

@@ -1,8 +1,8 @@
 import {
-  EggProtoImplClass,
-  InjectObjectInfo,
-  InjectConstructorInfo,
-  InjectParams,
+  type EggProtoImplClass,
+  type InjectObjectInfo,
+  type InjectConstructorInfo,
+  type InjectParams,
   InjectType,
   InitTypeQualifierAttribute,
 } from '@eggjs/tegg-types';

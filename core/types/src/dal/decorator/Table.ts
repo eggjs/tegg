@@ -1,5 +1,5 @@
 // Create Table https://dev.mysql.com/doc/refman/8.0/en/create-table.html
-import type { CompressionType, InsertMethod, RowFormat } from '../enum/index.js';
+import type { CompressionType, InsertMethod, RowFormat } from '../enum/index.ts';
 
 export interface TableParams {
   name?: string;

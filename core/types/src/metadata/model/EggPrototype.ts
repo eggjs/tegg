@@ -1,16 +1,16 @@
 import {
   AccessLevel,
-  EggProtoImplClass,
-  EggPrototypeInfo,
-  EggPrototypeName, InjectType,
-  MetaDataKey,
-  ObjectInitTypeLike,
-  QualifierAttribute,
-  QualifierInfo,
-  QualifierValue,
-} from '../../core-decorator/index.js';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
-import { LoadUnit } from './LoadUnit.js';
+  type EggProtoImplClass,
+  type EggPrototypeInfo,
+  type EggPrototypeName, InjectType,
+  type MetaDataKey,
+  type ObjectInitTypeLike,
+  type QualifierAttribute,
+  type QualifierInfo,
+  type QualifierValue,
+} from '../../core-decorator/index.ts';
+import { type LifecycleContext, type LifecycleObject } from '../../lifecycle/index.ts';
+import { type LoadUnit } from './LoadUnit.ts';
 
 export interface InjectObjectProto {
   /**

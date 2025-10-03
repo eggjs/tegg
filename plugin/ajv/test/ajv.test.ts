@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+
 import { afterEach, it, beforeAll, afterAll } from 'vitest';
 import { mm, MockApplication } from '@eggjs/mock';
 
@@ -11,12 +12,12 @@ afterEach(() => {
 
 beforeAll(async () => {
   mm(process.env, 'EGG_TYPESCRIPT', true);
-  mm(process, 'cwd', () => {
-    return path.join(__dirname, '../');
-  });
+  // mm(process, 'cwd', () => {
+  //   return path.join(__dirname, '../');
+  // });
   app = mm.app({
-    baseDir: path.join(__dirname, './fixtures/apps/ajv-app'),
-    framework: require.resolve('egg'),
+    baseDir: path.join(import.meta.dirname, 'fixtures/apps/ajv-app'),
+    // framework: require.resolve('egg'),
   });
   await app.ready();
 });

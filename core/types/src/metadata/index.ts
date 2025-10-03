@@ -1,3 +1,3 @@
-export * from './errors.js';
-export * from './model/index.js';
-export * from './enum/index.js';
+export * from './errors.ts';
+export * from './model/index.ts';
+export * from './enum/index.ts';

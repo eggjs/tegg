@@ -1,8 +1,8 @@
-import { EggPrototypeName } from '../../core-decorator/index.js';
-import { LifecycleContext, LifecycleObject } from '../../lifecycle/index.js';
-import { EggPrototype, LoadUnit } from '../../metadata/index.js';
-import type { EggRuntimeContext } from './EggContext.js';
-import type { LoadUnitInstance } from './LoadUnitInstance.js';
+import type { EggPrototypeName } from '../../core-decorator/index.ts';
+import type { LifecycleContext, LifecycleObject } from '../../lifecycle/index.ts';
+import type { EggPrototype, LoadUnit } from '../../metadata/index.ts';
+import type { EggRuntimeContext } from './EggContext.ts';
+import type { LoadUnitInstance } from './LoadUnitInstance.ts';
 
 export enum EggObjectStatus {
   PENDING = 'PENDING',

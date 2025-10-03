@@ -1,5 +1,5 @@
-import type { LoadUnit } from '../../metadata/index.js';
-import type { EggContainer } from './EggContainer.js';
+import type { LoadUnit } from '../../metadata/index.ts';
+import type { EggContainer } from './EggContainer.ts';
 
 export interface LoadUnitInstanceLifecycleContext {
   loadUnit: LoadUnit;

@@ -39,14 +39,14 @@
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
     "@eggjs/tegg-types": "^4.0.0-beta.4"
   },
-  "engines": {
-    "node": ">=22.18.0"
-  },
   "devDependencies": {
     "@types/node": "22",
     "coffee": "5",
     "typescript": "5",
     "tsdown": "^0.15.6"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   },
   "publishConfig": {
     "access": "public",

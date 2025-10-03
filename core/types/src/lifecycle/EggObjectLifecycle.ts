@@ -1,4 +1,4 @@
-import type { EggObject, EggObjectLifeCycleContext } from '../runtime/index.js';
+import type { EggObject, EggObjectLifeCycleContext } from '../runtime/index.ts';
 
 /**
  * lifecycle hook interface for egg object

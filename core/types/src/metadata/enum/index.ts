@@ -1,1 +1,1 @@
-export * from './ProtoDescriptorType.js';
+export * from './ProtoDescriptorType.ts';

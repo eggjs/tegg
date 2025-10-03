@@ -1,4 +1,4 @@
-import { EggObjectName } from './InjectObjectInfo.js';
+import type { EggObjectName } from './InjectObjectInfo.ts';
 
 export interface InjectConstructorInfo {
   /**

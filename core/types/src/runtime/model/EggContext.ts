@@ -1,4 +1,4 @@
-import type { EggContainer } from './EggContainer.js';
+import type { EggContainer } from './EggContainer.ts';
 
 export interface EggContextLifecycleContext {
 }

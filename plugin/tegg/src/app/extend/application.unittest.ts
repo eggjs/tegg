@@ -1,20 +1,21 @@
-import type { MockApplication } from '@eggjs/mock';
-import type { Context } from 'egg';
+import { type Context, Application } from 'egg';
 
-import { EggContextImpl } from '../../lib/EggContextImpl.js';
 import { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
+
+import { EggContextImpl } from '../../lib/EggContextImpl.ts';
 
 const TEGG_LIFECYCLE_CACHE: Map<EggContext, EggContextLifecycleContext> = new Map();
 
 let hasMockModuleContext = false;
 
-export default {
-  async mockModuleContext(this: MockApplication, data?: any): Promise<Context> {
+export default class TEggPluginApplicationUnittest extends Application {
+  async mockModuleContext(data?: any): Promise<Context> {
     this.deprecate('app.mockModuleContext is deprecated, use mockModuleContextScope.');
     if (hasMockModuleContext) {
       throw new Error('should not call mockModuleContext twice.');
     }
-    const ctx = this.mockContext(data) as unknown as Context;
+    // @ts-expect-error mockContext is not typed
+    const ctx = this.mockContext(data) as Context;
     const teggCtx = new EggContextImpl(ctx);
     const lifecycle = {};
     TEGG_LIFECYCLE_CACHE.set(teggCtx, lifecycle);
@@ -23,7 +24,7 @@ export default {
     }
     hasMockModuleContext = true;
     return ctx;
-  },
+  }
 
   async destroyModuleContext(ctx: Context) {
     hasMockModuleContext = false;
@@ -36,14 +37,14 @@ export default {
     if (teggCtx.destroy && lifecycle) {
       await teggCtx.destroy(lifecycle);
     }
-  },
+  }
 
-  async mockModuleContextScope<R=any>(this: MockApplication, fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
+  async mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
     if (hasMockModuleContext) {
       throw new Error('mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.');
     }
-    return this.mockContextScope(async _ctx => {
-      const ctx = _ctx as unknown as Context;
+    // @ts-expect-error mockContextScope only exists in MockApplication
+    return this.mockContextScope(async (ctx: Context) => {
       const teggCtx = new EggContextImpl(ctx);
       const lifecycle = {};
       if (teggCtx.init) {
@@ -55,5 +56,14 @@ export default {
         await teggCtx.destroy(lifecycle);
       }
     }, data);
-  },
+  }
 };
+
+
+declare module '@eggjs/mock' {
+  export interface MockApplication {
+    mockModuleContext(data?: any): Promise<Context>;
+    mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
+    destroyModuleContext(context: Context): Promise<void>;
+  }
+}
