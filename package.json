@@ -36,8 +36,8 @@
     "coverage": "vitest run --coverage core/* plugin/common plugin/config",
     "coverage:mocha": "npm run cov --workspaces --if-present",
     "preci": "npm run clean && npm run lint",
-    "ci": "npm run coverage && npm run coverage:mocha",
-    "postci": "npm run tsc:pub && npm run clean"
+    "ci": "npm run coverage && npm run coverage:mocha && npm run typecheck",
+    "postci": "npm run tsc:pub && npm run build && npm run clean"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
