@@ -39,9 +39,9 @@
   "dependencies": {
     "@eggjs/tegg-types": "workspace:*",
     "@eggjs/utils": "beta",
-    "reflect-metadata": "^0.2.2",
-    "extend2": "^4.0.0",
-    "globby": "^14.1.0",
+    "reflect-metadata": "catalog:",
+    "extend2": "catalog:",
+    "globby": "catalog:",
     "js-yaml": "^4.1.0"
   },
   "publishConfig": {
@@ -53,10 +53,10 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "22",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

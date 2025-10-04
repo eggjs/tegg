@@ -75,15 +75,15 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "catalog:",
-    "@types/node": "22",
-    "@types/mocha": "10",
+    "@types/node": "catalog:",
+    "@types/mocha": "catalog:",
     "egg": "catalog:",
-    "globby": "14",
-    "mocha": "11",
-    "mochawesome-with-mocha": "^8.0.0",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "globby": "catalog:",
+    "mocha": "catalog:",
+    "mochawesome-with-mocha": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

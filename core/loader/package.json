@@ -41,9 +41,9 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
-    "globby": "^14.1.0",
-    "egg-errors": "^2.3.0",
-    "is-type-of": "^2.2.0"
+    "globby": "catalog:",
+    "egg-errors": "catalog:",
+    "is-type-of": "catalog:"
   },
   "publishConfig": {
     "access": "public",
@@ -53,10 +53,10 @@
     }
   },
   "devDependencies": {
-    "@types/node": "22",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

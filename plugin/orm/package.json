@@ -68,7 +68,7 @@
     "@eggjs/tegg-orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "leoric": "^2.12.2",
-    "sdk-base": "^5.0.1"
+    "sdk-base": "catalog:"
   },
   "peerDependencies": {
     "egg": "catalog:",
@@ -81,14 +81,14 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "catalog:",
-    "@types/mocha": "10",
-    "mocha": "11",
-    "@types/node": "22",
+    "@types/mocha": "catalog:",
+    "mocha": "catalog:",
+    "@types/node": "catalog:",
     "egg": "catalog:",
     "mysql2": "3",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

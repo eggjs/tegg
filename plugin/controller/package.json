@@ -69,10 +69,10 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "egg-errors": "^2.3.0",
-    "globby": "^14.1.0",
+    "egg-errors": "catalog:",
+    "globby": "catalog:",
     "path-to-regexp": "^1.9.0",
-    "sdk-base": "^5.0.1"
+    "sdk-base": "catalog:"
   },
   "peerDependencies": {
     "egg": "catalog:",
@@ -84,11 +84,11 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "catalog:",
-    "@types/node": "22",
+    "@types/node": "catalog:",
     "egg": "catalog:",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

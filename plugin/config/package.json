@@ -53,11 +53,11 @@
   },
   "devDependencies": {
     "@eggjs/mock": "catalog:",
-    "@types/node": "22",
+    "@types/node": "catalog:",
     "egg": "catalog:",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

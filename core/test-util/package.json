@@ -44,13 +44,13 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
-    "globby": "^14.1.0"
+    "globby": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "22",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -54,10 +54,10 @@
   },
   "devDependencies": {
     "@types/lodash.snakecase": "^4.1.9",
-    "@types/node": "22",
+    "@types/node": "catalog:",
     "@types/pluralize": "^0.0.33",
-    "tsdown": "^0.15.6",
-    "typescript": "5"
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

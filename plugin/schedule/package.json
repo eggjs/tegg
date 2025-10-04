@@ -74,13 +74,13 @@
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
-    "@types/mocha": "10",
-    "@types/node": "22",
-    "mocha": "11",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "mocha": "catalog:",
     "egg": "catalog:",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

@@ -46,7 +46,7 @@
     "js-beautify": "^1.15.3",
     "lodash": "^4.17.21",
     "nunjucks": "^3.2.4",
-    "sdk-base": "^5.0.1",
+    "sdk-base": "catalog:",
     "sqlstring": "^2.3.3"
   },
   "publishConfig": {
@@ -59,12 +59,12 @@
   "devDependencies": {
     "@types/js-beautify": "^1.14.3",
     "@types/lodash": "catalog:",
-    "@types/node": "22",
+    "@types/node": "catalog:",
     "@types/nunjucks": "3",
     "@types/sqlstring": "^2.3.2",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

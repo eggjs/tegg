@@ -72,12 +72,12 @@
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "catalog:",
     "@types/mocha": "catalog:",
-    "@types/node": "22",
+    "@types/node": "catalog:",
     "egg": "catalog:",
-    "mocha": "11",
-    "tsdown": "^0.15.6",
-    "typescript": "5",
-    "unplugin-unused": "^0.5.3"
+    "mocha": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

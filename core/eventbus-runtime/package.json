@@ -53,12 +53,12 @@
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
-    "@types/node": "22",
-    "coffee": "5",
+    "@types/node": "catalog:",
+    "coffee": "catalog:",
     "egg": "beta",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

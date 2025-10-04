@@ -66,12 +66,12 @@
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/utils": "beta",
-    "@types/mocha": "10",
-    "@types/node": "22",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
     "mm": "4",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

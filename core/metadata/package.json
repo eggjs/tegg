@@ -41,16 +41,16 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "egg-errors": "^2.3.0"
+    "egg-errors": "catalog:"
   },
   "devDependencies": {
     "@eggjs/tegg": "workspace:*",
-    "@types/node": "22",
-    "globby": "14",
-    "is-type-of": "2",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@types/node": "catalog:",
+    "globby": "catalog:",
+    "is-type-of": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

@@ -56,11 +56,11 @@
   },
   "devDependencies": {
     "@types/lodash": "catalog:",
-    "@types/node": "22",
+    "@types/node": "catalog:",
     "@types/pluralize": "^0.0.33",
-    "tsdown": "^0.15.6",
-    "typescript": "5",
-    "unplugin-unused": "^0.5.3"
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

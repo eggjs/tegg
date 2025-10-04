@@ -30,6 +30,9 @@ catalogs:
     '@types/mocha':
       specifier: ^10.0.10
       version: 10.0.10
+    '@types/node':
+      specifier: ^22.10.5
+      version: 22.18.8
     '@vitest/coverage-v8':
       specifier: 4.0.0-beta.16
       version: 4.0.0-beta.16
@@ -39,27 +42,60 @@ catalogs:
     c8:
       specifier: ^10.1.3
       version: 10.1.3
+    coffee:
+      specifier: ^5.1.0
+      version: 5.5.1
     egg:
       specifier: beta
       version: 4.1.0-beta.19
+    egg-errors:
+      specifier: ^2.3.0
+      version: 2.3.2
+    extend2:
+      specifier: ^4.0.0
+      version: 4.0.0
+    globby:
+      specifier: ^14.1.0
+      version: 14.1.0
+    is-type-of:
+      specifier: ^2.2.0
+      version: 2.2.0
     lerna:
       specifier: ^6.6.2
       version: 6.6.2
+    mocha:
+      specifier: ^11.0.1
+      version: 11.7.4
+    mochawesome-with-mocha:
+      specifier: ^8.0.0
+      version: 8.0.0
     oxlint:
       specifier: ^1.19.0
       version: 1.19.0
     oxlint-tsgolint:
       specifier: ^0.2.0
       version: 0.2.0
+    reflect-metadata:
+      specifier: ^0.2.2
+      version: 0.2.2
     rimraf:
       specifier: ^6.0.1
       version: 6.0.1
+    sdk-base:
+      specifier: ^5.0.1
+      version: 5.0.1
+    tsdown:
+      specifier: ^0.15.6
+      version: 0.15.6
     tsx:
       specifier: ^4.20.6
       version: 4.20.6
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
+    unplugin-unused:
+      specifier: ^0.5.3
+      version: 0.5.3
     vite:
       specifier: npm:rolldown-vite@^7.1.15
       version: 7.1.15
@@ -124,16 +160,16 @@ importers:
         version: 8.17.1
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/aop-decorator:
@@ -152,16 +188,16 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/aop-runtime:
@@ -201,16 +237,16 @@ importers:
         specifier: '3'
         version: 3.2.8
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/background-task:
@@ -232,16 +268,16 @@ importers:
         specifier: workspace:*
         version: link:../common-util
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/common-util:
@@ -253,32 +289,32 @@ importers:
         specifier: beta
         version: 5.0.0-beta.19
       extend2:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.0.0
       globby:
-        specifier: ^14.1.0
+        specifier: 'catalog:'
         version: 14.1.0
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
       reflect-metadata:
-        specifier: ^0.2.2
+        specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/controller-decorator:
@@ -302,29 +338,29 @@ importers:
         specifier: workspace:*
         version: link:../types
       is-type-of:
-        specifier: ^2.2.0
+        specifier: 'catalog:'
         version: 2.2.0
       path-to-regexp:
         specifier: ^1.9.0
         version: 1.9.0
       reflect-metadata:
-        specifier: ^0.2.2
+        specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: beta
         version: 4.1.0-beta.19
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/core-decorator:
@@ -336,20 +372,20 @@ importers:
         specifier: workspace:*
         version: link:../types
       reflect-metadata:
-        specifier: ^0.2.2
+        specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/dal-decorator:
@@ -377,16 +413,16 @@ importers:
         specifier: ^4.1.9
         version: 4.1.9
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
 
   core/dal-runtime:
@@ -416,7 +452,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(chokidar@3.6.0)
       sdk-base:
-        specifier: ^5.0.1
+        specifier: 'catalog:'
         version: 5.0.1
       sqlstring:
         specifier: ^2.3.3
@@ -429,7 +465,7 @@ importers:
         specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       '@types/nunjucks':
         specifier: '3'
@@ -438,13 +474,13 @@ importers:
         specifier: ^2.3.2
         version: 2.3.2
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/dynamic-inject:
@@ -457,19 +493,19 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       coffee:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.5.1
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/dynamic-inject-runtime:
@@ -503,16 +539,16 @@ importers:
         specifier: workspace:*
         version: link:../loader
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/eventbus-decorator:
@@ -528,19 +564,19 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       coffee:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.5.1
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/eventbus-runtime:
@@ -577,22 +613,22 @@ importers:
         specifier: workspace:*
         version: link:../metadata
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       coffee:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.5.1
       egg:
         specifier: beta
         version: 4.1.0-beta.19
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/lifecycle:
@@ -605,16 +641,16 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/loader:
@@ -632,26 +668,26 @@ importers:
         specifier: workspace:*
         version: link:../types
       egg-errors:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.2
       globby:
-        specifier: ^14.1.0
+        specifier: 'catalog:'
         version: 14.1.0
       is-type-of:
-        specifier: ^2.2.0
+        specifier: 'catalog:'
         version: 2.2.0
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/metadata:
@@ -669,29 +705,29 @@ importers:
         specifier: workspace:*
         version: link:../types
       egg-errors:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.2
     devDependencies:
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../tegg
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       globby:
-        specifier: '14'
+        specifier: 'catalog:'
         version: 14.1.0
       is-type-of:
-        specifier: '2'
+        specifier: 'catalog:'
         version: 2.2.0
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/orm-decorator:
@@ -722,19 +758,19 @@ importers:
         specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/runtime:
@@ -762,16 +798,16 @@ importers:
         specifier: workspace:*
         version: link:../loader
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/schedule-decorator:
@@ -790,31 +826,31 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/standalone-decorator:
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/tegg:
@@ -875,16 +911,16 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/test-util:
@@ -908,20 +944,20 @@ importers:
         specifier: workspace:*
         version: link:../runtime
       globby:
-        specifier: ^14.1.0
+        specifier: 'catalog:'
         version: 14.1.0
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/transaction-decorator:
@@ -940,16 +976,16 @@ importers:
         version: link:../types
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   core/types:
@@ -959,16 +995,16 @@ importers:
         version: 4.1.0-beta.19
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/ajv:
@@ -999,19 +1035,19 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/aop:
@@ -1048,34 +1084,34 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/common:
     devDependencies:
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/config:
@@ -1091,19 +1127,19 @@ importers:
         specifier: 'catalog:'
         version: 7.0.0-beta.19(egg@4.1.0-beta.19)
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/controller:
@@ -1133,16 +1169,16 @@ importers:
         specifier: workspace:*
         version: link:../../core/types
       egg-errors:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.2
       globby:
-        specifier: ^14.1.0
+        specifier: 'catalog:'
         version: 14.1.0
       path-to-regexp:
         specifier: ^1.9.0
         version: 1.9.0
       sdk-base:
-        specifier: ^5.0.1
+        specifier: 'catalog:'
         version: 5.0.1
     devDependencies:
       '@eggjs/mock':
@@ -1161,19 +1197,19 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.19(egg@4.1.0-beta.19)
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/dal:
@@ -1210,31 +1246,31 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.19(egg@4.1.0-beta.19)
       '@types/mocha':
-        specifier: '10'
+        specifier: 'catalog:'
         version: 10.0.10
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       globby:
-        specifier: '14'
+        specifier: 'catalog:'
         version: 14.1.0
       mocha:
-        specifier: '11'
+        specifier: 'catalog:'
         version: 11.7.4
       mochawesome-with-mocha:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/eventbus:
@@ -1277,22 +1313,22 @@ importers:
         specifier: 'catalog:'
         version: 10.0.10
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       mocha:
-        specifier: '11'
+        specifier: 'catalog:'
         version: 11.7.4
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/orm:
@@ -1325,7 +1361,7 @@ importers:
         specifier: ^2.12.2
         version: 2.13.8(mysql2@3.15.1)
       sdk-base:
-        specifier: ^5.0.1
+        specifier: 'catalog:'
         version: 5.0.1
     devDependencies:
       '@eggjs/bin':
@@ -1347,28 +1383,28 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.19(egg@4.1.0-beta.19)
       '@types/mocha':
-        specifier: '10'
+        specifier: 'catalog:'
         version: 10.0.10
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       mocha:
-        specifier: '11'
+        specifier: 'catalog:'
         version: 11.7.4
       mysql2:
         specifier: '3'
         version: 3.15.1
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/schedule:
@@ -1414,25 +1450,25 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@types/mocha':
-        specifier: '10'
+        specifier: 'catalog:'
         version: 10.0.10
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.19
       mocha:
-        specifier: '11'
+        specifier: 'catalog:'
         version: 11.7.4
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   plugin/tegg:
@@ -1462,10 +1498,10 @@ importers:
         specifier: workspace:*
         version: link:../../core/runtime
       extend2:
-        specifier: ^4.0.0
+        specifier: 'catalog:'
         version: 4.0.0
       sdk-base:
-        specifier: ^5.0.1
+        specifier: 'catalog:'
         version: 5.0.1
     devDependencies:
       '@eggjs/bin':
@@ -1481,10 +1517,10 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.19(egg@4.1.0-beta.19)
       '@types/mocha':
-        specifier: '10'
+        specifier: 'catalog:'
         version: 10.0.10
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
@@ -1493,19 +1529,19 @@ importers:
         specifier: ^3.0.1
         version: 3.6.1
       mocha:
-        specifier: '11'
+        specifier: 'catalog:'
         version: 11.7.4
       mochawesome-with-mocha:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
   standalone/standalone:
@@ -1560,22 +1596,22 @@ importers:
         specifier: beta
         version: 5.0.0-beta.19
       '@types/mocha':
-        specifier: '10'
+        specifier: 'catalog:'
         version: 10.0.10
       '@types/node':
-        specifier: '22'
+        specifier: 'catalog:'
         version: 22.18.8
       mm:
         specifier: '4'
         version: 4.0.2
       tsdown:
-        specifier: ^0.15.6
+        specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
-        specifier: '5'
+        specifier: 'catalog:'
         version: 5.9.3
       unplugin-unused:
-        specifier: ^0.5.3
+        specifier: 'catalog:'
         version: 0.5.3
 
 packages:
