@@ -28,6 +28,7 @@
   },
   "scripts": {
     "test:mocha": "egg-bin test",
+    "cov:mocha": "egg-bin cov",
     "clean": "rimraf dist",
     "build": "tsdown",
     "typecheck": "tsc --noEmit",

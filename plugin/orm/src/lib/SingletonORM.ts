@@ -3,8 +3,9 @@ import {
   Inject,
   SingletonProto,
 } from '@eggjs/tegg';
-import { LeoricRegister } from './LeoricRegister.js';
-import type { RealmType } from './types.js';
+
+import { LeoricRegister } from './LeoricRegister.ts';
+import type { RealmType } from './types.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

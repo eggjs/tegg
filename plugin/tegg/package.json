@@ -49,7 +49,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test:mocha": "egg-bin test",
-    "cov": "egg-bin cov",
+    "cov:mocha": "egg-bin cov",
     "clean": "rimraf dist",
     "build": "tsdown",
     "prepublishOnly": "npm run build"

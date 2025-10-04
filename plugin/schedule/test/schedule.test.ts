@@ -1,13 +1,13 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+
+import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const FooSubscriberFilePath = path.join(__dirname, 'fixtures', 'schedule-app', 'app', 'subscriber', 'Subscriber.ts');
+const FooSubscriberFilePath = path.join(import.meta.dirname, 'fixtures', 'schedule-app', 'app', 'subscriber', 'Subscriber.ts');
 
 describe('plugin/schedule/test/schedule.test.ts', () => {
   let app: MockApplication;
@@ -16,14 +16,14 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'schedule-app',
+      baseDir: path.join(import.meta.dirname, 'fixtures', 'schedule-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -39,7 +39,7 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
 });
 
 async function getScheduleLogContent(name: string) {
-  const logPath = path.join(__dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
+  const logPath = path.join(import.meta.dirname, 'fixtures', name, 'logs', name, `${name}-web.log`);
   // schedule called
   return fs.readFile(logPath, 'utf8');
 }

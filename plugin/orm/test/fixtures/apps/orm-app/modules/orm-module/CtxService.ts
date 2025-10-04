@@ -1,5 +1,6 @@
 import { ContextProto, Inject } from '@eggjs/tegg';
-import { Pkg } from './model/Pkg';
+
+import { Pkg } from './model/Pkg.ts';
 
 @ContextProto()
 export class CtxService {

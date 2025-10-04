@@ -1,12 +1,13 @@
-import { LifecycleHook } from '@eggjs/tegg';
+import { type LifecycleHook } from '@eggjs/tegg';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,
   EggPrototypeFactory,
-  LoadUnit,
-  LoadUnitLifecycleContext,
+  type LoadUnit,
+  type LoadUnitLifecycleContext,
 } from '@eggjs/tegg-metadata';
-import { Orm } from './SingletonORM.js';
+
+import { Orm } from './SingletonORM.ts';
 
 const REGISTER_CLAZZ = [
   Orm,

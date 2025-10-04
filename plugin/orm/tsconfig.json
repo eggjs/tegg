@@ -2,8 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "target": "ES2021"
-  },
-  "exclude": [
-  ]
+    "target": "ES2021",
+    "types": [
+      "mocha"
+    ]
+  }
 }

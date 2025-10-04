@@ -1,14 +1,14 @@
-import { EggPrototype, LoadUnit, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import { type EggPrototype, type LoadUnit, type EggPrototypeLifecycleContext, type InjectObjectProto, type InjectConstructorProto } from '@eggjs/tegg-metadata';
 import {
   AccessLevel,
-  EggPrototypeName,
+  type EggPrototypeName,
   ObjectInitType,
-  QualifierInfo,
+  type QualifierInfo,
   QualifierUtil,
   MetadataUtil,
-  MetaDataKey, QualifierAttribute, QualifierValue,
+  type MetaDataKey, type QualifierAttribute, type QualifierValue,
 } from '@eggjs/tegg';
-import { Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
+import { type Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import { Bone } from 'leoric';
 
 export default class SingletonModelProto implements EggPrototype {
@@ -17,7 +17,7 @@ export default class SingletonModelProto implements EggPrototype {
   readonly accessLevel = AccessLevel.PUBLIC;
   id: Id;
   readonly initType = ObjectInitType.SINGLETON;
-  readonly injectObjects = [];
+  readonly injectObjects: (InjectObjectProto | InjectConstructorProto)[] = [];
   readonly loadUnitId: string;
   readonly moduleName: string;
   readonly name: EggPrototypeName;

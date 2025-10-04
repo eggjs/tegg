@@ -1,13 +1,14 @@
 import { Application } from 'egg';
-
-import { DataSourceManager } from './lib/DataSourceManager.js';
-import { LeoricRegister } from './lib/LeoricRegister.js';
-import { ModelProtoManager } from './lib/ModelProtoManager.js';
-import { ModelProtoHook } from './lib/ModelProtoHook.js';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
-import SingletonModelProto from './lib/SingletonModelProto.js';
-import { SingletonModelObject } from './lib/SingletonModelObject.js';
-import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook.js';
+
+import { Orm } from './lib/SingletonORM.ts';
+import { DataSourceManager } from './lib/DataSourceManager.ts';
+import { LeoricRegister } from './lib/LeoricRegister.ts';
+import { ModelProtoManager } from './lib/ModelProtoManager.ts';
+import { ModelProtoHook } from './lib/ModelProtoHook.ts';
+import SingletonModelProto from './lib/SingletonModelProto.ts';
+import { SingletonModelObject } from './lib/SingletonModelObject.ts';
+import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook.ts';
 
 export default class OrmAppBootHook {
   private readonly app: Application;
@@ -52,5 +53,12 @@ export default class OrmAppBootHook {
 
   async beforeClose() {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.modelProtoHook);
+  }
+}
+
+declare module 'egg' {
+  interface Application {
+    leoricRegister: LeoricRegister;
+    orm: Orm;
   }
 }

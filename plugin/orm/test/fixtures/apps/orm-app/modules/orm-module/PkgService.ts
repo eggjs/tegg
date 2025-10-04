@@ -1,5 +1,6 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
-import { Pkg } from './model/Pkg';
+
+import { Pkg } from './model/Pkg.ts';
 
 @SingletonProto()
 export class PkgService {
