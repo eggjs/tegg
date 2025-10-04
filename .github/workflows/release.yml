@@ -2,8 +2,6 @@ name: Manual Release
 
 on:
   workflow_dispatch:
-    branches:
-      - next
     inputs:
       branch:
         description: 'Branch to release from'
