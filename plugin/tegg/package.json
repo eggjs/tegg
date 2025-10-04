@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "4.0.0-beta.7",
+  "version": "4.0.0-beta.8",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
