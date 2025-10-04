@@ -1,8 +1,8 @@
 import type { Application, ILifecycleBoot } from 'egg';
 
-import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister.js';
-import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook.js';
-import { SchedulePrototypeHook } from './lib/SchedulePrototypeHook.js';
+import { ScheduleWorkerRegister } from './lib/ScheduleWorkerRegister.ts';
+import { ScheduleWorkerLoadUnitHook } from './lib/ScheduleWorkerLoadUnitHook.ts';
+import { SchedulePrototypeHook } from './lib/SchedulePrototypeHook.ts';
 
 export default class ScheduleAppBootHook implements ILifecycleBoot {
   private readonly app: Application;

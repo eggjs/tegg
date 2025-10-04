@@ -17,7 +17,8 @@ export class ScheduleWorkerRegister {
     const task = eggScheduleAdapterFactory(proto, metadata);
     const schedule = EggScheduleMetadataConvertor.convertToEggSchedule(metadata);
     const path = proto.getMetaData(PrototypeUtil.FILE_PATH);
-    (this.app as any).scheduleWorker.registerSchedule({
+    // @ts-expect-error app scheduleWorker is not typed
+    this.app.scheduleWorker.registerSchedule({
       schedule,
       task,
       key: path,

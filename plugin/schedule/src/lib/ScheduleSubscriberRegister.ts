@@ -1,13 +1,13 @@
-import { Application } from 'egg';
-import { PrototypeUtil, EggProtoImplClass } from '@eggjs/tegg';
+import { type EggApplicationCore } from 'egg';
+import { PrototypeUtil, type EggProtoImplClass } from '@eggjs/tegg';
 import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 
-import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.js';
+import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.ts';
 
 export class ScheduleSubscriberRegister {
-  private readonly agent: Application;
+  private readonly agent: EggApplicationCore;
 
-  constructor(agent: Application) {
+  constructor(agent: EggApplicationCore) {
     this.agent = agent;
   }
 

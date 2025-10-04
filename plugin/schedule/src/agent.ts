@@ -1,7 +1,6 @@
 import { Agent, type ILifecycleBoot } from 'egg';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggLoadUnitType } from '@eggjs/tegg-metadata';
-
 import { ScheduleInfoUtil, ScheduleMetaBuilder } from '@eggjs/tegg/schedule';
 
 import { ScheduleSubscriberRegister } from './lib/ScheduleSubscriberRegister.ts';

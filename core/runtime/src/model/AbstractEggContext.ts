@@ -106,4 +106,3 @@ EggContainerFactory.registerContainerGetMethod(ObjectInitType.CONTEXT, () => {
   }
   return ctx;
 });
-debug('EggContainerFactory.registerContainerGetMethod %o', ObjectInitType.CONTEXT, new Error().stack);

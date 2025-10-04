@@ -42,7 +42,7 @@ export default defineConfig({
         'vitest.config.ts',
       ],
     },
-    testTimeout: 60000,
+    testTimeout: 5000,
     poolOptions: {
       forks: {
         execArgv: [
