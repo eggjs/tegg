@@ -4,6 +4,9 @@
     "baseUrl": "./",
     "types": [
       "mocha"
-    ]
-  }
+    ],
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "exclude": ["test", "dist", "tsdown.config.ts"]
 }

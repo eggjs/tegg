@@ -51,7 +51,7 @@
     "test:mocha": "egg-bin test",
     "cov:mocha": "egg-bin cov",
     "clean": "rimraf dist",
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build"
   },
   "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/tegg",

@@ -8,28 +8,28 @@ catalogs:
   default:
     '@eggjs/bin':
       specifier: beta
-      version: 8.0.0-beta.19
+      version: 8.0.0-beta.22
     '@eggjs/cookies':
       specifier: beta
-      version: 4.0.0-beta.19
+      version: 4.0.0-beta.22
     '@eggjs/mock':
       specifier: beta
-      version: 7.0.0-beta.19
+      version: 7.0.0-beta.22
     '@eggjs/rds':
       specifier: ^1.3.0
       version: 1.3.0
     '@eggjs/router':
       specifier: beta
-      version: 4.0.0-beta.19
+      version: 4.0.0-beta.22
     '@eggjs/tracer':
       specifier: beta
-      version: 4.0.0-beta.19
+      version: 4.0.0-beta.22
     '@eggjs/tsconfig':
       specifier: 3.1.0-beta.19
       version: 3.1.0-beta.19
     '@eggjs/utils':
       specifier: beta
-      version: 5.0.0-beta.19
+      version: 5.0.0-beta.22
     '@sinclair/typebox':
       specifier: ^0.32.20
       version: 0.32.35
@@ -83,7 +83,7 @@ catalogs:
       version: 5.5.1
     egg:
       specifier: beta
-      version: 4.1.0-beta.19
+      version: 4.1.0-beta.22
     egg-errors:
       specifier: ^2.3.0
       version: 2.3.2
@@ -337,7 +337,7 @@ importers:
         version: link:../types
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
     devDependencies:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
@@ -362,7 +362,7 @@ importers:
         version: link:../types
       '@eggjs/utils':
         specifier: 'catalog:'
-        version: 5.0.0-beta.19
+        version: 5.0.0-beta.22
       extend2:
         specifier: 'catalog:'
         version: 4.0.0
@@ -399,7 +399,7 @@ importers:
         version: link:../aop-decorator
       '@eggjs/cookies':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19
+        version: 4.0.0-beta.22
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
@@ -424,7 +424,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -689,7 +689,7 @@ importers:
         version: 5.5.1
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1034,7 +1034,7 @@ importers:
     dependencies:
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1066,7 +1066,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
@@ -1081,7 +1081,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1115,7 +1115,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
@@ -1127,7 +1127,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1160,17 +1160,17 @@ importers:
         version: link:../../core/common-util
       '@eggjs/utils':
         specifier: 'catalog:'
-        version: 5.0.0-beta.19
+        version: 5.0.0-beta.22
     devDependencies:
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1188,7 +1188,7 @@ importers:
         version: link:../common
       '@eggjs/router':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19
+        version: 4.0.0-beta.22
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
@@ -1222,7 +1222,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/module-test-util':
         specifier: workspace:*
         version: link:../../core/test-util
@@ -1234,13 +1234,13 @@ importers:
         version: link:../tegg
       '@eggjs/tracer':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 4.0.0-beta.22(egg@4.1.0-beta.22)
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1268,10 +1268,10 @@ importers:
     devDependencies:
       '@eggjs/bin':
         specifier: 'catalog:'
-        version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+        version: 8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/tegg-aop-plugin':
         specifier: workspace:*
         version: link:../aop
@@ -1283,7 +1283,7 @@ importers:
         version: link:../tegg
       '@eggjs/tracer':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 4.0.0-beta.22(egg@4.1.0-beta.22)
       '@types/mocha':
         specifier: 'catalog:'
         version: 10.0.10
@@ -1292,7 +1292,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       globby:
         specifier: 'catalog:'
         version: 14.1.0
@@ -1329,10 +1329,10 @@ importers:
     devDependencies:
       '@eggjs/bin':
         specifier: 'catalog:'
-        version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+        version: 8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
@@ -1344,7 +1344,7 @@ importers:
         version: link:../tegg
       '@eggjs/tracer':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 4.0.0-beta.22(egg@4.1.0-beta.22)
       '@types/mocha':
         specifier: 'catalog:'
         version: 10.0.10
@@ -1353,7 +1353,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       mocha:
         specifier: 'catalog:'
         version: 11.7.4
@@ -1396,10 +1396,10 @@ importers:
     devDependencies:
       '@eggjs/bin':
         specifier: 'catalog:'
-        version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+        version: 8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/module-test-util':
         specifier: workspace:*
         version: link:../../core/test-util
@@ -1411,7 +1411,7 @@ importers:
         version: link:../tegg
       '@eggjs/tracer':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 4.0.0-beta.22(egg@4.1.0-beta.22)
       '@types/mocha':
         specifier: 'catalog:'
         version: 10.0.10
@@ -1420,7 +1420,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       mocha:
         specifier: 'catalog:'
         version: 11.7.4
@@ -1463,10 +1463,10 @@ importers:
     devDependencies:
       '@eggjs/bin':
         specifier: 'catalog:'
-        version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+        version: 8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/module-test-util':
         specifier: workspace:*
         version: link:../../core/test-util
@@ -1487,7 +1487,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       mocha:
         specifier: 'catalog:'
         version: 11.7.4
@@ -1536,16 +1536,16 @@ importers:
     devDependencies:
       '@eggjs/bin':
         specifier: 'catalog:'
-        version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+        version: 8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
         specifier: 'catalog:'
-        version: 7.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 7.0.0-beta.22(egg@4.1.0-beta.22)
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
       '@eggjs/tracer':
         specifier: 'catalog:'
-        version: 4.0.0-beta.19(egg@4.1.0-beta.19)
+        version: 4.0.0-beta.22(egg@4.1.0-beta.22)
       '@types/mocha':
         specifier: 'catalog:'
         version: 10.0.10
@@ -1554,7 +1554,7 @@ importers:
         version: 22.18.8
       egg:
         specifier: 'catalog:'
-        version: 4.1.0-beta.19
+        version: 4.1.0-beta.22
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
@@ -1600,7 +1600,7 @@ importers:
     devDependencies:
       '@eggjs/bin':
         specifier: 'catalog:'
-        version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+        version: 8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
@@ -1612,7 +1612,7 @@ importers:
         version: link:../../plugin/ajv
       '@eggjs/utils':
         specifier: 'catalog:'
-        version: 5.0.0-beta.19
+        version: 5.0.0-beta.22
       '@types/mocha':
         specifier: 'catalog:'
         version: 10.0.10
@@ -1673,131 +1673,131 @@ packages:
   '@eggjs/ajv-keywords@5.1.1':
     resolution: {integrity: sha512-+wUIlwNeHd/MKtQQFTdezkL0sqh91oTO4gyYHTuaJtFDJvf1TFjpLiTaNpq3Z783nvcUeKVOsbBThATVRkj7tg==}
 
-  '@eggjs/bin@8.0.0-beta.19':
-    resolution: {integrity: sha512-kPxBCwch3J2Ggj9CzAmA7h/6scZlOUFpNIGpbaYVAKg8+AAZuFzt5sCeiNiNglnwcXXcDFA3JX9XoJA+SDnNVQ==}
+  '@eggjs/bin@8.0.0-beta.22':
+    resolution: {integrity: sha512-IyIqtDx+4V5VK5f+CgUb3cE6B0DP3zILOyr4PI9ziu6hlt5gmcFn29NdFNeCmuf/AhlCTtRA/FYnRLh2169Y+w==}
     engines: {node: '>=22.18.0'}
     hasBin: true
     peerDependencies:
-      '@eggjs/mock': 7.0.0-beta.19
+      '@eggjs/mock': 7.0.0-beta.22
     peerDependenciesMeta:
       '@eggjs/mock':
         optional: true
 
-  '@eggjs/cluster@4.0.0-beta.19':
-    resolution: {integrity: sha512-k5cqbhl7/iwwww+KxZlnnv0xlNBqWamECSuU4W1+hzkvfNSlU8uoyuZcUMyh2Np/Jcg1XxX1OXmcjPkaX3FjGA==}
+  '@eggjs/cluster@4.0.0-beta.22':
+    resolution: {integrity: sha512-FzWFnIOGCBJcS465G7sUVjw/Gq2wvAGejb5yhFvG2pZIEYUsU238gBepi5qpjha/XB+3mhR+gHBDLlIW74U20w==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/compressible@3.0.0':
     resolution: {integrity: sha512-Bz/u+0zhmZ/44xdIL1MLfknaDFQpE+bSfJ4OjCb2NnHpg+LVmmNwEpRW4hUi3v2MhaO3sNWD93gBTtJ00q2iIA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/cookies@4.0.0-beta.19':
-    resolution: {integrity: sha512-wlCYB9B6VwDDJiv9sjKQF97JEB0L+v0kpoLx2VlyoWk5CTlY3yPVlY752HmFKaX9CbfQ7WVG1n6sxLbRK7P2zA==}
+  '@eggjs/cookies@4.0.0-beta.22':
+    resolution: {integrity: sha512-ZX9CbUXxd6n5ptaHy4g0p3VMBqbtbZIaeuYEgHQ/apH4INfJp6ngIuZ9ThUnE5NnzwvtpHSv7sKNWxjts9aWyw==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/core@7.0.0-beta.19':
-    resolution: {integrity: sha512-JbaoW2vogvWqdTQYlguHVZRr2iHWN0mp8DyZ0PV5NmMqF1jhzaGL6vwHIQp0gQPrN1RcNAjR+pyckPc3TZJsMg==}
+  '@eggjs/core@7.0.0-beta.22':
+    resolution: {integrity: sha512-MxsBCYIQUrHEP2hKUydqGq0Okt1O/x8aVvb1Qv8zo39dccI7kS+ecpUn2Uf9uB1SCr/7nEZH6Ympx8E3R00xqQ==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/development@5.0.0-beta.19':
-    resolution: {integrity: sha512-mqrkAVg+HkK5L0nCpqPrKO+3MQXux7j9fV0qudVUHMRHLjKF9YWyip8s330FHhMje3AZC6XveIiBKNIuqplrsQ==}
+  '@eggjs/development@5.0.0-beta.22':
+    resolution: {integrity: sha512-7R2wWCKFczVY98JZIZQaqCjlWfa33F12r6CrRBvRYnCpDTz000UTYbMj3R3YZSx+QCkRGMm3OZvNwp/fZkiGOg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/extend2@5.0.0-beta.19':
-    resolution: {integrity: sha512-qhkr9Amt49qEh1uz3hT75p+3+zB0jkaePU1AKUfZ/p/mJ4oZHIeDQydStqd1pmTM8KChNY7qcZqA9j8i8AApfg==}
+  '@eggjs/extend2@5.0.0-beta.22':
+    resolution: {integrity: sha512-0kvUmQ67QG/2bidTtwOOTcyR6yr5MAEpmZamiTLcxMzUsC3KVpUhrkjO+GX7nFwvhbyciAFvoR0VsNjBROO9zw==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/i18n@4.0.0-beta.19':
-    resolution: {integrity: sha512-SdtJCpH3LsUkIY3UjX1q4AsKmdJonv2Et+aCrv4RCkNO6+igRtdo0hmK3eyrnz+uPJSQ20hjP0SuV9VXD5G2/g==}
+  '@eggjs/i18n@4.0.0-beta.22':
+    resolution: {integrity: sha512-fd22H9hUlIOQJdBRrVdh6AGL/YXEi/gbhDMINBRJaHMm/EHZGOJN72EER99rq4btoatuohxuELwoUfK4JTh7Dg==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
   '@eggjs/ip@2.1.0':
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
     engines: {node: '>= 14.0.0'}
 
-  '@eggjs/jsonp@4.0.0-beta.19':
-    resolution: {integrity: sha512-vAfWfXeFQDGLNf2mO+Nkqz5GKUfzc+JSxfhrzcnhidhY82KP9KZH0TVMC0NgT5EIkmN41e+K/hCaa7SA0mlnpg==}
+  '@eggjs/jsonp@4.0.0-beta.22':
+    resolution: {integrity: sha512-OfYAoC8pOVgjEU3dhafouKhuTeJcx1oDuYxvVCoJS5ocnjc9155hSuE4oEFvYIVfTnt+aOzmtOb88jelhzi0ig==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/koa-static-cache@7.0.0-beta.19':
-    resolution: {integrity: sha512-l3VyHDlTWhdPJCpGpr9olEMR7CUqA6RMAnZcg/FShwjNqhfO6AjOUEAF8mLT0VfC7BpGm7ZonqP/aJo+GaO7QA==}
+  '@eggjs/koa-static-cache@7.0.0-beta.22':
+    resolution: {integrity: sha512-osKsqsCaMhUl7R0jDWORcVVabY8mTN60pUY+p+TDSRLxrhwltmb2BoxXxdHHkYH4H1/skTzJiyBLoNryNFQq5A==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/koa@3.1.0-beta.19':
-    resolution: {integrity: sha512-HANU26p1k1F6kMMKacukHY+74H7Ck00yzTKHSg8HaVxuu8xAB/whZ0UOCr0ncQ3gaAu3cPuk624lCsy+c4/5Sw==}
+  '@eggjs/koa@3.1.0-beta.22':
+    resolution: {integrity: sha512-vVO4Lo0avq5vTPR1AnyZp03kmpeeEasJTUe73Si+VRFSCifRB06LVpspdSb8m4E7nUS9O0SgA6c7fN/zhENi7g==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/logrotator@5.0.0-beta.19':
-    resolution: {integrity: sha512-svUmVIxRTmzbqyLjUEQNTRsLl0GTTzu8ZI5L0sX9yv0iQXpDwpOzZFjMou/vxaNS8uEdZ/kfCqWJcBNFDiz47w==}
+  '@eggjs/logrotator@5.0.0-beta.22':
+    resolution: {integrity: sha512-Sp75/Rd4LkSUn8iIfkzYRSL/giUdP4LeLE/mNUED5xFvtK57+uv1hmrEEswU846SJBiLqgzkjHCAt/NSTRBPMQ==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/mock@7.0.0-beta.19':
-    resolution: {integrity: sha512-X6dubcQza/gFXVlIwhqFPAtGMUzHJ2ogqHcUi5ibU6OCI5Lnr0Lf4ytrHnL25tQc9k/My3ulemC6m3/ydGjGMw==}
+  '@eggjs/mock@7.0.0-beta.22':
+    resolution: {integrity: sha512-7s0KTqjauAmBSxQW0NpnKn6/p1YN2A6F+PkzLUbW7+HQdMhIN6F5wtx4IxwoHnO8pHlBPguySPsEKCrLVUezWQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/multipart@5.0.0-beta.19':
-    resolution: {integrity: sha512-nL2z5ZS7j0hWx6fQ9QOtqG46EBcShrKVUNc4EqLT0dISxt0JWDEO+pwx+MxmRWz8H+RnsNYSXuUYIUtfu0xwDA==}
+  '@eggjs/multipart@5.0.0-beta.22':
+    resolution: {integrity: sha512-aDeQKIJUQBJyxA6qfla8hyyrV/Scv8Hs+a8Xen97FZ7luaKkgFWpLi3wQO9olKw5uwBxqMb3e1N/+NRsyFq7jA==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/onerror@4.0.0-beta.19':
-    resolution: {integrity: sha512-zHm5RquvVuTJNW8dJENNFwt368utCLf8fCikebEiwMnOzBTCMZxScMI5yuH5ZiXQnqq6T6mRUfgLBaI6SRhQ3A==}
+  '@eggjs/onerror@4.0.0-beta.22':
+    resolution: {integrity: sha512-Eph2jETPOiVmXCvmjt7Q5nGdTMR6ekCeGCLDJqff1Nks1dFhLCbcTiDTlAWMDudpU1L/CpBBh5mWdKInEcAo3A==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
   '@eggjs/rds@1.3.0':
     resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
     engines: {node: '>= 16.17.0'}
 
-  '@eggjs/router@4.0.0-beta.19':
-    resolution: {integrity: sha512-u0bWdefUnn7l4dYMn6fc+VO8B0UDL/NAeTTMKy/TMhL+qeoLj4UXBkt/CuV7dU3Gnfvsc3ecKfDcSzigDtFCZA==}
+  '@eggjs/router@4.0.0-beta.22':
+    resolution: {integrity: sha512-CqVy1sRwjBpIRQXnWWflf7P24TssHzeZYHBFcbcKlMLWaiizF3dzeZehVHUozdJ5hgNy00oWuaZNVBUff9r02A==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/schedule@6.0.0-beta.19':
-    resolution: {integrity: sha512-FDnGU8XljtMVKVQixFcSBA/OIgy6OA/M8WSOzLICTcSTFN9EZZFZrJWN9T0uquO1wzkACAi2BYoeO4b6K/UC0g==}
+  '@eggjs/schedule@6.0.0-beta.22':
+    resolution: {integrity: sha512-x/lYrqQnkui1ssfRfWSbHB9TeM/t/q/dmSK5RmXUXVJ6c2h/CzmkEM2P3f3YUwUU3mcFw8L3n9zLAcWYyuqtgQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/security@5.0.0-beta.19':
-    resolution: {integrity: sha512-NYMyBiNtYjL0KCh2ilYuxUae2hJeT4JCuL6i0YrcGvdKrCS6jFO80F0pTrb6lCUeejoWSvbGPiUKOkIO++NbYQ==}
+  '@eggjs/security@5.0.0-beta.22':
+    resolution: {integrity: sha512-37QtIwTxPZCFolQF0a+fARrtEBiNz/I8aw4WLysyMK8EX1PkMVYnfXDVx4RHOLcQTjwkQAhEShSNhwXPKL0/aA==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/session@5.0.0-beta.19':
-    resolution: {integrity: sha512-IP5lRJ/V5TEW44RHgQqX3EpJt+VqbrHCl9tJ5N7TKUm/s6U94MZVqzrhpXZuUuD3z+UuWdocxfeQPupZ+gSS6g==}
+  '@eggjs/session@5.0.0-beta.22':
+    resolution: {integrity: sha512-FslGGPRbmnpQDKrB6JImey8wiOehR02gbzYfgvSVZkFmHIObiXuiDV/6OqfzBkPpTSKgE8iixuNXLvwBT7D0Yg==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/static@4.0.0-beta.19':
-    resolution: {integrity: sha512-2TvfDBHGHT3nlhBSXXMP1dpkjZixuvHCNxZ6GNfQyivl4BZ5JIV2MW9d85gYGAMWxEHkGOnmIH9bl20W8oWOcg==}
+  '@eggjs/static@4.0.0-beta.22':
+    resolution: {integrity: sha512-KVE/sXh54J6LUEiQ7du10Wabtjs3SeEq/eEBuO0jQtN/NvuA2SAlFSwG2S6BsKwY/ekDe9cjiZ9xNUCEXsq2RA==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/supertest@9.0.0-beta.19':
-    resolution: {integrity: sha512-zvZYeP/JWIO+OP0zSQ2PQboAnYx7q1jIfRGvpVOpBGOwnVRe3hJHKsj6aRgm3ziHGBBbR++FbZn5N/LM1K1uKw==}
+  '@eggjs/supertest@9.0.0-beta.22':
+    resolution: {integrity: sha512-Mnl4axznBQiiWUw2giPFbv3MWJZ67bktKRbykMP0wRgDOcdEoQpQCOdrHfLFAI7iO9+HFnjfjhv9mVAJkk0nng==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/tracer@4.0.0-beta.19':
-    resolution: {integrity: sha512-YwoMR/NOjqrw9QjS2skO0PMzjaRmtYTA3Rh5WSHQpIzg0XSMpVp+usQECoaAXyd+T6/jYOnbGfgzbzQRgVvy1Q==}
+  '@eggjs/tracer@4.0.0-beta.22':
+    resolution: {integrity: sha512-Z/CQfMGT2CyOP8XAnA10V7KY4blR5Y0vpZbn7G+Xec578zPbGgFNvVZg+hOzWX7IlZJffEthKDz5Q5Vpyth21g==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
   '@eggjs/tsconfig@3.1.0-beta.19':
     resolution: {integrity: sha512-TFJOkTV8EWLCd3kbj+0vseWHPXDntgBpng66v3ehCLU/BI/hdfNVEtBS6g253lEALTl6oOGqsg7Vf3ux8beh/w==}
@@ -1806,21 +1806,21 @@ packages:
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
 
-  '@eggjs/utils@5.0.0-beta.19':
-    resolution: {integrity: sha512-Z5mF0c5SyidEXVSOgpfKkaefwxIuZ56QH47DYtiGYuy3zQRScm32e14AfQvA0s4Pd1e6lTusNE6cIyO6nw8b2w==}
+  '@eggjs/utils@5.0.0-beta.22':
+    resolution: {integrity: sha512-TUCahzVNCGD0uctuI740cs1h2/qfNceAobsMLbO1wYqPD7jbaCHEW6x4AVQ/NC4RGOpwfUaPzCekiFRH/f7WkQ==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/view@4.0.0-beta.19':
-    resolution: {integrity: sha512-pJv1XhPfi3l7BYtgGyJM6yLTeu1tIVgVSO6xUyVmh6p3qDaxCSR+/pjBihckuyC0V3p1vGafL4ZmZgcpaGiraw==}
+  '@eggjs/view@4.0.0-beta.22':
+    resolution: {integrity: sha512-pZKYGWrpWUcYWosD231B+sVgsWT8Z77RlgL0Eu9gcud+UqeHNXIowNOzEp6h7TkBLAGCH17KyTptCo/0Y+W4Tw==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
-  '@eggjs/watcher@5.0.0-beta.19':
-    resolution: {integrity: sha512-2AyexiGFajB82zuLrc4UW1kDwSPatGRcOWTnQRBFy5LpYI+SEH4E5DW5LZ7IwiFH8Ym0bz3zf2GY+/desdB8dg==}
+  '@eggjs/watcher@5.0.0-beta.22':
+    resolution: {integrity: sha512-z/DO0/6zTy1NI6KTa6D9/SMpY8Oq5oMtqW/+kCV6KNmg707/lOHmmtD9VrqCmJ5mpv/+wVa2nt0Gl1eDsQ+Izg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
   '@emnapi/core@1.5.0':
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
@@ -3124,8 +3124,8 @@ packages:
     engines: {node: '>= 18.19.0'}
     hasBin: true
 
-  egg@4.1.0-beta.19:
-    resolution: {integrity: sha512-desUUvo88YzcXTA3AmdVgxkcI7kbd21sjscOHgEYQ9SXHr7F3EP0vctbf0eSjIp9yfhmMTtzw6PCTe32Ma0ejQ==}
+  egg@4.1.0-beta.22:
+    resolution: {integrity: sha512-jYWszWWScMhLWonEl9L7U4umOdj0Pyt5EBY4ho1BaqqFk719mYW/6+w4VF3IW6YIZwEjJC7dZ2hX264X9ZBVyQ==}
     engines: {node: '>=22.18.0'}
 
   ejs@3.1.10:
@@ -4943,12 +4943,10 @@ snapshots:
       ajv: 8.17.1
       fast-deep-equal: 3.1.3
 
-  '@eggjs/bin@8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)':
+  '@eggjs/bin@8.0.0-beta.22(@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)':
     dependencies:
-      '@eggjs/supertest': 9.0.0-beta.19
-      '@eggjs/utils': 5.0.0-beta.19
+      '@eggjs/utils': 5.0.0-beta.22
       '@oclif/core': 4.5.4
-      '@types/mocha': 10.0.10
       c8: 10.1.3
       ci-parallel-vars: 1.0.1
       detect-port: 2.1.0
@@ -4961,18 +4959,17 @@ snapshots:
       tsconfig-paths: 4.2.0
       utility: 2.5.0
     optionalDependencies:
-      '@eggjs/mock': 7.0.0-beta.19(egg@4.1.0-beta.19)
+      '@eggjs/mock': 7.0.0-beta.22(egg@4.1.0-beta.22)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
       - '@types/node'
       - monocart-coverage-reports
-      - supports-color
       - typescript
 
-  '@eggjs/cluster@4.0.0-beta.19':
+  '@eggjs/cluster@4.0.0-beta.22':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.19
+      '@eggjs/utils': 5.0.0-beta.22
       '@fengmk2/ps-tree': 2.0.2
       cfork: 2.0.0
       cluster-reload: 2.0.0
@@ -4988,17 +4985,17 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  '@eggjs/cookies@4.0.0-beta.19':
+  '@eggjs/cookies@4.0.0-beta.22':
     dependencies:
       should-send-same-site-none: 2.0.5
       utility: 2.5.0
 
-  '@eggjs/core@7.0.0-beta.19':
+  '@eggjs/core@7.0.0-beta.22':
     dependencies:
-      '@eggjs/extend2': 5.0.0-beta.19
-      '@eggjs/koa': 3.1.0-beta.19
-      '@eggjs/router': 4.0.0-beta.19
-      '@eggjs/utils': 5.0.0-beta.19
+      '@eggjs/extend2': 5.0.0-beta.22
+      '@eggjs/koa': 3.1.0-beta.22
+      '@eggjs/router': 4.0.0-beta.22
+      '@eggjs/utils': 5.0.0-beta.22
       egg-logger: 3.6.1
       egg-path-matching: 2.1.0
       get-ready: 3.4.0
@@ -5010,19 +5007,19 @@ snapshots:
       tsconfig-paths: 4.2.0
       utility: 2.5.0
 
-  '@eggjs/development@5.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/development@5.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
       debounce: 2.2.0
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       multimatch: 7.0.0
       utility: 2.5.0
 
-  '@eggjs/extend2@5.0.0-beta.19': {}
+  '@eggjs/extend2@5.0.0-beta.22': {}
 
-  '@eggjs/i18n@4.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/i18n@4.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.19
-      egg: 4.1.0-beta.19
+      '@eggjs/utils': 5.0.0-beta.22
+      egg: 4.1.0-beta.22
       humanize-ms: 2.0.0
       ini: 5.0.0
       js-yaml: 4.1.0
@@ -5030,19 +5027,19 @@ snapshots:
 
   '@eggjs/ip@2.1.0': {}
 
-  '@eggjs/jsonp@4.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/jsonp@4.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       jsonp-body: 2.0.0
 
-  '@eggjs/koa-static-cache@7.0.0-beta.19':
+  '@eggjs/koa-static-cache@7.0.0-beta.22':
     dependencies:
       '@eggjs/compressible': 3.0.0
       fs-readdir-recursive: 1.1.0
       mime-types: 3.0.1
       utility: 2.5.0
 
-  '@eggjs/koa@3.1.0-beta.19':
+  '@eggjs/koa@3.1.0-beta.22':
     dependencies:
       '@types/content-disposition': 0.5.9
       accepts: 1.3.8
@@ -5064,23 +5061,22 @@ snapshots:
       type-is: 2.0.1
       vary: 1.1.2
 
-  '@eggjs/logrotator@5.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/logrotator@5.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       moment: 2.30.1
       utility: 2.5.0
 
-  '@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/mock@7.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      '@eggjs/extend2': 5.0.0-beta.19
-      '@eggjs/supertest': 9.0.0-beta.19
-      '@eggjs/utils': 5.0.0-beta.19
+      '@eggjs/extend2': 5.0.0-beta.22
+      '@eggjs/supertest': 9.0.0-beta.22
+      '@eggjs/utils': 5.0.0-beta.22
       coffee: 5.5.1
       detect-port: 2.1.0
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       egg-logger: 3.6.1
       get-ready: 3.4.0
-      globby: 11.1.0
       is-type-of: 2.2.0
       merge-descriptors: 2.0.0
       mm: 4.0.2
@@ -5090,18 +5086,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eggjs/multipart@5.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/multipart@5.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
       bytes: 3.1.2
       co-busboy: 2.0.2
       dayjs: 1.11.18
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       egg-path-matching: 2.1.0
 
-  '@eggjs/onerror@4.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/onerror@4.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
       cookie: 1.0.2
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       koa-onerror: 5.0.1
       mustache: 4.2.0
       stack-trace: 0.0.10
@@ -5111,7 +5107,7 @@ snapshots:
       mysql2: 3.15.1
       sqlstring: 2.3.3
 
-  '@eggjs/router@4.0.0-beta.19':
+  '@eggjs/router@4.0.0-beta.22':
     dependencies:
       http-errors: 2.0.0
       inflection: 3.0.2
@@ -5122,21 +5118,21 @@ snapshots:
       urijs: 1.19.11
       utility: 2.5.0
 
-  '@eggjs/schedule@6.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/schedule@6.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.19
+      '@eggjs/utils': 5.0.0-beta.22
       cron-parser: 4.9.0
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       humanize-ms: 2.0.0
       is-type-of: 2.2.0
       safe-timers: 1.1.0
       utility: 2.5.0
 
-  '@eggjs/security@5.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/security@5.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
       '@eggjs/ip': 2.1.0
       csrf: 3.1.0
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       egg-path-matching: 2.1.0
       escape-html: 1.0.3
       extend: 3.0.2
@@ -5147,48 +5143,48 @@ snapshots:
       xss: 1.0.15
       zod: 3.25.76
 
-  '@eggjs/session@5.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/session@5.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       koa-session: 7.0.2
       zod: 3.25.76
 
-  '@eggjs/static@4.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/static@4.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      '@eggjs/koa-static-cache': 7.0.0-beta.19
-      egg: 4.1.0-beta.19
+      '@eggjs/koa-static-cache': 7.0.0-beta.22
+      egg: 4.1.0-beta.22
       koa-compose: 4.1.0
       koa-range: 0.3.0
       ylru: 2.0.0
 
-  '@eggjs/supertest@9.0.0-beta.19':
+  '@eggjs/supertest@9.0.0-beta.22':
     dependencies:
       '@types/superagent': 8.1.9
       superagent: 10.2.3
     transitivePeerDependencies:
       - supports-color
 
-  '@eggjs/tracer@4.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/tracer@4.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
 
   '@eggjs/tsconfig@3.1.0-beta.19': {}
 
   '@eggjs/utils@4.4.1': {}
 
-  '@eggjs/utils@5.0.0-beta.19': {}
+  '@eggjs/utils@5.0.0-beta.22': {}
 
-  '@eggjs/view@4.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/view@4.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       is-type-of: 2.2.0
       utility: 2.5.0
 
-  '@eggjs/watcher@5.0.0-beta.19(egg@4.1.0-beta.19)':
+  '@eggjs/watcher@5.0.0-beta.22(egg@4.1.0-beta.22)':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.19
+      '@eggjs/utils': 5.0.0-beta.22
       camelcase: 8.0.0
-      egg: 4.1.0-beta.19
+      egg: 4.1.0-beta.22
       sdk-base: 5.0.1
 
   '@emnapi/core@1.5.0':
@@ -6318,25 +6314,25 @@ snapshots:
       - '@swc/wasm'
       - '@types/node'
 
-  egg@4.1.0-beta.19:
+  egg@4.1.0-beta.22:
     dependencies:
-      '@eggjs/cluster': 4.0.0-beta.19
-      '@eggjs/cookies': 4.0.0-beta.19
-      '@eggjs/core': 7.0.0-beta.19
-      '@eggjs/development': 5.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/extend2': 5.0.0-beta.19
-      '@eggjs/i18n': 4.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/jsonp': 4.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/logrotator': 5.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/multipart': 5.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/onerror': 4.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/schedule': 6.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/security': 5.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/session': 5.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/static': 4.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/utils': 5.0.0-beta.19
-      '@eggjs/view': 4.0.0-beta.19(egg@4.1.0-beta.19)
-      '@eggjs/watcher': 5.0.0-beta.19(egg@4.1.0-beta.19)
+      '@eggjs/cluster': 4.0.0-beta.22
+      '@eggjs/cookies': 4.0.0-beta.22
+      '@eggjs/core': 7.0.0-beta.22
+      '@eggjs/development': 5.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/extend2': 5.0.0-beta.22
+      '@eggjs/i18n': 4.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/jsonp': 4.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/logrotator': 5.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/multipart': 5.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/onerror': 4.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/schedule': 6.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/security': 5.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/session': 5.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/static': 4.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/utils': 5.0.0-beta.22
+      '@eggjs/view': 4.0.0-beta.22(egg@4.1.0-beta.22)
+      '@eggjs/watcher': 5.0.0-beta.22(egg@4.1.0-beta.22)
       circular-json-for-egg: 1.0.0
       cluster-client: 3.7.0
       egg-logger: 3.6.1

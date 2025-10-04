@@ -37,7 +37,7 @@
     "test:mocha": "egg-bin test",
     "cov:mocha": "egg-bin cov",
     "clean": "rimraf dist",
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

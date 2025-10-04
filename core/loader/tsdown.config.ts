@@ -4,7 +4,7 @@ export default defineConfig({
   entry: [
     'src/index.ts',
   ],
-  // unbundle: true,
+  unbundle: true,
   unused: {
     level: 'error',
   },
