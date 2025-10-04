@@ -5,5 +5,5 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "exclude": ["test", "dist", "tsdown.config.ts"]
+  "exclude": ["test", "test/fixtures", "dist", "tsdown.config.ts"]
 }
