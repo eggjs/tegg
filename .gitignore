@@ -49,3 +49,4 @@ plugin/tegg/test/fixtures/apps/**/*.js
 .node
 .egg
 .eslintcache
+!scripts/*.js
