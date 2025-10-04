@@ -99,8 +99,8 @@ packageFolders.forEach(({ folder, directory }) => {
   }
 });
 
-// Update root package.json version (use egg's version as reference)
-const eggVersion = updatedVersions.find(pkg => pkg.name === 'egg')?.newVersion;
+// Update root package.json version (use @eggjs/tegg's version as reference)
+const eggVersion = updatedVersions.find(pkg => pkg.name === '@eggjs/tegg')?.newVersion;
 if (eggVersion) {
   const rootPackageJsonPath = path.join(__dirname, '..', 'package.json');
   const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, 'utf8'));
