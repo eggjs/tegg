@@ -28,7 +28,6 @@
     "cov": "vitest run --coverage",
     "cov:mocha": "pnpm -r run cov:mocha",
     "ci": "npm run cov && npm run cov:mocha",
-    "postci": "npm run build && npm run clean",
     "version:patch": "node scripts/version.js patch",
     "version:minor": "node scripts/version.js minor",
     "version:major": "node scripts/version.js major",
