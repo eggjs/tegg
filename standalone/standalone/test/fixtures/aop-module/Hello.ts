@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import {
   ContextProto,
   Inject,
@@ -6,9 +7,9 @@ import {
 } from '@eggjs/tegg';
 import {
   Advice,
-  AdviceContext,
+  type AdviceContext,
   Crosscut,
-  IAdvice,
+  type IAdvice,
   Pointcut,
   PointcutType,
 } from '@eggjs/tegg/aop';

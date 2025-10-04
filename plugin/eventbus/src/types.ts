@@ -1,5 +1,4 @@
-import '@eggjs/tegg-plugin';
-import '@eggjs/tegg-config';
+import '@eggjs/tegg-plugin/types';
 
 import './app/extend/application.unittest.ts';
 import './app/extend/context.ts';

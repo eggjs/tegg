@@ -8,7 +8,7 @@ import { mm } from 'mm';
 import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
 
-import { main, StandaloneContext, Runner, preLoad } from '../index.js';
+import { main, StandaloneContext, Runner, preLoad } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.js';
 import { Foo } from './fixtures/dal-module/src/Foo.js';
 

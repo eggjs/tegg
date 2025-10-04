@@ -241,7 +241,7 @@ import {
   QualifierUtil,
   EggProtoImplClass,
 } from '@eggjs/tegg';
-import { EggObject, ModuleConfigUtil, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
+import { type EggObject, ModuleConfigUtil, type EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
 import fs from 'node:fs';
 import { Writable } from 'node:stream';
 import path from 'node:path';
@@ -953,7 +953,7 @@ export abstract class AbstractHello {
 定义一个自定义枚举。
 
 ```ts
-import { ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/tegg';
+import { type ImplDecorator, QualifierImplDecoratorUtil } from '@eggjs/tegg';
 import { ContextHelloType } from '../FooType';
 import { AbstractContextHello } from '../AbstractHello';
 

@@ -60,10 +60,19 @@ export default class TEggPluginApplicationUnittest extends Application {
 };
 
 
-declare module '@eggjs/mock' {
-  export interface MockApplication {
+declare module 'egg' {
+  export interface Application {
+    /**
+     * Mock the module context, only for unittest
+     */
     mockModuleContext(data?: any): Promise<Context>;
+    /**
+     * Mock the module context scope, only for unittest
+     */
     mockModuleContextScope<R=any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
+    /**
+     * Destroy the module context, only for unittest
+     */
     destroyModuleContext(context: Context): Promise<void>;
   }
 }

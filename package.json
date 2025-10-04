@@ -18,7 +18,7 @@
   "scripts": {
     "lint:fix": "npm run lint -- --fix",
     "lint": "oxlint --type-aware",
-    "typecheck": "lerna run --parallel typecheck",
+    "typecheck": "npm run clean && lerna run --parallel typecheck",
     "test": "vitest run",
     "test:mocha": "lerna run --parallel test:mocha",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",

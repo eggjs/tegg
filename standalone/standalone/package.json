@@ -15,22 +15,18 @@
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "egg-bin test",
-    "cov": "egg-bin cov",
-    "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "tsc:pub": "npm run tsc",
-    "typecheck:ignore": "tsc --noEmit",
-    "prepublishOnly": "npm run tsc"
+    "test:mocha": "egg-bin test",
+    "cov:mocha": "egg-bin cov",
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/standalone/standalone",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -58,7 +54,11 @@
     "@eggjs/tegg-runtime": "^4.0.0-beta.4"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "devDependencies": {
     "@eggjs/bin": "beta",
@@ -67,7 +67,11 @@
     "@types/mocha": "10",
     "@types/node": "22",
     "mm": "4",
-    "ts-node": "10",
-    "typescript": "5"
-  }
+    "typescript": "5",
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

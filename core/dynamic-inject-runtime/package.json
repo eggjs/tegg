@@ -60,7 +60,8 @@
     "@eggjs/tegg-loader": "^4.0.0-beta.4",
     "@types/node": "22",
     "typescript": "5",
-    "tsdown": "^0.15.6"
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -1,4 +1,4 @@
-import '@eggjs/tegg-plugin';
+import '@eggjs/tegg-plugin/types';
 import './app.ts';
 
 import { type AttributeOptions } from '@eggjs/tegg-orm-decorator';

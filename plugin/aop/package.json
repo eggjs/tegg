@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "types": "typings/index.d.ts",
+  "types": "./dist/index.d.ts",
   "description": "tegg aop plugin",
   "keywords": [
     "egg",
@@ -21,6 +21,7 @@
   ],
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./app": "./src/app.ts",
     "./lib/AopContextHook": "./src/lib/AopContextHook.ts",
     "./types": "./src/types.ts",
@@ -49,28 +50,34 @@
     "@eggjs/egg-module-common": "^4.0.0-beta.4",
     "@eggjs/tegg": "^4.0.0-beta.4",
     "@eggjs/tegg-aop-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4"
+    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
+    "@eggjs/tegg-runtime": "^4.0.0-beta.4",
+    "@eggjs/utils": "beta"
   },
   "peerDependencies": {
-    "egg": "beta"
+    "egg": "beta",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
     "@types/node": "22",
     "egg": "beta",
     "typescript": "5",
-    "tsdown": "^0.15.6"
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
+      ".": "./dist/index.js",
       "./app": "./dist/app.js",
       "./lib/AopContextHook": "./dist/lib/AopContextHook.js",
       "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
-  }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
 }

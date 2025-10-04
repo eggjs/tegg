@@ -1,8 +1,8 @@
-import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
+import { ModuleConfigUtil, type ModuleReference, type ReadModuleReferenceOptions, type RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
-  EggPrototype,
+  type EggPrototype,
   EggPrototypeLifecycleUtil, GlobalGraph,
-  LoadUnit,
+  type LoadUnit,
   LoadUnitFactory,
   LoadUnitLifecycleUtil,
   LoadUnitMultiInstanceProtoHook,
@@ -10,21 +10,21 @@ import {
 import {
   ContextHandler,
   EggContainerFactory,
-  EggContext,
+  type EggContext,
   EggObjectLifecycleUtil,
-  LoadUnitInstance,
+  type LoadUnitInstance,
   LoadUnitInstanceFactory,
   ModuleLoadUnitInstance,
 } from '@eggjs/tegg-runtime';
 import {
-  EggProtoImplClass,
+  type EggProtoImplClass,
   PrototypeUtil,
-  ModuleConfigHolder,
+  type ModuleConfigHolder,
   ModuleConfigs,
   ConfigSourceQualifierAttribute,
-  Logger,
+  type Logger,
 } from '@eggjs/tegg';
-import { StandaloneUtil, MainRunner } from '@eggjs/tegg/standalone';
+import { StandaloneUtil, type MainRunner } from '@eggjs/tegg/standalone';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import {
   crossCutGraphHook,
@@ -32,12 +32,6 @@ import {
   EggPrototypeCrossCutHook,
   LoadUnitAopHook, pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
-
-import { EggModuleLoader } from './EggModuleLoader.js';
-import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit.js';
-import { StandaloneContext } from './StandaloneContext.js';
-import { StandaloneContextHandler } from './StandaloneContextHandler.js';
-import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.js';
 import {
   DalTableEggPrototypeHook,
   DalModuleLoadUnitHook,
@@ -46,6 +40,12 @@ import {
   TableModelManager,
   TransactionPrototypeHook,
 } from '@eggjs/tegg-dal-plugin';
+
+import { EggModuleLoader } from './EggModuleLoader.ts';
+import { type InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './StandaloneLoadUnit.ts';
+import { StandaloneContext } from './StandaloneContext.ts';
+import { StandaloneContextHandler } from './StandaloneContextHandler.ts';
+import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook.ts';
 
 export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;

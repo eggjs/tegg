@@ -75,7 +75,8 @@
     "sdk-base": "^5.0.1"
   },
   "peerDependencies": {
-    "egg": "beta"
+    "egg": "beta",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
   },
   "devDependencies": {
     "@eggjs/mock": "beta",
@@ -86,7 +87,8 @@
     "@types/node": "22",
     "egg": "beta",
     "typescript": "5",
-    "tsdown": "^0.15.6"
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {
     "access": "public",

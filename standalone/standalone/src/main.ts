@@ -1,4 +1,4 @@
-import { Runner, RunnerOptions } from './Runner.js';
+import { Runner, type RunnerOptions } from './Runner.ts';
 
 export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
   try {

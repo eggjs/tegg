@@ -4,14 +4,14 @@ import path from 'node:path';
 import { EOL } from 'node:os';
 import {
   MultiInstanceProto,
-  MultiInstancePrototypeGetObjectsContext,
+  type MultiInstancePrototypeGetObjectsContext,
   LifecycleInit,
   LifecycleDestroy,
   QualifierUtil,
-  EggProtoImplClass,
+  type EggProtoImplClass,
   AccessLevel,
 } from '@eggjs/tegg';
-import { EggObject, ModuleConfigUtil, EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
+import { type EggObject, ModuleConfigUtil, type EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
 
 export const LOG_PATH_ATTRIBUTE = Symbol.for('LOG_PATH_ATTRIBUTE');
 

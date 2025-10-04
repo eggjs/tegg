@@ -17,9 +17,15 @@ export default class EventBusApplicationUnittest extends Application {
   }
 }
 
-declare module '@eggjs/mock' {
-  interface MockApplication {
+declare module 'egg' {
+  interface Application {
+    /**
+     * Get the event bus, only for unittest
+     */
     getEventbus(): Promise<EventBus>;
+    /**
+     * Get the event waiter, only for unittest
+     */
     getEventWaiter(): Promise<EventWaiter>;
   }
 }

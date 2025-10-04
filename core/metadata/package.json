@@ -41,14 +41,15 @@
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
     "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
     "@eggjs/tegg-types": "^4.0.0-beta.4",
-    "egg-errors": "^2.2.3"
+    "egg-errors": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "22",
     "globby": "14",
     "is-type-of": "2",
     "typescript": "5",
-    "tsdown": "^0.15.6"
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {
     "access": "public",

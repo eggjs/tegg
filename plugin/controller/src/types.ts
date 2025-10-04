@@ -1,2 +1,2 @@
-import '@eggjs/tegg-plugin';
+import '@eggjs/tegg-plugin/types';
 import './app.ts';

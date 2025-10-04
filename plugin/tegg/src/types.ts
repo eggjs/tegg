@@ -1,5 +1,4 @@
-// FIXME: should import from '@eggjs/tegg-config/types'
-import '@eggjs/tegg-config';
+import '@eggjs/tegg-config/types';
 
 import './app/extend/application.ts';
 import './app/extend/application.unittest.ts';

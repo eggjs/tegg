@@ -1,3 +1,5 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
+
 import {
   ContextHandler,
   EggContainerFactory,
@@ -14,7 +16,6 @@ import {
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import { AsyncLocalStorage } from 'node:async_hooks';
 
 import { LoaderUtil } from './LoaderUtil.ts';
 

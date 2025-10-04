@@ -1,5 +1,5 @@
 import { SingletonProto } from '@eggjs/tegg';
-import { Runner, MainRunner } from '@eggjs/tegg/standalone';
+import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 import { ContextHandler } from '@eggjs/tegg-runtime';
 
 export interface Hello {

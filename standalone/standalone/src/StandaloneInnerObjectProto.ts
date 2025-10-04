@@ -1,18 +1,18 @@
 import {
   AccessLevel,
-  EggProtoImplClass,
-  EggPrototypeName, MetaDataKey,
+  type EggProtoImplClass,
+  type EggPrototypeName, type MetaDataKey,
   MetadataUtil,
-  ObjectInitTypeLike,
-  QualifierInfo,
+  type ObjectInitTypeLike,
+  type QualifierInfo,
   QualifierUtil,
-  Id,
-  IdenticalUtil, QualifierValue,
+  type Id,
+  IdenticalUtil, type QualifierValue,
 } from '@eggjs/tegg';
 import {
-  EggPrototype,
-  InjectObjectProto,
-  EggPrototypeLifecycleContext,
+  type EggPrototype,
+  type InjectObjectProto,
+  type EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-metadata';
 
 export class StandaloneInnerObjectProto implements EggPrototype {

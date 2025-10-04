@@ -59,10 +59,14 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/dal-runtime": "^4.0.0-beta.4"
+    "@eggjs/dal-runtime": "^4.0.0-beta.4",
+    "@eggjs/tegg": "^4.0.0-beta.4",
+    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
+    "@eggjs/dal-decorator": "^4.0.0-beta.4"
   },
   "peerDependencies": {
-    "egg": "beta"
+    "egg": "beta",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
   },
   "devDependencies": {
     "@eggjs/bin": "beta",
@@ -78,7 +82,8 @@
     "mocha": "11",
     "mochawesome-with-mocha": "^8.0.0",
     "typescript": "5",
-    "tsdown": "^0.15.6"
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {
     "access": "public",
