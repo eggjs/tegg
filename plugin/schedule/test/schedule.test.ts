@@ -15,6 +15,7 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
   });
 
   before(async () => {
+    // FIXME: why mm.app() not work? it will let app.ready() blocked
     app = mm.cluster({
       baseDir: path.join(import.meta.dirname, 'fixtures', 'schedule-app'),
     });
@@ -25,12 +26,14 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
     return app.close();
   });
 
+  // TODO: fix this test
   it.skip('schedule should work', async () => {
     await TimerUtil.sleep(1000);
     const scheduleLog = await getScheduleLogContent('schedule-app');
     assert.match(scheduleLog, /schedule called/);
   });
 
+  // TODO: fix this test
   it.skip('schedule work with app.runSchedule', async () => {
     await app.runSchedule(FooSubscriberFilePath);
   });
