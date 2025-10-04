@@ -1,9 +1,9 @@
 name: Continuous integration
 on:
   push:
-    branches: [ master, next ]
+    branches: [ next ]
   pull_request:
-    branches: [ master, next ]
+    branches: [ next ]
 jobs:
   Runner-ubuntu:
     runs-on: ubuntu-latest
@@ -31,11 +31,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install Dependencies
-      run: npm i
+      run: |
+        corepack enable
+        pnpm i
 
     - name: Continuous integration
       run: |
-        npm run ci
+        pnpm run ci
 
     - name: Code Coverage
       uses: codecov/codecov-action@v5
@@ -65,10 +67,12 @@ jobs:
         run: brew services start mysql
 
       - name: Install Dependencies
-        run: npm i
+        run: |
+          corepack enable
+          pnpm i
 
       - name: Continuous integration
-        run: npm run ci
+        run: pnpm run ci
 
       - name: Code Coverage
         uses: codecov/codecov-action@v5
