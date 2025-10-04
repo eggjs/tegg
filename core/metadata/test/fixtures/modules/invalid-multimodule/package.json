@@ -2,5 +2,6 @@
   "name": "multi-module-service",
   "eggModule": {
     "name": "multiModuleInvalidateService"
-  }
+  },
+  "type": "module"
 }

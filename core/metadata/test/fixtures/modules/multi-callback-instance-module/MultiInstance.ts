@@ -2,7 +2,7 @@ import {
   AccessLevel,
   ObjectInitType,
   MultiInstanceProto,
-  MultiInstancePrototypeGetObjectsContext,
+  type MultiInstancePrototypeGetObjectsContext,
 } from '@eggjs/core-decorator';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 

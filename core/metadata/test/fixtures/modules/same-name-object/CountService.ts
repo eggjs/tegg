@@ -1,5 +1,6 @@
 import { ContextProto, Inject, SingletonProto } from '@eggjs/core-decorator';
-import { AppCache } from './AppCache';
+
+import { type AppCache } from './AppCache.ts';
 
 @ContextProto()
 export class CountService {
