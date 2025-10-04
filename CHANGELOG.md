@@ -1,5 +1,21 @@
 # Change Log
 
+> [!IMPORTANT]
+> Moving forwards we are using the GitHub releases page at <https://github.com/eggjs/tegg/releases> in combination with [release.yml](https://github.com/eggjs/tegg/actions/workflows/release.yml) for publishing releases and their changelogs.
+
+---
+
+## 4.1.0+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 22.18.0 support
+* only support egg@4
+
+part of https://github.com/eggjs/egg/issues/5434
+
+---
+
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
