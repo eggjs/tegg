@@ -1,9 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./dist"
   },
   "exclude": [
-    "test/fixtures/modules/loader-failed/AppRepo.ts"
+    "test/fixtures/modules/loader-failed/AppRepo.ts",
+    "test",
+    "dist",
+    "tsdown.config.ts"
   ]
 }

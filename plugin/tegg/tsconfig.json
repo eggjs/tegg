@@ -2,6 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "types": ["mocha"]
-  }
+    "types": ["mocha"],
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "exclude": ["test", "dist", "tsdown.config.ts"]
 }
