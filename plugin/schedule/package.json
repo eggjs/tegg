@@ -57,7 +57,6 @@
   "dependencies": {
     "@eggjs/egg-module-common": "workspace:*",
     "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
@@ -71,6 +70,7 @@
   "devDependencies": {
     "@eggjs/bin": "catalog:",
     "@eggjs/mock": "catalog:",
+    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",

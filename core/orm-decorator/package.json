@@ -38,14 +38,9 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "lodash": "catalog:",
     "pluralize": "catalog:"
-  },
-  "peerDependencies": {
-    "leoric": "^2.6.1"
   },
   "publishConfig": {
     "access": "public",

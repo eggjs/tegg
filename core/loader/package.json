@@ -38,11 +38,9 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "globby": "catalog:",
-    "egg-errors": "catalog:",
     "is-type-of": "catalog:"
   },
   "publishConfig": {

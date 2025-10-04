@@ -45,8 +45,7 @@
   },
   "dependencies": {
     "@eggjs/tegg-common-util": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*",
-    "reflect-metadata": "catalog:"
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",

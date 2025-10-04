@@ -61,9 +61,7 @@
   "dependencies": {
     "@eggjs/egg-module-common": "workspace:*",
     "@eggjs/tegg": "workspace:*",
-    "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",

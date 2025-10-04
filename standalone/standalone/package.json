@@ -41,13 +41,10 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/egg-module-common": "workspace:*",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-aop-runtime": "workspace:*",
-    "@eggjs/tegg-background-task": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-dal-plugin": "workspace:*",
-    "@eggjs/tegg-dynamic-inject-runtime": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",

@@ -261,9 +261,6 @@ importers:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -292,9 +289,6 @@ importers:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
       '@eggjs/tegg-metadata':
         specifier: workspace:*
         version: link:../metadata
@@ -452,9 +446,6 @@ importers:
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
-      reflect-metadata:
-        specifier: 'catalog:'
-        version: 0.2.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -739,18 +730,12 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
-      '@eggjs/tegg-common-util':
-        specifier: workspace:*
-        version: link:../common-util
       '@eggjs/tegg-metadata':
         specifier: workspace:*
         version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
       globby:
         specifier: 'catalog:'
         version: 14.1.0
@@ -816,18 +801,9 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
-      '@eggjs/tegg-common-util':
-        specifier: workspace:*
-        version: link:../common-util
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
-      leoric:
-        specifier: ^2.6.1
-        version: 2.13.8(mysql2@3.15.1)
       lodash:
         specifier: 'catalog:'
         version: 4.17.21
@@ -899,9 +875,6 @@ importers:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -1046,12 +1019,6 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
-      '@eggjs/tegg-common-util':
-        specifier: workspace:*
-        version: link:../common-util
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -1417,15 +1384,9 @@ importers:
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
-      '@eggjs/tegg-common-util':
-        specifier: workspace:*
-        version: link:../../core/common-util
       '@eggjs/tegg-lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
-      '@eggjs/tegg-loader':
-        specifier: workspace:*
-        version: link:../../core/loader
       '@eggjs/tegg-metadata':
         specifier: workspace:*
         version: link:../../core/metadata
@@ -1493,9 +1454,6 @@ importers:
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
-      '@eggjs/tegg-common-util':
-        specifier: workspace:*
-        version: link:../../core/common-util
       '@eggjs/tegg-lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
@@ -1521,6 +1479,9 @@ importers:
       '@eggjs/module-test-util':
         specifier: workspace:*
         version: link:../../core/test-util
+      '@eggjs/tegg-common-util':
+        specifier: workspace:*
+        version: link:../../core/common-util
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
@@ -1621,27 +1582,18 @@ importers:
 
   standalone/standalone:
     dependencies:
-      '@eggjs/egg-module-common':
-        specifier: workspace:*
-        version: link:../../plugin/common
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
       '@eggjs/tegg-aop-runtime':
         specifier: workspace:*
         version: link:../../core/aop-runtime
-      '@eggjs/tegg-background-task':
-        specifier: workspace:*
-        version: link:../../core/background-task
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../../core/common-util
       '@eggjs/tegg-dal-plugin':
         specifier: workspace:*
         version: link:../../plugin/dal
-      '@eggjs/tegg-dynamic-inject-runtime':
-        specifier: workspace:*
-        version: link:../../core/dynamic-inject-runtime
       '@eggjs/tegg-lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
