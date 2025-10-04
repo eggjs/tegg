@@ -51,8 +51,7 @@
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-aop-runtime": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*",
-    "@eggjs/utils": "catalog:"
+    "@eggjs/tegg-runtime": "workspace:*"
   },
   "peerDependencies": {
     "egg": "catalog:",

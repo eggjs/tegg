@@ -45,8 +45,7 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "is-type-of": "catalog:",
-    "path-to-regexp": "catalog:",
-    "reflect-metadata": "catalog:"
+    "path-to-regexp": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

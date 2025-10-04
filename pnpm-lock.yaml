@@ -418,9 +418,6 @@ importers:
       path-to-regexp:
         specifier: 'catalog:'
         version: 1.9.0
-      reflect-metadata:
-        specifier: 'catalog:'
-        version: 0.2.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1118,9 +1115,6 @@ importers:
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
-      '@eggjs/utils':
-        specifier: 'catalog:'
-        version: 5.0.0-beta.19
     devDependencies:
       '@eggjs/mock':
         specifier: 'catalog:'
