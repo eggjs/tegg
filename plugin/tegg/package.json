@@ -90,7 +90,7 @@
     "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "egg": "catalog:",
-    "egg-logger": "^3.0.1",
+    "egg-logger": "catalog:",
     "mocha": "catalog:",
     "mochawesome-with-mocha": "catalog:",
     "typescript": "catalog:",

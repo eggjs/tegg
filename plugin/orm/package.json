@@ -67,7 +67,7 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
-    "leoric": "^2.12.2",
+    "leoric": "catalog:",
     "sdk-base": "catalog:"
   },
   "peerDependencies": {
@@ -85,7 +85,7 @@
     "mocha": "catalog:",
     "@types/node": "catalog:",
     "egg": "catalog:",
-    "mysql2": "3",
+    "mysql2": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

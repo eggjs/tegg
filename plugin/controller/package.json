@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "workspace:*",
-    "@eggjs/router": "beta",
+    "@eggjs/router": "catalog:",
     "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
@@ -71,7 +71,7 @@
     "@eggjs/tegg-types": "workspace:*",
     "egg-errors": "catalog:",
     "globby": "catalog:",
-    "path-to-regexp": "^1.9.0",
+    "path-to-regexp": "catalog:",
     "sdk-base": "catalog:"
   },
   "peerDependencies": {

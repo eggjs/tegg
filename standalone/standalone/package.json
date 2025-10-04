@@ -61,14 +61,14 @@
     }
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
+    "@eggjs/bin": "catalog:",
     "@eggjs/tegg-ajv-plugin": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
-    "@eggjs/utils": "beta",
+    "@eggjs/utils": "catalog:",
     "@types/mocha": "catalog:",
     "@types/node": "catalog:",
-    "mm": "4",
+    "mm": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

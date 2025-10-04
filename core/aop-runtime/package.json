@@ -55,12 +55,12 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "koa-compose": "^4.1.0"
+    "koa-compose": "catalog:"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
-    "@types/koa-compose": "3",
+    "@types/koa-compose": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",

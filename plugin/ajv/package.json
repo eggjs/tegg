@@ -51,7 +51,7 @@
     "@eggjs/ajv-formats": "^3.0.1",
     "@eggjs/ajv-keywords": "^5.1.0",
     "@eggjs/tegg": "workspace:*",
-    "ajv": "^8.17.1"
+    "ajv": "catalog:"
   },
   "devDependencies": {
     "@eggjs/mock": "catalog:",

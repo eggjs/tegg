@@ -42,8 +42,8 @@
     "@eggjs/rds": "catalog:",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "lodash.snakecase": "^4.1.1",
-    "pluralize": "^8.0.0"
+    "lodash.snakecase": "catalog:",
+    "pluralize": "catalog:"
   },
   "publishConfig": {
     "access": "public",
@@ -53,9 +53,9 @@
     }
   },
   "devDependencies": {
-    "@types/lodash.snakecase": "^4.1.9",
+    "@types/lodash.snakecase": "catalog:",
     "@types/node": "catalog:",
-    "@types/pluralize": "^0.0.33",
+    "@types/pluralize": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

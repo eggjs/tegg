@@ -43,11 +43,11 @@
     "@eggjs/rds": "catalog:",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "js-beautify": "^1.15.3",
-    "lodash": "^4.17.21",
-    "nunjucks": "^3.2.4",
+    "js-beautify": "catalog:",
+    "lodash": "catalog:",
+    "nunjucks": "catalog:",
     "sdk-base": "catalog:",
-    "sqlstring": "^2.3.3"
+    "sqlstring": "catalog:"
   },
   "publishConfig": {
     "access": "public",
@@ -57,11 +57,11 @@
     }
   },
   "devDependencies": {
-    "@types/js-beautify": "^1.14.3",
+    "@types/js-beautify": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "@types/nunjucks": "3",
-    "@types/sqlstring": "^2.3.2",
+    "@types/nunjucks": "catalog:",
+    "@types/sqlstring": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

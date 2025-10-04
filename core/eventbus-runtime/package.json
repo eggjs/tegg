@@ -43,8 +43,8 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
-    "await-event": "^2.1.0",
-    "await-first": "^1.0.0"
+    "await-event": "catalog:",
+    "await-first": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -55,7 +55,7 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@types/node": "catalog:",
     "coffee": "catalog:",
-    "egg": "beta",
+    "egg": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

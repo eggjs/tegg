@@ -38,11 +38,11 @@
   },
   "dependencies": {
     "@eggjs/tegg-types": "workspace:*",
-    "@eggjs/utils": "beta",
+    "@eggjs/utils": "catalog:",
     "reflect-metadata": "catalog:",
     "extend2": "catalog:",
     "globby": "catalog:",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "catalog:"
   },
   "publishConfig": {
     "access": "public",
@@ -52,7 +52,7 @@
     }
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.9",
+    "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
