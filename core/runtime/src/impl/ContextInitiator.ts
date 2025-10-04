@@ -2,7 +2,7 @@ import { LoadUnitFactory } from '@eggjs/tegg-metadata';
 import type { EggRuntimeContext, EggObject } from '@eggjs/tegg-types';
 
 import { ContextObjectGraph } from './ContextObjectGraph.ts';
-import { EggContainerFactory } from '../factory/index.ts';
+import { EggContainerFactory } from '../factory/EggContainerFactory.ts';
 
 const CONTEXT_INITIATOR = Symbol('EggContext#ContextInitiator');
 

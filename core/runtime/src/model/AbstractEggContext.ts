@@ -5,7 +5,8 @@ import type { EggRuntimeContext, EggContextLifecycleContext, EggObject, EggObjec
 import { TeggError } from '@eggjs/tegg-metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
-import { EggContainerFactory, EggObjectFactory } from '../factory/index.ts';
+import { EggContainerFactory } from '../factory/EggContainerFactory.ts';
+import { EggObjectFactory } from '../factory/EggObjectFactory.ts';
 import { ContextHandler } from './ContextHandler.ts';
 import { EggContextLifecycleUtil } from './EggContext.ts';
 

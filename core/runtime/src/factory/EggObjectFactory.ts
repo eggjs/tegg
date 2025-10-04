@@ -8,8 +8,8 @@ import type {
 } from '@eggjs/tegg-types';
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
 
-import { EggObjectImpl } from '../impl/index.ts';
-import { EggObjectLifecycleUtil } from '../model/index.ts';
+import { EggObjectImpl } from '../impl/EggObjectImpl.ts';
+import { EggObjectLifecycleUtil } from '../model/EggObject.ts';
 import { LoadUnitInstanceFactory } from './LoadUnitInstanceFactory.ts';
 
 interface EggObjectPair {
