@@ -80,7 +80,6 @@
     "egg": "catalog:",
     "globby": "catalog:",
     "mocha": "catalog:",
-    "mochawesome-with-mocha": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

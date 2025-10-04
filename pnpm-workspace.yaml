@@ -43,7 +43,6 @@ catalog:
   lodash.snakecase: ^4.1.1
   mm: ^4.0.2
   mocha: ^11.0.1
-  mochawesome-with-mocha: ^8.0.0
   mysql2: ^3.12.0
   nunjucks: ^3.2.4
   oxlint: ^1.19.0

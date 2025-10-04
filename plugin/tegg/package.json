@@ -92,7 +92,6 @@
     "egg": "catalog:",
     "egg-logger": "catalog:",
     "mocha": "catalog:",
-    "mochawesome-with-mocha": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"
