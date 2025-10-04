@@ -1,14 +1,10 @@
 import assert from 'node:assert/strict';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 
-import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.js';
-import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.ts';
+import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/EggCompatible.test.ts', () => {
   let app: MockApplication;
@@ -23,7 +19,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/egg-app',
+      baseDir: getAppBaseDir('egg-app'),
     });
     await app.ready();
   });
@@ -85,7 +81,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
 
       const runtimeConfig = app.module.multiModuleService.configService.getRuntimeConfig();
       assert.deepEqual(runtimeConfig, {
-        baseDir: path.join(__dirname, 'fixtures/apps/egg-app'),
+        baseDir: getAppBaseDir('egg-app'),
         env: 'unittest',
         name: 'egg-app',
       });

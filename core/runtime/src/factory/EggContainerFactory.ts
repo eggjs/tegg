@@ -26,7 +26,7 @@ export class EggContainerFactory {
 
   static registerContainerGetMethod(initType: ObjectInitTypeLike, method: ContainerGetMethod) {
     if (debug.enabled) {
-      debug('registerContainerGetMethod %s %o', initType, method.toString());
+      debug('registerContainerGetMethod %o %o, exists: %s', initType, method.toString(), this.containerGetMethodMap.has(initType));
     }
     this.containerGetMethodMap.set(initType, method);
   }

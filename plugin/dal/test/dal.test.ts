@@ -1,4 +1,4 @@
-import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
@@ -13,14 +13,14 @@ describe('plugin/dal/test/dal.test.ts', () => {
     return mm.restore();
   });
 
-  beforeAll(async () => {
+  before(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/dal-app'),
     });
     await app.ready();
   });
 
-  afterAll(() => {
+  after(() => {
     return app.close();
   });
 

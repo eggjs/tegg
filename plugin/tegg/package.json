@@ -48,7 +48,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "egg-bin test",
+    "test:mocha": "egg-bin test",
     "cov": "egg-bin cov",
     "clean": "rimraf dist",
     "build": "tsdown",
@@ -67,7 +67,6 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core": "beta",
     "@eggjs/egg-module-common": "^4.0.0-beta.4",
     "@eggjs/tegg": "^4.0.0-beta.4",
     "@eggjs/tegg-background-task": "^4.0.0-beta.4",
@@ -79,6 +78,9 @@
     "extend2": "^4.0.0",
     "sdk-base": "^5.0.1"
   },
+  "peerDependencies": {
+    "egg": "beta"
+  },
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
@@ -88,6 +90,7 @@
     "@types/node": "22",
     "egg": "beta",
     "egg-logger": "^3.0.1",
+    "mocha": "11",
     "mochawesome-with-mocha": "^8.0.0",
     "typescript": "5",
     "tsdown": "^0.15.6"

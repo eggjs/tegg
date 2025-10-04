@@ -1,4 +1,4 @@
-import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
@@ -14,7 +14,7 @@ describe('plugin/dal/test/transaction.test.ts', () => {
     return mm.restore();
   });
 
-  beforeAll(async () => {
+  before(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/dal-app'),
     });
@@ -26,7 +26,7 @@ describe('plugin/dal/test/transaction.test.ts', () => {
     await dataSource.query('delete from egg_foo;');
   });
 
-  afterAll(() => {
+  after(() => {
     return app.close();
   });
 
@@ -51,7 +51,7 @@ describe('plugin/dal/test/transaction.test.ts', () => {
         const fooDao = await app.getEggObject(FooDAO);
         await expect(async () => {
           await fooService.failedTransaction();
-        }).rejects.toThrow(/dddd/);
+        }).rejects.toThrow(/mock error/);
         const foo1 = await fooDao.findByName('insert_failed_transaction_1');
         const foo2 = await fooDao.findByName('insert_failed_transaction_2');
         expect(foo1.length).toBe(0);

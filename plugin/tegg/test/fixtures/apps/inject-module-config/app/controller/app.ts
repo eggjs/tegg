@@ -1,6 +1,7 @@
 import { Controller } from 'egg';
-import { Foo } from '../../modules/module-with-config/foo.js';
-import { Bar } from '../../modules/module-with-overwrite-config/bar.js';
+
+import { Foo } from '../../modules/module-with-config/foo.ts';
+import { Bar } from '../../modules/module-with-overwrite-config/bar.ts';
 
 export default class App extends Controller {
   async baseDir() {

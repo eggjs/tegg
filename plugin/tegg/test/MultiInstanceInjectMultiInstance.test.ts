@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import { App2 } from './fixtures/apps/app-multi-inject-multi/app/modules/app2/App.js';
-import { App } from './fixtures/apps/app-multi-inject-multi/app/modules/app/App.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { App2 } from './fixtures/apps/app-multi-inject-multi/app/modules/app2/App.ts';
+import { App } from './fixtures/apps/app-multi-inject-multi/app/modules/app/App.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/MultiInstanceInjectMultiInstance.test.ts', () => {
   let app: MockApplication;
@@ -16,7 +19,7 @@ describe('plugin/tegg/test/MultiInstanceInjectMultiInstance.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/app-multi-inject-multi',
+      baseDir: getAppBaseDir('app-multi-inject-multi'),
     });
     await app.ready();
   });

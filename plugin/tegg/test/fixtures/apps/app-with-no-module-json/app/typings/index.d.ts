@@ -1,5 +1,5 @@
 import 'egg';
-import ConfigService from '../../modules/config-module/ConfigService.js';
+import ConfigService from '../../modules/config-module/ConfigService.ts';
 
 declare module 'egg' {
   export interface EggModule {

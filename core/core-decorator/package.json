@@ -17,7 +17,6 @@
     "dist"
   ],
   "scripts": {
-    "test:mocha": "egg-bin test",
     "clean": "rimraf dist",
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
@@ -50,8 +49,6 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
-    "@types/mocha": "10",
     "@types/node": "22",
     "typescript": "5",
     "tsdown": "^0.15.6"

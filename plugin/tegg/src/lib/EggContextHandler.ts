@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import { type Application } from 'egg';
 import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
 import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
@@ -11,7 +11,8 @@ export class EggContextHandler {
 
   getContextCallback(): EggContext {
     const ctx = this.app.currentContext;
-    return ctx?.teggContext as EggContext;
+    // @ts-expect-error teggContext is not typed, will fix in egg soon
+    return ctx?.teggContext;
   }
 
   async run<R>(eggContext: EggContext, fn: () => Promise<R>): Promise<R> {

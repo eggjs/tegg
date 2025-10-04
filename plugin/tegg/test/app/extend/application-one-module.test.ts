@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 
-import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
 import PersistenceService from '../../fixtures/apps/egg-app-simple/modules/multi-module-repo/PersistenceService.ts';
@@ -10,7 +9,7 @@ import { getAppBaseDir } from '../../utils.ts';
 describe('test/app/extend/application-one-module.test.ts', () => {
   let app: MockApplication;
 
-  afterAll(async () => {
+  after(async () => {
     await app.close();
   });
 
@@ -18,7 +17,7 @@ describe('test/app/extend/application-one-module.test.ts', () => {
     await mm.restore();
   });
 
-  beforeAll(async () => {
+  before(async () => {
     app = mm.app({
       baseDir: getAppBaseDir('egg-app-simple'),
     });

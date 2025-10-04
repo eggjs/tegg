@@ -1,4 +1,4 @@
-import { EggAppConfig } from 'egg';
+import { type EggAppConfig } from 'egg';
 import path from 'node:path';
 
 export default function(appInfo: EggAppConfig) {

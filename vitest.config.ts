@@ -23,7 +23,7 @@ export default defineConfig({
   ],
   test: {
     exclude: [
-      // 'plugin/(tegg|orm)/test/**/*.test.ts',
+      'plugin/(dal|tegg|orm)/test/**/*.test.ts',
       'standalone/standalone/test/**/*.test.ts',
       '**/node_modules',
     ],

@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import { BarService } from './fixtures/apps/same-name-protos/app/modules/module-a/BarService.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { BarService } from './fixtures/apps/same-name-protos/app/modules/module-a/BarService.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/SameProtoName.test.ts', () => {
   let app: MockApplication;
@@ -15,7 +18,7 @@ describe('plugin/tegg/test/SameProtoName.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/same-name-protos',
+      baseDir: getAppBaseDir('same-name-protos'),
     });
     await app.ready();
   });

@@ -1,5 +1,6 @@
 import path from 'node:path';
-import { EggAppInfo } from 'egg';
+import { type EggAppInfo } from 'egg';
+
 export default function(appInfo: EggAppInfo) {
   const config = {
     keys: 'test key',

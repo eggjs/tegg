@@ -1,6 +1,6 @@
 import 'egg';
-import TraceService from '../../modules/multi-module-service/TraceService.js';
-import AppService from '../../modules/multi-module-service/AppService.js';
+import TraceService from '../../modules/multi-module-service/TraceService.ts';
+import AppService from '../../modules/multi-module-service/AppService.ts';
 
 declare module 'egg' {
   export interface EggModule {

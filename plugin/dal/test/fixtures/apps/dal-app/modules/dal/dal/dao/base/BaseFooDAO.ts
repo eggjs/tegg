@@ -6,8 +6,8 @@ import { Inject } from '@eggjs/tegg';
 import { Dao } from '@eggjs/tegg/dal';
 import { type DataSource, DataSourceInjectName, DataSourceQualifier, type ColumnTsType } from '@eggjs/dal-decorator';
 
-import { Foo } from '../../../Foo.js';
-import FooExtension from '../../extension/FooExtension.js';
+import { Foo } from '../../../Foo.ts';
+import FooExtension from '../../extension/FooExtension.ts';
 import Structure from '../../structure/Foo.json' with { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);

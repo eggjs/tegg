@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+
 import { AccessLevel, SingletonProto, Inject, ContextProto } from '@eggjs/tegg';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-import { CountService } from './CountService.js';
+
+import { CountService } from './CountService.ts';
 
 @ContextProto()
 export class TestObj {

@@ -20,7 +20,7 @@
     "lint": "oxlint --type-aware",
     "typecheck": "lerna run --parallel typecheck",
     "test": "vitest run",
-    "test:mocha": "npm run test -w plugin/tegg",
+    "test:mocha": "lerna run --parallel test:mocha",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",

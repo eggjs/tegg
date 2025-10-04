@@ -1,19 +1,18 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 // import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { BackgroundTaskHelper } from '@eggjs/tegg';
-import { EggContext, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
-import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService.js';
+import { type EggContext, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { CountService } from './fixtures/apps/background-app/modules/multi-module-background/CountService.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
-  const appDir = path.join(__dirname, 'fixtures/apps/background-app');
+  const appDir = getAppBaseDir('background-app');
   let app: MockApplication;
 
   after(async () => {

@@ -1,5 +1,5 @@
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
-import { Secret, SecretQualifier } from '../foo/Secret.js';
+import { Secret, SecretQualifier } from '../foo/Secret.ts';
 
 @SingletonProto()
 export class App2 {

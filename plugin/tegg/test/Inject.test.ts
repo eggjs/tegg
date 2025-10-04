@@ -1,15 +1,18 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService.js';
-import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService.js';
-import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1.js';
-import { BarService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService2.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService.ts';
+import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService.ts';
+import { BarService1 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService1.ts';
+import { BarService2 } from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarService2.ts';
 import {
   BarConstructorService1,
-} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService1.js';
+} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService1.ts';
 import {
   BarConstructorService2,
-} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService2.js';
+} from './fixtures/apps/same-name-singleton-and-context-proto/app/modules/module-bar/BarConstructorService2.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/Inject.test.ts', () => {
   let app: MockApplication;
@@ -22,7 +25,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
   describe('optional', () => {
     beforeEach(async () => {
       app = mm.app({
-        baseDir: 'apps/optional-inject',
+        baseDir: getAppBaseDir('optional-inject'),
       });
       await app.ready();
     });
@@ -49,7 +52,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
   describe('default initType qualifier', async () => {
     beforeEach(async () => {
       app = mm.app({
-        baseDir: 'apps/same-name-singleton-and-context-proto',
+        baseDir: getAppBaseDir('same-name-singleton-and-context-proto'),
       });
       await app.ready();
     });
@@ -85,7 +88,7 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
 
   it('should throw error if no proto found', async () => {
     app = mm.app({
-      baseDir: 'apps/invalid-inject',
+      baseDir: getAppBaseDir('invalid-inject'),
     });
     await assert.rejects(
       app.ready(),

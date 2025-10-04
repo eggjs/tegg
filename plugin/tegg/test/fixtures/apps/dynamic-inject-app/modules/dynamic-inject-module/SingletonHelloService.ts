@@ -1,6 +1,6 @@
-import { AccessLevel, Inject, EggObjectFactory, SingletonProto } from '@eggjs/tegg';
-import { SingletonHelloType } from './FooType.js';
-import { AbstractSingletonHello } from './AbstractSingletonHello.js';
+import { AccessLevel, Inject, type EggObjectFactory, SingletonProto } from '@eggjs/tegg';
+import { SingletonHelloType } from './FooType.ts';
+import { AbstractSingletonHello } from './AbstractSingletonHello.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
