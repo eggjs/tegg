@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-orm-decorator",
-  "version": "4.0.0-beta.6",
+  "version": "4.0.0-beta.7",
   "description": "tegg orm decorator",
   "type": "module",
   "exports": {
