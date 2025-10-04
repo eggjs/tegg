@@ -6,11 +6,11 @@
 
 ```shell
 # tegg 注解
-npm i --save @eggjs/tegg
+npm i --save @eggjs/tegg@beta
 # tegg 插件
-npm i --save @eggjs/tegg-plugin
+npm i --save @eggjs/tegg-plugin@beta
 # tegg controller 插件
-npm i --save @eggjs/tegg-controller-plugin
+npm i --save @eggjs/tegg-controller-plugin@beta
 ```
 
 ## Prepare
