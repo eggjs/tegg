@@ -44,6 +44,7 @@
     "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
+    "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@types/node": "22",
     "typescript": "5",

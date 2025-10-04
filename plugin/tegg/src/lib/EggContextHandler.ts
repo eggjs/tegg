@@ -11,8 +11,7 @@ export class EggContextHandler {
 
   getContextCallback(): EggContext {
     const ctx = this.app.currentContext;
-    // @ts-expect-error teggContext is not typed, will fix in egg soon
-    return ctx?.teggContext;
+    return ctx!.teggContext!;
   }
 
   async run<R>(eggContext: EggContext, fn: () => Promise<R>): Promise<R> {

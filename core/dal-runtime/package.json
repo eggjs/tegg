@@ -40,7 +40,7 @@
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
-    "@eggjs/rds": "^1.0.0",
+    "@eggjs/rds": "catalog:",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "js-beautify": "^1.15.3",
@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@types/js-beautify": "^1.14.3",
-    "@types/lodash": "4",
+    "@types/lodash": "catalog:",
     "@types/node": "22",
     "@types/nunjucks": "3",
     "@types/sqlstring": "^2.3.2",

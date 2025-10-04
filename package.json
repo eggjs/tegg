@@ -19,7 +19,7 @@
   "scripts": {
     "lint:fix": "npm run lint -- --fix",
     "lint": "oxlint --type-aware",
-    "typecheck": "npm run clean && lerna run --parallel typecheck",
+    "typecheck": "npm run clean && pnpm -r run typecheck",
     "test": "vitest run",
     "test:mocha": "pnpm -r run test:mocha",
     "pub": "lerna publish from-git",

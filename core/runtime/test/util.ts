@@ -1,9 +1,11 @@
 import path from 'node:path';
-import { EggLoadUnitType, LoadUnitInstance } from '@eggjs/tegg-types';
+
+import { EggLoadUnitType, type LoadUnitInstance } from '@eggjs/tegg-types';
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { LoaderUtil } from '@eggjs/module-test-util';
-import { LoadUnitInstanceFactory } from '../src/index.js';
+
+import { LoadUnitInstanceFactory } from '../src/index.ts';
 
 export default class TestUtil {
   static async createLoadUnitInstance(modulePath: string, buildGraph = true) {

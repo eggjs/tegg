@@ -1,4 +1,4 @@
-import { SingletonProto, Inject } from '@eggjs/core-decorator';
+import { SingletonProto, Inject } from '@eggjs/tegg';
 import { UsedProto } from 'used/Used';
 
 @SingletonProto()

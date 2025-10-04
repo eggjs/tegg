@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/rds": "catalog:",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "lodash.snakecase": "^4.1.1",
@@ -55,8 +56,8 @@
     "@types/lodash.snakecase": "^4.1.9",
     "@types/node": "22",
     "@types/pluralize": "^0.0.33",
-    "typescript": "5",
-    "tsdown": "^0.15.6"
+    "tsdown": "^0.15.6",
+    "typescript": "5"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -44,6 +44,7 @@
     "egg-errors": "^2.3.0"
   },
   "devDependencies": {
+    "@eggjs/tegg": "workspace:*",
     "@types/node": "22",
     "globby": "14",
     "is-type-of": "2",

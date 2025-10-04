@@ -63,6 +63,8 @@
   "devDependencies": {
     "@eggjs/bin": "beta",
     "@eggjs/tegg-ajv-plugin": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/utils": "beta",
     "@types/mocha": "10",
     "@types/node": "22",

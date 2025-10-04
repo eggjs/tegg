@@ -50,6 +50,7 @@
     "node": ">=22.18.0"
   },
   "devDependencies": {
+    "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@types/node": "22",

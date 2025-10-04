@@ -1,8 +1,8 @@
 // import 'egg';
 
 // for declare merging
-declare module 'egg' {
-  export interface ModuleConfig {
-    // ...
-  }
-}
+// declare module 'egg' {
+//   export interface ModuleConfig {
+//     // ...
+//   }
+// }

@@ -61,8 +61,8 @@
     "@eggjs/tegg-runtime": "workspace:*"
   },
   "peerDependencies": {
-    "egg": "catalog:",
-    "@eggjs/tegg-plugin": "workspace:*"
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "catalog:"
   },
   "devDependencies": {
     "@eggjs/bin": "catalog:",
@@ -71,11 +71,12 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "catalog:",
+    "@types/mocha": "catalog:",
     "@types/node": "22",
     "egg": "catalog:",
     "mocha": "11",
-    "typescript": "5",
     "tsdown": "^0.15.6",
+    "typescript": "5",
     "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {

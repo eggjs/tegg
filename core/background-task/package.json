@@ -42,6 +42,9 @@
     "@eggjs/tegg-runtime": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
+  "peerDependencies": {
+    "egg": "catalog:"
+  },
   "devDependencies": {
     "@eggjs/tegg-common-util": "workspace:*",
     "@types/node": "22",

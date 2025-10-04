@@ -1,11 +1,12 @@
 import assert from 'node:assert';
 import path from 'node:path';
-import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
 import { mock } from 'node:test';
+
+import { describe, beforeEach, afterEach, beforeAll, afterAll, it } from 'vitest';
 import { LoaderUtil } from '@eggjs/module-test-util';
 import { EggPrototypeFactory } from '@eggjs/tegg-metadata';
-import { LoadUnitInstance } from '@eggjs/tegg-types';
-import { EggTestContext } from './fixtures/EggTestContext.js';
+import { type LoadUnitInstance } from '@eggjs/tegg-types';
+import { EggTestContext } from './fixtures/EggTestContext.ts';
 import TestUtil from './util.js';
 import { EggContainerFactory } from '../src/index.js';
 import CountController from './fixtures/modules/module-for-load-unit-instance/CountController.js';

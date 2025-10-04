@@ -12,6 +12,9 @@ catalogs:
     '@eggjs/mock':
       specifier: beta
       version: 7.0.0-beta.19
+    '@eggjs/rds':
+      specifier: ^1.3.0
+      version: 1.3.0
     '@eggjs/tracer':
       specifier: beta
       version: 4.0.0-beta.19
@@ -21,6 +24,12 @@ catalogs:
     '@eggjs/utils':
       specifier: beta
       version: 5.0.0-beta.19
+    '@types/lodash':
+      specifier: ^4.17.20
+      version: 4.17.20
+    '@types/mocha':
+      specifier: ^10.0.10
+      version: 10.0.10
     '@vitest/coverage-v8':
       specifier: 4.0.0-beta.16
       version: 4.0.0-beta.16
@@ -209,15 +218,15 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
-      '@eggjs/tegg-lifecycle':
-        specifier: workspace:*
-        version: link:../lifecycle
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../runtime
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
+      egg:
+        specifier: 'catalog:'
+        version: 4.1.0-beta.19
     devDependencies:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
@@ -348,6 +357,9 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/rds':
+        specifier: 'catalog:'
+        version: 1.3.0
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
@@ -386,7 +398,7 @@ importers:
         specifier: workspace:*
         version: link:../dal-decorator
       '@eggjs/rds':
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.3.0
       '@eggjs/tegg-loader':
         specifier: workspace:*
@@ -414,7 +426,7 @@ importers:
         specifier: ^1.14.3
         version: 1.14.3
       '@types/lodash':
-        specifier: '4'
+        specifier: 'catalog:'
         version: 4.17.20
       '@types/node':
         specifier: '22'
@@ -555,6 +567,9 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
     devDependencies:
+      '@eggjs/module-test-util':
+        specifier: workspace:*
+        version: link:../test-util
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../loader
@@ -610,6 +625,9 @@ importers:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
+      '@eggjs/tegg-metadata':
+        specifier: workspace:*
+        version: link:../metadata
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
@@ -623,9 +641,6 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0
     devDependencies:
-      '@eggjs/tegg-metadata':
-        specifier: workspace:*
-        version: link:../metadata
       '@types/node':
         specifier: '22'
         version: 22.18.8
@@ -657,6 +672,9 @@ importers:
         specifier: ^2.3.0
         version: 2.3.2
     devDependencies:
+      '@eggjs/tegg':
+        specifier: workspace:*
+        version: link:../tegg
       '@types/node':
         specifier: '22'
         version: 22.18.8
@@ -700,6 +718,9 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
     devDependencies:
+      '@types/lodash':
+        specifier: 'catalog:'
+        version: 4.17.20
       '@types/node':
         specifier: '22'
         version: 22.18.8
@@ -734,6 +755,9 @@ importers:
         specifier: workspace:*
         version: link:../types
     devDependencies:
+      '@eggjs/module-test-util':
+        specifier: workspace:*
+        version: link:../test-util
       '@eggjs/tegg-loader':
         specifier: workspace:*
         version: link:../loader
@@ -779,13 +803,6 @@ importers:
         version: 0.5.3
 
   core/standalone-decorator:
-    dependencies:
-      '@eggjs/tegg-common-util':
-        specifier: workspace:*
-        version: link:../common-util
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
     devDependencies:
       '@types/node':
         specifier: '22'
@@ -936,6 +953,10 @@ importers:
         version: 0.5.3
 
   core/types:
+    dependencies:
+      egg:
+        specifier: 'catalog:'
+        version: 4.1.0-beta.19
     devDependencies:
       '@types/node':
         specifier: '22'
@@ -961,9 +982,6 @@ importers:
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
-      '@sinclair/typebox':
-        specifier: ^0.32.20
-        version: 0.32.35
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
@@ -1255,6 +1273,9 @@ importers:
       '@eggjs/tracer':
         specifier: 'catalog:'
         version: 4.0.0-beta.19(egg@4.1.0-beta.19)
+      '@types/mocha':
+        specifier: 'catalog:'
+        version: 10.0.10
       '@types/node':
         specifier: '22'
         version: 22.18.8
@@ -1526,6 +1547,12 @@ importers:
       '@eggjs/bin':
         specifier: beta
         version: 8.0.0-beta.19(@eggjs/mock@7.0.0-beta.19(egg@4.1.0-beta.19))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
+      '@eggjs/core-decorator':
+        specifier: workspace:*
+        version: link:../../core/core-decorator
+      '@eggjs/dal-decorator':
+        specifier: workspace:*
+        version: link:../../core/dal-decorator
       '@eggjs/tegg-ajv-plugin':
         specifier: workspace:*
         version: link:../../plugin/ajv

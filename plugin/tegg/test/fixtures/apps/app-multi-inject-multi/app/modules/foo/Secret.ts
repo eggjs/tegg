@@ -6,7 +6,7 @@ import {
   QualifierUtil,
 } from '@eggjs/tegg';
 import { ModuleConfigUtil } from '@eggjs/tegg/helper';
-import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import type { EggProtoImplClass } from '@eggjs/tegg';
 
 export const SecretQualifierAttribute = Symbol.for('Qualifier.Secret');
 export const SecretInjectName = 'secret';
