@@ -10,7 +10,7 @@ import {
   Cookies,
   HTTPCookies,
 } from '@eggjs/tegg';
-import { countMw } from '../middleware/count_mw.js';
+import { countMw } from '../middleware/count_mw.ts';
 
 @HTTPController({
   path: '/apps',
@@ -28,8 +28,11 @@ export class AppController {
     return {
       success: true,
       traceId,
+      // @ts-expect-error HTTPRequest is not a real Request
       headers: Object.fromEntries(request.headers),
+      // @ts-expect-error HTTPRequest is not a real Request
       method: request.method,
+      // @ts-expect-error HTTPRequest is not a real Request
       requestBody: await request.text(),
       cookies: cookies.get('test', { signed: false }),
     };

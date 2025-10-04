@@ -1,7 +1,6 @@
 import path from 'node:path';
 
 import { describe, it, afterAll, beforeAll, afterEach, expect } from 'vitest';
-// import { expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
 describe('plugin/aop/test/aop.test.ts', () => {
