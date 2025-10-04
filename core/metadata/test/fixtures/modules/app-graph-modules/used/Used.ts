@@ -1,4 +1,4 @@
-import { AccessLevel, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, SingletonProto } from '@eggjs/core-decorator';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

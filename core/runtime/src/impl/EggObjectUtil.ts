@@ -1,6 +1,6 @@
 import type { EggObject, EggPrototype } from '@eggjs/tegg-types';
 
-import { EggContainerFactory } from '../factory/index.ts';
+import { EggContainerFactory } from '../factory/EggContainerFactory.ts';
 
 export class EggObjectUtil {
   static eggObjectGetProperty(eggObject: EggObject): PropertyDescriptor {

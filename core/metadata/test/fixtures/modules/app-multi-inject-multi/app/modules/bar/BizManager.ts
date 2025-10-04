@@ -3,13 +3,14 @@ import {
   AccessLevel,
   Inject,
   ObjectInitType,
-  ObjectInfo,
-  MultiInstancePrototypeGetObjectsContext,
+  type ObjectInfo,
+  type MultiInstancePrototypeGetObjectsContext,
   MultiInstanceInfo,
-} from '@eggjs/tegg';
+} from '@eggjs/core-decorator';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { type EggProtoImplClass, LoadUnitNameQualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
-import { Secret, SecretQualifierAttribute } from '../foo/Secret.js';
+
+import { Secret, SecretQualifierAttribute } from '../foo/Secret.ts';
 
 export const BizManagerQualifierAttribute = Symbol.for('Qualifier.BizManager');
 export const BizManagerInjectName = 'bizManager';

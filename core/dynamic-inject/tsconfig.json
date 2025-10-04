@@ -4,6 +4,6 @@
     "baseUrl": "./"
   },
   "exclude": [
-    "test"
+    "test/fixtures"
   ]
 }

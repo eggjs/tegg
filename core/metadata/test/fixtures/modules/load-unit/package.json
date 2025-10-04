@@ -3,5 +3,6 @@
   "eggModule": {
     "name": "app-repo"
   },
-  "main": "index.js"
+  "main": "index.js",
+  "type": "module"
 }

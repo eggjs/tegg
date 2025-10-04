@@ -2,8 +2,5 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./"
-  },
-  "exclude": [
-    "test",
-  ]
+  }
 }
