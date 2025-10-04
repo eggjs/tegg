@@ -1,7 +1,7 @@
 import { ContextProto } from '@eggjs/tegg';
-import { ContextHello } from '../decorator/ContextHello.js';
-import { ContextHelloType } from '../FooType.js';
-import { AbstractContextHello } from '../AbstractContextHello.js';
+import { ContextHello } from '../decorator/ContextHello.ts';
+import { ContextHelloType } from '../FooType.ts';
+import { AbstractContextHello } from '../AbstractContextHello.ts';
 
 @ContextProto()
 @ContextHello(ContextHelloType.FOO)

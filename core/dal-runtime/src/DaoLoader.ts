@@ -1,6 +1,6 @@
 import { EggLoadUnitType } from '@eggjs/tegg-types';
 import { DaoInfoUtil } from '@eggjs/dal-decorator';
-import { BaseDaoType } from '@eggjs/tegg-types/dal';
+import { type BaseDaoType } from '@eggjs/tegg-types/dal';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 
 export class DaoLoader {

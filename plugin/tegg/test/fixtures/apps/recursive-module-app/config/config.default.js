@@ -1,3 +1,5 @@
-'use strict';
-
-exports.keys = 'test key';
+export default () => {
+  return {
+    keys: 'test key',
+  };
+};

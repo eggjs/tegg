@@ -1,5 +1,7 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
   afterEach(() => {
@@ -9,12 +11,12 @@ describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
   describe('controllers have same controller name', () => {
     it('should throw error', async () => {
       let app: MockApplication;
-      await assert.rejects(async () => {
+      await expect(async () => {
         app = mm.app({
-          baseDir: 'apps/duplicate-controller-name-app',
+          baseDir: getFixtures('apps/duplicate-controller-name-app'),
         });
         await app.ready();
-      }, /duplicate controller name AppController/);
+      }).rejects.toThrow(/duplicate controller name AppController/);
       await app!.close();
     });
   });
@@ -22,12 +24,12 @@ describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
   describe('controllers have same proto name', () => {
     it('should throw error', async () => {
       let app: MockApplication;
-      await assert.rejects(async () => {
+      await expect(async () => {
         app = mm.app({
-          baseDir: 'apps/duplicate-proto-name-app',
+          baseDir: getFixtures('apps/duplicate-proto-name-app'),
         });
         await app.ready();
-      }, /duplicate proto name appController/);
+      }).rejects.toThrow(/duplicate proto name appController/);
       await app!.close();
     });
   });

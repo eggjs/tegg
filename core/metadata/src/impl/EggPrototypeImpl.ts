@@ -1,4 +1,4 @@
-import { InjectType, MetadataUtil, QualifierAttribute } from '@eggjs/core-decorator';
+import { InjectType, MetadataUtil, type QualifierAttribute } from '@eggjs/core-decorator';
 import type {
   AccessLevel,
   EggProtoImplClass,

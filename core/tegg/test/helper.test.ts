@@ -1,14 +1,16 @@
 import assert from 'node:assert/strict';
-import { it } from 'vitest';
+
+import { test } from 'vitest';
+
 import {
   AbstractEggContext,
   LoadUnitInstanceLifecycleUtil,
   LoaderUtil,
   ModuleConfigUtil,
   LoadUnitLifecycleUtil,
-} from '../helper.js';
+} from '../src/helper.ts';
 
-it('should helper exports work', async () => {
+test('should helper exports work', async () => {
   assert(AbstractEggContext);
   assert(LoadUnitInstanceLifecycleUtil);
   assert(LoaderUtil);

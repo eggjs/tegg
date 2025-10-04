@@ -1,5 +1,7 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/edgecase.test.ts', () => {
   let app: MockApplication;
@@ -8,14 +10,14 @@ describe('plugin/controller/test/http/edgecase.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/controller-app',
+      baseDir: getFixtures('apps/controller-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -38,7 +40,7 @@ describe('plugin/controller/test/http/edgecase.test.ts', () => {
       .get('/Middleware/Method')
       .expect(200)
       .expect(res => {
-        assert(res.text === 'hello, view');
+        expect(res.text).toBe('hello, view');
       });
   });
 });

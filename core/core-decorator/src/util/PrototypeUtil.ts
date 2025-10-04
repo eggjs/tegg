@@ -1,17 +1,17 @@
 import {
-  EggMultiInstanceCallbackPrototypeInfo,
-  EggMultiInstancePrototypeInfo,
-  EggProtoImplClass,
-  EggPrototypeInfo,
-  EggPrototypeName, InitTypeQualifierAttribute,
-  InjectConstructorInfo,
-  InjectObjectInfo,
+  type EggMultiInstanceCallbackPrototypeInfo,
+  type EggMultiInstancePrototypeInfo,
+  type EggProtoImplClass,
+  type EggPrototypeInfo,
+  type EggPrototypeName, InitTypeQualifierAttribute,
+  type InjectConstructorInfo,
+  type InjectObjectInfo,
   InjectType, LoadUnitNameQualifierAttribute,
-  MultiInstancePrototypeGetObjectsContext,
+  type MultiInstancePrototypeGetObjectsContext,
   MultiInstanceType,
-  QualifierAttribute,
+  type QualifierAttribute,
 } from '@eggjs/tegg-types';
-import { MetadataUtil } from './MetadataUtil.js';
+import { MetadataUtil } from './MetadataUtil.ts';
 
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE = Symbol.for('EggPrototype#isEggPrototype');
@@ -278,7 +278,7 @@ export class PrototypeUtil {
 
   // TODO fix proto type
   static setClazzProto(clazz: EggProtoImplClass, proto: object) {
-    return MetadataUtil.defineMetaData(PrototypeUtil.CLAZZ_PROTO, proto, clazz);
+    MetadataUtil.defineMetaData(PrototypeUtil.CLAZZ_PROTO, proto, clazz);
   }
 
   static getDesignType(clazz: EggProtoImplClass, propKey?: PropertyKey) {

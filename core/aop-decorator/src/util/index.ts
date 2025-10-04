@@ -1,4 +1,5 @@
-export * from './AdviceInfoUtil.js';
-export * from './AspectInfoUtil.js';
-export * from './CrosscutInfoUtil.js';
-export * from './PointcutAdviceInfoUtil.js';
+export * from './AdviceInfoUtil.ts';
+export * from './AspectInfoUtil.ts';
+export * from './CrosscutInfoUtil.ts';
+export * from './PointcutAdviceInfoUtil.ts';
+

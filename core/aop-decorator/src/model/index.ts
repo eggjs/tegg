@@ -1,2 +1,2 @@
-export * from './Aspect.js';
-export * from './PointcutInfo.js';
+export * from './Aspect.ts';
+export * from './PointcutInfo.ts';

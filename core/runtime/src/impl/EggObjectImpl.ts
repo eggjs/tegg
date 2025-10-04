@@ -8,9 +8,10 @@ import type {
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggObjectLifecycleUtil, ContextHandler } from '../model/index.js';
-import { EggContainerFactory } from '../factory/index.js';
-import { EggObjectUtil } from './EggObjectUtil.js';
+
+import { EggObjectLifecycleUtil, ContextHandler } from '../model/index.ts';
+import { EggContainerFactory } from '../factory/index.ts';
+import { EggObjectUtil } from './EggObjectUtil.ts';
 
 export class EggObjectImpl implements EggObject {
   private _obj: object;

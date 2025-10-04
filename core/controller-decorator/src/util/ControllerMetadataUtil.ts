@@ -1,7 +1,8 @@
 import { CONTROLLER_META_DATA } from '@eggjs/tegg-types';
 import type { ControllerMetadata, EggProtoImplClass } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { ControllerMetaBuilderFactory } from '../builder/index.js';
+
+import { ControllerMetaBuilderFactory } from '../builder/index.ts';
 
 export class ControllerMetadataUtil {
   static setControllerMetadata(clazz: EggProtoImplClass, metaData: ControllerMetadata) {

@@ -1,10 +1,15 @@
+import { debuglog } from 'node:util';
+
 import { ObjectInitType } from '@eggjs/tegg-types';
 import type { EggRuntimeContext, EggContextLifecycleContext, EggObject, EggObjectName, EggPrototype, EggPrototypeName, Id } from '@eggjs/tegg-types';
 import { TeggError } from '@eggjs/tegg-metadata';
 import { MapUtil } from '@eggjs/tegg-common-util';
-import { EggContainerFactory, EggObjectFactory } from '../factory/index.js';
-import { ContextHandler } from './ContextHandler.js';
-import { EggContextLifecycleUtil } from './EggContext.js';
+
+import { EggContainerFactory, EggObjectFactory } from '../factory/index.ts';
+import { ContextHandler } from './ContextHandler.ts';
+import { EggContextLifecycleUtil } from './EggContext.ts';
+
+const debug = debuglog('tegg/core/runtime/AbstractEggContext');
 
 export abstract class AbstractEggContext implements EggRuntimeContext {
   private contextData: Map<string | symbol, any> = new Map();
@@ -96,6 +101,7 @@ export abstract class AbstractEggContext implements EggRuntimeContext {
 EggContainerFactory.registerContainerGetMethod(ObjectInitType.CONTEXT, () => {
   const ctx = ContextHandler.getContext();
   if (!ctx) {
+    debug('can not get teggCtx from ContextHandler');
     throw new Error('ctx is required');
   }
   return ctx;

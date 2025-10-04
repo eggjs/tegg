@@ -11,9 +11,10 @@ import type {
   LoadUnitInstance,
   LoadUnitInstanceLifecycleContext,
 } from '@eggjs/tegg-types';
-import { EggObjectFactory } from '../factory/EggObjectFactory.js';
-import { LoadUnitInstanceFactory } from '../factory/LoadUnitInstanceFactory.js';
-import { LoadUnitInstanceLifecycleUtil } from '../model/LoadUnitInstance.js';
+
+import { EggObjectFactory } from '../factory/EggObjectFactory.ts';
+import { LoadUnitInstanceFactory } from '../factory/LoadUnitInstanceFactory.ts';
+import { LoadUnitInstanceLifecycleUtil } from '../model/LoadUnitInstance.ts';
 
 export class ModuleLoadUnitInstance implements LoadUnitInstance {
   readonly loadUnit: LoadUnit;

@@ -1,5 +1,6 @@
-export * from './AbstractEggContext.js';
-export * from './ContextHandler.js';
-export * from './EggContext.js';
-export * from './EggObject.js';
-export * from './LoadUnitInstance.js';
+export * from './AbstractEggContext.ts';
+export * from './ContextHandler.ts';
+export * from './EggContext.ts';
+export * from './EggObject.ts';
+export * from './LoadUnitInstance.ts';
+

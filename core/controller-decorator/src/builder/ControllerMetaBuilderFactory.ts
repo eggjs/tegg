@@ -4,8 +4,9 @@ import type {
   ControllerTypeLike,
   EggProtoImplClass,
 } from '@eggjs/tegg-types';
-import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.js';
 import { Pointcut } from '@eggjs/aop-decorator';
+
+import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
 
 export class ControllerMetaBuilderFactory {
   private static builderCreatorMap: Map<ControllerTypeLike, ControllerMetaBuilderCreator> = new Map();

@@ -5,7 +5,7 @@ import ConfigService from '../../modules/multi-module-service/ConfigService.js';
 import CustomLoggerService from '../../modules/multi-module-service/CustomLoggerService.js';
 import GlobalAppRepo from '../../modules/multi-module-repo/GlobalAppRepo.js';
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   export interface EggModule {
     multiModuleService: {
       traceService: TraceService;

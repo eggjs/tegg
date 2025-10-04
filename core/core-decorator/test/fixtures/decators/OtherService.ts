@@ -1,4 +1,4 @@
-import { ContextProto } from '../../../src/index.js';
+import { ContextProto } from '../../../src/index.ts';
 
 @ContextProto()
 export class TestService {

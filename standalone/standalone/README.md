@@ -12,7 +12,7 @@ npm i --save @eggjs/tegg-standalone
 当一个类上有 Runner 注解时，会自动运行其 main 函数。注无需再使用 `ContextProto` 注解，因为独立运行跑完即销毁，不用再区分独立上下文。
 
 ```ts
-import { Runner, MainRunner } from '@eggjs/tegg/standalone';
+import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
 @Runner()
 @SingletonProto()

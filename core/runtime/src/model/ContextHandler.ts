@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import type { EggRuntimeContext } from '@eggjs/tegg-types';
 
 type runInContextCallback<R = any> = (context: EggRuntimeContext, fn: () => Promise<R>) => Promise<R>;

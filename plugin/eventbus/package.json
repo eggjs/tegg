@@ -17,34 +17,31 @@
     "tegg"
   ],
   "files": [
-    "app.js",
-    "app.d.ts",
-    "lib/**/*.js",
-    "lib/**/*.d.ts",
-    "app/**/*.js",
-    "app/**/*.d.ts",
-    "config/*.js",
-    "config/*.d.ts",
-    "index.js",
-    "index.d.ts"
+    "dist"
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    },
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application.unittest": "./src/app/extend/application.unittest.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./lib/EggContextEventBus": "./src/lib/EggContextEventBus.ts",
+    "./lib/EggEventContext": "./src/lib/EggEventContext.ts",
+    "./lib/EventbusLoadUnitHook": "./src/lib/EventbusLoadUnitHook.ts",
+    "./lib/EventbusProtoHook": "./src/lib/EventbusProtoHook.ts",
+    "./lib/EventHandlerProtoManager": "./src/lib/EventHandlerProtoManager.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "egg-bin test",
-    "cov": "egg-bin cov",
-    "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "tsc:pub": "npm run tsc",
-    "prepublishOnly": "npm run tsc"
+    "test:mocha": "egg-bin test",
+    "cov:mocha": "egg-bin cov",
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/eventbus",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -54,29 +51,50 @@
     "directory": "plugin/eventbus"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core": "^6.4.0",
     "@eggjs/egg-module-common": "^4.0.0-beta.4",
     "@eggjs/tegg": "^4.0.0-beta.4",
     "@eggjs/tegg-eventbus-runtime": "^4.0.0-beta.4",
     "@eggjs/tegg-metadata": "^4.0.0-beta.4",
     "@eggjs/tegg-runtime": "^4.0.0-beta.4"
   },
+  "peerDependencies": {
+    "egg": "beta",
+    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
+  },
   "devDependencies": {
-    "@eggjs/mock": "6",
+    "@eggjs/bin": "beta",
+    "@eggjs/mock": "beta",
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
     "@eggjs/tegg-plugin": "^4.0.0-beta.4",
-    "@eggjs/tracer": "3",
-    "@types/mocha": "10",
+    "@eggjs/tracer": "beta",
     "@types/node": "22",
-    "egg": "4",
-    "ts-node": "10",
-    "typescript": "5"
+    "egg": "beta",
+    "mocha": "11",
+    "typescript": "5",
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {
-    "access": "public"
-  }
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./lib/EggContextEventBus": "./dist/lib/EggContextEventBus.js",
+      "./lib/EggEventContext": "./dist/lib/EggEventContext.js",
+      "./lib/EventbusLoadUnitHook": "./dist/lib/EventbusLoadUnitHook.js",
+      "./lib/EventbusProtoHook": "./dist/lib/EventbusProtoHook.js",
+      "./lib/EventHandlerProtoManager": "./dist/lib/EventHandlerProtoManager.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

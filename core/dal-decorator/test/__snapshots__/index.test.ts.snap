@@ -66,7 +66,6 @@ exports[`test/dal/index.test.ts > should export stable 1`] = `
   "DataSourceInjectName": "dataSource",
   "DataSourceQualifier": [Function],
   "DataSourceQualifierAttribute": Symbol(Qualifier.DataSource),
-  "DeleteResult": undefined,
   "Index": [Function],
   "IndexInfoUtil": [Function],
   "IndexModel": [Function],
@@ -86,7 +85,6 @@ exports[`test/dal/index.test.ts > should export stable 1`] = `
     "LAST": "LAST",
     "NO": "NO",
   },
-  "InsertResult": undefined,
   "RowFormat": {
     "COMPACT": "COMPACT",
     "COMPRESSED": "COMPRESSED",
@@ -114,6 +112,5 @@ exports[`test/dal/index.test.ts > should export stable 1`] = `
     "DAO": "dao",
     "EXTENSION": "extension",
   },
-  "UpdateResult": undefined,
 }
 `;

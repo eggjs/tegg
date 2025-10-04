@@ -1,5 +1,7 @@
-import { strict as assert } from 'node:assert';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/proto-poisoning.test.ts', () => {
   let app: MockApplication;
@@ -8,14 +10,14 @@ describe('plugin/controller/test/http/proto-poisoning.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/proto-poisoning',
+      baseDir: getFixtures('apps/proto-poisoning'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -30,8 +32,8 @@ describe('plugin/controller/test/http/proto-poisoning.test.ts', () => {
       }`)
       .expect(200);
     console.log(res.body);
-    assert.equal(res.body['body.boom'], undefined, 'body.boom');
-    assert.equal(res.body['params2.boom'], undefined, 'params2.boom');
-    assert.equal(res.body['params1.boom'], undefined, 'params1.boom');
+    expect(res.body['body.boom']).toBeUndefined();
+    expect(res.body['params2.boom']).toBeUndefined();
+    expect(res.body['params1.boom']).toBeUndefined();
   });
 });

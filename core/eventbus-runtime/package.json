@@ -14,24 +14,21 @@
   },
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./src/index.d.ts",
-      "default": "./src/index.js"
-    }
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "files": [
-    "src/**/*.js",
-    "src/**/*.d.ts"
+    "dist"
   ],
   "scripts": {
-    "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run tsc",
-    "prepublishOnly": "npm run tsc"
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/core/eventbus-runtime",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -50,18 +47,26 @@
     "await-first": "^1.0.0"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "devDependencies": {
     "@eggjs/tegg-loader": "^4.0.0-beta.4",
     "@eggjs/tegg-metadata": "^4.0.0-beta.4",
     "@types/node": "22",
     "coffee": "5",
-    "egg": "4",
-    "ts-node": "10",
-    "typescript": "5"
+    "egg": "beta",
+    "typescript": "5",
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
   },
   "publishConfig": {
-    "access": "public"
-  }
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

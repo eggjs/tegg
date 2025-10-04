@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { ContextHandler, EggContext } from '@eggjs/tegg-runtime';
+
+import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
 
 export class StandaloneContextHandler {
   static storage = new AsyncLocalStorage<EggContext>();

@@ -1,4 +1,7 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/priority.test.ts', () => {
   let app: MockApplication;
@@ -7,14 +10,14 @@ describe('plugin/controller/test/http/priority.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/controller-app',
+      baseDir: getFixtures('apps/controller-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 

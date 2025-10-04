@@ -1,7 +1,7 @@
-import { AccessLevel, ContextProto, Inject, EggObjectFactory } from '@eggjs/tegg';
-import { ContextHelloType, SingletonHelloType } from './FooType.js';
-import { AbstractContextHello } from './AbstractContextHello.js';
-import { AbstractSingletonHello } from './AbstractSingletonHello.js';
+import { AccessLevel, ContextProto, Inject, type EggObjectFactory } from '@eggjs/tegg';
+import { ContextHelloType, SingletonHelloType } from './FooType.ts';
+import { AbstractContextHello } from './AbstractContextHello.ts';
+import { AbstractSingletonHello } from './AbstractSingletonHello.ts';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

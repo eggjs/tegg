@@ -3,7 +3,7 @@ import {
   CONTROLLER_HOST,
   CONTROLLER_MIDDLEWARES,
   CONTROLLER_NAME,
-  CONTROLLER_TYPE, IAdvice,
+  CONTROLLER_TYPE, type IAdvice,
 } from '@eggjs/tegg-types';
 import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';

@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
   let app: MockApplication;
@@ -15,7 +18,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/access-level-check',
+      baseDir: getAppBaseDir('access-level-check'),
     });
     await app.ready();
   });

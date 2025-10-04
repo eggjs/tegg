@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+
 import {
   AccessLevel,
   ObjectInitType,
@@ -6,18 +7,19 @@ import {
   InitTypeQualifierAttribute,
   DEFAULT_PROTO_IMPL_TYPE,
   MultiInstanceType,
+  InjectType,
 } from '@eggjs/tegg-types';
 import type { EggPrototypeInfo, EggMultiInstancePrototypeInfo, InjectObjectInfo } from '@eggjs/tegg-types';
-import { describe, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
-import CacheService from './fixtures/decators/CacheService.js';
-import ContextCache from './fixtures/decators/ContextCache.js';
-import SingletonCache from './fixtures/decators/SingletonCache.js';
+import { PrototypeUtil, QualifierUtil } from '../src/index.ts';
 
-import { PrototypeUtil, QualifierUtil } from '../src/index.js';
-import QualifierCacheService from './fixtures/decators/QualifierCacheService.js';
-import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger.js';
-import { ConstructorObject, ConstructorQualifierObject } from './fixtures/decators/ConstructorObject.js';
+import CacheService from './fixtures/decators/CacheService.ts';
+import ContextCache from './fixtures/decators/ContextCache.ts';
+import SingletonCache from './fixtures/decators/SingletonCache.ts';
+import QualifierCacheService from './fixtures/decators/QualifierCacheService.ts';
+import { FOO_ATTRIBUTE, FooLogger } from './fixtures/decators/FooLogger.ts';
+import { ConstructorObject, ConstructorQualifierObject } from './fixtures/decators/ConstructorObject.ts';
 import {
   ChildDynamicMultiInstanceProto,
   ChildSingletonProto,
@@ -25,9 +27,9 @@ import {
   ParentDynamicMultiInstanceProto,
   ParentSingletonProto,
   ParentStaticMultiInstanceProto,
-} from './fixtures/decators/ChildService.js';
+} from './fixtures/decators/ChildService.ts';
 
-describe('test/decorator.test.ts', () => {
+describe('test/decorators.test.ts', () => {
   describe('ContextProto', () => {
     it('should work', () => {
       assert(PrototypeUtil.isEggPrototype(ContextCache));
@@ -57,8 +59,11 @@ describe('test/decorator.test.ts', () => {
   });
 
   describe('Inject', () => {
-    it('should work', () => {
+    it('property should work', () => {
       assert(PrototypeUtil.isEggPrototype(CacheService));
+      const injectType = PrototypeUtil.getInjectType(CacheService);
+      expect(injectType).toBe(InjectType.PROPERTY);
+
       const expectInjectInfo: InjectObjectInfo[] = [{
         refName: 'cache',
         objName: 'fooCache',
@@ -66,11 +71,11 @@ describe('test/decorator.test.ts', () => {
         refName: 'testService',
         objName: 'testService',
       }, {
-        objName: 'abcabc',
         refName: 'testService2',
+        objName: 'abcabc',
       }, {
-        objName: 'testService3',
         refName: 'otherService',
+        objName: 'testService3',
       }, {
         objName: 'testService4',
         refName: 'testService4',
@@ -83,12 +88,15 @@ describe('test/decorator.test.ts', () => {
         refName: 'optionalService2',
         optional: true,
       }];
-      assert.deepStrictEqual(PrototypeUtil.getInjectObjects(CacheService), expectInjectInfo);
+      expect(PrototypeUtil.getInjectObjects(CacheService)).toStrictEqual(expectInjectInfo);
     });
 
     it('constructor should work', () => {
+      const injectType = PrototypeUtil.getInjectType(ConstructorObject);
+      expect(injectType).toBe(InjectType.CONSTRUCTOR);
+
       const injectConstructors = PrototypeUtil.getInjectObjects(ConstructorObject);
-      assert.deepStrictEqual(injectConstructors, [
+      expect(injectConstructors).toStrictEqual([
         { refIndex: 0, refName: 'xCache', objName: 'fooCache' },
         { refIndex: 1, refName: 'cache', objName: 'cache' },
         { refIndex: 2, refName: 'otherCache', objName: 'cacheService' },

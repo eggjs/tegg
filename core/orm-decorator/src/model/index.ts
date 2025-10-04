@@ -1,3 +1,3 @@
-export * from './AttributeMeta.js';
-export * from './IndexMeta.js';
-export * from './ModelMetadata.js';
+export * from './AttributeMeta.ts';
+export * from './IndexMeta.ts';
+export * from './ModelMetadata.ts';

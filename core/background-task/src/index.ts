@@ -1,1 +1,1 @@
-export * from './BackgroundTaskHelper.js';
+export * from './BackgroundTaskHelper.ts';

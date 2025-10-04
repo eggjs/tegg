@@ -1,1 +1,1 @@
-export * from './TransformEnum.js';
+export * from './TransformEnum.ts';

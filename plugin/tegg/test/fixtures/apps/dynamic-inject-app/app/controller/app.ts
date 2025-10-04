@@ -1,6 +1,6 @@
 import { Controller } from 'egg';
-import { HelloService } from '../../modules/dynamic-inject-module/HelloService.js';
-import { SingletonHelloService } from '../../modules/dynamic-inject-module/SingletonHelloService.js';
+import { HelloService } from '../../modules/dynamic-inject-module/HelloService.ts';
+import { SingletonHelloService } from '../../modules/dynamic-inject-module/SingletonHelloService.ts';
 
 export default class App extends Controller {
   async dynamicInject() {

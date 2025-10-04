@@ -1,3 +1,3 @@
-export * from './AttributeMetaBuilder.js';
-export * from './IndexMetaBuilder.js';
-export * from './ModelMetaBuilder.js';
+export * from './AttributeMetaBuilder.ts';
+export * from './IndexMetaBuilder.ts';
+export * from './ModelMetaBuilder.ts';

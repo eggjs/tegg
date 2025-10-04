@@ -1,6 +1,7 @@
 import { AccessLevel } from '@eggjs/tegg-types';
-import { ContextProto } from '../../../src/index.js';
-import { ICache } from './ICache.js';
+
+import { ContextProto } from '../../../src/index.ts';
+import { type ICache } from './ICache.ts';
 
 @ContextProto({
   name: 'cache',

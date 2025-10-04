@@ -1,5 +1,6 @@
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
-import { BizManager, BizManagerQualifier } from '../bar/BizManager.js';
+
+import { BizManager, BizManagerQualifier } from '../bar/BizManager.ts';
 
 @SingletonProto()
 export class App {

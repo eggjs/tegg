@@ -1,8 +1,6 @@
-// use @eggjs/tegg as namespace
-// eslint-disable-next-line import/no-unresolved
-import type { Events } from '@eggjs/tegg';
-import type { IEventContext } from './EventContext.js';
-import type { Arguments, TypedEventEmitter } from './typed-emitter.js';
+import type { Events } from './Event.ts';
+import type { IEventContext } from './EventContext.ts';
+import type { Arguments, TypedEventEmitter } from './typed-emitter.ts';
 
 export type EventName = string | symbol;
 export type { Arguments };

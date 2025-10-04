@@ -1,6 +1,7 @@
-import { expect, it } from 'vitest';
-import * as types from '../index.js';
+import { expect, test } from 'vitest';
 
-it('should export stable', async () => {
-  expect(types).toMatchSnapshot();
+import * as exports from '../src/index.ts';
+
+test('should export stable', async () => {
+  expect(exports).toMatchSnapshot();
 });

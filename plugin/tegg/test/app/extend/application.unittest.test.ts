@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { mm, type MockApplication } from '@eggjs/mock';
 
 describe('test/app/extend/application.unittest.test.ts', () => {
   let app: MockApplication;

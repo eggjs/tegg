@@ -1,9 +1,9 @@
-import { SqlMap } from '@eggjs/tegg/dal';
+import { type SqlMap } from '@eggjs/tegg/dal';
 
 /**
  * Define Custom SQLs
  *
- * import { SqlMap, SqlType } from '@eggjs/tegg/dal';
+ * import { type SqlMap, SqlType } from '@eggjs/tegg/dal';
  *
  * export default {
  *   findByName: {

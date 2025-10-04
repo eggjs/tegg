@@ -1,3 +1,3 @@
-export * from './ModelInfoUtil.js';
-export * from './ModelMetadataUtil.js';
-export * from './NameUtil.js';
+export * from './ModelInfoUtil.ts';
+export * from './ModelMetadataUtil.ts';
+export * from './NameUtil.ts';

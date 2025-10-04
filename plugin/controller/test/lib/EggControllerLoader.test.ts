@@ -1,20 +1,18 @@
-import assert from 'node:assert/strict';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { describe, it, expect } from 'vitest';
 import { ControllerMetadataUtil } from '@eggjs/tegg';
-import { EggControllerLoader } from '../../lib/EggControllerLoader.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/lib/EggModuleLoader.test.ts', () => {
   it('should work', async () => {
-    const controllerDir = path.join(__dirname, '../fixtures/apps/controller-app/app/controller');
+    const controllerDir = getFixtures('apps/controller-app/app/controller');
     const loader = new EggControllerLoader(controllerDir);
     const classes = await loader.load();
-    assert.equal(classes.length, 7);
+
+    expect(classes.length).toBe(7);
     const AppController = classes[0];
     const metadata = ControllerMetadataUtil.getControllerMetadata(AppController);
-    assert(metadata);
+    expect(metadata).toBeDefined();
   });
 });

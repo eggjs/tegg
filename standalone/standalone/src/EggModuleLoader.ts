@@ -1,14 +1,14 @@
 import {
   EggLoadUnitType,
   GlobalGraph,
-  Loader,
-  LoadUnit,
+  type Loader,
+  type LoadUnit,
   LoadUnitFactory,
   ModuleDescriptorDumper,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { ModuleReference } from '@eggjs/tegg-common-util';
-import { Logger } from '@eggjs/tegg';
+import type { ModuleReference } from '@eggjs/tegg-common-util';
+import type { Logger } from '@eggjs/tegg';
 
 export interface EggModuleLoaderOptions {
   logger: Logger;

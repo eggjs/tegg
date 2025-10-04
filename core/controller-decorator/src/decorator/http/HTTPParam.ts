@@ -1,8 +1,10 @@
 import assert from 'node:assert';
+
 import { HTTPParamType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, HTTPParamParams, HTTPQueriesParams, HTTPQueryParams } from '@eggjs/tegg-types';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
-import { HTTPInfoUtil } from '../../util/index.js';
+
+import { HTTPInfoUtil } from '../../util/index.ts';
 
 // TODO url params
 // /foo/:id
@@ -10,7 +12,7 @@ import { HTTPInfoUtil } from '../../util/index.js';
 
 export function HTTPBody() {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -20,7 +22,7 @@ export function HTTPBody() {
 
 export function HTTPHeaders() {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -30,7 +32,7 @@ export function HTTPHeaders() {
 
 export function HTTPQuery(param?: HTTPQueryParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -43,7 +45,7 @@ export function HTTPQuery(param?: HTTPQueryParams) {
 
 export function HTTPQueries(param?: HTTPQueriesParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -56,7 +58,7 @@ export function HTTPQueries(param?: HTTPQueriesParams) {
 
 export function HTTPParam(param?: HTTPParamParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -72,7 +74,7 @@ export function Request() {
     const [ nodeMajor ] = process.versions.node.split('.').map(v => Number(v));
     assert(nodeMajor >= 16,
       `[controller/${target.name}] expect node version >=16, but now is ${nodeMajor}`);
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
@@ -82,7 +84,7 @@ export function Request() {
 
 export function Cookies() {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
+    assert.equal(typeof propertyKey, 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;

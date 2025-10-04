@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
-import { mm, MockApplication } from '@eggjs/mock';
-import { TimerUtil } from '@eggjs/tegg-common-util';
-import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.js';
-import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.js';
-import { LONG_STACK_DELIMITER } from '../../../lib/run_in_background.js';
 
-const __filename = fileURLToPath(import.meta.url);
+import { mm, type MockApplication } from '@eggjs/mock';
+import { TimerUtil } from '@eggjs/tegg-common-util';
+
+import AppService from '../../fixtures/apps/egg-app/modules/multi-module-service/AppService.ts';
+import PersistenceService from '../../fixtures/apps/egg-app/modules/multi-module-repo/PersistenceService.ts';
+import { LONG_STACK_DELIMITER } from '../../../src/lib/run_in_background.ts';
+import { getAppBaseDir } from '../../utils.ts';
 
 describe('test/app/extend/context.test.ts', () => {
   let app: MockApplication;
@@ -21,7 +21,7 @@ describe('test/app/extend/context.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/egg-app',
+      baseDir: getAppBaseDir('egg-app'),
     });
     await app.ready();
   });
@@ -109,7 +109,7 @@ describe('test/app/extend/context.test.ts', () => {
       // at ~/plugin/tegg/app/extend/application.unittest.ts:49:22
       // at async Proxy.mockContextScope (~/node_modules/egg-mock/app/extend/application.js:81:12)
       // at async Context.<anonymous> (~/plugin/tegg/test/app/extend/context.test.ts:86:7)
-      assert(stack.includes(__filename));
+      assert(stack.includes(import.meta.filename));
       assert(stack.includes(LONG_STACK_DELIMITER));
     });
   });

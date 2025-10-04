@@ -1,5 +1,5 @@
-import { AccessLevel, SingletonProto, Inject, RuntimeConfig } from '@eggjs/tegg';
-import { EggAppConfig } from 'egg';
+import { AccessLevel, SingletonProto, Inject, type RuntimeConfig } from '@eggjs/tegg';
+import type { EggAppConfig } from 'egg';
 
 interface XSessionUser {
   userName: string;

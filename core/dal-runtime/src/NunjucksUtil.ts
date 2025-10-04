@@ -1,7 +1,8 @@
 import nunjucks, { Template, type Environment } from 'nunjucks';
 import sqlstring from 'sqlstring';
-import { NunjucksConverter } from './NunjucksConverter.js';
-import { SqlUtil } from './SqlUtil.js';
+
+import { NunjucksConverter } from './NunjucksConverter.ts';
+import { SqlUtil } from './SqlUtil.ts';
 
 const compiler = (nunjucks as any).compiler;
 const envs: Record<string, Environment> = {};

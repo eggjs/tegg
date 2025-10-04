@@ -1,6 +1,7 @@
 import { ContextProto, Inject } from '@eggjs/tegg';
-import { Runner, MainRunner } from '@eggjs/tegg/standalone';
-import { Hello } from './Hello.js';
+import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
+
+import { Hello } from './Hello.ts';
 
 @Runner()
 @ContextProto()

@@ -1,8 +1,9 @@
 import { ContextProto, Inject } from '@eggjs/tegg';
-import { Runner, MainRunner } from '@eggjs/tegg/standalone';
-import { Foo } from './Foo.js';
-import { FooService } from './FooService.js';
-import FooDAO from './dal/dao/FooDAO.js';
+import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
+
+import { Foo } from './Foo.ts';
+import { FooService } from './FooService.ts';
+import FooDAO from './dal/dao/FooDAO.ts';
 
 
 @Runner()

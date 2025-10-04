@@ -11,4 +11,8 @@ export default {
     package: '@eggjs/tegg-config',
     enable: true,
   },
+  teggOrm: {
+    package: '@eggjs/tegg-orm-plugin',
+    enable: true,
+  },
 };

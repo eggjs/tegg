@@ -1,5 +1,5 @@
 import { ContextProto, Inject, ConfigSourceQualifier } from '@eggjs/tegg';
-import { Runner, MainRunner } from '@eggjs/tegg/standalone';
+import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 // @ts-expect-error no declaration file
 import { Hello } from 'dependency-2';
 

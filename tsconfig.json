@@ -1,10 +1,13 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "strict": true,
+    "strict": false,
     "noImplicitAny": true,
     "target": "ES2022",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "erasableSyntaxOnly": false,
+    "verbatimModuleSyntax": true,
+    "types": ["node"]
   }
 }

@@ -567,7 +567,7 @@ export class FooRepository {
 
 ```ts
 // dal/extension/FooExtension.ts
-import { SqlMap, SqlType } from '@eggjs/tegg/dal';
+import { type SqlMap, SqlType } from '@eggjs/tegg/dal';
 
 export default {
   findByName: {

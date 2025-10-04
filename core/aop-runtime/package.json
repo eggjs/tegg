@@ -7,14 +7,11 @@
   },
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./src/index.d.ts",
-      "default": "./src/index.js"
-    }
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "files": [
-    "src/**/*.js",
-    "src/**/*.d.ts"
+    "dist"
   ],
   "keywords": [
     "egg",
@@ -24,14 +21,14 @@
     "aop"
   ],
   "scripts": {
-    "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run tsc",
-    "prepublishOnly": "npm run tsc"
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/core/aop-runtime",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -41,10 +38,14 @@
     "directory": "core/aop-runtime"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "dependencies": {
     "@eggjs/aop-decorator": "^4.0.0-beta.4",
@@ -61,7 +62,11 @@
     "@eggjs/tegg-loader": "^4.0.0-beta.4",
     "@types/koa-compose": "3",
     "@types/node": "22",
-    "ts-node": "10",
-    "typescript": "5"
-  }
+    "typescript": "5",
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

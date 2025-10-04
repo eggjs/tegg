@@ -1,4 +1,4 @@
-import { MainRunnerClass } from '../typing.js';
+import type { MainRunnerClass } from '../typing.js';
 import { StandaloneUtil } from '../util/index.js';
 
 export function Runner<T>() {

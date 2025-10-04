@@ -1,7 +1,7 @@
 import { Inject } from '@eggjs/tegg';
-import { EggLogger } from 'egg';
+import { type EggLogger } from 'egg';
 import {
-  IntervalParams,
+  type IntervalParams,
   Schedule,
   ScheduleType,
 } from '@eggjs/tegg-schedule-decorator';

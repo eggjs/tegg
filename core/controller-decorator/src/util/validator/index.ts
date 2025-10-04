@@ -1,2 +1,2 @@
-export * from './ControllerValidator.js';
-export * from './MethodValidator.js';
+export * from './ControllerValidator.ts';
+export * from './MethodValidator.ts';

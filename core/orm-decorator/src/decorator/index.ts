@@ -1,4 +1,5 @@
-export * from './Attribute.js';
-export * from './DataSource.js';
-export * from './Model.js';
-export * from './ModelIndex.js';
+export * from './Attribute.ts';
+export * from './DataSource.ts';
+export * from './Model.ts';
+export * from './ModelIndex.ts';
+

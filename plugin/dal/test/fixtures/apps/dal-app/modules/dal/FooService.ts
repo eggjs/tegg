@@ -1,7 +1,8 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
 import { Transactional } from '@eggjs/tegg/transaction';
-import FooDAO from './dal/dao/FooDAO.js';
-import { Foo } from './Foo.js';
+
+import FooDAO from './dal/dao/FooDAO.ts';
+import { Foo } from './Foo.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

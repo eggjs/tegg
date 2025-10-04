@@ -7,9 +7,10 @@ import type {
   EggPrototypeClass,
 } from '@eggjs/tegg-types';
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
-import { EggObjectImpl } from '../impl/index.js';
-import { EggObjectLifecycleUtil } from '../model/index.js';
-import { LoadUnitInstanceFactory } from './LoadUnitInstanceFactory.js';
+
+import { EggObjectImpl } from '../impl/index.ts';
+import { EggObjectLifecycleUtil } from '../model/index.ts';
+import { LoadUnitInstanceFactory } from './LoadUnitInstanceFactory.ts';
 
 interface EggObjectPair {
   obj: EggObject;

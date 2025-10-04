@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
-import AppService from './fixtures/apps/schedule-app/modules/multi-module-service/AppService.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import AppService from './fixtures/apps/schedule-app/modules/multi-module-service/AppService.ts';
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/Subscription.test.ts', () => {
   let app: MockApplication;
@@ -15,7 +18,7 @@ describe('plugin/tegg/test/Subscription.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/schedule-app',
+      baseDir: getAppBaseDir('schedule-app'),
     });
     await app.ready();
   });

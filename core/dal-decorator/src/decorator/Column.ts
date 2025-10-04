@@ -1,6 +1,8 @@
 import assert from 'node:assert';
+
 import type { ColumnParams, ColumnTypeParams, EggProtoImplClass } from '@eggjs/tegg-types';
-import { ColumnInfoUtil } from '../util/index.js';
+
+import { ColumnInfoUtil } from '../util/index.ts';
 
 export function Column(type: ColumnTypeParams, params?: ColumnParams) {
   return function(target: any, propertyKey: PropertyKey) {

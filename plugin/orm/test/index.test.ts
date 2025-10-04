@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
 import os from 'node:os';
+
 import Realm from 'leoric';
-import { mm, MockApplication } from '@eggjs/mock';
-import { Context } from '@eggjs/core';
-import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.js';
-import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.js';
-import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.js';
-import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App.js';
-import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService.js';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { Context } from 'egg';
+
+import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.ts';
+import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.ts';
+import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.ts';
+import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App.ts';
+import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService.ts';
 
 describe('plugin/orm/test/orm.test.ts', () => {
   // TODO win32 ci not support mysql
@@ -161,11 +163,11 @@ describe('plugin/orm/test/orm.test.ts', () => {
     });
 
     it('should tracer ctx set', async () => {
-      let ctx;
-      await (app as any).leoricRegister.ready();
+      let ctx: Context;
+      await app.leoricRegister.ready();
       for (const realm of app.leoricRegister.realmMap.values()) {
         // @ts-expect-error: the library definition is wrong
-        (realm.driver as any).logger = new Realm.Logger({
+        realm.driver.logger = new Realm.Logger({
           // eslint-disable-next-line no-loop-func
           logQuery(_: any, __: any, options: { Model: { ctx: any; }; }) {
             if (options.Model) {
@@ -180,6 +182,8 @@ describe('plugin/orm/test/orm.test.ts', () => {
       });
 
       assert.equal(ctx!.originalUrl, '/');
+      assert(ctx!.tracer);
+      // @ts-expect-error: no type definition
       assert(ctx!.tracer.traceId);
       // assert.equal(ctx!.tracer.traceId, '1234567890');
     });

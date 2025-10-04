@@ -1,5 +1,5 @@
 import { ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
-import { Runner, MainRunner } from '@eggjs/tegg/standalone';
+import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
 @SingletonProto()
 export class Hello {

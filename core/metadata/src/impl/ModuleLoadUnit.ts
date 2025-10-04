@@ -2,11 +2,12 @@ import assert from 'node:assert';
 import path from 'node:path';
 import { readFileSync } from 'node:fs';
 import { debuglog } from 'node:util';
+
 import {
   EggLoadUnitType,
-  GraphNodeObj,
+  type GraphNodeObj,
   InitTypeQualifierAttribute,
-  ObjectInitTypeLike,
+  type ObjectInitTypeLike,
 } from '@eggjs/tegg-types';
 import type {
   EggProtoImplClass,
@@ -20,11 +21,12 @@ import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil, LifecycleUtil } from '@eggjs/tegg-lifecycle';
 import { FrameworkErrorFormater } from 'egg-errors';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
-import { EggPrototypeFactory, LoadUnitFactory, EggPrototypeCreatorFactory } from '../factory/index.js';
-import { ClassProtoDescriptor, GlobalGraph } from '../model/index.js';
-import { MultiPrototypeFound } from '../errors.js';
 
-const debug = debuglog('@eggjs/tegg-metadata/ModuleLoadUnit');
+import { EggPrototypeFactory, LoadUnitFactory, EggPrototypeCreatorFactory } from '../factory/index.ts';
+import { ClassProtoDescriptor, GlobalGraph } from '../model/index.ts';
+import { MultiPrototypeFound } from '../errors.ts';
+
+const debug = debuglog('tegg/core/metadata/impl/ModuleLoadUnit');
 
 let id = 0;
 

@@ -1,5 +1,5 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { IS_TRANSACTION_CLAZZ, TRANSACTION_META_DATA, TransactionMetadata } from '@eggjs/tegg-types';
+import { IS_TRANSACTION_CLAZZ, TRANSACTION_META_DATA, type TransactionMetadata } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 export class TransactionMetadataUtil {

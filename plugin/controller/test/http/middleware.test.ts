@@ -1,5 +1,7 @@
-import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach, beforeAll, afterAll, expect } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from '../utils.ts';
 
 describe('plugin/controller/test/http/middleware.test.ts', () => {
   let app: MockApplication;
@@ -8,14 +10,14 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/controller-app',
+      baseDir: getFixtures('apps/controller-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -25,7 +27,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       .get('/middleware/global')
       .expect(200)
       .expect(res => {
-        assert.equal(res.body.count, 0);
+        expect(res.body.count).toBe(0);
       });
   });
 
@@ -35,7 +37,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       .get('/middleware/method')
       .expect(200)
       .expect(res => {
-        assert.equal(res.body.log, 'use middleware');
+        expect(res.body.log).toBe('use middleware');
       });
   });
 
@@ -51,7 +53,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
     const res = await app.httpRequest()
       .get('/aop/middleware/global')
       .expect(200);
-    assert.deepStrictEqual(res.body, {
+    expect(res.body).toEqual({
       method: 'global',
       count: 0,
       aopList: [ 'FooControllerAdvice', 'CountAdvice' ],
@@ -63,7 +65,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
     const res = await app.httpRequest()
       .get('/aop/middleware/method')
       .expect(200);
-    assert.deepStrictEqual(res.body, {
+    expect(res.body).toEqual({
       method: 'middleware',
       aopList: [
         'FooControllerAdvice',

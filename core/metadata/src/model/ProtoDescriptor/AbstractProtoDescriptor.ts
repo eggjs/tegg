@@ -1,10 +1,10 @@
 import {
   AccessLevel,
-  InjectObjectDescriptor,
-  ObjectInitTypeLike,
-  ProtoDescriptor,
-  ProtoDescriptorTypeLike,
-  QualifierInfo,
+  type InjectObjectDescriptor,
+  type ObjectInitTypeLike,
+  type ProtoDescriptor,
+  type ProtoDescriptorTypeLike,
+  type QualifierInfo,
 } from '@eggjs/tegg-types';
 
 export interface AbstractProtoDescriptorOptions {

@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 export * from '@eggjs/tegg-types/common';
-export * from './MapUtil.js';
-export * from './NameUtil.js';
-export * from './Graph.js';
-export * from './ObjectUtils.js';
-export * from './FSUtil.js';
-export * from './StackUtil.js';
-export * from './ProxyUtil.js';
-export * from './ModuleConfig.js';
-export * from './ModuleConfigs.js';
-export * from './TimerUtil.js';
+
+export * from './MapUtil.ts';
+export * from './NameUtil.ts';
+export * from './Graph.ts';
+export * from './ObjectUtils.ts';
+export * from './FSUtil.ts';
+export * from './StackUtil.ts';
+export * from './ProxyUtil.ts';
+export * from './ModuleConfig.ts';
+export * from './ModuleConfigs.ts';
+export * from './TimerUtil.ts';

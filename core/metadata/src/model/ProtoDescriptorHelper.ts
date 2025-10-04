@@ -1,22 +1,24 @@
+import assert from 'node:assert';
+
 import {
-  EggMultiInstancePrototypeInfo,
+  type EggMultiInstancePrototypeInfo,
   PrototypeUtil,
   QualifierUtil,
 } from '@eggjs/core-decorator';
 import {
-  EggProtoImplClass,
-  InitTypeQualifierAttribute, InjectObjectDescriptor,
+  type EggProtoImplClass,
+  InitTypeQualifierAttribute, type InjectObjectDescriptor,
   LoadUnitNameQualifierAttribute,
-  ObjectInitTypeLike,
-  ProtoDescriptor,
-  QualifierInfo,
+  type ObjectInitTypeLike,
+  type ProtoDescriptor,
+  type QualifierInfo,
   AccessLevel,
-  MultiInstancePrototypeGetObjectsContext,
+  type MultiInstancePrototypeGetObjectsContext,
   MultiInstanceType,
 } from '@eggjs/tegg-types';
-import assert from 'node:assert';
-import { ProtoSelectorContext } from './graph/index.js';
-import { ClassProtoDescriptor } from './ProtoDescriptor/index.js';
+
+import { type ProtoSelectorContext } from './graph/index.ts';
+import { ClassProtoDescriptor } from './ProtoDescriptor/index.ts';
 
 export class ProtoDescriptorHelper {
   static addDefaultQualifier(qualifiers: QualifierInfo[], initType: ObjectInitTypeLike, loadUnitName: string): QualifierInfo[] {

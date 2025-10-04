@@ -2,7 +2,20 @@
   "name": "@eggjs/tegg",
   "version": "4.0.0-beta.4",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./ajv": "./dist/ajv.js",
+      "./aop": "./dist/aop.js",
+      "./dal": "./dist/dal.js",
+      "./helper": "./dist/helper.js",
+      "./orm": "./dist/orm.js",
+      "./schedule": "./dist/schedule.js",
+      "./standalone": "./dist/standalone.js",
+      "./transaction": "./dist/transaction.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
   },
   "description": "tegg decorator packages",
   "keywords": [
@@ -13,55 +26,30 @@
   ],
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    },
-    "./ajv": {
-      "types": "./ajv.d.ts",
-      "default": "./ajv.js"
-    },
-    "./aop": {
-      "types": "./aop.d.ts",
-      "default": "./aop.js"
-    },
-    "./dal": {
-      "types": "./dal.d.ts",
-      "default": "./dal.js"
-    },
-    "./helper": {
-      "types": "./helper.d.ts",
-      "default": "./helper.js"
-    },
-    "./orm": {
-      "types": "./orm.d.ts",
-      "default": "./orm.js"
-    },
-    "./schedule": {
-      "types": "./schedule.d.ts",
-      "default": "./schedule.js"
-    },
-    "./standalone": {
-      "types": "./standalone.d.ts",
-      "default": "./standalone.js"
-    },
-    "./transaction": {
-      "types": "./transaction.d.ts",
-      "default": "./transaction.js"
-    }
+    ".": "./src/index.ts",
+    "./ajv": "./src/ajv.ts",
+    "./aop": "./src/aop.ts",
+    "./dal": "./src/dal.ts",
+    "./helper": "./src/helper.ts",
+    "./orm": "./src/orm.ts",
+    "./schedule": "./src/schedule.ts",
+    "./standalone": "./src/standalone.ts",
+    "./transaction": "./src/transaction.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
   },
   "files": [
-    "*.js",
-    "*.d.ts"
+    "dist"
   ],
   "scripts": {
-    "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/core/tegg",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
@@ -71,7 +59,7 @@
     "directory": "core/tegg"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/ajv-decorator": "^4.0.0-beta.4",
@@ -95,7 +83,11 @@
   },
   "devDependencies": {
     "@types/node": "22",
-    "ts-node": "10",
-    "typescript": "5"
-  }
+    "typescript": "5",
+    "tsdown": "^0.15.6",
+    "unplugin-unused": "^0.5.3"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

@@ -1,6 +1,7 @@
-import { GraphNode, GraphNodeObj, EdgeMeta } from '@eggjs/tegg-common-util';
-import { ProtoDescriptor } from '@eggjs/tegg-types';
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.js';
+import { GraphNode, type GraphNodeObj, type EdgeMeta } from '@eggjs/tegg-common-util';
+import { type ProtoDescriptor } from '@eggjs/tegg-types';
+
+import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
 
 export interface GlobalModuleNodeOptions {
   name: string;
@@ -9,7 +10,12 @@ export interface GlobalModuleNodeOptions {
 }
 
 export class ModuleDependencyMeta implements EdgeMeta {
-  constructor(readonly obj: ProtoDescriptor, readonly injectObj: PropertyKey) {
+  readonly obj: ProtoDescriptor;
+  readonly injectObj: PropertyKey;
+
+  constructor(obj: ProtoDescriptor, injectObj: PropertyKey) {
+    this.obj = obj;
+    this.injectObj = injectObj;
   }
 
   equal(meta: ModuleDependencyMeta): boolean {

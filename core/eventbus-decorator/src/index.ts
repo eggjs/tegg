@@ -1,8 +1,4 @@
-export * from './EventBus.js';
-export * from './Event.js';
-export * from './EventInfoUtil.js';
-export * from './EventContext.js';
-
-// trick for use declaration
-export interface Events {
-}
+export * from './EventBus.ts';
+export * from './Event.ts';
+export * from './EventInfoUtil.ts';
+export * from './EventContext.ts';

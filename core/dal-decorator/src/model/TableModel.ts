@@ -1,11 +1,13 @@
 import assert from 'node:assert';
+
 import pluralize from 'pluralize';
 import snakecase from 'lodash.snakecase';
 import { IndexType } from '@eggjs/tegg-types';
 import type { CompressionType, EggProtoImplClass, InsertMethod, RowFormat } from '@eggjs/tegg-types';
-import { ColumnModel } from './ColumnModel.js';
-import { IndexModel } from './IndexModel.js';
-import { TableInfoUtil, ColumnInfoUtil, IndexInfoUtil } from '../util/index.js';
+
+import { ColumnModel } from './ColumnModel.ts';
+import { IndexModel } from './IndexModel.ts';
+import { TableInfoUtil, ColumnInfoUtil, IndexInfoUtil } from '../util/index.ts';
 
 export class TableModel<T=object> {
   clazz: EggProtoImplClass<T>;

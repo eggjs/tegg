@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+
 import pathToRegexp from 'path-to-regexp';
 import { HTTPParamType } from '@eggjs/tegg-types';
 import type { HTTPMethodEnum, MethodMeta, MiddlewareFunc } from '@eggjs/tegg-types';

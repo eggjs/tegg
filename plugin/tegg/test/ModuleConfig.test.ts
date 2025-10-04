@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getAppBaseDir } from './utils.ts';
 
 describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
   let app: MockApplication;
@@ -14,7 +17,7 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
 
   before(async () => {
     app = mm.app({
-      baseDir: 'apps/inject-module-config',
+      baseDir: getAppBaseDir('inject-module-config'),
     });
     await app.ready();
   });

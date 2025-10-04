@@ -1,4 +1,5 @@
 export * from '@eggjs/tegg-types/lifecycle';
-export * from './LifycycleUtil.js';
-export * from './IdenticalObject.js';
-export * from './decorator/index.js';
+
+export * from './LifycycleUtil.ts';
+export * from './IdenticalObject.ts';
+export * from './decorator/index.ts';

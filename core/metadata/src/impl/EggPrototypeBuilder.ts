@@ -1,5 +1,6 @@
 import assert from 'node:assert';
-import { InjectType, PrototypeUtil, QualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
+
+import { InjectType, PrototypeUtil, type QualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
 import type {
   AccessLevel,
   EggProtoImplClass,
@@ -15,13 +16,14 @@ import type {
 import {
   DEFAULT_PROTO_IMPL_TYPE,
   InitTypeQualifierAttribute,
-  InjectConstructorProto,
+  type InjectConstructorProto,
   ObjectInitType,
 } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { EggPrototypeFactory, EggPrototypeCreatorFactory } from '../factory/index.js';
-import { EggPrototypeImpl } from './EggPrototypeImpl.js';
-import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.js';
+
+import { EggPrototypeFactory, EggPrototypeCreatorFactory } from '../factory/index.ts';
+import { EggPrototypeImpl } from './EggPrototypeImpl.ts';
+import { EggPrototypeNotFound, MultiPrototypeFound } from '../errors.ts';
 
 export class EggPrototypeBuilder {
   private clazz: EggProtoImplClass;

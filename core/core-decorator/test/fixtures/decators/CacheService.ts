@@ -1,7 +1,7 @@
-import { ContextProto } from '../../../src/index.js';
-import { Inject, InjectOptional } from '../../../src/index.js';
-import { ICache } from './ICache.js';
-import { TestService, TestService2 } from './OtherService.js';
+import { ContextProto } from '../../../src/index.ts';
+import { Inject, InjectOptional } from '../../../src/index.ts';
+import { type ICache } from './ICache.ts';
+import { TestService, TestService2 } from './OtherService.ts';
 
 @ContextProto()
 export class TestService3 {
@@ -20,7 +20,7 @@ export class TestService4 {
 
 @ContextProto()
 export default class CacheService {
-  static fileName = __filename;
+  static fileName = import.meta.filename;
 
   @Inject({
     name: 'fooCache',
