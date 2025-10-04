@@ -38,11 +38,11 @@
     "directory": "core/eventbus-runtime"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/eventbus-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/eventbus-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0"
   },
@@ -50,8 +50,8 @@
     "node": ">=22.18.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-loader": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
     "@types/node": "22",
     "coffee": "5",
     "egg": "beta",

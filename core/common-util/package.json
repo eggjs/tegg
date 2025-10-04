@@ -37,7 +37,7 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/tegg-types": "^4.0.0-beta.4",
+    "@eggjs/tegg-types": "workspace:*",
     "@eggjs/utils": "beta",
     "reflect-metadata": "^0.2.2",
     "extend2": "^4.0.0",

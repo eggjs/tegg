@@ -55,29 +55,29 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^4.0.0-beta.4",
-    "@eggjs/tegg": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
-    "@eggjs/tegg-loader": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-schedule-decorator": "^4.0.0-beta.4"
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-schedule-decorator": "workspace:*"
   },
   "peerDependencies": {
-    "egg": "beta",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
+    "egg": "catalog:",
+    "@eggjs/tegg-plugin": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
-    "@eggjs/mock": "beta",
-    "@eggjs/module-test-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-config": "^4.0.0-beta.4",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.4",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/mock": "catalog:",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
     "@types/mocha": "10",
     "@types/node": "22",
     "mocha": "11",
-    "egg": "beta",
+    "egg": "catalog:",
     "typescript": "5",
     "tsdown": "^0.15.6",
     "unplugin-unused": "^0.5.3"

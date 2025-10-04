@@ -13,7 +13,7 @@ Tegg is a modular IoC (Inversion of Control) framework for Egg.js, providing dep
 
 ## Monorepo Structure
 
-This is a Lerna-managed monorepo with npm workspaces:
+This is a Lerna-managed monorepo with pnpm workspaces:
 
 ```
 core/          # 24 core packages - decorators, runtime, metadata, loaders
@@ -46,46 +46,45 @@ standalone/    # 1 standalone package - standalone runtime without Egg.js
 
 ### Build & Clean
 ```bash
-npm run tsc:pub              # Build all packages for publishing
-npm run tsc:pub-workspaces   # Build using npm workspaces
-npm run clean                # Clean all build artifacts (lerna)
-npm run clean-workspaces     # Clean using npm workspaces
+pnpm run build               # Build all packages for publishing
+pnpm run clean               # Clean all build artifacts (lerna)
+pnpm run clean-workspaces    # Clean using pnpm workspaces
 ```
 
 ### Testing
 ```bash
-npm test                     # Run vitest tests (core packages)
-npm run test:mocha           # Run mocha tests (plugin/tegg only)
-npm run coverage             # Run coverage for core packages
-npm run coverage:mocha       # Run coverage for mocha tests
-npm run ci                   # Full CI: clean, lint, coverage
+pnpm test                    # Run vitest tests (core packages)
+pnpm run test:mocha          # Run mocha tests (plugin/tegg only)
+pnpm run coverage            # Run coverage for core packages
+pnpm run coverage:mocha      # Run coverage for mocha tests
+pnpm run ci                  # Full CI: clean, lint, coverage
 ```
 
 ### Type Checking & Linting
 ```bash
-npm run typecheck            # Type check all workspaces
-npm run lint                 # Run oxlint + eslint
-npm run lint:fix             # Auto-fix lint issues
-npm run oxlint               # Run oxlint with type-aware checking
+pnpm run typecheck           # Type check all workspaces
+pnpm run lint                # Run oxlint + eslint
+pnpm run lint:fix            # Auto-fix lint issues
+pnpm run oxlint              # Run oxlint with type-aware checking
 ```
 
 ### Publishing
 ```bash
-npm run bump                 # Create new version (conventional commits)
-npm run pub                  # Publish from git tags
-npm run pub-canary           # Publish canary version
+pnpm run bump                # Create new version (conventional commits)
+pnpm run pub                 # Publish from git tags
+pnpm run pub-canary          # Publish canary version
 ```
 
 ### Working with Individual Packages
 ```bash
 # Type check a specific package
-npm run typecheck -w core/runtime
+pnpm run typecheck --filter @eggjs/tegg-runtime
 
 # Test a specific package
-npm test core/runtime
+pnpm test --filter @eggjs/tegg-runtime
 
 # Build a specific package
-npm run tsc -w core/metadata
+pnpm run build --filter @eggjs/tegg-metadata
 ```
 
 ## Architecture Concepts

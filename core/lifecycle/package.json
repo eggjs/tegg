@@ -44,8 +44,8 @@
     }
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "22",

@@ -59,25 +59,25 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/dal-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/dal-decorator": "^4.0.0-beta.4"
+    "@eggjs/dal-runtime": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/dal-decorator": "workspace:*"
   },
   "peerDependencies": {
-    "egg": "beta",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
+    "egg": "catalog:",
+    "@eggjs/tegg-plugin": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
-    "@eggjs/mock": "beta",
-    "@eggjs/tegg-aop-plugin": "^4.0.0-beta.4",
-    "@eggjs/tegg-config": "^4.0.0-beta.4",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.4",
-    "@eggjs/tracer": "beta",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/mock": "catalog:",
+    "@eggjs/tegg-aop-plugin": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "catalog:",
     "@types/node": "22",
     "@types/mocha": "10",
-    "egg": "beta",
+    "egg": "catalog:",
     "globby": "14",
     "mocha": "11",
     "mochawesome-with-mocha": "^8.0.0",

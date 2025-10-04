@@ -38,11 +38,11 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/dal-decorator": "^4.0.0-beta.4",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/rds": "^1.0.0",
-    "@eggjs/tegg-loader": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "js-beautify": "^1.15.3",
     "lodash": "^4.17.21",
     "nunjucks": "^3.2.4",

@@ -37,10 +37,10 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "22",

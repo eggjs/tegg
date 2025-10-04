@@ -47,17 +47,17 @@
     }
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-dynamic-inject": "^4.0.0-beta.4",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-dynamic-inject": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-loader": "^4.0.0-beta.4",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
     "@types/node": "22",
     "typescript": "5",
     "tsdown": "^0.15.6",

@@ -15,19 +15,19 @@
   "engines": {
     "node": ">=22.18.0"
   },
+  "packageManager": "pnpm@10.18.0",
   "scripts": {
     "lint:fix": "npm run lint -- --fix",
     "lint": "oxlint --type-aware",
     "typecheck": "npm run clean && lerna run --parallel typecheck",
     "test": "vitest run",
-    "test:mocha": "lerna run --parallel test:mocha",
-    "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
+    "test:mocha": "pnpm -r run test:mocha",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
-    "clean": "lerna run --parallel clean",
+    "clean": "pnpm -r run clean",
     "clean-workspaces": "npm run clean --workspaces --if-present",
     "prepare-test": "lerna run --parallel prepare-test",
-    "build": "lerna run build",
+    "build": "pnpm -r run build",
     "build-workspaces": "npm run build --workspaces --if-present",
     "coverage": "vitest run --coverage",
     "cov:mocha": "lerna run --parallel cov:mocha",
@@ -38,23 +38,18 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "devDependencies": {
-    "@eggjs/tsconfig": "beta",
-    "@vitest/coverage-v8": "beta",
-    "ajv": "^8.17.1",
-    "c8": "^10.1.3",
-    "lerna": "^6.1.0",
-    "oxlint": "^1.18.0",
-    "oxlint-tsgolint": "^0.2.0",
-    "rimraf": "^6.0.1",
-    "tsx": "^4.19.2",
-    "typescript": "^5.9.3",
-    "vite-plugin-swc-transform": "^1.1.0",
-    "vitest": "beta",
-    "vite": "npm:rolldown-vite@latest"
-  },
-  "workspaces": [
-    "core/*",
-    "plugin/*",
-    "standalone/*"
-  ]
+    "@eggjs/tsconfig": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "ajv": "catalog:",
+    "c8": "catalog:",
+    "lerna": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "rimraf": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vite-plugin-swc-transform": "catalog:",
+    "vitest": "catalog:",
+    "vite": "catalog:"
+  }
 }

@@ -38,12 +38,12 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^4.0.0-beta.4",
+    "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/cookies": "beta",
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
     "is-type-of": "^2.2.0",
     "path-to-regexp": "^1.9.0",
     "reflect-metadata": "^0.2.2"
