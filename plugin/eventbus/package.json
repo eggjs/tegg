@@ -34,6 +34,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
+    "test:mocha": "egg-bin test",
     "clean": "rimraf dist",
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
@@ -62,6 +63,7 @@
     "egg": "beta"
   },
   "devDependencies": {
+    "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
     "@eggjs/tegg-common-util": "^4.0.0-beta.4",
     "@eggjs/tegg-config": "^4.0.0-beta.4",
@@ -69,6 +71,7 @@
     "@eggjs/tracer": "beta",
     "@types/node": "22",
     "egg": "beta",
+    "mocha": "11",
     "typescript": "5",
     "tsdown": "^0.15.6"
   },

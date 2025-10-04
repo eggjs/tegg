@@ -1,13 +1,12 @@
-import path from 'node:path';
-
-import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
+import { expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { type IEventContext } from '@eggjs/tegg';
 
-import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService.js';
-import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger.js';
-import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler.js';
+import { HelloService } from './fixtures/apps/event-app/app/event-module/HelloService.ts';
+import { HelloLogger } from './fixtures/apps/event-app/app/event-module/HelloLogger.ts';
+import { MultiEventHandler } from './fixtures/apps/event-app/app/event-module/MultiEventHandler.ts';
+import { getFixtures } from './utils.ts';
 
 describe('plugin/eventbus/test/eventbus.test.ts', () => {
   let app: MockApplication;
@@ -16,14 +15,14 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
     return mm.restore();
   });
 
-  beforeAll(async () => {
+  before(async () => {
     app = mm.app({
-      baseDir: path.join(import.meta.dirname, 'fixtures/apps/event-app'),
+      baseDir: getFixtures('apps/event-app'),
     });
     await app.ready();
   });
 
-  afterAll(() => {
+  after(() => {
     return app.close();
   });
 
