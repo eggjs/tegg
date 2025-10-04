@@ -38,17 +38,19 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
+  },
+  "peerDependencies": {
+    "egg": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@types/node": "22",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

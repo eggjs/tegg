@@ -38,11 +38,12 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4",
-    "lodash.snakecase": "^4.1.1",
-    "pluralize": "^8.0.0"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/rds": "catalog:",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "lodash.snakecase": "catalog:",
+    "pluralize": "catalog:"
   },
   "publishConfig": {
     "access": "public",
@@ -52,11 +53,11 @@
     }
   },
   "devDependencies": {
-    "@types/lodash.snakecase": "^4.1.9",
-    "@types/node": "22",
-    "@types/pluralize": "^0.0.33",
-    "typescript": "5",
-    "tsdown": "^0.15.6"
+    "@types/lodash.snakecase": "catalog:",
+    "@types/node": "catalog:",
+    "@types/pluralize": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -9,9 +9,8 @@ export class EggContextHandler {
     this.app = app;
   }
 
-  getContextCallback(): EggContext {
+  getContextCallback(): EggContext | undefined {
     const ctx = this.app.currentContext;
-    // @ts-expect-error teggContext is not typed, will fix in egg soon
     return ctx?.teggContext;
   }
 

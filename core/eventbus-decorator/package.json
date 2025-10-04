@@ -35,16 +35,16 @@
     "directory": "core/eventbus-decorator"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "22",
-    "coffee": "5",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@types/node": "catalog:",
+    "coffee": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "engines": {
     "node": ">=22.18.0"

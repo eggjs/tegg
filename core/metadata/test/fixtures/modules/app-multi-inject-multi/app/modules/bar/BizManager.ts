@@ -8,7 +8,7 @@ import {
   MultiInstanceInfo,
 } from '@eggjs/tegg';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
-import { EggProtoImplClass, LoadUnitNameQualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
+import { type EggProtoImplClass, LoadUnitNameQualifierAttribute, QualifierUtil } from '@eggjs/core-decorator';
 import { Secret, SecretQualifierAttribute } from '../foo/Secret.js';
 
 export const BizManagerQualifierAttribute = Symbol.for('Qualifier.BizManager');

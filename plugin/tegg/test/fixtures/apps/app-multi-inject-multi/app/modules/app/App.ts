@@ -1,4 +1,4 @@
-import { Inject, SingletonProto } from '@eggjs/core-decorator';
+import { Inject, SingletonProto } from '@eggjs/tegg';
 
 import { BizManager, BizManagerQualifier } from '../bar/BizManager.ts';
 

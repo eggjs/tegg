@@ -44,14 +44,14 @@
     }
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-types": "^4.0.0-beta.4"
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "22",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -59,36 +59,34 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^4.0.0-beta.4",
-    "@eggjs/tegg": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
-    "@eggjs/tegg-loader": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/tegg-orm-decorator": "^4.0.0-beta.4",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.4",
-    "leoric": "^2.12.2",
-    "sdk-base": "^5.0.1"
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-orm-decorator": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "leoric": "catalog:",
+    "sdk-base": "catalog:"
   },
   "peerDependencies": {
-    "egg": "beta",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.4"
+    "egg": "catalog:",
+    "@eggjs/tegg-plugin": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
-    "@eggjs/mock": "beta",
-    "@eggjs/module-test-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-config": "^4.0.0-beta.4",
-    "@eggjs/tegg-plugin": "^4.0.0-beta.4",
-    "@eggjs/tracer": "beta",
-    "@types/mocha": "10",
-    "mocha": "11",
-    "@types/node": "22",
-    "egg": "beta",
-    "mysql2": "3",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@eggjs/bin": "catalog:",
+    "@eggjs/mock": "catalog:",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "catalog:",
+    "@types/mocha": "catalog:",
+    "mocha": "catalog:",
+    "@types/node": "catalog:",
+    "egg": "catalog:",
+    "mysql2": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "publishConfig": {
     "access": "public",

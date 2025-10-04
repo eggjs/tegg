@@ -1,4 +1,5 @@
-import { Inject, SingletonProto } from '@eggjs/core-decorator';
+import { Inject, SingletonProto } from '@eggjs/tegg';
+
 import { Secret, SecretQualifier } from '../foo/Secret.ts';
 
 @SingletonProto()

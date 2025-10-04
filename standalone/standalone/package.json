@@ -41,17 +41,14 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/egg-module-common": "^4.0.0-beta.4",
-    "@eggjs/tegg": "^4.0.0-beta.4",
-    "@eggjs/tegg-aop-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-background-task": "^4.0.0-beta.4",
-    "@eggjs/tegg-common-util": "^4.0.0-beta.4",
-    "@eggjs/tegg-dal-plugin": "^4.0.0-beta.4",
-    "@eggjs/tegg-dynamic-inject-runtime": "^4.0.0-beta.4",
-    "@eggjs/tegg-lifecycle": "^4.0.0-beta.4",
-    "@eggjs/tegg-loader": "^4.0.0-beta.4",
-    "@eggjs/tegg-metadata": "^4.0.0-beta.4",
-    "@eggjs/tegg-runtime": "^4.0.0-beta.4"
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-aop-runtime": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-dal-plugin": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*"
   },
   "publishConfig": {
     "access": "public",
@@ -61,15 +58,17 @@
     }
   },
   "devDependencies": {
-    "@eggjs/bin": "beta",
-    "@eggjs/tegg-ajv-plugin": "^4.0.0-beta.4",
-    "@eggjs/utils": "beta",
-    "@types/mocha": "10",
-    "@types/node": "22",
-    "mm": "4",
-    "typescript": "5",
-    "tsdown": "^0.15.6",
-    "unplugin-unused": "^0.5.3"
+    "@eggjs/bin": "catalog:",
+    "@eggjs/tegg-ajv-plugin": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dal-decorator": "workspace:*",
+    "@eggjs/utils": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "mm": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
