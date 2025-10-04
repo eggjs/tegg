@@ -2,8 +2,8 @@
 
 ## Required
 
-- Node.js >= 20.0.0
-- egg >= 4.0.0
+- Node.js >= 22.18.0
+- egg >= 4.1.0
 - esm only
 
 ## Install
