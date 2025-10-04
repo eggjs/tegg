@@ -44,7 +44,6 @@
     "egg-errors": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/tegg": "workspace:*",
     "@types/node": "catalog:",
     "globby": "catalog:",
     "is-type-of": "catalog:",
