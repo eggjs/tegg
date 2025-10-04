@@ -97,15 +97,6 @@ jobs:
 
   test-macos:
     runs-on: macos-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: test
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     strategy:
       fail-fast: false
