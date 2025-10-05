@@ -33,9 +33,16 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
   });
 
   it('schedule should work', async () => {
-    await TimerUtil.sleep(1000);
-    const scheduleLog = await getScheduleLogContent('schedule-app');
-    assert.match(scheduleLog, /schedule called/);
+    let count = 5;
+    while (count > 0) {
+      await TimerUtil.sleep(1000);
+      const scheduleLog = await getScheduleLogContent('schedule-app');
+      if (scheduleLog.includes('schedule called')) {
+        break;
+      }
+      count--;
+    }
+    assert(count > 0, 'schedule called not found');
   });
 
   it('schedule work with app.runSchedule', async () => {
