@@ -14,6 +14,6 @@ export class FooSubscriber {
 
   async subscribe() {
     this.logger.info('schedule called');
-    console.warn('FooSubscriber schedule called');
+    // console.warn('FooSubscriber schedule called');
   }
 }
