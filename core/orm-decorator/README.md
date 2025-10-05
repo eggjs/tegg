@@ -22,7 +22,9 @@ npm i --save @eggjs/tegg-orm-decorator
 
 ```ts
 import { Model, Attribute } from '@eggjs/tegg-orm-decorator';
-import { DataTypes, Bone } from 'leoric';
+import leoric from 'leoric';
+
+const { DataTypes, Bone } = leoric;
 
 @Model()
 export class App extends Bone {
@@ -44,10 +46,7 @@ export class AppService {
   @Inject()
   App: typeof App;
 
-  async createApp(data: {
-    name: string;
-    desc: string;
-  }): Promise<App> {
+  async createApp(data: { name: string; desc: string }): Promise<App> {
     const bone = await this.App.create(data as any);
     return bone as App;
   }
@@ -57,5 +56,4 @@ export class AppService {
     return app as App;
   }
 }
-
 ```
