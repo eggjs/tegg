@@ -46,6 +46,7 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
   });
 
   it('schedule work with app.runSchedule', async () => {
+    console.error(app.scheduleWorker.scheduleItems);
     await app.runSchedule(FooSubscriberFilePath);
   });
 });

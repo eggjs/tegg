@@ -36,7 +36,7 @@
   },
   "scripts": {
     "test:mocha": "egg-bin test",
-    "cov:mocha": "egg-bin cov",
+    "cov:mocha": "NODE_DEBUG=egg/schedule*,tegg/plugin/schedule* egg-bin cov",
     "clean": "rimraf dist",
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
