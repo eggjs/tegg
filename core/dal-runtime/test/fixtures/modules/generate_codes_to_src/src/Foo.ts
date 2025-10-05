@@ -1,17 +1,18 @@
-import {
-  Column,
-  ColumnType,
+import type {
   Geometry,
   GeometryCollection,
-  Index,
-  IndexType,
   Line,
-  IndexStoreType,
   MultiLine,
   MultiPoint,
   MultiPolygon,
   Point,
-  Polygon,
+  Polygon} from '@eggjs/dal-decorator';
+import {
+  Column,
+  ColumnType,
+  Index,
+  IndexType,
+  IndexStoreType,
   Table,
 } from '@eggjs/dal-decorator';
 

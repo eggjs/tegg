@@ -1,6 +1,7 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
 
-import { BizManager, BizManagerQualifier } from '../bar/BizManager.ts';
+import type { BizManager} from '../bar/BizManager.ts';
+import { BizManagerQualifier } from '../bar/BizManager.ts';
 
 @SingletonProto()
 export class App {

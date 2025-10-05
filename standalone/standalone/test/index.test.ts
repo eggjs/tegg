@@ -5,12 +5,13 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
 import { mm } from 'mm';
-import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
+import type { ModuleConfigs} from '@eggjs/tegg/helper';
+import { type ModuleConfig, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
 
 import { main, StandaloneContext, Runner, preLoad } from '../src/index.ts';
 import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.js';
-import { Foo } from './fixtures/dal-module/src/Foo.js';
+import type { Foo } from './fixtures/dal-module/src/Foo.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

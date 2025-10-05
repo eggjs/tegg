@@ -13,18 +13,19 @@ import {
   LoaderFactory,
   ModuleConfigUtil,
 } from '@eggjs/tegg/helper';
+import type {
+  TableModel} from '@eggjs/tegg/dal';
 import {
   DataSourceInjectName,
   DataSourceQualifierAttribute,
-  TableInfoUtil,
-  TableModel,
+  TableInfoUtil
 } from '@eggjs/tegg/dal';
 import { DataSource } from '@eggjs/dal-runtime';
 
 import { TableModelManager } from './TableModelManager.ts';
 import { MysqlDataSourceManager } from './MysqlDataSourceManager.ts';
 import { SqlMapManager } from './SqlMapManager.ts';
-import { TransactionalAOP } from './TransactionalAOP.ts';
+import type { TransactionalAOP } from './TransactionalAOP.ts';
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,

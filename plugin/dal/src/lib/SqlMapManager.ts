@@ -1,4 +1,4 @@
-import { TableSqlMap } from '@eggjs/dal-runtime';
+import type { TableSqlMap } from '@eggjs/dal-runtime';
 
 export class SqlMapManager {
   static instance = new SqlMapManager();

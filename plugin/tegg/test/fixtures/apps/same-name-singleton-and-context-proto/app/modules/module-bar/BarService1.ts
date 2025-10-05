@@ -1,5 +1,5 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
-import { FooService } from '../module-foo/FooService.js';
+import type { FooService } from '../module-foo/FooService.js';
 
 @SingletonProto()
 export class BarService1 {

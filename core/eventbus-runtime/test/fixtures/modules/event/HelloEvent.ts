@@ -1,4 +1,5 @@
-import { Event, EventBus } from '@eggjs/eventbus-decorator';
+import type { EventBus } from '@eggjs/eventbus-decorator';
+import { Event } from '@eggjs/eventbus-decorator';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
 
 declare module '@eggjs/eventbus-decorator' {

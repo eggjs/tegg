@@ -2,5 +2,8 @@
   "$schema": "node_modules/oxlint/configuration_schema.json",
   "ignorePatterns": [
     "core/loader/test/fixtures/modules/loader-failed/AppRepo.ts"
-  ]
+  ],
+  "rules": {
+    "typescript/consistent-type-imports": "error"
+  }
 }

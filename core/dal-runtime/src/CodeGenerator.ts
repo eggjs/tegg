@@ -6,7 +6,7 @@ import _ from 'lodash';
 import nunjucks, { type Environment } from 'nunjucks';
 import { Templates } from '@eggjs/tegg-types';
 import type { CodeGeneratorOptions } from '@eggjs/tegg-types';
-import { ColumnModel, TableModel } from '@eggjs/dal-decorator';
+import type { ColumnModel, TableModel } from '@eggjs/dal-decorator';
 import { PrototypeUtil } from '@eggjs/core-decorator';
 
 import { SqlGenerator } from './SqlGenerator.ts';

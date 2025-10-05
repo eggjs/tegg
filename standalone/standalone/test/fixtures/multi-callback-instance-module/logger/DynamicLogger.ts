@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { Writable } from 'node:stream';
+import type { Writable } from 'node:stream';
 import path from 'node:path';
 import { EOL } from 'node:os';
 import {

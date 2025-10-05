@@ -1,4 +1,5 @@
-import { type BaseDaoType, TableModel } from '@eggjs/dal-decorator';
+import type { TableModel } from '@eggjs/dal-decorator';
+import { type BaseDaoType } from '@eggjs/dal-decorator';
 import type { Logger, SqlMap } from '@eggjs/tegg-types';
 
 import { BaseSqlMapGenerator } from './BaseSqlMap.ts';

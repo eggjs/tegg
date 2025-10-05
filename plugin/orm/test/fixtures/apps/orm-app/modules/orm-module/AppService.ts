@@ -1,7 +1,7 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
 
-import { Orm } from '../../../../../../src/index.ts';
-import { App } from './model/App.ts';
+import type { Orm } from '../../../../../../src/index.ts';
+import type { App } from './model/App.ts';
 
 @SingletonProto()
 export class AppService {

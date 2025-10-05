@@ -1,4 +1,5 @@
-import { type ObjectInitTypeLike, AccessLevel } from '../enum/index.ts';
+import type { AccessLevel } from '../enum/index.ts';
+import { type ObjectInitTypeLike } from '../enum/index.ts';
 import { type EggPrototypeName } from './EggPrototypeInfo.ts';
 import { type QualifierInfo } from './QualifierInfo.ts';
 

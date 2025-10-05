@@ -1,6 +1,6 @@
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
-import App from '../multi-module-common/model/App.js';
-import PersistenceService from './PersistenceService.js';
+import type App from '../multi-module-common/model/App.js';
+import type PersistenceService from './PersistenceService.js';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

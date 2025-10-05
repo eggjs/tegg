@@ -12,7 +12,8 @@ import { FrameworkErrorFormater } from 'egg-errors';
 import { QualifierUtil } from '@eggjs/core-decorator';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
-import { ModuleDependencyMeta, GlobalModuleNode } from './GlobalModuleNode.ts';
+import type { GlobalModuleNode } from './GlobalModuleNode.ts';
+import { ModuleDependencyMeta } from './GlobalModuleNode.ts';
 import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
 import { GlobalModuleNodeBuilder } from './GlobalModuleNodeBuilder.ts';
 import type { ModuleDescriptor } from '../ModuleDescriptor.ts';

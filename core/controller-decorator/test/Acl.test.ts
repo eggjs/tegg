@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'vitest';
 import { ControllerType } from '@eggjs/tegg-types';
 import { AclController } from './fixtures/AclController.js';
-import { ControllerMetaBuilderFactory, HTTPControllerMeta } from '../src/index.js';
+import type { HTTPControllerMeta } from '../src/index.js';
+import { ControllerMetaBuilderFactory } from '../src/index.js';
 
 describe('test/Acl.test.ts', () => {
   it('should work', () => {

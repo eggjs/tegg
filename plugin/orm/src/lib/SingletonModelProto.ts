@@ -9,7 +9,7 @@ import {
   type MetaDataKey, type QualifierAttribute, type QualifierValue,
 } from '@eggjs/tegg';
 import { type Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
-import { Bone } from 'leoric';
+import type { Bone } from 'leoric';
 
 export default class SingletonModelProto implements EggPrototype {
   [key: symbol]: PropertyDescriptor;

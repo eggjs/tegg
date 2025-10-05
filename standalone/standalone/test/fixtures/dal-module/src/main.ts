@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { ContextProto, Inject } from '@eggjs/tegg';
 import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
-import FooDAO from './dal/dao/FooDAO.ts';
+import type FooDAO from './dal/dao/FooDAO.ts';
 import { Foo } from './Foo.ts';
 
 @Runner()

@@ -22,7 +22,9 @@ npm i --save @eggjs/tegg-orm-decorator
 
 ```ts
 import { Model, Attribute } from '@eggjs/tegg-orm-decorator';
-import { DataTypes, Bone } from 'leoric';
+import leoric from 'leoric';
+
+const { DataTypes, Bone } = leoric;
 
 @Model()
 export class App extends Bone {

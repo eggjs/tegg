@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { EggRuntimeContext } from '@eggjs/tegg-types';
+import type { EggRuntimeContext } from '@eggjs/tegg-types';
 import { ContextHandler } from '../../src/index.js';
 
 export class EggContextStorage {

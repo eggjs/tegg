@@ -1,7 +1,7 @@
 import { AccessLevel } from '@eggjs/tegg-types';
 import { ContextProto, Inject } from '@eggjs/core-decorator';
-import App from '../multi-module-common/model/App.js';
-import PersistenceService from './PersistenceService.js';
+import type App from '../multi-module-common/model/App.js';
+import type PersistenceService from './PersistenceService.js';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

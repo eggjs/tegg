@@ -1,4 +1,4 @@
-import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
+import type { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 
 export class EggScheduleMetadataConvertor {
   static convertToEggSchedule(metadata: ScheduleMetadata<object>): object {

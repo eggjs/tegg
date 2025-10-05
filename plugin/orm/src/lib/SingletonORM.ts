@@ -4,7 +4,7 @@ import {
   SingletonProto,
 } from '@eggjs/tegg';
 
-import { LeoricRegister } from './LeoricRegister.ts';
+import type { LeoricRegister } from './LeoricRegister.ts';
 import type { RealmType } from './types.ts';
 
 @SingletonProto({

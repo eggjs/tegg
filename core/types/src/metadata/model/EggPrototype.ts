@@ -1,8 +1,9 @@
+import type {
+  AccessLevel, InjectType} from '../../core-decorator/index.ts';
 import {
-  AccessLevel,
   type EggProtoImplClass,
   type EggPrototypeInfo,
-  type EggPrototypeName, InjectType,
+  type EggPrototypeName,
   type MetaDataKey,
   type ObjectInitTypeLike,
   type QualifierAttribute,

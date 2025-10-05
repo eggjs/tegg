@@ -1,5 +1,6 @@
+import type {
+  AccessLevel} from '@eggjs/tegg-types';
 import {
-  AccessLevel,
   type InjectObjectDescriptor,
   type ObjectInitTypeLike,
   type ProtoDescriptor,

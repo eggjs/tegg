@@ -11,7 +11,8 @@ import type {
   EggPrototypeLifecycleContext,
 } from '@eggjs/tegg-types';
 
-import { EggPrototypeLifecycleUtil, ClassProtoDescriptor } from '../model/index.ts';
+import type { ClassProtoDescriptor } from '../model/index.ts';
+import { EggPrototypeLifecycleUtil } from '../model/index.ts';
 
 const debug = debuglog('tegg/core/metadata/factory/EggPrototypeCreatorFactory');
 

@@ -12,8 +12,8 @@ import awaitEvent from 'await-event';
 // @ts-expect-error await-first is not typed
 import awaitFirst from 'await-first';
 
-import { EventContextFactory } from './EventContextFactory.ts';
-import { EventHandlerFactory } from './EventHandlerFactory.ts';
+import type { EventContextFactory } from './EventContextFactory.ts';
+import type { EventHandlerFactory } from './EventHandlerFactory.ts';
 export interface Event {
   name: EventName;
   args: Array<any>;

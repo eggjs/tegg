@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import { type Loader, TeggError } from '@eggjs/tegg-metadata';
 import {
   AccessLevel,

@@ -1,19 +1,20 @@
 import assert from 'node:assert/strict';
 
-import { Application, Router } from 'egg';
+import type { Application, Router } from 'egg';
+import type {
+  HTTPControllerMeta,
+  HTTPMethodMeta} from '@eggjs/tegg';
 import {
   CONTROLLER_META_DATA,
   type ControllerMetadata,
-  ControllerType,
-  HTTPControllerMeta,
-  HTTPMethodMeta,
+  ControllerType
 } from '@eggjs/tegg';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import type { EggContainerFactory } from '@eggjs/tegg-runtime';
 
 import { type ControllerRegister } from '../../ControllerRegister.ts';
 import { HTTPMethodRegister } from './HTTPMethodRegister.ts';
-import { RootProtoManager } from '../../RootProtoManager.ts';
+import type { RootProtoManager } from '../../RootProtoManager.ts';
 
 export class HTTPControllerRegister implements ControllerRegister {
   static instance?: HTTPControllerRegister;

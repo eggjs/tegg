@@ -1,7 +1,7 @@
 import { ContextProto } from '../../../src/index.ts';
 import { Inject, InjectOptional } from '../../../src/index.ts';
 import { type ICache } from './ICache.ts';
-import { TestService, TestService2 } from './OtherService.ts';
+import type { TestService, TestService2 } from './OtherService.ts';
 
 @ContextProto()
 export class TestService3 {

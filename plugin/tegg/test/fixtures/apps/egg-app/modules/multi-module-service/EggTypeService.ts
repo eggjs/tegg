@@ -1,5 +1,5 @@
 import { AccessLevel, EggQualifier, EggType, Inject, SingletonProto } from '@eggjs/tegg';
-import { EggLogger } from 'egg-logger';
+import type { EggLogger } from 'egg-logger';
 
 interface AppDefObj {
   from: string;

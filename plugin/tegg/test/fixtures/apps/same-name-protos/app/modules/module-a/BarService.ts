@@ -1,6 +1,6 @@
 import { SingletonProto, Inject, ModuleQualifier } from '@eggjs/tegg';
 
-import { FooService } from '../module-foo/FooService.ts';
+import type { FooService } from '../module-foo/FooService.ts';
 
 @SingletonProto()
 export class BarService {

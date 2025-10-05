@@ -3,7 +3,8 @@ import path from 'node:path';
 import { ClassUtil } from '@eggjs/tegg-metadata';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-import { HTTPMethodMeta, ParamMeta, ParamMetaUtil } from '../../model/index.ts';
+import type { ParamMeta} from '../../model/index.ts';
+import { HTTPMethodMeta, ParamMetaUtil } from '../../model/index.ts';
 import { MethodValidator, HTTPInfoUtil, MethodInfoUtil, HTTPPriorityUtil } from '../../util/index.ts';
 
 export class HTTPControllerMethodMetaBuilder {

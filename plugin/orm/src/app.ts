@@ -1,7 +1,7 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
 
-import { Orm } from './lib/SingletonORM.ts';
+import type { Orm } from './lib/SingletonORM.ts';
 import { DataSourceManager } from './lib/DataSourceManager.ts';
 import { LeoricRegister } from './lib/LeoricRegister.ts';
 import { ModelProtoManager } from './lib/ModelProtoManager.ts';

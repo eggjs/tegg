@@ -1,6 +1,6 @@
 import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
-import AppRepo from '../multi-module-repo/AppRepo.ts';
-import App from '../multi-module-common/model/App.ts';
+import type AppRepo from '../multi-module-repo/AppRepo.ts';
+import type App from '../multi-module-common/model/App.ts';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -1,7 +1,7 @@
 import { SingletonProto, AccessLevel } from '@eggjs/tegg';
 
 import { BaseFooDAO } from './base/BaseFooDAO.ts';
-import { Foo } from '../../Foo.ts';
+import type { Foo } from '../../Foo.ts';
 
 /**
  * FooDAO 类

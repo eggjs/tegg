@@ -1,4 +1,5 @@
-import { type ObjectInitTypeLike, AccessLevel } from '../enum/index.ts';
+import type { AccessLevel } from '../enum/index.ts';
+import { type ObjectInitTypeLike } from '../enum/index.ts';
 import { type QualifierInfo } from './QualifierInfo.ts';
 
 export type EggProtoImplClass<T = object> = new(...args: any[]) => T;

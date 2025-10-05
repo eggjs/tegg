@@ -1,6 +1,7 @@
-import { Context, Application } from 'egg';
-import { AbstractEggContext, type EggContext } from '@eggjs/tegg-runtime';
-import { IdenticalUtil } from '@eggjs/tegg';
+import type { Context, Application } from 'egg';
+import type { AbstractEggContext} from '@eggjs/tegg-runtime';
+import { type EggContext } from '@eggjs/tegg-runtime';
+import type { IdenticalUtil } from '@eggjs/tegg';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { type ContextCreator } from '@eggjs/tegg-eventbus-runtime';
 

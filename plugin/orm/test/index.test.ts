@@ -3,7 +3,7 @@ import os from 'node:os';
 
 import Realm from 'leoric';
 import { mm, type MockApplication } from '@eggjs/mock';
-import { Context } from 'egg';
+import type { Context } from 'egg';
 
 import { AppService } from './fixtures/apps/orm-app/modules/orm-module/AppService.ts';
 import { PkgService } from './fixtures/apps/orm-app/modules/orm-module/PkgService.ts';

@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import Realm from 'leoric';
 
 // @ts-expect-error: the library definition is wrong

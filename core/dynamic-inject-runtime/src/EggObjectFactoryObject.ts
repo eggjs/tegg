@@ -9,7 +9,7 @@ import type {
   EggObjectName,
   EggPrototype,
 } from '@eggjs/tegg-types';
-import { EggObjectFactory } from './EggObjectFactory.js';
+import type { EggObjectFactory } from './EggObjectFactory.js';
 import { EggObjectFactoryPrototype } from './EggObjectFactoryPrototype.js';
 
 const OBJ = Symbol('EggObjectFactoryObject#obj');

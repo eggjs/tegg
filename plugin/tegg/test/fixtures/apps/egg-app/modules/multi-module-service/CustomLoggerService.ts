@@ -3,7 +3,7 @@ import {
   Inject,
   SingletonProto,
 } from '@eggjs/tegg';
-import { EggLogger } from 'egg-logger';
+import type { EggLogger } from 'egg-logger';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,

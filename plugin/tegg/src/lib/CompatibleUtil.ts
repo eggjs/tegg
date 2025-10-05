@@ -1,4 +1,4 @@
-import { Application, Context } from 'egg';
+import type { Application, Context } from 'egg';
 import { type EggPrototype, EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/tegg';
 import { EggContainerFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';

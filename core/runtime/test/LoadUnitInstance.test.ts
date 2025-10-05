@@ -9,13 +9,13 @@ import { type LoadUnitInstance } from '@eggjs/tegg-types';
 import { EggTestContext } from './fixtures/EggTestContext.ts';
 import TestUtil from './util.js';
 import { EggContainerFactory } from '../src/index.js';
-import CountController from './fixtures/modules/module-for-load-unit-instance/CountController.js';
-import AppService from './fixtures/modules/multi-module/multi-module-service/AppService.js';
-import { Bar, Foo } from './fixtures/modules/extends-module/Base.js';
+import type CountController from './fixtures/modules/module-for-load-unit-instance/CountController.js';
+import type AppService from './fixtures/modules/multi-module/multi-module-service/AppService.js';
+import type { Bar, Foo } from './fixtures/modules/extends-module/Base.js';
 import { ContextHandler } from '../src/model/ContextHandler.js';
 import { EggContextStorage } from './fixtures/EggContextStorage.js';
 import { FOO_ATTRIBUTE, FooLogger } from './fixtures/modules/multi-instance-module/MultiInstance.js';
-import { FooLoggerConstructor } from './fixtures/modules/multi-instance-module/MultiInstanceConstructor.js';
+import type { FooLoggerConstructor } from './fixtures/modules/multi-instance-module/MultiInstanceConstructor.js';
 
 describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
   describe('ModuleLoadUnitInstance', () => {

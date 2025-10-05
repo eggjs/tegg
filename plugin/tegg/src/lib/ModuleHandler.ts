@@ -1,5 +1,5 @@
 import { Base } from 'sdk-base';
-import { Application, Context } from 'egg';
+import type { Application, Context } from 'egg';
 import {
   EggLoadUnitType,
   type LoadUnit,

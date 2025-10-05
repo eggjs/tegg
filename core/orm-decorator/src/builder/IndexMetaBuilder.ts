@@ -1,6 +1,7 @@
 import type { EggProtoImplClass, ModelIndexInfo } from '@eggjs/tegg-types';
 
-import { IndexMeta, AttributeMeta } from '../model/index.ts';
+import type { AttributeMeta } from '../model/index.ts';
+import { IndexMeta } from '../model/index.ts';
 import { ModelInfoUtil, NameUtil } from '../util/index.ts';
 
 export class IndexMetaBuilder {

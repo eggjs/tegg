@@ -3,7 +3,7 @@ import path from 'node:path';
 import type { ControllerMetadata, EggPrototypeName, MiddlewareFunc } from '@eggjs/tegg-types';
 import { ControllerType } from '@eggjs/tegg-types';
 
-import { HTTPMethodMeta } from './HTTPMethodMeta.ts';
+import type { HTTPMethodMeta } from './HTTPMethodMeta.ts';
 
 export class HTTPControllerMeta implements ControllerMetadata {
   readonly protoName: EggPrototypeName;

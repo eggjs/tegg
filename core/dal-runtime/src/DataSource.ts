@@ -1,8 +1,8 @@
-import { TableModel } from '@eggjs/dal-decorator';
+import type { TableModel } from '@eggjs/dal-decorator';
 import type { DataSource as IDataSource, PaginateData, SqlType } from '@eggjs/tegg-types';
 
-import { MysqlDataSource } from './MySqlDataSource.ts';
-import { TableSqlMap } from './TableSqlMap.ts';
+import type { MysqlDataSource } from './MySqlDataSource.ts';
+import type { TableSqlMap } from './TableSqlMap.ts';
 import { TableModelInstanceBuilder } from './TableModelInstanceBuilder.ts';
 
 export interface ExecuteSql {

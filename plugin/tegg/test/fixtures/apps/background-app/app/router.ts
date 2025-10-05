@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
 export default (app: Application) => {
   app.router.get('/background', app.controller.app.background);

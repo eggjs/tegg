@@ -1,5 +1,5 @@
 import { Prototype, Inject } from '@eggjs/core-decorator';
-import SprintRepo from './SprintRepo.ts';
+import type SprintRepo from './SprintRepo.ts';
 
 
 interface App {

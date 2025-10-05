@@ -1,6 +1,7 @@
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
 
-import { EventBus, Event } from '../../src/index.ts';
+import type { EventBus} from '../../src/index.ts';
+import { Event } from '../../src/index.ts';
 
 declare module '@eggjs/tegg' {
   interface Events {

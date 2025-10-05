@@ -1,4 +1,7 @@
-import { Context as EggContext } from 'egg';
+import type { Context as EggContext } from 'egg';
+import type {
+  HTTPRequest,
+  HTTPCookies} from '@eggjs/tegg';
 import {
   Context,
   HTTPController,
@@ -6,9 +9,7 @@ import {
   HTTPMethodEnum,
   Middleware,
   Request,
-  HTTPRequest,
-  Cookies,
-  HTTPCookies,
+  Cookies
 } from '@eggjs/tegg';
 import { countMw } from '../middleware/count_mw.ts';
 

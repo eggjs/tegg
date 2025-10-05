@@ -1,5 +1,5 @@
 import { SingletonProto } from '@eggjs/core-decorator';
-import { ICache, CacheValue } from './Cache.js';
+import type { ICache, CacheValue } from './Cache.js';
 
 @SingletonProto({
   name: 'cache',

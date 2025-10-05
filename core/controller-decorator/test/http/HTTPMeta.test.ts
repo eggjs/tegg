@@ -11,15 +11,16 @@ import {
   FoxController,
   FxxController,
 } from '../fixtures/HTTPFooController.js';
+import type {
+  ParamMeta,
+  HTTPControllerMeta} from '../../src/index.js';
 import {
   BodyParamMeta,
   ControllerMetaBuilderFactory,
-  ParamMeta,
   HeadersParamMeta,
   PathParamMeta,
   QueriesParamMeta,
-  QueryParamMeta,
-  HTTPControllerMeta,
+  QueryParamMeta
 } from '../../src/index.js';
 import { PriorityController, TooLongController } from '../fixtures/HTTPPriorityController.js';
 import {

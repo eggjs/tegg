@@ -3,7 +3,7 @@ import { EggContainerFactory, type EggContext, type EggContextLifecycleContext }
 import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
 
-import { ModuleHandler } from './ModuleHandler.ts';
+import type { ModuleHandler } from './ModuleHandler.ts';
 
 export class EggContextCompatibleHook implements LifecycleHook<EggContextLifecycleContext, EggContext> {
   private readonly moduleHandler: ModuleHandler;

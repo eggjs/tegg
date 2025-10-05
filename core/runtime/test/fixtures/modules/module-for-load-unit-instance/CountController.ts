@@ -1,7 +1,7 @@
 import { AccessLevel } from '@eggjs/tegg-types';
 import { ContextProto, Inject } from '@eggjs/core-decorator';
-import CountService from './CountService.js';
-import TempObj from './TempObj.js';
+import type CountService from './CountService.js';
+import type TempObj from './TempObj.js';
 
 interface CountResult {
   serviceCount: number;

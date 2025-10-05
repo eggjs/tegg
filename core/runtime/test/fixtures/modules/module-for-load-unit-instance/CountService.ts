@@ -1,6 +1,6 @@
 import { ContextProto, Inject } from '@eggjs/core-decorator';
-import AppCache from './AppCache.js';
-import TempObj from './TempObj.js';
+import type AppCache from './AppCache.js';
+import type TempObj from './TempObj.js';
 
 @ContextProto()
 export default class CountService {

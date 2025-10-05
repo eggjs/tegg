@@ -1,9 +1,9 @@
 import { type LoadUnit, type LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { CONTROLLER_META_DATA, type ControllerMetadata, type LifecycleHook } from '@eggjs/tegg';
 
-import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
+import type { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
 import { ControllerMetadataManager } from './ControllerMetadataManager.ts';
-import { RootProtoManager } from './RootProtoManager.ts';
+import type { RootProtoManager } from './RootProtoManager.ts';
 
 export class AppLoadUnitControllerHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly controllerRegisterFactory: ControllerRegisterFactory;

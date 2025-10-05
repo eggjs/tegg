@@ -1,5 +1,5 @@
-import { AttributeMeta } from './AttributeMeta.ts';
-import { IndexMeta } from './IndexMeta.ts';
+import type { AttributeMeta } from './AttributeMeta.ts';
+import type { IndexMeta } from './IndexMeta.ts';
 
 export class ModelMetadata {
   readonly dataSource: string | undefined;

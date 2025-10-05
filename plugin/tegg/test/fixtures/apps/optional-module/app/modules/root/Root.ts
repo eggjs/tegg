@@ -1,5 +1,5 @@
 import { SingletonProto, Inject } from '@eggjs/tegg';
-import { UsedProto } from 'used/Used';
+import type { UsedProto } from 'used/Used';
 
 @SingletonProto()
 export class RootProto {

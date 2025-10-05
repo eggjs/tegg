@@ -1,4 +1,5 @@
-import { AccessLevel, ContextProto, Inject, ModuleConfigs } from '@eggjs/tegg';
+import type { ModuleConfigs } from '@eggjs/tegg';
+import { AccessLevel, ContextProto, Inject } from '@eggjs/tegg';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,

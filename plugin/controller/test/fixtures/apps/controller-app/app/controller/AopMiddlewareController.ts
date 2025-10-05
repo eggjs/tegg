@@ -5,7 +5,7 @@ import {
   Middleware,
   Inject,
 } from '@eggjs/tegg';
-import AppService from '../../modules/multi-module-service/AppService.js';
+import type AppService from '../../modules/multi-module-service/AppService.js';
 import { CountAdvice } from '../../modules/multi-module-common/advice/CountAdvice.js';
 import { FooControllerAdvice } from '../../modules/multi-module-common/advice/FooControllerAdvice.js';
 import { FooMethodAdvice } from '../../modules/multi-module-common/advice/FooMethodAdvice.js';

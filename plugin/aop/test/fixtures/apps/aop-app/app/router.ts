@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
 export default (app: Application) => {
   app.router.get('/aop', app.controller.app.aop);

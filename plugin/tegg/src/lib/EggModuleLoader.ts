@@ -4,7 +4,7 @@ import {
   GlobalGraph, ModuleDescriptorDumper,
 } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
 import { EggAppLoader } from './EggAppLoader.ts';
 

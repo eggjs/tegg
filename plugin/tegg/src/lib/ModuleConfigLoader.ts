@@ -11,7 +11,7 @@ import {
   type ModuleConfigHolder, ConfigSourceQualifierAttribute,
 } from '@eggjs/tegg';
 import { ModuleConfigUtil } from '@eggjs/tegg/helper';
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import { extend } from 'extend2';
 
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.ts';

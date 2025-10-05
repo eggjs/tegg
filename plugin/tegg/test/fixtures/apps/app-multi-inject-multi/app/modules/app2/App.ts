@@ -1,6 +1,7 @@
 import { Inject, SingletonProto } from '@eggjs/tegg';
 
-import { Secret, SecretQualifier } from '../foo/Secret.ts';
+import type { Secret} from '../foo/Secret.ts';
+import { SecretQualifier } from '../foo/Secret.ts';
 
 @SingletonProto()
 export class App2 {

@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
 module.exports = (app: Application) => {
   app.router.get('/apps', app.controller.app.find);

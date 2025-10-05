@@ -1,5 +1,5 @@
 import '@eggjs/tracer/types';
-import { Context as EggContext } from 'egg';
+import type { Context as EggContext } from 'egg';
 import {
   Context,
   HTTPBody,
@@ -13,8 +13,8 @@ import {
   Middleware,
   Inject,
 } from '@eggjs/tegg';
-import AppService from '../../modules/multi-module-service/AppService.js';
-import App from '../../modules/multi-module-common/model/App.js';
+import type AppService from '../../modules/multi-module-service/AppService.js';
+import type App from '../../modules/multi-module-common/model/App.js';
 import { countMw } from '../middleware/count_mw.js';
 
 @HTTPController({

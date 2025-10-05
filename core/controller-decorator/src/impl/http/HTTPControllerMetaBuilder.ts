@@ -7,7 +7,8 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ControllerType } from '@eggjs/tegg-types';
 
 import { ControllerMetaBuilderFactory } from '../../builder/index.ts';
-import { HTTPControllerMeta, HTTPMethodMeta } from '../../model/index.ts';
+import type { HTTPMethodMeta } from '../../model/index.ts';
+import { HTTPControllerMeta } from '../../model/index.ts';
 import { ControllerInfoUtil, ControllerMetadataUtil, HTTPInfoUtil, ControllerValidator } from '../../util/index.ts';
 import { HTTPControllerMethodMetaBuilder } from './HTTPControllerMethodMetaBuilder.ts';
 

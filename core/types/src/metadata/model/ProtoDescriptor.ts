@@ -1,4 +1,5 @@
-import { AccessLevel, type EggPrototypeInfo, type ObjectInitTypeLike, type QualifierInfo } from '../../core-decorator/index.ts';
+import type { AccessLevel} from '../../core-decorator/index.ts';
+import { type EggPrototypeInfo, type ObjectInitTypeLike, type QualifierInfo } from '../../core-decorator/index.ts';
 import { type ProtoDescriptorType } from '../enum/index.ts';
 
 export type ProtoDescriptorTypeLike = ProtoDescriptorType | string;

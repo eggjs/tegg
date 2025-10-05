@@ -1,7 +1,7 @@
 import { Inject, InjectOptional, SingletonProto } from '@eggjs/tegg';
 import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 
-import { Bar } from './bar.ts';
+import type { Bar } from './bar.ts';
 
 @Runner()
 @SingletonProto()

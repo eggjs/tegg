@@ -1,4 +1,4 @@
-import { TableModel } from '@eggjs/dal-decorator';
+import type { TableModel } from '@eggjs/dal-decorator';
 
 export class TableModelInstanceBuilder {
   constructor(tableModel: TableModel, row: Record<string, any>) {

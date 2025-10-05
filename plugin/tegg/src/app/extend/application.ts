@@ -19,8 +19,8 @@ import { LoaderFactory } from '@eggjs/tegg-loader';
 import { type EggProtoImplClass, IdenticalUtil, type RuntimeConfig, type QualifierInfo } from '@eggjs/tegg';
 import { Application } from 'egg';
 
-import { ModuleHandler } from '../../lib/ModuleHandler.ts';
-import { EggContextHandler } from '../../lib/EggContextHandler.ts';
+import type { ModuleHandler } from '../../lib/ModuleHandler.ts';
+import type { EggContextHandler } from '../../lib/EggContextHandler.ts';
 
 export default class TEggPluginApplication extends Application {
   // @eggjs/tegg-metadata should not depend by other egg plugins.

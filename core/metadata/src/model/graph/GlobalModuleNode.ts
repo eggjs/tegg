@@ -1,7 +1,8 @@
 import { GraphNode, type GraphNodeObj, type EdgeMeta } from '@eggjs/tegg-common-util';
 import { type ProtoDescriptor } from '@eggjs/tegg-types';
 
-import { ProtoDependencyMeta, ProtoNode } from './ProtoNode.ts';
+import type { ProtoDependencyMeta} from './ProtoNode.ts';
+import { ProtoNode } from './ProtoNode.ts';
 
 export interface GlobalModuleNodeOptions {
   name: string;

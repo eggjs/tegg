@@ -1,24 +1,25 @@
 import assert from 'node:assert';
 
-import { Context, Router } from 'egg';
-import {
-  type EggContext,
+import type { Context, Router } from 'egg';
+import type {
   HTTPControllerMeta,
   HTTPMethodMeta,
-  HTTPParamType,
-  type Next,
   PathParamMeta,
   QueriesParamMeta,
-  QueryParamMeta,
+  QueryParamMeta} from '@eggjs/tegg';
+import {
+  type EggContext,
+  HTTPParamType,
+  type Next,
   HTTPCookies,
 } from '@eggjs/tegg';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import type { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
 import pathToRegexp from 'path-to-regexp';
 import { EggRouter } from '@eggjs/router';
 import { FrameworkErrorFormater } from 'egg-errors';
 
-import { RootProtoManager } from '../../RootProtoManager.ts';
+import type { RootProtoManager } from '../../RootProtoManager.ts';
 import { aclMiddlewareFactory } from './Acl.ts';
 import { HTTPRequest } from './Req.ts';
 import { RouterConflictError } from '../../errors.ts';

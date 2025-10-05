@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { TableModel } from '@eggjs/dal-decorator';
+import type { TableModel } from '@eggjs/dal-decorator';
 import { ColumnType, IndexType, SqlType, type SqlMap } from '@eggjs/tegg-types';
 import type { Logger, GenerateSqlMap } from '@eggjs/tegg-types';
 

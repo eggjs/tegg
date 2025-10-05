@@ -1,4 +1,4 @@
-import { Template } from 'nunjucks';
+import type { Template } from 'nunjucks';
 import { SqlType } from '@eggjs/tegg-types';
 import type { SqlMap } from '@eggjs/tegg-types';
 

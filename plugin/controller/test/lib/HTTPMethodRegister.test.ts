@@ -10,7 +10,8 @@ import {
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { CONTROLLER_META_DATA, HTTPControllerMeta } from '@eggjs/tegg';
+import type { HTTPControllerMeta } from '@eggjs/tegg';
+import { CONTROLLER_META_DATA } from '@eggjs/tegg';
 
 import { EggControllerLoader } from '../../src/lib/EggControllerLoader.ts';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from '../../src/lib/ControllerLoadUnit.ts';

@@ -1,8 +1,10 @@
-import {
-  AccessLevel,
-  ObjectInitType,
+import type {
   QualifierValue,
   ObjectInfo
+} from '@eggjs/tegg-types';
+import {
+  AccessLevel,
+  ObjectInitType
 } from '@eggjs/tegg-types';
 import { Inject, MultiInstanceInfo, MultiInstanceProto, SingletonProto } from '@eggjs/core-decorator';
 

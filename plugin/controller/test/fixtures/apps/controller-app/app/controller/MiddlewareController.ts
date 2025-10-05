@@ -5,7 +5,7 @@ import {
   Middleware,
   Inject,
 } from '@eggjs/tegg';
-import AppService from '../../modules/multi-module-service/AppService.js';
+import type AppService from '../../modules/multi-module-service/AppService.js';
 import { countMw } from '../middleware/count_mw.js';
 import { logMwFactory } from '../middleware/log_mw.js';
 import { callModuleCtx } from '../middleware/call_module.js';

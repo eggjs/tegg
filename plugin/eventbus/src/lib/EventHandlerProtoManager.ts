@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { EventContextFactory, EventHandlerFactory } from '@eggjs/tegg-eventbus-runtime';
 import { EVENT_NAME, type EventName } from '@eggjs/tegg';

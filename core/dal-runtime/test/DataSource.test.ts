@@ -3,7 +3,7 @@ import path from 'node:path';
 import { mock } from 'node:test';
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { RDSClient } from '@eggjs/rds';
-import { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types.js';
+import type { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types.js';
 import { TableModel } from '@eggjs/dal-decorator';
 import { MysqlDataSource, SqlMapLoader, DataSource, TableModelInstanceBuilder, DatabaseForker } from '../src/index.js';
 import { Foo } from './fixtures/modules/dal/Foo.js';

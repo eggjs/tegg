@@ -1,9 +1,11 @@
 import { Base } from 'sdk-base';
 import Realm from 'leoric';
-import { ModelMetadata, ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
+import type { ModelMetadata} from '@eggjs/tegg-orm-decorator';
+import { ModelMetadataUtil } from '@eggjs/tegg-orm-decorator';
 
-import { ModelProtoManager } from './ModelProtoManager.ts';
-import { DataSourceManager, type OrmConfig } from './DataSourceManager.ts';
+import type { ModelProtoManager } from './ModelProtoManager.ts';
+import type { DataSourceManager} from './DataSourceManager.ts';
+import { type OrmConfig } from './DataSourceManager.ts';
 import type { RealmType } from './types.ts';
 
 export class LeoricRegister extends Base {

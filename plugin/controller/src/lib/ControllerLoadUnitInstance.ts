@@ -1,9 +1,10 @@
 import { type EggPrototype, type LoadUnit } from '@eggjs/tegg-metadata';
 import { type EggObjectName, type EggPrototypeName, IdenticalUtil } from '@eggjs/tegg';
+import type { LoadUnitInstanceLifecycleUtil} from '@eggjs/tegg-runtime';
 import {
   type EggObject,
   type LoadUnitInstance,
-  type LoadUnitInstanceLifecycleContext, LoadUnitInstanceLifecycleUtil,
+  type LoadUnitInstanceLifecycleContext
 } from '@eggjs/tegg-runtime';
 
 export class ControllerLoadUnitInstance implements LoadUnitInstance {

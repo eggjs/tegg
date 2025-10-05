@@ -1,12 +1,13 @@
 import assert from 'node:assert';
 import { AspectMetaBuilder, PointcutAdviceInfoUtil } from '@eggjs/aop-decorator';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
-import { GraphNode } from '@eggjs/tegg-common-util';
-import {
-  ClassProtoDescriptor,
+import type { GraphNode } from '@eggjs/tegg-common-util';
+import type {
   GlobalGraph,
   ProtoDependencyMeta,
-  ProtoNode,
+  ProtoNode} from '@eggjs/tegg-metadata';
+import {
+  ClassProtoDescriptor
 } from '@eggjs/tegg-metadata';
 
 export function pointCutGraphHook(globalGraph: GlobalGraph) {

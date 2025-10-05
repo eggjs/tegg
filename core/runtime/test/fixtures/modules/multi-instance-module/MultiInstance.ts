@@ -1,4 +1,5 @@
-import { AccessLevel, ObjectInitType, QualifierValue, EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-types';
+import type { QualifierValue, EggObject, EggObjectLifeCycleContext } from '@eggjs/tegg-types';
+import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
 import { MultiInstanceProto } from '@eggjs/core-decorator';
 import { LifecycleInit } from '@eggjs/tegg-lifecycle';
 

@@ -7,7 +7,7 @@ import {
   EggQualifierAttribute,
   EggType,
 } from '@eggjs/tegg';
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import {
   APP_CLAZZ_BLACK_LIST,
   CONTEXT_CLAZZ_BLACK_LIST,

@@ -1,7 +1,7 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import { PrototypeUtil } from '@eggjs/tegg';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
-import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
+import type { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 
 import { eggScheduleAdapterFactory } from './EggScheduleAdapter.ts';
 import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.ts';
