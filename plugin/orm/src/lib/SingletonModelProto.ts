@@ -1,15 +1,14 @@
-import type { EggPrototype, LoadUnit, EggPrototypeLifecycleContext, InjectObjectProto, InjectConstructorProto } from '@eggjs/tegg-metadata';
 import type {
-   EggPrototypeName,
-   QualifierInfo,
-   MetaDataKey,  QualifierAttribute,  QualifierValue} from '@eggjs/tegg';
-import {
-  AccessLevel,
-  ObjectInitType,
-  QualifierUtil,
-  MetadataUtil
-} from '@eggjs/tegg';
-import type {  Id} from '@eggjs/tegg-lifecycle';
+  EggPrototype,
+  LoadUnit,
+  EggPrototypeLifecycleContext,
+  InjectObjectProto,
+  InjectConstructorProto,
+} from '@eggjs/tegg-metadata';
+import type { EggPrototypeName, QualifierInfo, MetaDataKey, QualifierAttribute, QualifierValue } from '@eggjs/tegg';
+import { AccessLevel, ObjectInitType, QualifierUtil, MetadataUtil } from '@eggjs/tegg';
+
+import type { Id } from '@eggjs/tegg-lifecycle';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import type { Bone } from 'leoric';
 

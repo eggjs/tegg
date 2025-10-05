@@ -37,7 +37,15 @@
     "version:premajor": "node scripts/version.js premajor",
     "version:alpha": "node scripts/version.js prerelease --prerelease-tag=alpha",
     "version:beta": "node scripts/version.js prerelease --prerelease-tag=beta",
-    "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc"
+    "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --type-aware --fix"
+    ]
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -46,9 +54,12 @@
     "@vitest/coverage-v8": "catalog:",
     "ajv": "catalog:",
     "c8": "catalog:",
+    "husky": "catalog:",
     "js-yaml": "catalog:",
+    "lint-staged": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
+    "prettier": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
     "tsx": "catalog:",
