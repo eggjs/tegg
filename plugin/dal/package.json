@@ -10,7 +10,7 @@
   "eggModule": {
     "name": "teggDal"
   },
-  "version": "4.0.0-beta.9",
+  "version": "4.0.0-beta.10",
   "description": "dal plugin for egg",
   "keywords": [
     "egg",
