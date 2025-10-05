@@ -4,6 +4,10 @@
     "core/loader/test/fixtures/modules/loader-failed/AppRepo.ts"
   ],
   "rules": {
-    "typescript/consistent-type-imports": "error"
+    "typescript/consistent-type-imports": ["error", {
+      "prefer": "type-imports",
+      "fixStyle": "separate-type-imports",
+      "disallowTypeAnnotations": true
+    }]
   }
 }
