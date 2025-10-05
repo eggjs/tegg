@@ -6,177 +6,45 @@ settings:
 
 catalogs:
   default:
-    '@eggjs/bin':
-      specifier: beta
-      version: 8.0.0-beta.25
-    '@eggjs/cookies':
-      specifier: beta
-      version: 4.0.0-beta.25
-    '@eggjs/mock':
-      specifier: beta
-      version: 7.0.0-beta.25
-    '@eggjs/rds':
-      specifier: ^1.3.0
-      version: 1.3.0
-    '@eggjs/router':
-      specifier: beta
-      version: 4.0.0-beta.25
-    '@eggjs/tracer':
-      specifier: beta
-      version: 4.0.0-beta.25
     '@eggjs/tsconfig':
       specifier: 3.1.0-beta.19
       version: 3.1.0-beta.19
-    '@eggjs/utils':
-      specifier: beta
-      version: 5.0.0-beta.25
-    '@sinclair/typebox':
-      specifier: ^0.32.20
-      version: 0.32.35
-    '@types/js-beautify':
-      specifier: ^1.14.3
-      version: 1.14.3
-    '@types/js-yaml':
-      specifier: ^4.0.9
-      version: 4.0.9
-    '@types/koa-compose':
-      specifier: ^3.2.5
-      version: 3.2.8
-    '@types/lodash':
-      specifier: ^4.17.20
-      version: 4.17.20
-    '@types/lodash.snakecase':
-      specifier: ^4.1.9
-      version: 4.1.9
-    '@types/mocha':
-      specifier: ^10.0.10
-      version: 10.0.10
-    '@types/node':
-      specifier: ^22.10.5
-      version: 22.18.8
-    '@types/nunjucks':
-      specifier: ^3.2.6
-      version: 3.2.6
-    '@types/pluralize':
-      specifier: ^0.0.33
-      version: 0.0.33
-    '@types/sqlstring':
-      specifier: ^2.3.2
-      version: 2.3.2
     '@vitest/coverage-v8':
       specifier: 4.0.0-beta.16
       version: 4.0.0-beta.16
     ajv:
       specifier: ^8.17.1
       version: 8.17.1
-    await-event:
-      specifier: ^2.1.0
-      version: 2.1.0
-    await-first:
-      specifier: ^1.0.0
-      version: 1.0.0
-    c8:
-      specifier: ^10.1.3
-      version: 10.1.3
-    coffee:
-      specifier: ^5.1.0
-      version: 5.5.1
-    egg:
-      specifier: beta
-      version: 4.1.0-beta.25
-    egg-errors:
-      specifier: ^2.3.0
-      version: 2.3.2
-    egg-logger:
-      specifier: ^3.0.1
-      version: 3.6.1
-    extend2:
-      specifier: ^4.0.0
-      version: 4.0.0
-    globby:
-      specifier: ^14.1.0
-      version: 14.1.0
     husky:
       specifier: ^9.1.7
       version: 9.1.7
-    is-type-of:
-      specifier: ^2.2.0
-      version: 2.2.0
-    js-beautify:
-      specifier: ^1.15.3
-      version: 1.15.4
     js-yaml:
       specifier: 4.1.0
       version: 4.1.0
-    koa-compose:
-      specifier: ^4.1.0
-      version: 4.1.0
-    leoric:
-      specifier: ^2.12.2
-      version: 2.13.8
     lint-staged:
       specifier: ^16.2.3
       version: 16.2.3
-    lodash:
-      specifier: ^4.17.21
-      version: 4.17.21
-    lodash.snakecase:
-      specifier: ^4.1.1
-      version: 4.1.1
-    mm:
-      specifier: ^4.0.2
-      version: 4.0.2
-    mocha:
-      specifier: ^11.0.1
-      version: 11.7.4
-    mysql2:
-      specifier: ^3.12.0
-      version: 3.15.1
-    nunjucks:
-      specifier: ^3.2.4
-      version: 3.2.4
     oxlint:
       specifier: ^1.19.0
       version: 1.19.0
     oxlint-tsgolint:
       specifier: ^0.2.0
       version: 0.2.0
-    path-to-regexp:
-      specifier: ^1.9.0
-      version: 1.9.0
-    pluralize:
-      specifier: ^8.0.0
-      version: 8.0.0
     prettier:
       specifier: ^3.6.2
       version: 3.6.2
-    reflect-metadata:
-      specifier: ^0.2.2
-      version: 0.2.2
     rimraf:
       specifier: ^6.0.1
       version: 6.0.1
-    sdk-base:
-      specifier: ^5.0.1
-      version: 5.0.1
     semver:
       specifier: ^7.7.2
       version: 7.7.2
-    sqlstring:
-      specifier: ^2.3.3
-      version: 2.3.3
-    tsdown:
-      specifier: ^0.15.6
-      version: 0.15.6
     tsx:
       specifier: ^4.20.6
       version: 4.20.6
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
-    unplugin-unused:
-      specifier: ^0.5.3
-      version: 0.5.3
     urllib:
       specifier: ^4.8.2
       version: 4.8.2
@@ -203,9 +71,6 @@ importers:
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
-      c8:
-        specifier: 'catalog:'
-        version: 10.1.3
       husky:
         specifier: 'catalog:'
         version: 9.1.7
@@ -5897,7 +5762,7 @@ snapshots:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.0.0-beta.16
       ast-v8-to-istanbul: 0.3.5
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       istanbul-lib-coverage: 3.2.2
       istanbul-lib-report: 3.0.1
       istanbul-lib-source-maps: 5.0.6
@@ -6312,6 +6177,10 @@ snapshots:
   debounce@2.2.0: {}
 
   debug@3.2.7:
+    dependencies:
+      ms: 2.1.3
+
+  debug@4.4.3:
     dependencies:
       ms: 2.1.3
 
@@ -6992,7 +6861,7 @@ snapshots:
   istanbul-lib-source-maps@5.0.6:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       istanbul-lib-coverage: 3.2.2
     transitivePeerDependencies:
       - supports-color
@@ -8164,7 +8033,7 @@ snapshots:
       '@vitest/snapshot': 4.0.0-beta.16
       '@vitest/spy': 4.0.0-beta.16
       '@vitest/utils': 4.0.0-beta.16
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.3
       es-module-lexer: 1.7.0
       expect-type: 1.2.2
       magic-string: 0.30.19
