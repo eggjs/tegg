@@ -22,7 +22,6 @@ describe('plugin/schedule/test/schedule.test.ts', () => {
   });
 
   before(async () => {
-    // FIXME: why mm.app() not work? it will let app.ready() blocked
     app = mm.app({
       baseDir: path.join(import.meta.dirname, 'fixtures', 'schedule-app'),
     });
