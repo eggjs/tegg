@@ -8,13 +8,14 @@ export class MockLogger {
   constructor() {
     const methods = Object.keys(console);
     for (const method of methods) {
+      // @ts-expect-error console is not typed
       this[method] = (...args) => {
+        // @ts-expect-error console is not typed
         console[method](...args);
-      }
+      };
     }
   }
 }
-
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -24,9 +25,11 @@ export class MockContextLogger {
   constructor() {
     const methods = Object.keys(console);
     for (const method of methods) {
+      // @ts-expect-error console is not typed
       this[method] = (...args) => {
+        // @ts-expect-error console is not typed
         console[method](...args);
-      }
+      };
     }
   }
 }

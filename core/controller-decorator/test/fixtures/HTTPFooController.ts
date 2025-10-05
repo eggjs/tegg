@@ -1,6 +1,17 @@
 import { HTTPMethodEnum } from '@eggjs/tegg-types';
 import type { EggContext, Next, IncomingHttpHeaders } from '@eggjs/tegg-types';
-import { HTTPController, Context, Middleware, HTTPBody, HTTPParam, HTTPQueries, HTTPQuery, HTTPHeaders, HTTPMethod } from '../../src/index.js';
+
+import {
+  HTTPController,
+  Context,
+  Middleware,
+  HTTPBody,
+  HTTPParam,
+  HTTPQueries,
+  HTTPQuery,
+  HTTPHeaders,
+  HTTPMethod,
+} from '../../src/index.ts';
 
 async function middleware1(ctx: EggContext, next: Next) {
   console.log(ctx, next);
@@ -27,7 +38,13 @@ export class FooController {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, @HTTPBody() body, @HTTPQuery() query, @HTTPQueries() queries, @HTTPParam() id) {
+  async bar(
+    @Context() ctx: EggContext,
+    @HTTPBody() body: unknown,
+    @HTTPQuery() query: Record<string, unknown>,
+    @HTTPQueries() queries: Record<string, unknown[]>,
+    @HTTPParam() id: string
+  ) {
     console.log(ctx, body, query, queries, id);
   }
 }
@@ -42,8 +59,12 @@ export class ControllerWithParam {
     path: '/bar/:id',
     method: HTTPMethodEnum.GET,
   })
-  async bar(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPParam() fooId: string,
-    @HTTPHeaders() headers: IncomingHttpHeaders) {
+  async bar(
+    @Context() ctx: EggContext,
+    @HTTPParam() id: string,
+    @HTTPParam() fooId: string,
+    @HTTPHeaders() headers: IncomingHttpHeaders
+  ) {
     console.log(ctx, id, fooId, headers);
   }
 }
@@ -58,7 +79,13 @@ export class FoxController {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, @HTTPBody() body, @HTTPQuery() query, @HTTPQueries() queries, @HTTPParam() id) {
+  async bar(
+    @Context() ctx: EggContext,
+    @HTTPBody() body: unknown,
+    @HTTPQuery() query: Record<string, unknown>,
+    @HTTPQueries() queries: Record<string, unknown[]>,
+    @HTTPParam() id: string
+  ) {
     console.log(ctx, body, query, queries, id);
   }
 }
@@ -73,18 +100,22 @@ export class FxxController {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, @HTTPBody() body, @HTTPQuery() query, @HTTPQueries() queries, @HTTPParam() id) {
+  async bar(
+    @Context() ctx: EggContext,
+    @HTTPBody() body: unknown,
+    @HTTPQuery() query: Record<string, unknown>,
+    @HTTPQueries() queries: Record<string, unknown[]>,
+    @HTTPParam() id: string
+  ) {
     console.log(ctx, body, query, queries, id);
   }
 }
 
 @HTTPController()
-export class ParentController {
-}
+export class ParentController {}
 
 @HTTPController()
-export class ChildController extends ParentController {
-}
+export class ChildController extends ParentController {}
 
 @HTTPController()
 export class DefaultValueController {
@@ -94,7 +125,12 @@ export class DefaultValueController {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, @HTTPParam() id = 233, @HTTPQuery() query, @HTTPQueries() queries) {
+  async bar(
+    @Context() ctx: EggContext,
+    @HTTPParam() id = 233,
+    @HTTPQuery() query: Record<string, unknown>,
+    @HTTPQueries() queries: Record<string, unknown[]>
+  ) {
     console.log(ctx, id, query, queries);
   }
 }
@@ -107,7 +143,7 @@ export class Error1Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, id) {
+  async bar(@Context() ctx: EggContext, id: number) {
     console.log(ctx, id);
   }
 }
@@ -120,7 +156,7 @@ export class Error2Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, id = 233, @HTTPParam() id2 = 233) {
+  async bar(@Context() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233) {
     console.log(ctx, id, id2);
   }
 }

@@ -42,8 +42,8 @@
     "dist"
   ],
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },

@@ -40,8 +40,8 @@
   "scripts": {
     "test:mocha": "npm run prepare-test && egg-bin test",
     "cov:mocha": "npm run prepare-test && egg-bin cov",
-    "clean": "rimraf dist",
-    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
     "prepare-test": "node ./test/fixtures/prepare.js"

@@ -1,4 +1,4 @@
-import {Event, EventBus, EventContext, IEventContext} from '@eggjs/eventbus-decorator';
+import { Event, type EventBus, EventContext, type IEventContext } from '@eggjs/eventbus-decorator';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
 
 declare module '@eggjs/eventbus-decorator' {
@@ -31,6 +31,6 @@ export class MultiWithContextHandler {
   static msg: string;
   async handle(@EventContext() ctx: IEventContext, msg: string) {
     MultiWithContextHandler.eventName = ctx.eventName;
-    MultiWithContextHandler.msg = msg
+    MultiWithContextHandler.msg = msg;
   }
 }

@@ -1,4 +1,4 @@
-import { AccessLevel, EggObjectLifecycle } from '@eggjs/tegg-types';
+import { AccessLevel, type EggObjectLifecycle } from '@eggjs/tegg-types';
 import { ContextProto, SingletonProto } from '@eggjs/core-decorator';
 import {
   LifecyclePostConstruct,
