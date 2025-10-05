@@ -1,20 +1,25 @@
 import assert from 'node:assert';
+
 import { AccessLevel, Inject } from '@eggjs/core-decorator';
 import { Advice, Crosscut } from '@eggjs/aop-decorator';
-import { AdviceContext, IAdvice, PointcutType } from '@eggjs/tegg-types';
-import { Hello } from '../hello_succeed/Hello.js';
-import { CallTrace } from './CallTrace.js';
+import { type AdviceContext, type IAdvice, PointcutType } from '@eggjs/tegg-types';
+
+import { Hello } from '../hello_succeed/Hello.ts';
+import { CallTrace } from './CallTrace.ts';
 
 export const crosscutAdviceParams = {
   cross: Math.random().toString(),
   cut: Math.random().toString(),
 };
 
-@Crosscut({
-  type: PointcutType.CLASS,
-  clazz: Hello,
-  methodName: 'hello',
-}, { adviceParams: crosscutAdviceParams })
+@Crosscut(
+  {
+    type: PointcutType.CLASS,
+    clazz: Hello,
+    methodName: 'hello',
+  },
+  { adviceParams: crosscutAdviceParams }
+)
 @Advice({
   accessLevel: AccessLevel.PUBLIC,
 })

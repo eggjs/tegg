@@ -1,6 +1,7 @@
-import { HTTPMethodEnum, IAdvice, ObjectInitType } from '@eggjs/tegg-types';
+import { HTTPMethodEnum, type IAdvice, ObjectInitType } from '@eggjs/tegg-types';
 import { Advice } from '@eggjs/aop-decorator';
-import { Middleware, HTTPController, HTTPMethod } from '../../src/index.js';
+
+import { Middleware, HTTPController, HTTPMethod } from '../../src/index.ts';
 
 @Advice({
   initType: ObjectInitType.SINGLETON,
@@ -41,7 +42,6 @@ export class BarMethodAdvice implements IAdvice {
 @Middleware(FooAdvice, BarAdvice)
 @HTTPController()
 export class AopMiddlewareController {
-
   @Middleware(FooMethodAdvice, BarMethodAdvice)
   @HTTPMethod({
     method: HTTPMethodEnum.GET,

@@ -1,8 +1,8 @@
-import assert from 'node:assert';
 import { AccessLevel, ObjectInitType } from '@eggjs/core-decorator';
 import { Advice } from '@eggjs/aop-decorator';
-import { AdviceContext, IAdvice } from '@eggjs/tegg-types';
-import { Hello } from '../hello_succeed/Hello.js';
+import { type AdviceContext, type IAdvice } from '@eggjs/tegg-types';
+
+import { Hello } from '../hello_succeed/Hello.ts';
 
 const STATE_SYMBOL = Symbol.for('STATE_SYMBOL');
 

@@ -1,15 +1,11 @@
 import { Inject } from '@eggjs/tegg';
 import { type EggLogger } from 'egg';
-import {
-  type IntervalParams,
-  Schedule,
-  ScheduleType,
-} from '@eggjs/tegg-schedule-decorator';
+import { type IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg-schedule-decorator';
 
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
   scheduleData: {
-    interval: 100,
+    interval: 500,
   },
 })
 export class FooSubscriber {
@@ -18,5 +14,6 @@ export class FooSubscriber {
 
   async subscribe() {
     this.logger.info('schedule called');
+    // console.warn('FooSubscriber schedule called');
   }
 }

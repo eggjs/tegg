@@ -1,4 +1,4 @@
-import { Event, EventBus } from '@eggjs/eventbus-decorator';
+import { Event, type EventBus } from '@eggjs/eventbus-decorator';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import type { EggLogger } from 'egg';
@@ -27,7 +27,6 @@ export class Timeout0Handler {
     throw new Error('mock error');
   }
 }
-
 
 @Event('timeout')
 export class Timeout100Handler {

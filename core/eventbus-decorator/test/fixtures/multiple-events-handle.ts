@@ -1,6 +1,6 @@
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
 
-import { EventBus, Event } from '../../src/index.ts';
+import { type EventBus, Event } from '../../src/index.ts';
 
 declare module '@eggjs/tegg' {
   interface Events {
@@ -26,4 +26,3 @@ export class MultiHandler {
     console.log('msg: ', msg);
   }
 }
-
