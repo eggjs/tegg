@@ -80,9 +80,7 @@ jobs:
       - name: Init DB (macOS or Linux)
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
         run: |
-          mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS testdb; \
-            CREATE USER IF NOT EXISTS 'test'@'localhost' IDENTIFIED BY 'test'; \
-            GRANT ALL ON testdb.* TO 'test'@'localhost'; FLUSH PRIVILEGES;"
+          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
