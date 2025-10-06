@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { pathToFileURL } from 'node:url';
 
 import { mm } from 'mm';
 import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
@@ -335,7 +336,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       mm.spy(ModuleDescriptorDumper, 'dump');
       let fooPath = path.join(fixturePath, 'foo.ts');
       if (process.platform === 'win32') {
-        fooPath = fooPath.replaceAll('\\', '/');
+        fooPath = pathToFileURL(fooPath).toString();
       }
       Foo = await import(fooPath).then(m => m.Foo);
     });
