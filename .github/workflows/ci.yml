@@ -58,7 +58,7 @@ jobs:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['20', '22', '24']
 
-    name: Test ${{ matrix.os }} with Node.js@${{ matrix.node }}
+    name: test node@${{ matrix.node }} on ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
 
@@ -110,7 +110,7 @@ jobs:
           if (-not $ready) { Write-Error "MariaDB not ready on 127.0.0.1:3306"; exit 1 }
           # MariaDB default root has no password, set a password and create database/user
           # & "C:\Program Files\MariaDB 12.0\bin\mysqladmin.exe" -u root password root
-          & "C:\Program Files\MariaDB 12.0\bin\mysql.exe" -uroot -proot -e "CREATE DATABASE IF NOT EXISTS test;"
+          & "C:\Program Files\MariaDB 12.0\bin\mysql.exe" -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
