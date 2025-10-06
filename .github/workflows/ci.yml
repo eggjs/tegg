@@ -58,7 +58,7 @@ jobs:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['20', '22', '24']
 
-    name: Test ${{ matrix.os }}} with Node.js@${{ matrix.node }}
+    name: Test ${{ matrix.os }} with Node.js@${{ matrix.node }}
 
     runs-on: ${{ matrix.os }}
 
@@ -81,6 +81,36 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
         run: |
           mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
+      # Windows: use MariaDB (service name MariaDB), if you must use MySQL, see the "replace MySQL" comment below
+      - name: Start MariaDB (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          choco install -y mariadb
+          refreshenv
+          # start service and wait for Running
+          $svc = Get-Service -Name MariaDB -ErrorAction SilentlyContinue
+          if (-not $svc) { Write-Error "MariaDB service not found after install"; exit 1 }
+          if ($svc.Status -ne 'Running') {
+            Start-Service -Name MariaDB -ErrorAction Stop
+            $svc.WaitForStatus('Running','00:00:30')
+          }
+          # wait for 3306 port to be ready (max 60s)
+          $deadline = (Get-Date).AddSeconds(60)
+          $ready = $false
+          while ((Get-Date) -lt $deadline -and -not $ready) {
+            try {
+              $c = New-Object System.Net.Sockets.TcpClient
+              $ok = $c.BeginConnect('127.0.0.1',3306,$null,$null).AsyncWaitHandle.WaitOne(2000)
+              if ($ok -and $c.Connected) { $ready = $true }
+              $c.Close()
+            } catch {}
+          }
+          if (-not $ready) { Write-Error "MariaDB not ready on 127.0.0.1:3306"; exit 1 }
+          # MariaDB default root has no password, set a password and create database/user
+          # & "C:\Program Files\MariaDB 10.11\bin\mysqladmin.exe" -u root password root
+          & "C:\Program Files\MariaDB 10.11\bin\mysql.exe" -uroot -proot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
