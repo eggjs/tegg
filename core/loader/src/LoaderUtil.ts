@@ -6,11 +6,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
-const Module =
-  globalThis.module?.constructor?.length > 1
-    ? globalThis.module.constructor
-    : /* istanbul ignore next */
-      BuiltinModule;
+const Module = globalThis.module?.constructor?.length > 1 ? globalThis.module.constructor : BuiltinModule;
 
 interface LoaderUtilConfig {
   extraFilePattern?: string[];
