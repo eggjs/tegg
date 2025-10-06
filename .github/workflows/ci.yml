@@ -66,7 +66,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['22', '24']
+        node: ['20', '22', '24']
 
     name: Test ubuntu with Node.js@${{ matrix.node }}
 
@@ -104,7 +104,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['22', '24']
+        node: ['20', '22', '24']
 
     name: Test macos with Node.js@${{ matrix.node }}
 
