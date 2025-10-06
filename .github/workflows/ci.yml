@@ -82,16 +82,14 @@ jobs:
         run: |
           mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
-      # Windows: use MariaDB (service name MariaDB), if you must use MySQL, see the "replace MySQL" comment below
-      - name: Start MariaDB (Windows)
+      - name: Start MySQL (Windows)
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
           choco install -y mysql
           refreshenv
-          # MariaDB default root has no password, set a password and create database/user
-          # & "C:\Program Files\MariaDB 12.0\bin\mysqladmin.exe" -u root password root
-          # & "C:\Program Files\MariaDB 12.0\bin\mysql.exe" -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+          # MySQL default root has no password, set a password and create database/user
+          # & mysqladmin -u root password root
           & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Install pnpm
