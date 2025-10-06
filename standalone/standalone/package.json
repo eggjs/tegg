@@ -21,8 +21,8 @@
   "scripts": {
     "test:mocha": "egg-bin test",
     "cov:mocha": "egg-bin cov",
-    "clean": "rimraf dist",
-    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
+    "clean": "tsc -b --clean && rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
