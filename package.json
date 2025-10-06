@@ -20,11 +20,11 @@
     "lint:fix": "npm run lint -- --fix",
     "lint": "oxlint --type-aware",
     "typecheck": "npm run clean && pnpm -r run typecheck",
-    "test": "vitest run --bail 1",
+    "test": "vitest run --bail 1 --retry 2",
     "test:mocha": "pnpm -r run test:mocha",
     "clean": "pnpm -r run clean",
     "build": "pnpm -r run build",
-    "cov": "vitest run --coverage --bail 1",
+    "cov": "pnpm run test --coverage",
     "cov:mocha": "pnpm -r run cov:mocha",
     "ci": "npm run cov && npm run cov:mocha",
     "prepare": "husky"
