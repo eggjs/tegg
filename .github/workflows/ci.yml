@@ -88,10 +88,11 @@ jobs:
         shell: pwsh
         run: |
           choco install -y mariadb
-          # refreshenv
+          refreshenv
           # MariaDB default root has no password, set a password and create database/user
           # & "C:\Program Files\MariaDB 12.0\bin\mysqladmin.exe" -u root password root
-          & "C:\Program Files\MariaDB 12.0\bin\mysql.exe" -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+          # & "C:\Program Files\MariaDB 12.0\bin\mysql.exe" -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+          & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
