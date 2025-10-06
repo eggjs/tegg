@@ -30,7 +30,7 @@ async function middleware3(ctx: EggContext, next: Next) {
 })
 @Middleware(middleware1)
 export class FooController {
-  static fileName = __filename;
+  static fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
 
   @HTTPMethod({
     path: '/bar/:id',
@@ -53,7 +53,7 @@ export class FooController {
   path: '/foo/:fooId',
 })
 export class ControllerWithParam {
-  static fileName = __filename;
+  static fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
 
   @HTTPMethod({
     path: '/bar/:id',

@@ -64,30 +64,38 @@ describe('test/decorators.test.ts', () => {
       const injectType = PrototypeUtil.getInjectType(CacheService);
       expect(injectType).toBe(InjectType.PROPERTY);
 
-      const expectInjectInfo: InjectObjectInfo[] = [{
-        refName: 'cache',
-        objName: 'fooCache',
-      }, {
-        refName: 'testService',
-        objName: 'testService',
-      }, {
-        refName: 'testService2',
-        objName: 'abcabc',
-      }, {
-        refName: 'otherService',
-        objName: 'testService3',
-      }, {
-        objName: 'testService4',
-        refName: 'testService4',
-      }, {
-        objName: 'optionalService1',
-        refName: 'optionalService1',
-        optional: true,
-      }, {
-        objName: 'optionalService2',
-        refName: 'optionalService2',
-        optional: true,
-      }];
+      const expectInjectInfo: InjectObjectInfo[] = [
+        {
+          refName: 'cache',
+          objName: 'fooCache',
+        },
+        {
+          refName: 'testService',
+          objName: 'testService',
+        },
+        {
+          refName: 'testService2',
+          objName: 'abcabc',
+        },
+        {
+          refName: 'otherService',
+          objName: 'testService3',
+        },
+        {
+          objName: 'testService4',
+          refName: 'testService4',
+        },
+        {
+          objName: 'optionalService1',
+          refName: 'optionalService1',
+          optional: true,
+        },
+        {
+          objName: 'optionalService2',
+          refName: 'optionalService2',
+          optional: true,
+        },
+      ];
       expect(PrototypeUtil.getInjectObjects(CacheService)).toStrictEqual(expectInjectInfo);
     });
 
@@ -111,10 +119,11 @@ describe('test/decorators.test.ts', () => {
       assert(PrototypeUtil.isEggPrototype(QualifierCacheService));
       const property = 'cache';
       assert(
-        QualifierUtil.getProperQualifier(QualifierCacheService, property, LoadUnitNameQualifierAttribute) === 'foo',
+        QualifierUtil.getProperQualifier(QualifierCacheService, property, LoadUnitNameQualifierAttribute) === 'foo'
       );
       assert(
-        QualifierUtil.getProperQualifier(QualifierCacheService, property, InitTypeQualifierAttribute) === ObjectInitType.SINGLETON,
+        QualifierUtil.getProperQualifier(QualifierCacheService, property, InitTypeQualifierAttribute) ===
+          ObjectInitType.SINGLETON
       );
     });
 
@@ -138,10 +147,12 @@ describe('test/decorators.test.ts', () => {
       assert(PrototypeUtil.isEggPrototype(QualifierCacheService));
       const property = 'cache';
       assert(
-        QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.LoadUnitName')) === 'foo',
+        QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.LoadUnitName')) ===
+          'foo'
       );
       assert(
-        QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.InitType')) === ObjectInitType.SINGLETON,
+        QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.InitType')) ===
+          ObjectInitType.SINGLETON
       );
     });
 
@@ -166,7 +177,11 @@ describe('test/decorators.test.ts', () => {
       ];
 
       for (const { property, expected } of properties) {
-        const qualifier = QualifierUtil.getProperQualifier(ConstructorQualifierObject, property, InitTypeQualifierAttribute);
+        const qualifier = QualifierUtil.getProperQualifier(
+          ConstructorQualifierObject,
+          property,
+          InitTypeQualifierAttribute
+        );
         assert.equal(qualifier, expected, `expect initType for ${property} to be ${expected}`);
       }
     });
@@ -179,29 +194,41 @@ describe('test/decorators.test.ts', () => {
         initType: ObjectInitType.SINGLETON,
         accessLevel: AccessLevel.PUBLIC,
         protoImplType: 'foo',
-        objects: [{
-          name: 'foo',
-          qualifiers: [{
-            attribute: FOO_ATTRIBUTE,
-            value: 'foo1',
-          }],
-        }, {
-          name: 'foo',
-          qualifiers: [{
-            attribute: FOO_ATTRIBUTE,
-            value: 'foo2',
-          }],
-        }],
+        objects: [
+          {
+            name: 'foo',
+            qualifiers: [
+              {
+                attribute: FOO_ATTRIBUTE,
+                value: 'foo1',
+              },
+            ],
+          },
+          {
+            name: 'foo',
+            qualifiers: [
+              {
+                attribute: FOO_ATTRIBUTE,
+                value: 'foo2',
+              },
+            ],
+          },
+        ],
         className: 'FooLogger',
       };
-      assert.deepStrictEqual(await PrototypeUtil.getMultiInstanceProperty(FooLogger, {
-        unitPath: 'foo',
-        moduleName: '',
-      }), expectObjectProperty);
+      assert.deepStrictEqual(
+        await PrototypeUtil.getMultiInstanceProperty(FooLogger, {
+          unitPath: 'foo',
+          moduleName: '',
+        }),
+        expectObjectProperty
+      );
     });
   });
 
   it('should get the right file path', () => {
+    console.warn(CacheService.fileName);
+    console.warn(PrototypeUtil.getFilePath(CacheService));
     assert.equal(PrototypeUtil.getFilePath(CacheService), CacheService.fileName);
   });
 
@@ -225,7 +252,7 @@ describe('test/decorators.test.ts', () => {
       assert(PrototypeUtil.isEggMultiInstancePrototype(ParentStaticMultiInstanceProto));
       assert.strictEqual(
         PrototypeUtil.getEggMultiInstancePrototypeType(ParentStaticMultiInstanceProto),
-        MultiInstanceType.STATIC,
+        MultiInstanceType.STATIC
       );
       assert(PrototypeUtil.getStaticMultiInstanceProperty(ParentStaticMultiInstanceProto));
       assert(await PrototypeUtil.getMultiInstanceProperty(ParentStaticMultiInstanceProto, fakeCtx));
@@ -234,21 +261,30 @@ describe('test/decorators.test.ts', () => {
       assert.strictEqual(PrototypeUtil.isEggMultiInstancePrototype(ChildStaticMultiInstanceProto), false);
       assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildStaticMultiInstanceProto), undefined);
       assert.strictEqual(PrototypeUtil.getStaticMultiInstanceProperty(ChildStaticMultiInstanceProto), undefined);
-      assert.strictEqual(await PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(
+        await PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx),
+        undefined
+      );
       assert.strictEqual(PrototypeUtil.getFilePath(ChildStaticMultiInstanceProto), undefined);
     });
 
     it('dynamic multipleInstanceProto should not be inherited', async () => {
       assert.strictEqual(
         PrototypeUtil.getEggMultiInstancePrototypeType(ParentDynamicMultiInstanceProto),
-        MultiInstanceType.DYNAMIC,
+        MultiInstanceType.DYNAMIC
       );
       assert(await PrototypeUtil.getDynamicMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
       assert(await PrototypeUtil.getMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
 
       assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildDynamicMultiInstanceProto), undefined);
-      assert.strictEqual(await PrototypeUtil.getDynamicMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
-      assert.strictEqual(await PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx), undefined);
+      assert.strictEqual(
+        await PrototypeUtil.getDynamicMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx),
+        undefined
+      );
+      assert.strictEqual(
+        await PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx),
+        undefined
+      );
     });
   });
 });

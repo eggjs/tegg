@@ -1,13 +1,12 @@
+import BuiltinModule from 'node:module';
+import { pathToFileURL } from 'node:url';
+
 import { PrototypeUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
-import BuiltinModule from 'node:module';
 import { isClass } from 'is-type-of';
 
 // Guard against poorly mocked module constructors.
-const Module = globalThis.module?.constructor?.length > 1
-  ? globalThis.module.constructor
-  /* istanbul ignore next */
-  : BuiltinModule;
+const Module = globalThis.module?.constructor?.length > 1 ? globalThis.module.constructor : BuiltinModule;
 
 interface LoaderUtilConfig {
   extraFilePattern?: string[];
@@ -33,7 +32,8 @@ export class LoaderUtil {
 
   static filePattern(): string[] {
     const extensions = LoaderUtil.supportExtensions();
-    const extensionPattern = extensions.map(t => t.substring(1))
+    const extensionPattern = extensions
+      .map(t => t.substring(1))
       // JSON file will not export class
       .filter(t => t !== 'json')
       .join('|');
@@ -58,11 +58,16 @@ export class LoaderUtil {
   }
 
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
+    if (process.platform === 'win32') {
+      // convert to file:// url
+      // avoid windows path issue: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader. On Windows, absolute paths must be valid file:// URLs. Received protocol 'd:'
+      filePath = pathToFileURL(filePath).toString();
+    }
     let exports;
     try {
       exports = await import(filePath);
     } catch (e: any) {
-      console.error('[tegg/loader] loadFile %s error:', filePath);
+      console.trace('[tegg/loader] loadFile %s error:', filePath);
       console.error(e);
       throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`);
     }
@@ -70,7 +75,8 @@ export class LoaderUtil {
     const exportNames = Object.keys(exports);
     for (const exportName of exportNames) {
       const clazz = exports[exportName];
-      const isEggProto = isClass(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
+      const isEggProto =
+        isClass(clazz) && (PrototypeUtil.isEggPrototype(clazz) || PrototypeUtil.isEggMultiInstancePrototype(clazz));
       if (!isEggProto) {
         continue;
       }

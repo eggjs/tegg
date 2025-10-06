@@ -1,13 +1,15 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import { mock } from 'node:test';
+
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { RDSClient } from '@eggjs/rds';
-import { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds/lib/types.js';
+import type { DeleteResult, InsertResult, UpdateResult } from '@eggjs/rds';
 import { TableModel } from '@eggjs/dal-decorator';
-import { MysqlDataSource, SqlMapLoader, DataSource, TableModelInstanceBuilder, DatabaseForker } from '../src/index.js';
-import { Foo } from './fixtures/modules/dal/Foo.js';
-import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.js';
+
+import { MysqlDataSource, SqlMapLoader, DataSource, TableModelInstanceBuilder, DatabaseForker } from '../src/index.ts';
+import { Foo } from './fixtures/modules/dal/Foo.ts';
+import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.ts';
 
 describe('test/Datasource.test.ts', () => {
   const mysqlOptions = {
@@ -16,7 +18,7 @@ describe('test/Datasource.test.ts', () => {
     user: 'root',
     database: 'test_runtime_datasource',
     timezone: '+08:00',
-    initSql: 'SET GLOBAL time_zone = \'+08:00\';',
+    initSql: "SET GLOBAL time_zone = '+08:00';",
     forkDb: true,
   };
 
@@ -84,7 +86,7 @@ describe('test/Datasource.test.ts', () => {
       const foo = new Foo();
       foo.name = 'name';
       foo.col1 = 'col1';
-      foo.bitColumn = Buffer.from([ 0, 0 ]);
+      foo.bitColumn = Buffer.from([0, 0]);
       foo.boolColumn = 0;
       foo.tinyIntColumn = 0;
       foo.smallIntColumn = 1;
@@ -120,30 +122,52 @@ describe('test/Datasource.test.ts', () => {
       ];
       foo.polygonColumn = [
         [
-          { x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 10 }, { x: 0, y: 10 }, { x: 0, y: 0 },
-        ], [
-          { x: 5, y: 5 }, { x: 7, y: 5 }, { x: 7, y: 7 }, { x: 5, y: 7 }, { x: 5, y: 5 },
+          { x: 0, y: 0 },
+          { x: 10, y: 0 },
+          { x: 10, y: 10 },
+          { x: 0, y: 10 },
+          { x: 0, y: 0 },
+        ],
+        [
+          { x: 5, y: 5 },
+          { x: 7, y: 5 },
+          { x: 7, y: 7 },
+          { x: 5, y: 7 },
+          { x: 5, y: 5 },
         ],
       ];
       foo.multipointColumn = [
-        { x: 0, y: 0 }, { x: 20, y: 20 }, { x: 60, y: 60 },
+        { x: 0, y: 0 },
+        { x: 20, y: 20 },
+        { x: 60, y: 60 },
       ];
       foo.multiLineStringColumn = [
         [
-          { x: 10, y: 10 }, { x: 20, y: 20 },
-        ], [
-          { x: 15, y: 15 }, { x: 30, y: 15 },
+          { x: 10, y: 10 },
+          { x: 20, y: 20 },
+        ],
+        [
+          { x: 15, y: 15 },
+          { x: 30, y: 15 },
         ],
       ];
       foo.multiPolygonColumn = [
         [
           [
-            { x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 10 }, { x: 0, y: 10 }, { x: 0, y: 0 },
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+            { x: 0, y: 0 },
           ],
         ],
         [
           [
-            { x: 5, y: 5 }, { x: 7, y: 5 }, { x: 7, y: 7 }, { x: 5, y: 7 }, { x: 5, y: 5 },
+            { x: 5, y: 5 },
+            { x: 7, y: 5 },
+            { x: 7, y: 7 },
+            { x: 5, y: 7 },
+            { x: 5, y: 5 },
           ],
         ],
       ];
@@ -151,7 +175,8 @@ describe('test/Datasource.test.ts', () => {
         { x: 10, y: 10 },
         { x: 30, y: 30 },
         [
-          { x: 15, y: 15 }, { x: 20, y: 20 },
+          { x: 15, y: 15 },
+          { x: 20, y: 20 },
         ],
       ];
       foo.jsonColumn = {

@@ -1,6 +1,7 @@
 import { ContextProto } from '@eggjs/core-decorator';
 import type { AdviceContext, IAdvice } from '@eggjs/tegg-types';
-import { Advice, Pointcut } from '../../src/index.js';
+
+import { Advice, Pointcut } from '../../src/index.ts';
 
 @Advice()
 export class PointcutAdviceBeforeCallExample implements IAdvice {
@@ -23,9 +24,7 @@ export class GetterExample {
   }
 
   @Pointcut(PointcutAdviceBeforeCallExample)
-  foo() {
-
-  }
+  foo() {}
 }
 
 @ContextProto()

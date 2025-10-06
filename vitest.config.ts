@@ -29,20 +29,11 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      reporter: [
-        'json',
-        'text-summary',
-        'html',
-        'lcov',
-      ],
-      exclude: [
-        '*/*/test',
-        'benchmark',
-        '**/*/typings',
-        'vitest.config.ts',
-      ],
+      reporter: ['json', 'text-summary', 'html', 'lcov'],
+      exclude: ['*/*/test', 'benchmark', '**/*/typings', 'vitest.config.ts'],
     },
     testTimeout: 5000,
+    hookTimeout: 20000,
     poolOptions: {
       forks: {
         execArgv: [

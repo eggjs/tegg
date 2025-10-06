@@ -2,18 +2,17 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { fileURLToPath } from 'node:url';
+import { pathToFileURL } from 'node:url';
 
 import { mm } from 'mm';
 import { type ModuleConfig, ModuleConfigs, ModuleDescriptorDumper } from '@eggjs/tegg/helper';
 import { importResolve } from '@eggjs/utils';
 
 import { main, StandaloneContext, Runner, preLoad } from '../src/index.ts';
-import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.js';
-import { Foo } from './fixtures/dal-module/src/Foo.js';
+import { crosscutAdviceParams, pointcutAdviceParams } from './fixtures/aop-module/Hello.ts';
+import { Foo } from './fixtures/dal-module/src/Foo.ts';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = import.meta.dirname;
 
 describe('standalone/standalone/test/index.test.ts', () => {
   describe('simple runner', () => {
@@ -41,9 +40,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
   describe('runner with dependency', () => {
     it('should work', async () => {
       const msg: string = await main(path.join(__dirname, './fixtures/dependency'), {
-        dependencies: [
-          path.join(__dirname, './fixtures/dependency/node_modules/dependency-1'),
-        ],
+        dependencies: [path.join(__dirname, './fixtures/dependency/node_modules/dependency-1')],
       });
       assert.equal(msg, 'hello!{"features":{"dynamic":{"foo":"bar"}}}');
     });
@@ -53,13 +50,15 @@ describe('standalone/standalone/test/index.test.ts', () => {
     it('should work', async () => {
       const msg: string = await main(path.join(__dirname, './fixtures/inner-object'), {
         innerObjectHandlers: {
-          hello: [{
-            obj: {
-              hello() {
-                return 'hello, inner';
+          hello: [
+            {
+              obj: {
+                hello() {
+                  return 'hello, inner';
+                },
               },
             },
-          }],
+          ],
         },
       });
       assert.equal(msg, 'hello, inner');
@@ -123,9 +122,9 @@ describe('standalone/standalone/test/index.test.ts', () => {
   describe('@ConfigSource qualifier', () => {
     it('should work', async () => {
       const { configs, foo, bar } = (await main(path.join(__dirname, './fixtures/multi-modules'))) as {
-        configs: ModuleConfigs,
-        foo: ModuleConfig,
-        bar: ModuleConfig,
+        configs: ModuleConfigs;
+        foo: ModuleConfig;
+        bar: ModuleConfig;
       };
       assert.deepEqual(configs.get('foo'), foo);
       assert.deepEqual(configs.get('bar'), bar);
@@ -184,9 +183,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should work', async () => {
       const msgs = await main(fixturePath, {
-        dependencies: [
-          { baseDir: path.join(__dirname, '..'), extraFilePattern: [ '!**/test' ] },
-        ],
+        dependencies: [{ baseDir: path.join(__dirname, '..'), extraFilePattern: ['!**/test'] }],
       });
       assert.deepEqual(msgs, [
         'hello, foo(context:0)',
@@ -209,7 +206,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const runner = new Runner(fixturePath);
       await assert.rejects(
         runner.init(),
-        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
+        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/
       );
       await runner.destroy();
     });
@@ -220,8 +217,10 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
     it('should work', async () => {
       const msg = await main(fixturePath);
-      assert.deepEqual(msg,
-        `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`);
+      assert.deepEqual(
+        msg,
+        `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`
+      );
     });
   });
 
@@ -290,37 +289,39 @@ describe('standalone/standalone/test/index.test.ts', () => {
 
   describe('ajv runner', () => {
     it('should throw AjvInvalidParamError', async () => {
-      await assert.rejects(async () => {
-        await main<string>(path.join(__dirname, './fixtures/ajv-module'), {
-          dependencies: [
-            path.dirname(importResolve('@eggjs/tegg-ajv-plugin/package.json')),
-          ],
-        });
-      }, (err: any) => {
-        assert.equal(err.name, 'AjvInvalidParamError');
-        assert.equal(err.message, 'Validation Failed');
-        assert.deepEqual(err.errorData, {});
-        assert.equal(err.currentSchema, '{"type":"object","properties":{"fullname":{"transform":["trim"],"maxLength":100,"type":"string"},"skipDependencies":{"type":"boolean"},"registryName":{"type":"string"}},"required":["fullname","skipDependencies"]}');
-        assert.deepEqual(err.errors, [
-          {
-            instancePath: '',
-            schemaPath: '#/required',
-            keyword: 'required',
-            params: {
-              missingProperty: 'fullname',
+      await assert.rejects(
+        async () => {
+          await main<string>(path.join(__dirname, './fixtures/ajv-module'), {
+            dependencies: [path.dirname(importResolve('@eggjs/tegg-ajv-plugin/package.json'))],
+          });
+        },
+        (err: any) => {
+          assert.equal(err.name, 'AjvInvalidParamError');
+          assert.equal(err.message, 'Validation Failed');
+          assert.deepEqual(err.errorData, {});
+          assert.equal(
+            err.currentSchema,
+            '{"type":"object","properties":{"fullname":{"transform":["trim"],"maxLength":100,"type":"string"},"skipDependencies":{"type":"boolean"},"registryName":{"type":"string"}},"required":["fullname","skipDependencies"]}'
+          );
+          assert.deepEqual(err.errors, [
+            {
+              instancePath: '',
+              schemaPath: '#/required',
+              keyword: 'required',
+              params: {
+                missingProperty: 'fullname',
+              },
+              message: "must have required property 'fullname'",
             },
-            message: "must have required property 'fullname'",
-          },
-        ]);
-        return true;
-      });
+          ]);
+          return true;
+        }
+      );
     });
 
     it('should pass', async () => {
       const result = await main<string>(path.join(__dirname, './fixtures/ajv-module-pass'), {
-        dependencies: [
-          path.dirname(importResolve('@eggjs/tegg-ajv-plugin/package.json')),
-        ],
+        dependencies: [path.dirname(importResolve('@eggjs/tegg-ajv-plugin/package.json'))],
       });
       assert.equal(result, '{"body":{"fullname":"mock fullname","skipDependencies":true,"registryName":"ok"}}');
     });
@@ -333,20 +334,17 @@ describe('standalone/standalone/test/index.test.ts', () => {
     beforeEach(async () => {
       mm.restore();
       mm.spy(ModuleDescriptorDumper, 'dump');
-      Foo = await import(path.join(fixturePath, './foo.js')).then(m => m.Foo);
+      let fooPath = path.join(fixturePath, 'foo.ts');
+      if (process.platform === 'win32') {
+        fooPath = pathToFileURL(fooPath).toString();
+      }
+      Foo = await import(fooPath).then(m => m.Foo);
     });
 
     it('should work', async () => {
       await preLoad(fixturePath);
       await main(fixturePath);
-      assert.deepEqual(Foo.staticCalled, [
-        'preLoad',
-        'construct',
-        'postConstruct',
-        'preInject',
-        'postInject',
-        'init',
-      ]);
+      assert.deepEqual(Foo.staticCalled, ['preLoad', 'construct', 'postConstruct', 'preInject', 'postInject', 'init']);
       assert.equal((ModuleDescriptorDumper.dump as any).called, 1);
     });
   });
