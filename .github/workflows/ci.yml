@@ -87,7 +87,7 @@ jobs:
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
-          choco install -y mariadb
+          choco install -y mysql
           refreshenv
           # MariaDB default root has no password, set a password and create database/user
           # & "C:\Program Files\MariaDB 12.0\bin\mysqladmin.exe" -u root password root
