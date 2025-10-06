@@ -99,6 +99,7 @@ describe('test/app/extend/context.test.ts', () => {
         await TimerUtil.sleep(1000);
       });
       const stack = backgroundError?.stack ?? '';
+      const fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
       // background
       // at ~/plugin/tegg/test/app/extend/context.test.ts:88:17
       // at ~/plugin/tegg/test/app/extend/context.test.ts:82:21 (~/plugin/tegg/lib/run_in_background.ts:34:15)
@@ -109,8 +110,8 @@ describe('test/app/extend/context.test.ts', () => {
       // at ~/plugin/tegg/app/extend/application.unittest.ts:49:22
       // at async Proxy.mockContextScope (~/node_modules/egg-mock/app/extend/application.js:81:12)
       // at async Context.<anonymous> (~/plugin/tegg/test/app/extend/context.test.ts:86:7)
-      assert(stack.includes(import.meta.filename));
-      assert(stack.includes(LONG_STACK_DELIMITER));
+      assert(stack.includes(fileName), `stack: ${stack} not includes '${fileName}'`);
+      assert(stack.includes(LONG_STACK_DELIMITER), `stack: ${stack} not includes '${LONG_STACK_DELIMITER}'`);
     });
   });
 });

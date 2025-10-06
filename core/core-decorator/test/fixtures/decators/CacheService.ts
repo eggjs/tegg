@@ -17,10 +17,9 @@ export class TestService4 {
   }
 }
 
-
 @ContextProto()
 export default class CacheService {
-  static fileName = import.meta.filename;
+  static fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
 
   @Inject({
     name: 'fooCache',
