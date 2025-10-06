@@ -97,20 +97,20 @@ jobs:
             $svc.WaitForStatus('Running','00:00:30')
           }
           # wait for 3306 port to be ready (max 60s)
-          $deadline = (Get-Date).AddSeconds(60)
-          $ready = $false
-          while ((Get-Date) -lt $deadline -and -not $ready) {
-            try {
-              $c = New-Object System.Net.Sockets.TcpClient
-              $ok = $c.BeginConnect('127.0.0.1',3306,$null,$null).AsyncWaitHandle.WaitOne(2000)
-              if ($ok -and $c.Connected) { $ready = $true }
-              $c.Close()
-            } catch {}
-          }
-          if (-not $ready) { Write-Error "MariaDB not ready on 127.0.0.1:3306"; exit 1 }
+          # $deadline = (Get-Date).AddSeconds(60)
+          # $ready = $false
+          # while ((Get-Date) -lt $deadline -and -not $ready) {
+          #   try {
+          #     $c = New-Object System.Net.Sockets.TcpClient
+          #     $ok = $c.BeginConnect('127.0.0.1',3306,$null,$null).AsyncWaitHandle.WaitOne(2000)
+          #     if ($ok -and $c.Connected) { $ready = $true }
+          #     $c.Close()
+          #   } catch {}
+          # }
+          # if (-not $ready) { Write-Error "MariaDB not ready on 127.0.0.1:3306"; exit 1 }
           # MariaDB default root has no password, set a password and create database/user
-          # & "C:\Program Files\MariaDB 10.11\bin\mysqladmin.exe" -u root password root
-          & "C:\Program Files\MariaDB 10.11\bin\mysql.exe" -uroot -proot -e "CREATE DATABASE IF NOT EXISTS test;"
+          # & "C:\Program Files\MariaDB 12.0\bin\mysqladmin.exe" -u root password root
+          & "C:\Program Files\MariaDB 12.0\bin\mysql.exe" -uroot -proot -e "CREATE DATABASE IF NOT EXISTS test;"
 
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
