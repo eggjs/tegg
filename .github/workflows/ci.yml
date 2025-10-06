@@ -105,9 +105,16 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
+        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run ci
 
+      - name: Run tests on Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: pnpm test && pnpm run test:mocha
+
       - name: Code Coverage
+        # Windows codecov will hang, so skip it, see https://github.com/eggjs/tegg/actions/runs/18271686556/job/52015146433
+        if: ${{ matrix.os != 'windows-latest' }}
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
         with:
           use_oidc: true
