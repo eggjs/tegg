@@ -105,12 +105,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        if: ${{ matrix.os != 'windows-latest' }}
         run: pnpm run ci
-
-      - name: Run tests on Windows
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: pnpm test && pnpm run cov:mocha
 
       - name: Code Coverage
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
