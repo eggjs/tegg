@@ -58,7 +58,7 @@
     "@eggjs/tegg-runtime": "^3.62.0",
     "@types/koa-router": "^7.0.40",
     "koa-compose": "^3.2.1",
-    "leoric": "^2.12.2",
+    "leoric": "2.13.8",
     "sdk-base": "^4.2.0"
   },
   "devDependencies": {
