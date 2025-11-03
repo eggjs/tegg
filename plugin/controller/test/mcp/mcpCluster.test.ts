@@ -669,7 +669,7 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
         },
       ]);
 
-      const toolRes2 = await streamableClient1.callTool({
+      const toolRes2 = await streamableClient2.callTool({
         name: 'bar',
         arguments: {
           name: 'aaa',

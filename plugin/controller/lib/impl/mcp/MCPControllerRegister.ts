@@ -306,21 +306,21 @@ export class MCPControllerRegister implements ControllerRegister {
           const self = this;
           const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
           for (const tool of self.registerMap[name ?? 'default'].tools) {
-            mcpServerHelper.mcpToolRegister(
+            await mcpServerHelper.mcpToolRegister(
               tool.getOrCreateEggObject,
               tool.proto,
               tool.meta,
             );
           }
           for (const resource of self.registerMap[name ?? 'default'].resources) {
-            mcpServerHelper.mcpResourceRegister(
+            await mcpServerHelper.mcpResourceRegister(
               resource.getOrCreateEggObject,
               resource.proto,
               resource.meta,
             );
           }
           for (const prompt of self.registerMap[name ?? 'default'].prompts) {
-            mcpServerHelper.mcpPromptRegister(
+            await mcpServerHelper.mcpPromptRegister(
               prompt.getOrCreateEggObject,
               prompt.proto,
               prompt.meta,
