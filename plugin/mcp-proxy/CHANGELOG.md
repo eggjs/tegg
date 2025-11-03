@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.62.1](https://github.com/eggjs/tegg/compare/v3.62.0...v3.62.1) (2025-11-03)
+
+
+### Bug Fixes
+
+* multi mcp client ([#357](https://github.com/eggjs/tegg/issues/357)) ([f9e4728](https://github.com/eggjs/tegg/commit/f9e47289160dffc5b47e93b60128a25ffd94fb4e))
+
+
+
+
+
 # [3.62.0](https://github.com/eggjs/tegg/compare/v3.61.0...v3.62.0) (2025-09-24)
 
 
