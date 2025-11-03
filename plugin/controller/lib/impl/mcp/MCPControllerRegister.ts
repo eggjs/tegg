@@ -12,9 +12,11 @@ import {
   MCPToolMeta,
   ControllerType,
   EggContext,
+  EggObjectName,
+  MCPResourceMeta,
 } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { EggContainerFactory, EggObject } from '@eggjs/tegg-runtime';
 import { ControllerRegister } from '../../ControllerRegister';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -37,7 +39,7 @@ export interface MCPControllerHook {
 
   // STREAM
   preHandle?: (ctx: Context) => Promise<void>
-  onStreamSessionInitialized?: (ctx: Context, transport: StreamableHTTPServerTransport, register: MCPControllerRegister) => Promise<void>
+  onStreamSessionInitialized?: (ctx: Context, transport: StreamableHTTPServerTransport, server: McpServer, register: MCPControllerRegister) => Promise<void>
 
   // COMMON
   preProxy?: (ctx: Context, proxyReq: http.IncomingMessage, proxyResp: http.ServerResponse) => Promise<void>
@@ -48,6 +50,12 @@ export interface MCPControllerHook {
   middlewareStart?: (ctx: Context) => Promise<void>
   middlewareEnd?: (ctx: Context) => Promise<void>
   middlewareError?: (ctx: Context, e: Error) => Promise<void>
+}
+
+interface ServerRegisterRecord<T> {
+  getOrCreateEggObject: (proto: EggPrototype, name?: EggObjectName) => Promise<EggObject>;
+  proto: EggPrototype,
+  meta: T,
 }
 
 class InnerSSEServerTransport extends SSEServerTransport {
@@ -83,7 +91,8 @@ export class MCPControllerRegister implements ControllerRegister {
   string,
   { res: ServerResponse; intervalId: NodeJS.Timeout }
   >();
-  mcpServerHelperMap: Record<string, MCPServerHelper> = {};
+  mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
+  mcpServerMap: Record<string, McpServer> = {};
   statelessMcpServerHelperMap: Record<string, MCPServerHelper> = {};
   private controllerMeta: MCPControllerMeta;
   mcpConfig: MCPConfig;
@@ -102,6 +111,8 @@ export class MCPControllerRegister implements ControllerRegister {
   >();
   static hooks: MCPControllerHook[] = [];
   globalMiddlewares: compose.ComposedMiddleware<EggContext>;
+
+  registerMap: Record<string, { tools: ServerRegisterRecord<MCPToolMeta>[], prompts: ServerRegisterRecord<MCPPromptMeta>[], resources: ServerRegisterRecord<MCPResourceMeta>[] }> = {};
 
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
     assert(controllerMeta.type === ControllerType.MCP, 'controller meta type is not MCP');
@@ -293,6 +304,28 @@ export class MCPControllerRegister implements ControllerRegister {
           ctx.respond = false;
           const eventStore = this.mcpConfig.getEventStore();
           const self = this;
+          const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
+          for (const tool of self.registerMap[name ?? 'default'].tools) {
+            mcpServerHelper.mcpToolRegister(
+              tool.getOrCreateEggObject,
+              tool.proto,
+              tool.meta,
+            );
+          }
+          for (const resource of self.registerMap[name ?? 'default'].resources) {
+            mcpServerHelper.mcpResourceRegister(
+              resource.getOrCreateEggObject,
+              resource.proto,
+              resource.meta,
+            );
+          }
+          for (const prompt of self.registerMap[name ?? 'default'].prompts) {
+            mcpServerHelper.mcpPromptRegister(
+              prompt.getOrCreateEggObject,
+              prompt.proto,
+              prompt.meta,
+            );
+          }
           const transport = new StreamableHTTPServerTransport({
             sessionIdGenerator: () =>
               this.mcpConfig.getSessionIdGenerator(name)(ctx),
@@ -303,6 +336,7 @@ export class MCPControllerRegister implements ControllerRegister {
                   await hook.onStreamSessionInitialized?.(
                     self.app.currentContext,
                     transport,
+                    mcpServerHelper.server,
                     self,
                   );
                 }
@@ -315,9 +349,7 @@ export class MCPControllerRegister implements ControllerRegister {
             'transfer-encoding': 'chunked',
           });
 
-          await self.mcpServerHelperMap[name ?? 'default'].server.connect(
-            transport,
-          );
+          await mcpServerHelper.server.connect(transport);
 
           const onmessage = transport.onmessage;
 
@@ -429,9 +461,30 @@ export class MCPControllerRegister implements ControllerRegister {
         'transfer-encoding': 'chunked',
       });
       ctx.respond = false;
-      await self.mcpServerHelperMap[name ?? 'default'].server.connect(
-        transport,
-      );
+      const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
+      for (const tool of self.registerMap[name ?? 'default'].tools) {
+        mcpServerHelper.mcpToolRegister(
+          tool.getOrCreateEggObject,
+          tool.proto,
+          tool.meta,
+        );
+      }
+      for (const resource of self.registerMap[name ?? 'default'].resources) {
+        mcpServerHelper.mcpResourceRegister(
+          resource.getOrCreateEggObject,
+          resource.proto,
+          resource.meta,
+        );
+      }
+      for (const prompt of self.registerMap[name ?? 'default'].prompts) {
+        mcpServerHelper.mcpPromptRegister(
+          prompt.getOrCreateEggObject,
+          prompt.proto,
+          prompt.meta,
+        );
+      }
+      await mcpServerHelper.server.connect(transport);
+      self.mcpServerMap[id] = mcpServerHelper.server;
       return self.sseCtxStorageRun.bind(self)(ctx, transport, name);
     };
     Reflect.apply(routerFunc, this.router, [
@@ -452,6 +505,7 @@ export class MCPControllerRegister implements ControllerRegister {
     transport.onclose = (...args) => {
       closeFunc?.(...args);
       delete self.transports[transport.sessionId];
+      delete self.mcpServerMap[transport.sessionId];
       self.sseTransportsRequestMap.delete(transport);
       const connection = self.sseConnections.get(transport.sessionId);
       if (connection) {
@@ -480,12 +534,12 @@ export class MCPControllerRegister implements ControllerRegister {
       };
       const newCtx = self.app.createContext(req, res) as unknown as Context;
       await ctx.app.ctxStorage.run(newCtx, async () => {
-        if (MCPControllerRegister.hooks.length > 0) {
-          for (const hook of MCPControllerRegister.hooks) {
-            await hook.preHandle?.(newCtx);
-          }
-        }
         await mw(newCtx, async () => {
+          if (MCPControllerRegister.hooks.length > 0) {
+            for (const hook of MCPControllerRegister.hooks) {
+              await hook.preHandle?.(newCtx);
+            }
+          }
           messageFunc!(message, extra);
           if (isJSONRPCRequest(args[0])) {
             const map = self.sseTransportsRequestMap.get(transport)!;
@@ -597,14 +651,15 @@ export class MCPControllerRegister implements ControllerRegister {
       ) as MCPControllerMeta;
       if (!this.mcpServerHelperMap[metadata.name ?? 'default']) {
         this.getGlobalMiddleware();
-        this.mcpServerHelperMap[metadata.name ?? 'default'] =
-          new MCPServerHelper({
+        this.mcpServerHelperMap[metadata.name ?? 'default'] = () => {
+          return new MCPServerHelper({
             name:
               this.controllerMeta.name ??
               `chair-mcp-${metadata.name ?? this.app.name}-server`,
             version: this.controllerMeta.version ?? '1.0.0',
             hooks: MCPControllerRegister.hooks,
           });
+        };
         this.statelessMcpServerHelperMap[metadata.name ?? 'default'] =
           new MCPServerHelper({
             name:
@@ -621,18 +676,23 @@ export class MCPControllerRegister implements ControllerRegister {
           this.mcpConfig.setMultipleServerPath(this.app, metadata.name);
         }
       }
-      const mcpServerHelper =
-        this.mcpServerHelperMap[metadata.name ?? 'default'];
       const statelessMcpServerHelper =
         this.statelessMcpServerHelperMap[metadata.name ?? 'default'];
       for (const prompt of metadata.prompts) {
-        await mcpServerHelper.mcpPromptRegister(
-          this.eggContainerFactory.getOrCreateEggObject.bind(
+        if (!this.registerMap[metadata.name ?? 'default']) {
+          this.registerMap[metadata.name ?? 'default'] = {
+            prompts: [],
+            resources: [],
+            tools: [],
+          };
+        }
+        this.registerMap[metadata.name ?? 'default'].prompts.push({
+          getOrCreateEggObject: this.eggContainerFactory.getOrCreateEggObject.bind(
             this.eggContainerFactory,
           ),
           proto,
-          prompt,
-        );
+          meta: prompt,
+        });
         await statelessMcpServerHelper.mcpPromptRegister(
           this.eggContainerFactory.getOrCreateEggObject.bind(
             this.eggContainerFactory,
@@ -642,13 +702,20 @@ export class MCPControllerRegister implements ControllerRegister {
         );
       }
       for (const resource of metadata.resources) {
-        await mcpServerHelper.mcpResourceRegister(
-          this.eggContainerFactory.getOrCreateEggObject.bind(
+        if (!this.registerMap[metadata.name ?? 'default']) {
+          this.registerMap[metadata.name ?? 'default'] = {
+            prompts: [],
+            resources: [],
+            tools: [],
+          };
+        }
+        this.registerMap[metadata.name ?? 'default'].resources.push({
+          getOrCreateEggObject: this.eggContainerFactory.getOrCreateEggObject.bind(
             this.eggContainerFactory,
           ),
           proto,
-          resource,
-        );
+          meta: resource,
+        });
         await statelessMcpServerHelper.mcpResourceRegister(
           this.eggContainerFactory.getOrCreateEggObject.bind(
             this.eggContainerFactory,
@@ -658,13 +725,20 @@ export class MCPControllerRegister implements ControllerRegister {
         );
       }
       for (const tool of metadata.tools) {
-        await mcpServerHelper.mcpToolRegister(
-          this.eggContainerFactory.getOrCreateEggObject.bind(
+        if (!this.registerMap[metadata.name ?? 'default']) {
+          this.registerMap[metadata.name ?? 'default'] = {
+            prompts: [],
+            resources: [],
+            tools: [],
+          };
+        }
+        this.registerMap[metadata.name ?? 'default'].tools.push({
+          getOrCreateEggObject: this.eggContainerFactory.getOrCreateEggObject.bind(
             this.eggContainerFactory,
           ),
           proto,
-          tool,
-        );
+          meta: tool,
+        });
         await statelessMcpServerHelper.mcpToolRegister(
           this.eggContainerFactory.getOrCreateEggObject.bind(
             this.eggContainerFactory,
