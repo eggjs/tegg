@@ -2,11 +2,11 @@ import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
 
-import { ChatOpenAIModel } from '../lib/ChatOpenAI';
-
 
 describe('plugin/langchain/test/llm.test.ts', () => {
   if (parseInt(process.version.slice(1, 3)) > 17) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { ChatOpenAIModel } = require('../lib/ChatOpenAI');
     let app;
 
     after(async () => {

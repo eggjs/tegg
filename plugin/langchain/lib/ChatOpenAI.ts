@@ -6,9 +6,8 @@ import {
   MultiInstancePrototypeGetObjectsContext,
   ObjectInfo,
   ObjectInitType,
-  ModuleConfig,
 } from '@eggjs/tegg';
-import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { ModuleConfig, ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { ChatOpenAI } from '@langchain/openai';
 import { getChatModelConfig, getClientNames } from './util';
 import { QualifierUtil } from './config/QualifierUtil';

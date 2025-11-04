@@ -4,7 +4,7 @@ import { MCPInfoUtil } from '@eggjs/controller-decorator';
 describe('Graph', () => {
   if (parseInt(process.version.slice(1, 3)) > 17) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { GraphMetaBuilder, GraphEdgeMetaBuilder, GraphNodeMetaBuilder, GraphToolMetaBuilder, GraphToolMetadata, GraphMetadata, TeggToolNode, BoundModelMetaBuilder } = require('../src');
+    const { GraphMetaBuilder, GraphEdgeMetaBuilder, GraphNodeMetaBuilder, GraphToolMetaBuilder, GraphToolMetadata, GraphMetadata, TeggToolNode, BoundModelMetaBuilder } = require('../');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { FooContinueEdge, FooGraph, FooNode, FooSaver, FooTool, BarGraph, BarNode, ToolNode, ToolType, FooChatModel } = require('./fixtures/modules/langgraph/Graph');
 

@@ -7,7 +7,7 @@ describe('index.test.ts', () => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { Foo } = require('./fixtures/modules/langchain');
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const { ChatModelQualifierAttribute } = require('../src');
+      const { ChatModelQualifierAttribute } = require('../');
       const chatModelQualifier = QualifierUtil.getProperQualifier(Foo, 'chatModel', ChatModelQualifierAttribute);
       assert.equal(chatModelQualifier, 'chat');
     });
