@@ -38,4 +38,11 @@ describe('test/app/extend/application.test.ts', () => {
       }, /ctx is required/);
     });
   });
+
+  describe('getEggObjectFromName', () => {
+    it('should work with correct type inference', async () => {
+      const persistenceService: PersistenceService = await app.getEggObjectFromName<PersistenceService>('persistenceService');
+      assert(persistenceService instanceof PersistenceService);
+    });
+  });
 });

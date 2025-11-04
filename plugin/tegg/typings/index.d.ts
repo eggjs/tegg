@@ -60,7 +60,7 @@ declare module 'egg' {
     module: EggModule & EggApplicationModule;
 
     getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<unknown>;
+    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
   }
 
   export interface TEggContext {
