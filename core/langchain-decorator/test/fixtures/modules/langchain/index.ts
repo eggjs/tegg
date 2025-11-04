@@ -1,7 +1,7 @@
 import { ChatOpenAI } from '@langchain/openai';
 import {
   ChatModelQualifier,
-} from '../../../../src';
+} from '../../../..';
 import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
 
 @SingletonProto({

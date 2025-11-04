@@ -1,0 +1,9 @@
+ChatModel:
+  clients:
+    chat:
+      apiKey: mock_api_key
+      model: Qwen2_5_7B_Instruct
+      temperature: 0
+      timeout: 10
+      configuration:
+        baseURL: https://antchat.alipay.com/v1

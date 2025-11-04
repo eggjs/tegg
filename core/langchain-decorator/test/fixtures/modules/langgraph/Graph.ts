@@ -1,4 +1,4 @@
-import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, ChatModelQualifier, TeggCompiledStateGraph, TeggToolNode, BoundModel, TeggBoundModel } from '../../../../src';
+import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, ChatModelQualifier, TeggCompiledStateGraph, TeggToolNode, BoundModel, TeggBoundModel } from '../../../..';
 import { Annotation, MemorySaver } from '@langchain/langgraph';
 import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
