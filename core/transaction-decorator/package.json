@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-transaction-decorator",
-  "version": "3.62.1",
+  "version": "3.62.3",
   "description": "tegg transaction decorator",
   "keywords": [
     "egg",
@@ -17,10 +17,10 @@
     "directory": "core/transaction-decorator"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.62.1",
-    "@eggjs/tegg-common-util": "^3.62.1",
-    "@eggjs/tegg-metadata": "^3.62.1",
-    "@eggjs/tegg-types": "^3.62.1"
+    "@eggjs/core-decorator": "^3.62.3",
+    "@eggjs/tegg-common-util": "^3.62.3",
+    "@eggjs/tegg-metadata": "^3.62.3",
+    "@eggjs/tegg-types": "^3.62.3"
   },
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",

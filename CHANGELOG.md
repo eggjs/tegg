@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.62.3](https://github.com/eggjs/tegg/compare/v3.62.1...v3.62.3) (2025-11-05)
+
+
+### Bug Fixes
+
+* mcp args chinese ([61dad90](https://github.com/eggjs/tegg/commit/61dad903b2ba6140dd52a5b5600a36caef26373f))
+* mcp chinese args ([#359](https://github.com/eggjs/tegg/issues/359)) ([b3c6ff1](https://github.com/eggjs/tegg/commit/b3c6ff178e1e3c76c34cedfe936d40475514708e))
+* **typings:** fix getEggObjectFromName return type to Promise<T> ([#358](https://github.com/eggjs/tegg/issues/358)) ([919b72b](https://github.com/eggjs/tegg/commit/919b72b48e7966226a5e970c7e297ee6c3d1f081))
+
+
+
+
+
+## [3.62.2](https://github.com/eggjs/tegg/compare/v3.62.1...v3.62.2) (2025-11-05)
+
+
+### Bug Fixes
+
+* mcp args chinese ([61dad90](https://github.com/eggjs/tegg/commit/61dad903b2ba6140dd52a5b5600a36caef26373f))
+* mcp chinese args ([#359](https://github.com/eggjs/tegg/issues/359)) ([b3c6ff1](https://github.com/eggjs/tegg/commit/b3c6ff178e1e3c76c34cedfe936d40475514708e))
+* **typings:** fix getEggObjectFromName return type to Promise<T> ([#358](https://github.com/eggjs/tegg/issues/358)) ([919b72b](https://github.com/eggjs/tegg/commit/919b72b48e7966226a5e970c7e297ee6c3d1f081))
+
+
+
+
+
 ## [3.62.1](https://github.com/eggjs/tegg/compare/v3.62.0...v3.62.1) (2025-11-03)
 
 
