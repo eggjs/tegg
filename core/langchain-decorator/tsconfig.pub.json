@@ -2,7 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
   },
   "exclude": [
     "dist",

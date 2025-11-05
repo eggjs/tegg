@@ -23,4 +23,9 @@ exports.teggController = {
   enable: true,
 };
 
+exports.teggMcpClient = {
+  enable: true,
+  package: '@eggjs/tegg-mcp-client',
+};
+
 exports.watcher = false;

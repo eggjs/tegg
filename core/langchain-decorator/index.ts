@@ -23,3 +23,5 @@ export * from './src/util/GraphToolInfoUtil';
 export * from './src/util/BoundModelInfoUtil';
 
 export * from './src/qualifier/ChatModelQualifier';
+export * from './src/qualifier/ChatCheckpointSaverQualifier';
+export * from './src/type/metadataKey';

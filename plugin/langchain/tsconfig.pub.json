@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
   },
   "exclude": [
     "node_modules",

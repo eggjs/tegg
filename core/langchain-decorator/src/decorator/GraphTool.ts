@@ -10,7 +10,7 @@ import {
 
 import { IGraphToolMetadata } from '../model/GraphToolMetadata';
 import { GraphToolInfoUtil } from '../util/GraphToolInfoUtil';
-import { DynamicStructuredTool, ToolSchemaBase } from '@langchain/core/dist/tools';
+import { DynamicStructuredTool, ToolSchemaBase } from '@langchain/core/tools';
 
 export function GraphTool<ToolSchema = ToolSchemaBase>(params: IGraphToolMetadata) {
   return (constructor: EggProtoImplClass<IGraphTool<ToolSchema>>) => {

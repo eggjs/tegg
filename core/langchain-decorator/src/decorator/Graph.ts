@@ -37,4 +37,4 @@ export abstract class AbstractStateGraph<N extends string = '', S extends StateD
   private _state: S;
 }
 
-export type TeggCompiledStateGraph<G> = G extends AbstractStateGraph<infer N, infer S> ? CompiledStateGraph<StateType<S>, UpdateType<S>, N, S, S> : never;
+export type TeggCompiledStateGraph<G> = G extends AbstractStateGraph<infer N extends string, infer S extends StateDefinition> ? CompiledStateGraph<StateType<S>, UpdateType<S>, N, S, S> : never;

@@ -1,0 +1,132 @@
+import mm from 'egg-mock';
+import path from 'path';
+import assert from 'assert';
+import { startSSEServer, stopSSEServer } from './fixtures/sse-mcp-server/http';
+import { startStreamableServer, stopStreamableServer } from './fixtures/streamable-mcp-server/http';
+
+describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
+  if (parseInt(process.version.slice(1, 3)) > 17) {
+    let app;
+
+    before(async () => {
+      await startStreamableServer(17263);
+      await startSSEServer(17253);
+    });
+
+    after(async () => {
+      await app.close();
+      await stopSSEServer();
+      await stopStreamableServer();
+    });
+
+    afterEach(() => {
+      mm.restore();
+    });
+
+    before(async () => {
+      mm(process.env, 'EGG_TYPESCRIPT', true);
+      mm(process, 'cwd', () => {
+        return path.join(__dirname, '..');
+      });
+      app = mm.app({
+        baseDir: path.join(__dirname, 'fixtures/apps/mcpclient'),
+        framework: path.dirname(require.resolve('egg')),
+      });
+      await app.ready();
+    });
+
+    after(() => {
+      return app.close();
+    });
+
+    it('should sse work', async () => {
+      const res = await app.httpRequest()
+        .get('/mcpclient/hello-sse')
+        .expect(200);
+      assert.deepStrictEqual(res.body, {
+        tools: [
+          {
+            name: 'add',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'number',
+                },
+                b: {
+                  type: 'number',
+                },
+              },
+              required: [
+                'a',
+                'b',
+              ],
+              additionalProperties: false,
+              $schema: 'http://json-schema.org/draft-07/schema#',
+            },
+          },
+        ],
+      });
+    });
+
+    it('should streamable work', async () => {
+      const res = await app.httpRequest()
+        .get('/mcpclient/hello-streamable')
+        .expect(200);
+      assert.deepStrictEqual(res.body, {
+        tools: [
+          {
+            name: 'add',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'number',
+                },
+                b: {
+                  type: 'number',
+                },
+              },
+              required: [
+                'a',
+                'b',
+              ],
+              additionalProperties: false,
+              $schema: 'http://json-schema.org/draft-07/schema#',
+            },
+          },
+        ],
+      });
+    });
+
+    it('should factory work', async () => {
+      const res = await app.httpRequest()
+        .get('/mcpclient/hello-factory')
+        .expect(200);
+      assert.deepStrictEqual(res.body, {
+        tools: [
+          {
+            name: 'add',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'number',
+                },
+                b: {
+                  type: 'number',
+                },
+              },
+              required: [
+                'a',
+                'b',
+              ],
+              additionalProperties: false,
+              $schema: 'http://json-schema.org/draft-07/schema#',
+            },
+          },
+        ],
+      });
+    });
+  }
+});

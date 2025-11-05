@@ -11,8 +11,8 @@ import {
 import { IGraphNodeMetadata } from '../model/GraphNodeMetadata';
 import { GraphNodeInfoUtil } from '../util/GraphNodeInfoUtil';
 import { AnnotationRoot, StateDefinition, UpdateType } from '@langchain/langgraph';
-import { ConfigurableModel } from 'langchain/dist/chat_models/universal.js';
-import { ToolNode } from '@langchain/langgraph/dist/prebuilt';
+import { ConfigurableModel } from 'langchain/chat_models/universal';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
 
 export function GraphNode<S extends StateDefinition = StateDefinition>(params: IGraphNodeMetadata) {
   return (constructor: EggProtoImplClass<IGraphNode<S> | TeggToolNode>) => {

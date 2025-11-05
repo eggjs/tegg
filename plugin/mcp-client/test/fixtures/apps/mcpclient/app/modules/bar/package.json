@@ -1,0 +1,6 @@
+{
+  "name": "mcp-client-module",
+  "eggModule": {
+    "name": "mcpClientModule"
+  }
+}

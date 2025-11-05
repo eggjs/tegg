@@ -1,4 +1,4 @@
-# @eggjs/tegg-orm-plugin
+# @eggjs/tegg-langchain
 
 使用注解的方式来开发 egg 中的 orm
 

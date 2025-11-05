@@ -23,6 +23,9 @@ import { ChatModelHelper } from './ChatModelHelper';
     const config: ModuleConfig = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath);
     const moduleName = ModuleConfigUtil.readModuleNameSync(ctx.unitPath);
     return getClientNames(config, 'ChatModel')
+      .filter(name => {
+        return (config as any).ChatModel.clients[name].type === 'openai';
+      })
       .map(name => {
         return {
           name: ChatModelInjectName,

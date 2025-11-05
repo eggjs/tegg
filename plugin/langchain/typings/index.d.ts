@@ -3,6 +3,7 @@ import { Type, Static } from '@eggjs/tegg/ajv';
 import 'egg';
 import '@eggjs/tegg-plugin/typings';
 import '@eggjs/tegg-controller-plugin/typings';
+import '@eggjs/tegg-mcp-client/typings';
 
 export const ChatModelConfigModuleConfigSchema = Type.Object({
   clients: Type.Record(Type.String(), Type.Object({
