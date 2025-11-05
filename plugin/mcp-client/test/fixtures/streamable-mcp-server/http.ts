@@ -2,39 +2,40 @@ import http from 'node:http';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { z } from "zod";
+import { z } from 'zod';
 
 // Create an MCP server
 const server = new McpServer({
-  name: "Demo",
-  version: "1.0.0"
+  name: 'Demo',
+  version: '1.0.0',
 });
 
 // Add an addition tool
-server.tool("add",
+server.tool('add',
   { a: z.number(), b: z.number() },
   async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a + b) }]
-  })
+    content: [{ type: 'text', text: String(a + b) }],
+  }),
 );
 
 // Add a dynamic greeting resource
 server.resource(
-  "greeting",
-  "greeting://{name}",
+  'greeting',
+  'greeting://{name}',
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   async (uri, { name }) => ({
     contents: [{
       uri: uri.href,
-      text: `Hello, ${name}!`
-    }]
-  })
+      text: `Hello, ${name}!`,
+    }],
+  }),
 );
 
 export const headers = {};
 
 export let httpServer;
-export async function startStreamableServer(port = 17243){
+export async function startStreamableServer(port = 17243) {
   const httpServer = http.createServer(async (req, res) => {
     const url = new URL(`http://127.0.0.1:${port}${req.url!}`);
     const headerKey = `${req.method}${url.pathname}`;
