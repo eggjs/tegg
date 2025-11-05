@@ -320,7 +320,7 @@ export class MCPProxyApiClient extends APIClientBase {
             method: ctx.req.method,
           });
           const headers: Record<string, string> = {
-            'mcp-proxy-arg': (body as Buffer).toString(),
+            'mcp-proxy-arg': encodeURIComponent((body as Buffer).toString()),
           };
           for (const [ key, value ] of resp.headers.entries()) {
             if (IGNORE_HEADERS.includes(key)) {
@@ -366,7 +366,7 @@ export class MCPProxyApiClient extends APIClientBase {
             } : {}),
           });
           const headers: Record<string, string> = {
-            'mcp-proxy-arg': (body as Buffer).toString(),
+            'mcp-proxy-arg': encodeURIComponent((body as Buffer).toString()),
           };
           for (const [ key, value ] of response.headers.entries()) {
             if (IGNORE_HEADERS.includes(key)) {
