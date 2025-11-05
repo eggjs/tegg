@@ -1,0 +1,219 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to release from'
+        required: true
+        default: 'next'
+        type: string
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'prerelease'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+          - prepatch
+          - preminor
+          - premajor
+      prerelease_tag:
+        description: 'Prerelease tag (alpha, beta, rc) - only used with prerelease/pre* types'
+        required: false
+        default: 'beta'
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
+      dry_run:
+        description: 'Dry run (do not publish)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    name: Manual Release
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: release-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: false
+
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+          # Use git token for checkout and pushing
+          token: ${{ secrets.GIT_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Re-install npm
+        # TODO: OIDC requires npm >=11.5.1.
+        # Until Node.js v24 is LTS (with npm 11 as the default), we need to bump.
+        run: npm install -g npm@11
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Version bump (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🧪 Running version bump in dry-run mode..."
+          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }} --dry-run
+          else
+            node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
+          fi
+
+      - name: Version bump
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "🚀 Running version bump..."
+          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            node scripts/version.js ${{ github.event.inputs.version_type }}
+          fi
+
+          # Get the new version tag
+          NEW_TAG=$(git describe --tags --abbrev=0)
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+          # Push changes and tags
+          git push origin ${{ github.event.inputs.branch }} --tags
+
+      - name: Publish packages (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🧪 Running publish in dry-run mode..."
+          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+            echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
+            pnpm -r publish --dry-run --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            echo "Setting npm tag to: latest"
+            pnpm -r publish --dry-run --no-git-checks --tag=latest
+          fi
+
+      - name: Publish packages
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "📦 Publishing packages..."
+          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+            echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
+            pnpm -r publish --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            echo "Setting npm tag to: latest"
+            pnpm -r publish --no-git-checks --tag=latest
+          fi
+
+      - name: Create GitHub Release (draft)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            const tag = process.env.NEW_TAG;
+            const versionType = '${{ github.event.inputs.version_type }}';
+
+            let releaseBody = `## 🎉 ${versionType.charAt(0).toUpperCase() + versionType.slice(1)} Release\n\n`;
+            releaseBody += `This release includes ${versionType} version updates for all packages.\n\n`;
+            releaseBody += `### 📦 Published Packages\n\n`;
+
+            // Get package versions from the tag
+            const fs = require('fs');
+            const packagesDirs = ['./packages', './tools', './plugins'];
+            for (const packagesDir of packagesDirs) {
+              const packageFolders = fs.readdirSync(packagesDir);
+              for (const folder of packageFolders) {
+                const packageJsonPath = `${packagesDir}/${folder}/package.json`;
+                if (fs.existsSync(packageJsonPath)) {
+                  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+                  if (packageJson.private) {
+                    continue;
+                  }
+                  releaseBody += `- [${packageJson.name}@${packageJson.version}](https://npmjs.com/package/${packageJson.name}/v/${packageJson.version})\n`;
+                }
+              }
+            }
+            releaseBody += `\n### 🔄 What's Changed\n\n`;
+            releaseBody += `<!-- Please add changelog information here manually -->\n`;
+            releaseBody += `- Add your changelog items here\n`;
+            releaseBody += `- Remove this placeholder text\n\n`;
+            releaseBody += `**Full Changelog**: https://github.com/${{ github.repository }}/compare/v${tag}...${tag}`;
+
+            const release = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: tag,
+              body: releaseBody,
+              draft: true,
+              prerelease: versionType.includes('pre')
+            });
+
+            core.info(`Created draft release: ${release.data.html_url}`);
+
+            // Set the release URL as an environment variable for use in summary
+            core.exportVariable('DRAFT_RELEASE_URL', release.data.html_url);
+
+      - name: Sync to cnpm
+        run: |
+          node scripts/sync-cnpm.js
+
+      - name: Summary
+        run: |
+          echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            echo "### 🧪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
+            echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+              echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "- Status: **Dry run - no changes made**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ Release Completed" >> $GITHUB_STEP_SUMMARY
+            echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- New tag: **$NEW_TAG**" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+              echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "- Packages published to npm" >> $GITHUB_STEP_SUMMARY
+            echo "- Draft GitHub release created: [View Draft Release]($DRAFT_RELEASE_URL)" >> $GITHUB_STEP_SUMMARY
+          fi
