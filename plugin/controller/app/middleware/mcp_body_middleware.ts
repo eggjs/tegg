@@ -24,7 +24,7 @@ export default () => {
         }
         await next();
         if (!ctx.mcpArg) {
-          ctx.mcpArg = JSON.parse(ctx.response.header['mcp-proxy-arg'] as string ?? '{}');
+          ctx.mcpArg = JSON.parse(decodeURIComponent(ctx.response.header['mcp-proxy-arg'] as string ?? '{}'));
         }
         for (const hook of ctx.app.config.mcp.hooks) {
           await hook.middlewareEnd?.(ctx);

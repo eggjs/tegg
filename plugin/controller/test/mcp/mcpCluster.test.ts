@@ -157,11 +157,11 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       const toolRes = await sseClient.callTool({
         name: 'bar',
         arguments: {
-          name: 'aaa',
+          name: '中文',
         },
       });
       assert.deepEqual(toolRes, {
-        content: [{ type: 'text', text: 'npm package: aaa not found' }],
+        content: [{ type: 'text', text: 'npm package: 中文 not found' }],
       });
       const userRes = await sseClient.callTool({
         name: 'echoUser',
