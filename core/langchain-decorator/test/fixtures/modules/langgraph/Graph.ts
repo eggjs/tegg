@@ -3,10 +3,10 @@ import { Annotation, MemorySaver } from '@langchain/langgraph';
 import { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
-import { BaseMessage } from '@langchain/core/dist/messages/base';
+import { BaseMessage } from '@langchain/core/messages';
 import { AccessLevel, ToolArgs } from '@eggjs/tegg-types';
 import { ToolArgsSchema } from '@eggjs/controller-decorator';
-import { AIMessage } from '@langchain/core/dist/messages/ai';
+import { AIMessage } from '@langchain/core/messages';
 
 export enum FooGraphNodeName {
   START = '__start__',

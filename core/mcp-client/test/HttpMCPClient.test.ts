@@ -1,14 +1,17 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { HttpMCPClient } from '../src/HttpMCPClient';
-import { startSSEServer, stopSSEServer } from './fixtures/sse-mcp-server/http';
-import { startStreamableServer, stopStreamableServer } from './fixtures/streamable-mcp-server/http';
 const majorVersion = parseInt(process.versions.node.split('.')[0], 10);
 
 describe('test/HttpMCPClient.test.ts', () => {
   if (majorVersion < 18) {
     return;
   }
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { HttpMCPClient } = require('../src/HttpMCPClient');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { startSSEServer, stopSSEServer } = require('./fixtures/sse-mcp-server/http');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { startStreamableServer, stopStreamableServer } = require('./fixtures/streamable-mcp-server/http');
   it('should work', async () => {
     await startStreamableServer();
     const client = new HttpMCPClient({

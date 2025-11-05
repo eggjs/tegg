@@ -11,7 +11,7 @@ import {
   ObjectInfo,
   QualifierInfo,
 } from '@eggjs/tegg';
-import type { EggApplication } from 'egg';
+import { fetch } from 'urllib';
 import { ModuleConfigUtil } from '@eggjs/tegg/helper';
 import {
   getMCPClientConfig,
@@ -51,11 +51,10 @@ import assert from 'node:assert';
       });
   },
 })
-export class EggVipStaticMCPClient extends EggHttpMCPClient {
+export class EggHttpStaticMCPClient extends EggHttpMCPClient {
   constructor(
     @Inject() moduleConfig: ModuleConfig,
     @Inject() logger: Logger,
-    @Inject() FetchFactory: EggApplication['FetchFactory'],
     @MultiInstanceInfo([ MCPClientQualifierAttribute ]) objInfo: ObjectInfo,
   ) {
     const configName = getMCPClientName(objInfo);
@@ -73,7 +72,7 @@ export class EggVipStaticMCPClient extends EggHttpMCPClient {
       transportType: mcpServerSubConfig.transportType as any,
       url: mcpServerSubConfig.url,
       logger,
-      fetch: FetchFactory.fetch,
+      fetch,
     });
   }
 

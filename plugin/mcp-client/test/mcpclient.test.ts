@@ -1,11 +1,13 @@
 import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
-import { startSSEServer, stopSSEServer } from './fixtures/sse-mcp-server/http';
-import { startStreamableServer, stopStreamableServer } from './fixtures/streamable-mcp-server/http';
 
 describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
   if (parseInt(process.version.slice(1, 3)) > 17) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { startSSEServer, stopSSEServer } = require('./fixtures/sse-mcp-server/http');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { startStreamableServer, stopStreamableServer } = require('./fixtures/streamable-mcp-server/http');
     let app;
 
     before(async () => {
