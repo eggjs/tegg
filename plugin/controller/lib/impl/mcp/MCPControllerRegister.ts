@@ -14,6 +14,7 @@ import {
   EggContext,
   EggObjectName,
   MCPResourceMeta,
+  MCPProtocols,
 } from '@eggjs/tegg';
 import { EggPrototype } from '@eggjs/tegg-metadata';
 import { EggContainerFactory, EggObject } from '@eggjs/tegg-runtime';
@@ -22,7 +23,6 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { isInitializeRequest, isJSONRPCRequest, JSONRPCMessage, MessageExtraInfo } from '@modelcontextprotocol/sdk/types.js';
-import { MCPProtocols } from '@eggjs/mcp-proxy/types';
 import awaitEvent from 'await-event';
 import compose from 'koa-compose';
 
