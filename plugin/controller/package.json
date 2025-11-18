@@ -49,7 +49,6 @@
   },
   "dependencies": {
     "@eggjs/egg-module-common": "^3.63.0",
-    "@eggjs/mcp-proxy": "^3.63.0",
     "@eggjs/router": "^2.0.1",
     "@eggjs/tegg": "^3.63.0",
     "@eggjs/tegg-common-util": "^3.63.0",
