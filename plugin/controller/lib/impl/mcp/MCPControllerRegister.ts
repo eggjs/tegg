@@ -31,6 +31,7 @@ import contentType from 'content-type';
 
 import { MCPConfig } from './MCPConfig';
 import { MCPServerHelper } from './MCPServerHelper';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 
 export interface MCPControllerHook {
   // SSE
@@ -113,6 +114,8 @@ export class MCPControllerRegister implements ControllerRegister {
   globalMiddlewares: compose.ComposedMiddleware<EggContext>;
 
   registerMap: Record<string, { tools: ServerRegisterRecord<MCPToolMeta>[], prompts: ServerRegisterRecord<MCPPromptMeta>[], resources: ServerRegisterRecord<MCPResourceMeta>[] }> = {};
+
+  pingIntervals: Record<string, NodeJS.Timeout> = {};
 
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
     assert(controllerMeta.type === ControllerType.MCP, 'controller meta type is not MCP');
@@ -330,7 +333,7 @@ export class MCPControllerRegister implements ControllerRegister {
             sessionIdGenerator: () =>
               this.mcpConfig.getSessionIdGenerator(name)(ctx),
             eventStore,
-            onsessioninitialized: async () => {
+            onsessioninitialized: async sessionId => {
               if (MCPControllerRegister.hooks.length > 0) {
                 for (const hook of MCPControllerRegister.hooks) {
                   await hook.onStreamSessionInitialized?.(
@@ -341,6 +344,7 @@ export class MCPControllerRegister implements ControllerRegister {
                   );
                 }
               }
+              self.mcpServerPing(mcpServerHelper.server.server, sessionId, name);
             },
           });
 
@@ -350,6 +354,13 @@ export class MCPControllerRegister implements ControllerRegister {
           });
 
           await mcpServerHelper.server.connect(transport);
+
+          transport.onclose = async () => {
+            if (transport.sessionId && self.pingIntervals[transport.sessionId]) {
+              clearInterval(self.pingIntervals[transport.sessionId]);
+              delete self.pingIntervals[transport.sessionId];
+            }
+          };
 
           const onmessage = transport.onmessage;
 
@@ -485,6 +496,7 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       await mcpServerHelper.server.connect(transport);
       self.mcpServerMap[id] = mcpServerHelper.server;
+      self.mcpServerPing(mcpServerHelper.server.server, transport.sessionId, name);
       return self.sseCtxStorageRun.bind(self)(ctx, transport, name);
     };
     Reflect.apply(routerFunc, this.router, [
@@ -506,6 +518,10 @@ export class MCPControllerRegister implements ControllerRegister {
       closeFunc?.(...args);
       delete self.transports[transport.sessionId];
       delete self.mcpServerMap[transport.sessionId];
+      if (transport.sessionId && self.pingIntervals[transport.sessionId]) {
+        clearInterval(self.pingIntervals[transport.sessionId]);
+        delete self.pingIntervals[transport.sessionId];
+      }
       self.sseTransportsRequestMap.delete(transport);
       const connection = self.sseConnections.get(transport.sessionId);
       if (connection) {
@@ -639,6 +655,27 @@ export class MCPControllerRegister implements ControllerRegister {
       middlewares.push(mw);
     }
     this.globalMiddlewares = compose(middlewares);
+  }
+
+  mcpServerPing(server: Server, sessionId: string, name?: string) {
+    const duration = this.mcpConfig.getPingElapsed(name);
+    const interval = this.mcpConfig.getPingInterval(name);
+
+    const startTime = Date.now();
+
+    const timerId = setInterval(async () => {
+      const elapsed = Date.now() - startTime;
+      await server.ping();
+
+      if (elapsed >= duration) {
+        if (this.pingIntervals[sessionId]) {
+          clearInterval(this.pingIntervals[sessionId]);
+          delete this.pingIntervals[sessionId];
+        }
+      }
+    }, interval);
+
+    this.pingIntervals[sessionId] = timerId;
   }
 
   async register() {
