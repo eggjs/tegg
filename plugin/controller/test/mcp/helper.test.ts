@@ -106,7 +106,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       },
       {
         capabilities: {
-          tools: {},
+          // tools: {},
         },
       },
     );

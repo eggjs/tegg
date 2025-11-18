@@ -45,7 +45,7 @@ async function startNotificationTool(client: Client, name?: string) {
       });
     } else {
       notifications.push({
-        text: item.data!.toString(),
+        text: (item as any).data!.toString(),
       });
     }
   });
