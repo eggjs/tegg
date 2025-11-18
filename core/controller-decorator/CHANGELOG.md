@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.63.0](https://github.com/eggjs/tegg/compare/v3.62.3...v3.63.0) (2025-11-18)
+
+
+### Features
+
+* add MiddlewareGraphHook to handle controller middleware depende… ([#361](https://github.com/eggjs/tegg/issues/361)) ([7ab3eae](https://github.com/eggjs/tegg/commit/7ab3eae1af20e14101e1df63628a426cb5f6d3db))
+
+
+
+
+
 ## [3.62.3](https://github.com/eggjs/tegg/compare/v3.62.1...v3.62.3) (2025-11-05)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
