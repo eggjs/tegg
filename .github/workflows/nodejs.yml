@@ -34,7 +34,7 @@ jobs:
       uses: utooland/setup-utoo@v1
 
     - name: Install Dependencies
-      run: ut
+      run: ut install --ignore-scripts
 
     - name: Continuous integration
       run: |
@@ -72,7 +72,7 @@ jobs:
         uses: utooland/setup-utoo@v1
 
       - name: Install Dependencies
-        run: ut
+        run: ut install --ignore-scripts
 
       - name: Continuous integration
         run: ut ci

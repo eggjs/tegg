@@ -39,8 +39,7 @@
     "lerna": "^6.1.0",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.16",
-    "test-exclude": "^6.0.0",
-    "utoo": "latest"
+    "test-exclude": "^6.0.0"
   },
   "workspaces": [
     "core/*",
