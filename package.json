@@ -45,6 +45,9 @@
     "source-map-support": "^0.5.16",
     "test-exclude": "^6.0.0"
   },
+  "overrides": {
+    "koa-compose@4.2.0": "4.1.0"
+  },
   "workspaces": [
     "core/*",
     "plugin/*",
