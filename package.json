@@ -18,7 +18,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "lint": "eslint . --ext .ts",
     "test": "npm run test --workspaces --if-present",
-    "cov": "nyc npm run test",
+    "cov": "ut test --workspaces",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
