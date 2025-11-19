@@ -20,9 +20,9 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean && rm -rf dist",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc": "ut clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
