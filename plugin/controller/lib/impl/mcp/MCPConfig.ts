@@ -8,6 +8,8 @@ export interface MCPConfigOptions {
   sseMessagePath: string;
   streamPath: string;
   statelessStreamPath: string;
+  ssePingEnabled?: boolean;
+  streamPingEnabled?: boolean;
   pingElapsed?: number;
   pingInterval?: number;
   sessionIdGenerator?: (ctx: Context) => string;
@@ -27,6 +29,8 @@ export class MCPConfig {
 
   private _pingElapsed: number;
   private _pingInterval: number;
+  private _ssePingEnabled: boolean;
+  private _streamPingEnabled: boolean;
 
   private _multipleServer: Record<string, Partial<MCPConfigOptions>>;
 
@@ -41,6 +45,8 @@ export class MCPConfig {
     this._sseHeartTime = options.sseHeartTime ?? 25000;
     this._pingElapsed = options.pingElapsed ?? 10 * 60 * 1000;
     this._pingInterval = options.pingInterval ?? 5 * 1000;
+    this._ssePingEnabled = options.ssePingEnabled ?? false;
+    this._streamPingEnabled = options.streamPingEnabled ?? false;
 
     this._multipleServer = options.multipleServer ?? {};
   }
@@ -146,6 +152,28 @@ export class MCPConfig {
       return 5 * 1000;
     }
     return this._pingInterval;
+  }
+
+  getSsePingEnabled(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.ssePingEnabled !== undefined) {
+        return config.ssePingEnabled;
+      }
+      return false;
+    }
+    return this._ssePingEnabled;
+  }
+
+  getStreamPingEnabled(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.streamPingEnabled !== undefined) {
+        return config.streamPingEnabled;
+      }
+      return false;
+    }
+    return this._streamPingEnabled;
   }
 
   setMultipleServerPath(app: Application, name: string) {

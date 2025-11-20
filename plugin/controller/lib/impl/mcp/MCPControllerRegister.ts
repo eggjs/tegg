@@ -344,7 +344,9 @@ export class MCPControllerRegister implements ControllerRegister {
                   );
                 }
               }
-              self.mcpServerPing(mcpServerHelper.server.server, sessionId, name);
+              if (self.mcpConfig.getStreamPingEnabled(name)) {
+                self.mcpServerPing(mcpServerHelper.server.server, sessionId, name);
+              }
             },
           });
 
@@ -496,7 +498,9 @@ export class MCPControllerRegister implements ControllerRegister {
       }
       await mcpServerHelper.server.connect(transport);
       self.mcpServerMap[id] = mcpServerHelper.server;
-      self.mcpServerPing(mcpServerHelper.server.server, transport.sessionId, name);
+      if (self.mcpConfig.getSsePingEnabled(name)) {
+        self.mcpServerPing(mcpServerHelper.server.server, transport.sessionId, name);
+      }
       return self.sseCtxStorageRun.bind(self)(ctx, transport, name);
     };
     Reflect.apply(routerFunc, this.router, [
@@ -665,12 +669,16 @@ export class MCPControllerRegister implements ControllerRegister {
 
     const timerId = setInterval(async () => {
       const elapsed = Date.now() - startTime;
-      await server.ping();
-
-      if (elapsed >= duration) {
-        if (this.pingIntervals[sessionId]) {
-          clearInterval(this.pingIntervals[sessionId]);
-          delete this.pingIntervals[sessionId];
+      try {
+        await server.ping();
+      } catch (e) {
+        this.app.logger.warn('mcp server ping failed: ', e);
+      } finally {
+        if (elapsed >= duration) {
+          if (this.pingIntervals[sessionId]) {
+            clearInterval(this.pingIntervals[sessionId]);
+            delete this.pingIntervals[sessionId];
+          }
         }
       }
     }, interval);
