@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "3.62.3",
+  "version": "3.63.2",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -45,21 +45,21 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.62.3",
-    "@eggjs/tegg": "^3.62.3",
-    "@eggjs/tegg-background-task": "^3.62.3",
-    "@eggjs/tegg-common-util": "^3.62.3",
-    "@eggjs/tegg-dynamic-inject-runtime": "^3.62.3",
-    "@eggjs/tegg-loader": "^3.62.3",
-    "@eggjs/tegg-metadata": "^3.62.3",
-    "@eggjs/tegg-runtime": "^3.62.3",
+    "@eggjs/egg-module-common": "^3.63.2",
+    "@eggjs/tegg": "^3.63.2",
+    "@eggjs/tegg-background-task": "^3.63.2",
+    "@eggjs/tegg-common-util": "^3.63.2",
+    "@eggjs/tegg-dynamic-inject-runtime": "^3.63.2",
+    "@eggjs/tegg-loader": "^3.63.2",
+    "@eggjs/tegg-metadata": "^3.63.2",
+    "@eggjs/tegg-runtime": "^3.63.2",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0",
     "extend2": "^1.0.0",
     "sdk-base": "^4.2.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^3.62.3",
+    "@eggjs/tegg-config": "^3.63.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

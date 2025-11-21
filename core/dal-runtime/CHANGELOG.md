@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.63.2](https://github.com/eggjs/tegg/compare/v3.63.0...v3.63.2) (2025-11-18)
+
+**Note:** Version bump only for package @eggjs/dal-runtime
+
+
+
+
+
+## [3.63.1](https://github.com/eggjs/tegg/compare/v3.63.0...v3.63.1) (2025-11-18)
+
+**Note:** Version bump only for package @eggjs/dal-runtime
+
+
+
+
+
+# [3.63.0](https://github.com/eggjs/tegg/compare/v3.62.3...v3.63.0) (2025-11-18)
+
+**Note:** Version bump only for package @eggjs/dal-runtime
+
+
+
+
+
 ## [3.62.3](https://github.com/eggjs/tegg/compare/v3.62.1...v3.62.3) (2025-11-05)
 
 **Note:** Version bump only for package @eggjs/dal-runtime

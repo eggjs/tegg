@@ -15,7 +15,7 @@ import { MCPControllerRegister, MCPControllerHook } from '@eggjs/tegg-controller
 import querystring from 'node:querystring';
 import url from 'node:url';
 import compose from 'koa-compose';
-import { MCPProtocols } from './types';
+import { MCPProtocols } from '@eggjs/tegg-types';
 
 const MAXIMUM_MESSAGE_SIZE = '4mb';
 

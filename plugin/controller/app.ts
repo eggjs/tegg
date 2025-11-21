@@ -1,7 +1,7 @@
 import { Application } from 'egg';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit';
 import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook';
-import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import { GlobalGraph, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister';
 import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory';
@@ -12,6 +12,7 @@ import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
 import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
+import { middlewareGraphHook } from './lib/MiddlewareGraphHook';
 import assert from 'node:assert';
 
 // Load Controller process
@@ -134,6 +135,10 @@ export default class ControllerAppBootHook {
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
 
     this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+  }
+
+  configDidLoad() {
+    GlobalGraph.instance!.registerBuildHook(middlewareGraphHook);
   }
 
   async willReady() {

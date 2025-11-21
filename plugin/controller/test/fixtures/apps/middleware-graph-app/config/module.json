@@ -1,0 +1,8 @@
+[
+  {
+    "path": "../modules/advice-module"
+  },
+  {
+    "path": "../modules/controller-module"
+  }
+]

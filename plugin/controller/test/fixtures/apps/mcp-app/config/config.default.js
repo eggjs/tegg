@@ -8,6 +8,8 @@ module.exports = function(appInfo) {
   const config = {
     keys: 'test key',
     mcp: {
+      ssePingEnabled: true,
+      streamPingEnabled: true,
       sessionIdGenerator: ctx => {
         return ctx.request.headers['custom-session-id'] || randomUUID();
       },
