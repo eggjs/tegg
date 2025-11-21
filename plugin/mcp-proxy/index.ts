@@ -382,7 +382,7 @@ export class MCPProxyApiClient extends APIClientBase {
       }
     } catch (error) {
       this.logger.error(error);
-      // ctx.res.writeHead(400).end(`Invalid message: ${body}`);
+      ctx.res.writeHead(400).end(`Invalid message: ${body}`);
       return;
     }
   }
