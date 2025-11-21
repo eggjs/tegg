@@ -382,7 +382,15 @@ export class MCPProxyApiClient extends APIClientBase {
       }
     } catch (error) {
       this.logger.error(error);
-      ctx.res.writeHead(400).end(`Invalid message: ${body}`);
+      ctx.res.writeHead(500, { 'content-type': 'application/json' })
+        .end(JSON.stringify({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'Internal error',
+          },
+          id: null,
+        }));
       return;
     }
   }

@@ -1,5 +1,3 @@
-// import type { ToolSchemaBase, DynamicStructuredTool } from '../../core/tools.js';
-
 import { StackUtil } from '@eggjs/tegg-common-util';
 import {
   AccessLevel,

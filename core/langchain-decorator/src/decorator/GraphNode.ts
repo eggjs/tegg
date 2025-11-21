@@ -1,5 +1,3 @@
-// import type { EggProtoImplClass } from '@alipay/tegg-types';
-
 import { StackUtil } from '@eggjs/tegg-common-util';
 import {
   AccessLevel,
@@ -30,7 +28,6 @@ export function GraphNode<S extends StateDefinition = StateDefinition>(params: I
 
 export interface IGraphNode<S extends StateDefinition = StateDefinition, T = any> {
 
-  // execute(state: T extends AbstractStateGraph<infer S> ? GraphStateType<S> : never): Promise<GraphUpdateType<T> extends object ? GraphUpdateType<T> & Record<string, any> : GraphUpdateType<T>>;
   execute(state: AnnotationRoot<S>['State']): Promise<UpdateType<S> & Record<string, any>> | Promise<ToolNode<T>>;
 
   build?: (tools: Parameters<ConfigurableModel['bindTools']>['0']) => Promise<ReturnType<ConfigurableModel['bindTools']> | ReturnType<BaseChatOpenAI<any>['bindTools']>>;
