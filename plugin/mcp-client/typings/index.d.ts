@@ -1,0 +1,1 @@
+import '@eggjs/mcp-client/typings';

@@ -35,6 +35,7 @@ core/dal-runtime/test/fixtures/modules/*/src/dal/
 plugin/tegg/test/fixtures/apps/**/*.js
 !core/common-util/test/fixtures/**/node_modules
 !core/common-util/test/fixtures/**/node_modules/**/*.js
+!core/*/typings/*.d.ts
 !plugin/*/test/fixtures/**/*.js
 !plugin/*/typings/*.d.ts
 !plugin/*/test/fixtures/apps/*/config/*.js
