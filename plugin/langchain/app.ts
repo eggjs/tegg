@@ -8,7 +8,7 @@ import { BoundModelObjectHook } from './lib/boundModel/BoundModelObjectHook';
 import { GraphPrototypeHook } from './lib/graph/GraphPrototypeHook';
 import { GraphBuildHook } from './lib/graph/GraphBuildHook';
 
-export default class ModuleDRMHook implements IBoot {
+export default class ModuleLangChainHook implements IBoot {
   readonly #app: Application;
   readonly #graphObjectHook: GraphObjectHook;
   readonly #graphLoadUnitHook: GraphLoadUnitHook;
