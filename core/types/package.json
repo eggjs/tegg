@@ -16,8 +16,8 @@
   "typings": "index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
   },
   "author": "gxkl <gxkl203@gmail.com>",
   "license": "MIT",

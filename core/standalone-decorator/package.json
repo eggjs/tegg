@@ -17,9 +17,9 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc": "ut clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
