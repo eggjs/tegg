@@ -8,7 +8,7 @@ import { ChatModelQualifier, TeggBoundModel, TeggCompiledStateGraph } from '@egg
 import { ChatOpenAIModel } from '../../../../../../../../lib/ChatOpenAI';
 import { BoundChatModel } from '../service/BoundChatModel';
 import { FooGraph } from '../service/Graph';
-import { AIMessage } from 'langchain';
+import { AIMessage, SystemMessage } from 'langchain';
 
 @HTTPController({
   path: '/llm',
@@ -45,7 +45,7 @@ export class AppController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/graph' })
   async get() {
     const res = await this.compiledFooGraph.invoke({
-      messages: [],
+      messages: [ new SystemMessage('') ],
       aggregate: [],
     }, {
       configurable: {

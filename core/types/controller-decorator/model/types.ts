@@ -15,6 +15,7 @@ export enum ControllerType {
   MESSAGE = 'MESSAGE',
   SCHEDULE = 'SCHEDULE',
   HEADERS = 'HEADERS',
+  AGENT = 'AGENT',
 }
 
 export type HostType = string | string [];

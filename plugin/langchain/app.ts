@@ -7,6 +7,8 @@ import { CompiledStateGraphObject } from './lib/graph/CompiledStateGraphObject';
 import { BoundModelObjectHook } from './lib/boundModel/BoundModelObjectHook';
 import { GraphPrototypeHook } from './lib/graph/GraphPrototypeHook';
 import { GraphBuildHook } from './lib/graph/GraphBuildHook';
+import { AgentControllerRegister } from './lib/agent/AgentControllerRegister';
+import { ControllerType } from '@eggjs/tegg';
 
 export default class ModuleLangChainHook implements IBoot {
   readonly #app: Application;
@@ -29,6 +31,7 @@ export default class ModuleLangChainHook implements IBoot {
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
     this.#app.eggObjectFactory.registerEggObjectCreateMethod(CompiledStateGraphProto, CompiledStateGraphObject.createObject);
     this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
+    this.#app.controllerRegisterFactory.registerControllerRegister(ControllerType.AGENT, AgentControllerRegister.create);
   }
 
   configDidLoad() {

@@ -1,5 +1,5 @@
 import { AccessLevel, SingletonProto, ToolArgs, ToolArgsSchema } from '@eggjs/tegg';
-import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, TeggToolNode } from '@eggjs/tegg-langchain-decorator';
+import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, TeggToolNode, AgentController } from '@eggjs/tegg-langchain-decorator';
 import { Annotation, MemorySaver } from '@langchain/langgraph';
 // import { AIMessage, BaseMessage, ToolMessage } from '@langchain/core/messages';
 import { z } from 'zod';
@@ -130,6 +130,10 @@ export class FooStartContinueEdge implements IGraphEdge<fooAnnotationStateDefini
   nodes: [ FooNode, ToolNode ],
   edges: [ FooContinueEdge, FooStartContinueEdge, ToolsContinueEdge ],
   checkpoint: FooSaver,
+})
+@AgentController({
+  path: '/graph/stream',
+  stream: true,
 })
 export class FooGraph extends AbstractStateGraph<FooGraphNodeName, typeof fooAnnotationStateDefinition> {
   constructor() {
