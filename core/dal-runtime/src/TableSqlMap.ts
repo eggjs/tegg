@@ -5,6 +5,8 @@ import { TemplateUtil } from './TemplateUtil';
 import { SqlType } from '@eggjs/tegg-types';
 import type { SqlMap } from '@eggjs/tegg-types';
 
+const SQL_PARAMS = '$$__sql_params';
+
 export interface SqlGenerator {
   type: SqlType;
   template: Template,
@@ -49,8 +51,8 @@ export class TableSqlMap {
 
     // Add param filter for parameterized queries
     env.addFilter('param', function(this: Template, value: any) {
-      if ((this as any).env.$$params) {
-        (this as any).env.$$params.push(value);
+      if ((this as any).ctx[SQL_PARAMS]) {
+        (this as any).ctx[SQL_PARAMS].push(value);
       }
       return '?';
     });
@@ -101,12 +103,13 @@ export class TableSqlMap {
 
     // Set timezone and params collector on env
     (template as any).env.timezone = timezone;
-    (template as any).env.$$params = params;
 
-    const sql = template.render(data);
+    const context = {
+      ...data,
+      [SQL_PARAMS]: params,
+    };
 
-    // Clean up params collector
-    delete (template as any).env.$$params;
+    const sql = template.render(context);
 
     return { sql, params };
   }

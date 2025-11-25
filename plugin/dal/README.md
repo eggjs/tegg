@@ -612,7 +612,7 @@ export default class FooDAO extends BaseFooDAO {
 
 **param 过滤器**
 
-`param` 过滤器用于将值作为参数化查询参数，而不是直接拼接到 SQL 字符串中。这可以有效防止 SQL 注入攻击，并支持使用数据库的预编译语句功能。
+`param` 过滤器用于将值作为参数化查询参数，而不是直接拼接到 SQL 字符串中。可以有效利用到 sql parameters 的能力，小幅提升 db 性能与观测能力。
 
 使用示例：
 
@@ -632,8 +632,6 @@ export default {
 
 生成的 SQL：`SELECT ... FROM egg_foo WHERE name = ? AND age > ?`
 参数数组：`['John', 18]`
-
-**注意**：建议在所有用户输入的值上使用 `param` 过滤器，以确保安全性。
 
 支持自定义 block 来简化 sql, 如内置的 allColumns
 
