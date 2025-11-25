@@ -183,7 +183,7 @@ export class BaseSqlMapGenerator {
         ,
         {% endif %}
 
-        {{ $${propertyName} if $${propertyName} !== undefined else '${now}' }}
+        {{ ($${propertyName} | param) if $${propertyName} !== undefined else '${now}' }}
         `).trim());
       }
     }
