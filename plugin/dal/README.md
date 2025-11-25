@@ -572,7 +572,7 @@ import { SqlMap, SqlType } from '@eggjs/tegg/dal';
 export default {
   findByName: {
     type: SqlType.SELECT,
-    sql: 'SELECT {{ allColumns }} FROM egg_foo WHERE name = {{ name }}',
+    sql: 'SELECT {{ allColumns }} FROM egg_foo WHERE name = {{ name | param }}',
   },
 } as Record<string, SqlMap>;
 ```
@@ -599,6 +599,7 @@ export default class FooDAO extends BaseFooDAO {
 支持的自定义 filter
 
 ```
+- param: 参数化查询过滤器，用于防止 SQL 注入
 - toPoint
 - toLine
 - toPolygon
@@ -608,6 +609,31 @@ export default class FooDAO extends BaseFooDAO {
 - toMultiPolygon
 - toGeometryCollection
 ```
+
+**param 过滤器**
+
+`param` 过滤器用于将值作为参数化查询参数，而不是直接拼接到 SQL 字符串中。这可以有效防止 SQL 注入攻击，并支持使用数据库的预编译语句功能。
+
+使用示例：
+
+```ts
+export default {
+  findByNameAndAge: {
+    type: SqlType.SELECT,
+    sql: `
+      SELECT {{ allColumns }}
+      FROM egg_foo
+      WHERE name = {{ name | param }}
+        AND age > {{ age | param }}
+    `,
+  },
+} as Record<string, SqlMap>;
+```
+
+生成的 SQL：`SELECT ... FROM egg_foo WHERE name = ? AND age > ?`
+参数数组：`['John', 18]`
+
+**注意**：建议在所有用户输入的值上使用 `param` 过滤器，以确保安全性。
 
 支持自定义 block 来简化 sql, 如内置的 allColumns
 
