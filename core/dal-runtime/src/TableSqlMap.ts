@@ -11,6 +11,11 @@ export interface SqlGenerator {
   raw: string,
 }
 
+export interface GeneratedSql {
+  sql: string;
+  params: any[];
+}
+
 export class TableSqlMap {
   readonly name: string;
   private readonly map: Record<string, SqlMap>;
@@ -41,6 +46,14 @@ export class TableSqlMap {
     env.addFilter('toMultiLine', TemplateUtil.toMultiLine);
     env.addFilter('toMultiPolygon', TemplateUtil.toMultiPolygon);
     env.addFilter('toGeometryCollection', TemplateUtil.toGeometryCollection);
+
+    // Add param filter for parameterized queries
+    env.addFilter('param', function(this: Template, value: any) {
+      if ((this as any).env.$$params) {
+        (this as any).env.$$params.push(value);
+      }
+      return '?';
+    });
   }
 
   #extract(map: Record<string, SqlMap>) {
@@ -76,7 +89,7 @@ export class TableSqlMap {
     return ret;
   }
 
-  generate(name: string, data: object, timezone: string) {
+  generate(name: string, data: object, timezone: string): GeneratedSql {
     const generator = this.sqlGenerator[name];
     // istanbul ignore if
     if (!generator) {
@@ -84,8 +97,18 @@ export class TableSqlMap {
     }
 
     const template = generator.template;
+    const params: any[] = [];
+
+    // Set timezone and params collector on env
     (template as any).env.timezone = timezone;
-    return template.render(data);
+    (template as any).env.$$params = params;
+
+    const sql = template.render(data);
+
+    // Clean up params collector
+    delete (template as any).env.$$params;
+
+    return { sql, params };
   }
 
   getType(name: string): SqlType {

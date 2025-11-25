@@ -8,6 +8,7 @@ export interface ExecuteSql {
   sql: string;
   template: string;
   sqlType: SqlType;
+  params: any[];
 }
 
 const PAGINATE_COUNT_WRAPPER = [ 'SELECT COUNT(0) as count FROM (', ') AS T' ];
@@ -29,25 +30,26 @@ export class DataSource<T> implements IDataSource<T> {
    * @param data
    */
   async generateSql(sqlName: string, data: object): Promise<ExecuteSql> {
-    const sql = this.sqlMap.generate(sqlName, data, this.mysqlDataSource.timezone!);
+    const { sql, params } = this.sqlMap.generate(sqlName, data, this.mysqlDataSource.timezone!);
     const sqlType = this.sqlMap.getType(sqlName);
     const template = this.sqlMap.getTemplateString(sqlName);
     return {
       sql,
       sqlType,
       template,
+      params,
     };
   }
 
   async count(sqlName: string, data?: any): Promise<number> {
     const newData = Object.assign({ $$count: true }, data);
     const executeSql = await this.generateSql(sqlName, newData);
-    return await this.#paginateCount(executeSql.sql);
+    return await this.#paginateCount(executeSql.sql, executeSql.params);
   }
 
   async execute(sqlName: string, data?: any): Promise<Array<T>> {
     const executeSql = await this.generateSql(sqlName, data);
-    const rows = await this.mysqlDataSource.query(executeSql.sql);
+    const rows = await this.mysqlDataSource.query(executeSql.sql, executeSql.params);
     return rows.map(t => {
       return TableModelInstanceBuilder.buildInstance(this.tableModel, t);
     });
@@ -55,7 +57,7 @@ export class DataSource<T> implements IDataSource<T> {
 
   async executeRaw(sqlName: string, data?: any): Promise<Array<any>> {
     const executeSql = await this.generateSql(sqlName, data);
-    return await this.mysqlDataSource.query(executeSql.sql);
+    return await this.mysqlDataSource.query(executeSql.sql, executeSql.params);
   }
 
   async executeScalar(sqlName: string, data?: any): Promise<T | null> {
@@ -72,13 +74,14 @@ export class DataSource<T> implements IDataSource<T> {
 
   async paginate(sqlName: string, data: any, currentPage: number, perPageCount: number): Promise<PaginateData<T>> {
     const limit = `LIMIT ${(currentPage - 1) * perPageCount}, ${perPageCount}`;
-    const sql = (await this.generateSql(sqlName, data)).sql + ' ' + limit;
-    const countSql = (await this.generateSql(sqlName, Object.assign({ $$count: true }, data))).sql;
+    const executeSql = await this.generateSql(sqlName, data);
+    const sql = executeSql.sql + ' ' + limit;
+    const countExecuteSql = await this.generateSql(sqlName, Object.assign({ $$count: true }, data));
 
 
     const ret = await Promise.all([
-      this.mysqlDataSource.query(sql),
-      this.#paginateCount(countSql),
+      this.mysqlDataSource.query(sql, executeSql.params),
+      this.#paginateCount(countExecuteSql.sql, countExecuteSql.params),
     ]);
 
     return {
@@ -88,10 +91,10 @@ export class DataSource<T> implements IDataSource<T> {
     };
   }
 
-  async #paginateCount(baseSQL: string): Promise<number> {
+  async #paginateCount(baseSQL: string, params: any[]): Promise<number> {
     const sql = `${PAGINATE_COUNT_WRAPPER[0]}${baseSQL}${PAGINATE_COUNT_WRAPPER[1]}`;
 
-    const result = await this.mysqlDataSource.query(sql);
+    const result = await this.mysqlDataSource.query(sql, params);
 
     return result[0].count;
   }
