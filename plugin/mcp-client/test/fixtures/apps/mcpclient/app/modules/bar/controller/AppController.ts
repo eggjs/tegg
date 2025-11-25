@@ -1,0 +1,66 @@
+import {
+  HTTPController,
+  HTTPMethod,
+  HTTPMethodEnum,
+  Inject,
+} from '@eggjs/tegg';
+import {
+  MCPClientQualifier,
+  MCPClientInjectName,
+  HttpMCPClient,
+} from '@eggjs/mcp-client';
+
+import { HttpMCPClientFactory } from '../../../../../../../../index';
+
+@HTTPController({
+  path: '/mcpclient',
+})
+export class AppController {
+  @Inject()
+  @MCPClientQualifier('bar')
+  private readonly mcpClient: HttpMCPClient;
+
+  @Inject({
+    name: MCPClientInjectName,
+  })
+  @MCPClientQualifier('foo')
+  private readonly StreamMcpClient: HttpMCPClient;
+
+  @Inject()
+  private readonly httpMCPClientFactory: HttpMCPClientFactory;
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/hello-sse',
+  })
+  async hello() {
+    const res = await this.mcpClient.listTools();
+    return res;
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/hello-streamable',
+  })
+  async streamable() {
+    const res = await this.StreamMcpClient.listTools();
+    return res;
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/hello-factory',
+  })
+  async factory() {
+    const client = await this.httpMCPClientFactory.build({
+      name: 'foo',
+      version: '1.0.0',
+    }, {
+      transportType: 'STREAMABLE_HTTP',
+      url: 'http://127.0.0.1:17263/',
+    });
+    await client.init();
+    const res = await client.listTools();
+    return res;
+  }
+}

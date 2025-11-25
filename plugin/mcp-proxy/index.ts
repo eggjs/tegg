@@ -15,7 +15,7 @@ import { MCPControllerRegister, MCPControllerHook } from '@eggjs/tegg-controller
 import querystring from 'node:querystring';
 import url from 'node:url';
 import compose from 'koa-compose';
-import { MCPProtocols } from './types';
+import { MCPProtocols } from '@eggjs/tegg-types';
 
 const MAXIMUM_MESSAGE_SIZE = '4mb';
 
@@ -382,7 +382,15 @@ export class MCPProxyApiClient extends APIClientBase {
       }
     } catch (error) {
       this.logger.error(error);
-      // ctx.res.writeHead(400).end(`Invalid message: ${body}`);
+      ctx.res.writeHead(500, { 'content-type': 'application/json' })
+        .end(JSON.stringify({
+          jsonrpc: '2.0',
+          error: {
+            code: -32603,
+            message: 'Internal error',
+          },
+          id: null,
+        }));
       return;
     }
   }

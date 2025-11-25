@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs/promises';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
 
 async function listTools(client: Client) {
@@ -124,10 +124,18 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           },
         },
       );
+      const pingMessages: JSONRPCMessage[] = [];
       const sseNotifications: { level: string, data: string }[] = [];
       sseClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         sseNotifications.push({ level: notification.params.level, data: notification.params.data as string });
       });
+      sseTransport.onmessage = message => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (message?.method === 'ping') {
+          pingMessages.push(message);
+        }
+      };
       await sseClient.connect(sseTransport);
       // tool
       const tools = await listTools(sseClient);
@@ -232,6 +240,7 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
         ],
       });
       await sseTransport.close();
+      assert.ok(pingMessages.length > 0);
     });
     it('multiple client should work', async () => {
       const sseClient1 = new Client({
@@ -429,10 +438,18 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
           requestInit: { headers: { 'custom-session-id': 'custom-session-id' } },
         },
       );
+      const pingMessages: JSONRPCMessage[] = [];
       const streamableNotifications: { level: string, data: string }[] = [];
       streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });
       });
+      streamableTransport.onmessage = (...args) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        if (args[0]?.method === 'ping') {
+          pingMessages.push(args[0]);
+        }
+      };
       await streamableClient.connect(streamableTransport);
       // tool
       const tools = await listTools(streamableClient);
@@ -544,6 +561,7 @@ describe('plugin/controller/test/mcp/mcpCluster.test.ts', () => {
       const logContent = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/mcp-app/mcp-app-web.log'));
 
       assert.ok(logContent.includes('startNotificationStream finish'));
+      assert.ok(pingMessages.length > 0);
     });
 
     it('multiple streamable should work', async () => {

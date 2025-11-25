@@ -22,7 +22,14 @@
     "declaration": true,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@eggjs/tegg-metadata": ["./core/metadata/src"],
+      "@eggjs/tegg-metadata/*": ["./core/metadata/src/*"],
+      "@eggjs/tegg-loader": ["./core/loader/src"],
+      "@eggjs/tegg-loader/*": ["./core/loader/src/*"]
+    }
   },
   "ts-node": {
     "files": true
