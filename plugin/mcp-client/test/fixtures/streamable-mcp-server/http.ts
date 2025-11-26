@@ -2,7 +2,7 @@ import http from 'node:http';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 // Create an MCP server
 const server = new McpServer({
@@ -11,23 +11,24 @@ const server = new McpServer({
 });
 
 // Add an addition tool
-server.tool('add',
-  { a: z.number(), b: z.number() },
+server.registerTool('add',
+  {
+    inputSchema: { a: z.number(), b: z.number() },
+  },
   async ({ a, b }) => ({
     content: [{ type: 'text', text: String(a + b) }],
   }),
 );
 
 // Add a dynamic greeting resource
-server.resource(
+server.registerResource(
   'greeting',
   'greeting://{name}',
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  async (uri, { name }) => ({
+  {},
+  async uri => ({
     contents: [{
       uri: uri.href,
-      text: `Hello, ${name}!`,
+      text: `Hello, ${uri.hostname}!`,
     }],
   }),
 );

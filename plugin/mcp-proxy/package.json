@@ -53,7 +53,7 @@
     "@eggjs/core": "^6.5.0",
     "@eggjs/tegg-controller-plugin": "^3.63.2",
     "@eggjs/tegg-types": "^3.63.2",
-    "@modelcontextprotocol/sdk": "^1.10.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "await-event": "^2.1.0",
     "cluster-client": "^3.7.0",
     "content-type": "^1.0.5",

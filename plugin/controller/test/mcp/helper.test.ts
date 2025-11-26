@@ -4,7 +4,7 @@ import {
   MCPPromptMeta,
 } from '@eggjs/controller-decorator';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import z from 'zod';
+import * as z from 'zod/v4';
 import assert from 'assert';
 
 import { MCPServerHelper } from '../../lib/impl/mcp/MCPServerHelper';
@@ -17,9 +17,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     };
 
     const ToolType = {
-      name: z.string({
-        description: 'npm package name',
-      }),
+      name: z.string().describe('npm package name'),
     };
 
     const helper = new MCPServerHelper({

@@ -2,7 +2,7 @@ import http from 'node:http';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
-import { z } from "zod";
+import * as z from 'zod/v4';
 
 // Create an MCP server
 const server = new McpServer({
@@ -10,18 +10,22 @@ const server = new McpServer({
   version: "1.0.0"
 });
 
+
 // Add an addition tool
-server.tool("add",
-  { a: z.number(), b: z.number() },
+server.registerTool("add",
+  {
+    inputSchema: { a: z.number(), b: z.number() },
+  },
   async ({ a, b }) => ({
     content: [{ type: "text", text: String(a + b) }]
   })
 );
 
 // Add a dynamic greeting resource
-server.resource(
+server.registerResource(
   "greeting",
   "greeting://{name}",
+  {},
   // @ts-ignore
   async (uri, { name }) => ({
     contents: [{

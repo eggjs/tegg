@@ -55,7 +55,7 @@
     "@eggjs/tegg-loader": "^3.63.2",
     "@eggjs/tegg-metadata": "^3.63.2",
     "@eggjs/tegg-runtime": "^3.63.2",
-    "@modelcontextprotocol/sdk": "^1.10.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "await-event": "^2.1.0",
     "content-type": "^1.0.5",
     "egg-errors": "^2.3.0",

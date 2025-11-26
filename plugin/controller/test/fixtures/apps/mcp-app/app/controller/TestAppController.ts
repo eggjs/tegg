@@ -9,7 +9,7 @@ import {
   Logger,
   Inject,
 } from '@eggjs/tegg';
-import z from 'zod';
+import * as z from 'zod/v4';
 
 export const NotificationType = {
   interval: z
