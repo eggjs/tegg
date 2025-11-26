@@ -1,7 +1,7 @@
 import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, ChatModelQualifier, TeggCompiledStateGraph, TeggToolNode, BoundModel, TeggBoundModel } from '../../../..';
 import { Annotation, MemorySaver } from '@langchain/langgraph';
 import { ChatOpenAI } from '@langchain/openai';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 import { Inject, SingletonProto } from '@eggjs/core-decorator';
 import { BaseMessage } from '@langchain/core/messages';
 import { AccessLevel, ToolArgs } from '@eggjs/tegg-types';
@@ -36,9 +36,7 @@ export const fooAnnotationStateDefinition = {
 export type FooAnnotationStateDefinition = typeof fooAnnotationStateDefinition;
 
 export const ToolType = {
-  query: z.string({
-    description: 'npm package name',
-  }),
+  query: z.string().describe('npm package name'),
 };
 
 @GraphTool({

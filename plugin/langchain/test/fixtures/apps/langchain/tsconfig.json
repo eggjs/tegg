@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "node18",
+    "moduleResolution": "node16",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "baseUrl": "./"
   },
   "exclude": [

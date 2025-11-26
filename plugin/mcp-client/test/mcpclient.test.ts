@@ -50,6 +50,7 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
           {
             name: 'add',
             inputSchema: {
+              $schema: 'http://json-schema.org/draft-07/schema#',
               type: 'object',
               properties: {
                 a: {
@@ -78,6 +79,7 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
           {
             name: 'add',
             inputSchema: {
+              $schema: 'http://json-schema.org/draft-07/schema#',
               type: 'object',
               properties: {
                 a: {
@@ -106,6 +108,7 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
           {
             name: 'add',
             inputSchema: {
+              $schema: 'http://json-schema.org/draft-07/schema#',
               type: 'object',
               properties: {
                 a: {
