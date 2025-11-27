@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.64.0](https://github.com/eggjs/tegg/compare/v3.63.2...v3.64.0) (2025-11-27)
+
+
+### Bug Fixes
+
+* mcp zod type and langchain test version ([#369](https://github.com/eggjs/tegg/issues/369)) ([8178168](https://github.com/eggjs/tegg/commit/81781685c392346d21c56b649bfe8bb7a99bc9fb))
+
+
+
+
+
 ## [3.63.2](https://github.com/eggjs/tegg/compare/v3.63.0...v3.63.2) (2025-11-18)
 
 **Note:** Version bump only for package @eggjs/tegg
