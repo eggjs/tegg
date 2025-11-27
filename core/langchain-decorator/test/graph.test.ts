@@ -2,7 +2,8 @@ import { strict as assert } from 'node:assert';
 import { MCPInfoUtil } from '@eggjs/controller-decorator';
 
 describe('Graph', () => {
-  if (parseInt(process.version.slice(1, 3)) > 17) {
+  // https://github.com/langchain-ai/langchainjs/blob/main/libs/langchain/package.json#L9
+  if (parseInt(process.version.slice(1, 3)) > 19) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { GraphMetaBuilder, GraphEdgeMetaBuilder, GraphNodeMetaBuilder, GraphToolMetaBuilder, GraphToolMetadata, GraphMetadata, TeggToolNode, BoundModelMetaBuilder } = require('../');
     // eslint-disable-next-line @typescript-eslint/no-var-requires

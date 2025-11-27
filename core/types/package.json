@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-types",
-  "version": "3.63.2",
+  "version": "3.64.0",
   "description": "tegg types",
   "keywords": [
     "egg",
@@ -37,7 +37,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

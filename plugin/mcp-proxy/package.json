@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-proxy",
-  "version": "3.63.2",
+  "version": "3.64.0",
   "eggPlugin": {
     "name": "mcpProxy"
   },
@@ -51,9 +51,9 @@
   },
   "dependencies": {
     "@eggjs/core": "^6.5.0",
-    "@eggjs/tegg-controller-plugin": "^3.63.2",
-    "@eggjs/tegg-types": "^3.63.2",
-    "@modelcontextprotocol/sdk": "^1.10.0",
+    "@eggjs/tegg-controller-plugin": "^3.64.0",
+    "@eggjs/tegg-types": "^3.64.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "await-event": "^2.1.0",
     "cluster-client": "^3.7.0",
     "content-type": "^1.0.5",
@@ -63,12 +63,12 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@eggjs/egg-module-common": "^3.63.2",
-    "@eggjs/tegg": "^3.63.2",
-    "@eggjs/tegg-aop-runtime": "^3.63.2",
-    "@eggjs/tegg-config": "^3.63.2",
-    "@eggjs/tegg-metadata": "^3.63.2",
-    "@eggjs/tegg-plugin": "^3.63.2",
+    "@eggjs/egg-module-common": "^3.64.0",
+    "@eggjs/tegg": "^3.64.0",
+    "@eggjs/tegg-aop-runtime": "^3.64.0",
+    "@eggjs/tegg-config": "^3.64.0",
+    "@eggjs/tegg-metadata": "^3.64.0",
+    "@eggjs/tegg-plugin": "^3.64.0",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

@@ -2,7 +2,7 @@ import { AccessLevel, SingletonProto, ToolArgs, ToolArgsSchema } from '@eggjs/te
 import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, TeggToolNode } from '@eggjs/tegg-langchain-decorator';
 import { Annotation, MemorySaver } from '@langchain/langgraph';
 // import { AIMessage, BaseMessage, ToolMessage } from '@langchain/core/messages';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 import { AIMessage, BaseMessage, ToolMessage } from 'langchain';
 
 export enum FooGraphNodeName {
@@ -33,9 +33,7 @@ export const fooAnnotationStateDefinition = {
 export type fooAnnotationStateDefinitionType = typeof fooAnnotationStateDefinition;
 
 export const ToolType = {
-  query: z.string({
-    description: 'npm package name',
-  }),
+  query: z.string().describe('npm package name'),
 };
 
 @GraphTool({

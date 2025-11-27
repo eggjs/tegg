@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as z from 'zod/v4';
 import { MCPInfoUtil, type LifecycleHook } from '@eggjs/tegg';
 import {
   ChatModelInjectName,
