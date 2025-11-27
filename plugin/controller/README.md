@@ -236,18 +236,15 @@ import {
   Inject,
   ToolArgsSchema,
 } from '@eggjs/tegg';
-import z from 'zod';
+import * as z from 'zod/v4';
 
 export const PromptType = {
   name: z.string(),
 };
 
 export const ToolType = {
-  name: z.string({
-    description: 'npm package name',
-  }),
+  name: z.string().describe('npm package name'),
 };
-
 
 @MCPController()
 export class McpController {

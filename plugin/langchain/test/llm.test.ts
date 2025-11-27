@@ -4,7 +4,8 @@ import assert from 'assert';
 
 
 describe('plugin/langchain/test/llm.test.ts', () => {
-  if (parseInt(process.version.slice(1, 3)) > 17) {
+  // https://github.com/langchain-ai/langchainjs/blob/main/libs/langchain/package.json#L9
+  if (parseInt(process.version.slice(1, 3)) > 19) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { startSSEServer, stopSSEServer } = require('./fixtures/sse-mcp-server/http');
     // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -2,7 +2,7 @@ import { MCPPromptResponse, MCPResourceResponse, MCPToolResponse, PromptArgs, To
 import { MCPPrompt, PromptArgsSchema } from "../../src/decorator/mcp/MCPPrompt";
 import { MCPTool, ToolArgsSchema } from "../../src/decorator/mcp/MCPTool";
 import { MCPController } from "../../src/decorator/mcp/MCPController";
-import z from 'zod';
+import * as z from 'zod/v4';
 import { MCPResource } from "../../src/decorator/mcp/MCPResource";
 import { Extra } from "../../src/decorator/mcp/Extra";
 
@@ -11,9 +11,7 @@ export const PromptType = {
 }
 
 export const ToolType = {
-  name: z.string({
-    description: 'npm package name',
-  }),
+  name: z.string().describe('npm package name'),
 }
 
 @MCPController({
@@ -21,7 +19,6 @@ export const ToolType = {
   timeout: 60000,
 })
 export class MCPFooController {
-
   @MCPPrompt()
   async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
     return {

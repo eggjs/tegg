@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { StreamableHTTPServerTransport, EventStore } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { Controller } from 'egg';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 import url from 'url';
 import querystring from 'querystring';
 import getRawBody from 'raw-body';
