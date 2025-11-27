@@ -62,7 +62,10 @@ export class MysqlDataSource extends Base {
     }
   }
 
-  async query<T = any>(sql: string): Promise<T> {
+  async query<T = any>(sql: string, params?: any[]): Promise<T> {
+    if (params && params.length > 0) {
+      return this.client.query(sql, params);
+    }
     return this.client.query(sql);
   }
 

@@ -5,10 +5,17 @@ import { TemplateUtil } from './TemplateUtil';
 import { SqlType } from '@eggjs/tegg-types';
 import type { SqlMap } from '@eggjs/tegg-types';
 
+const SQL_PARAMS = '$$__sql_params';
+
 export interface SqlGenerator {
   type: SqlType;
   template: Template,
   raw: string,
+}
+
+export interface GeneratedSql {
+  sql: string;
+  params: any[];
 }
 
 export class TableSqlMap {
@@ -41,6 +48,14 @@ export class TableSqlMap {
     env.addFilter('toMultiLine', TemplateUtil.toMultiLine);
     env.addFilter('toMultiPolygon', TemplateUtil.toMultiPolygon);
     env.addFilter('toGeometryCollection', TemplateUtil.toGeometryCollection);
+
+    // Add param filter for parameterized queries
+    env.addFilter('param', function(this: Template, value: any) {
+      if ((this as any).ctx[SQL_PARAMS]) {
+        (this as any).ctx[SQL_PARAMS].push(value);
+      }
+      return '?';
+    });
   }
 
   #extract(map: Record<string, SqlMap>) {
@@ -76,7 +91,7 @@ export class TableSqlMap {
     return ret;
   }
 
-  generate(name: string, data: object, timezone: string) {
+  generate(name: string, data: object, timezone: string): GeneratedSql {
     const generator = this.sqlGenerator[name];
     // istanbul ignore if
     if (!generator) {
@@ -84,8 +99,19 @@ export class TableSqlMap {
     }
 
     const template = generator.template;
+    const params: any[] = [];
+
+    // Set timezone and params collector on env
     (template as any).env.timezone = timezone;
-    return template.render(data);
+
+    const context = {
+      ...data,
+      [SQL_PARAMS]: params,
+    };
+
+    const sql = template.render(context);
+
+    return { sql, params };
   }
 
   getType(name: string): SqlType {

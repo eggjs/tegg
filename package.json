@@ -18,7 +18,9 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "lint": "eslint . --ext .ts",
     "test": "npm run test --workspaces --if-present",
+    "test:20-": "npm run test --workspaces --if-present --workspace='!core/langchain-decorator'",
     "cov": "nyc npm run test",
+    "cov:20-": "nyc npm run test:20-",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
@@ -29,7 +31,8 @@
     "tsc-workspaces": "npm run tsc --workspaces --if-present",
     "tsc:pub": "lerna run tsc:pub",
     "tsc:pub-workspaces": "npm run tsc:pub --workspaces --if-present",
-    "ci": "npm run prepare-test && npm run lint && npm run cov"
+    "ci": "npm run prepare-test && npm run lint && npm run cov",
+    "ci:20-": "npm run prepare-test && npm run lint && npm run cov:20-"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
