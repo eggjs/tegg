@@ -11,6 +11,7 @@ import { EggPrototype } from '@eggjs/tegg-metadata';
 import { ChatCheckpointSaverInjectName, ChatCheckpointSaverQualifierAttribute, GRAPH_EDGE_METADATA, GRAPH_NODE_METADATA, GraphEdgeMetadata, GraphMetadata, GraphNodeMetadata, IGraph, IGraphEdge, IGraphNode, TeggToolNode } from '@eggjs/tegg-langchain-decorator';
 import { LangGraphTracer } from '../tracing/LangGraphTracer';
 import { BaseCheckpointSaver, CompiledStateGraph } from '@langchain/langgraph';
+import { Application } from 'egg';
 
 export class CompiledStateGraphObject implements EggObject {
   private status: EggObjectStatus = EggObjectStatus.PENDING;
@@ -19,17 +20,19 @@ export class CompiledStateGraphObject implements EggObject {
   readonly proto: CompiledStateGraphProto;
   readonly ctx: EggContext;
   readonly daoName: string;
-  private _obj: object;
+  _obj: object;
   readonly graphMetadata: GraphMetadata;
   readonly graphName: string;
+  readonly app: Application;
 
-  constructor(name: EggObjectName, proto: CompiledStateGraphProto) {
+  constructor(name: EggObjectName, proto: CompiledStateGraphProto, app: Application) {
     this.name = name;
     this.proto = proto;
     this.ctx = ContextHandler.getContext()!;
     this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx?.id);
     this.graphMetadata = proto.graphMetadata;
     this.graphName = proto.graphName;
+    this.app = app;
   }
 
   async init() {
@@ -122,9 +125,11 @@ export class CompiledStateGraphObject implements EggObject {
     return this._obj;
   }
 
-  static async createObject(name: EggObjectName, proto: EggPrototype): Promise<CompiledStateGraphObject> {
-    const compiledStateGraphObject = new CompiledStateGraphObject(name, proto as CompiledStateGraphProto);
-    await compiledStateGraphObject.init();
-    return compiledStateGraphObject;
+  static createObject(app: Application) {
+    return async function(name: EggObjectName, proto: EggPrototype): Promise<CompiledStateGraphObject> {
+      const compiledStateGraphObject = new CompiledStateGraphObject(name, proto as CompiledStateGraphProto, app);
+      await compiledStateGraphObject.init();
+      return compiledStateGraphObject;
+    };
   }
 }
