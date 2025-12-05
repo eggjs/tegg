@@ -6,7 +6,7 @@ import { BaseTracer, Run } from '@langchain/core/tracers/base';
 @SingletonProto()
 export class LangGraphTracer extends BaseTracer {
   @Inject()
-  private readonly logger: Logger;
+  logger: Logger;
 
   name = 'LangGraphTracer';
 

@@ -1,1 +1,11 @@
 export * from './lib/ChatOpenAI';
+export * from './lib/boundModel/BoundModelObjectHook';
+export * from './lib/config/QualifierUtil';
+export * from './lib/graph/CompiledStateGraphObject';
+export * from './lib/graph/CompiledStateGraphProto';
+export * from './lib/graph/GraphBuildHook';
+export * from './lib/graph/GraphLoadUnitHook';
+export * from './lib/graph/GraphObjectHook';
+export * from './lib/graph/GraphPrototypeHook';
+export * from './lib/tracing/LangGraphTracer';
+
