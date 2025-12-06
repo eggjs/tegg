@@ -1,12 +1,14 @@
-import { SingletonProto, Inject, Logger } from '@eggjs/tegg';
+import { SingletonProto, Inject, Logger, AccessLevel } from '@eggjs/tegg';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { BaseTracer, Run } from '@langchain/core/tracers/base';
 
-@SingletonProto()
+@SingletonProto({
+  accessLevel: AccessLevel.PUBLIC,
+})
 export class LangGraphTracer extends BaseTracer {
   @Inject()
-  private readonly logger: Logger;
+  logger: Logger;
 
   name = 'LangGraphTracer';
 

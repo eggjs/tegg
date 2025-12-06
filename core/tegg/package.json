@@ -48,6 +48,7 @@
     "@eggjs/tegg-lifecycle": "^3.64.2",
     "@eggjs/tegg-loader": "^3.64.2",
     "@eggjs/tegg-metadata": "^3.64.2",
+    "@eggjs/tegg-langchain-decorator": "^3.64.2",
     "@eggjs/tegg-orm-decorator": "^3.64.2",
     "@eggjs/tegg-runtime": "^3.64.2",
     "@eggjs/tegg-schedule-decorator": "^3.64.2",
