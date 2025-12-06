@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-runtime",
-  "version": "3.64.2",
+  "version": "3.64.3",
   "description": "tegg aop",
   "main": "dist/index.js",
   "eggModule": {
@@ -43,18 +43,18 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/aop-decorator": "^3.64.2",
-    "@eggjs/core-decorator": "^3.64.2",
-    "@eggjs/tegg-common-util": "^3.64.2",
-    "@eggjs/tegg-lifecycle": "^3.64.2",
-    "@eggjs/tegg-metadata": "^3.64.2",
-    "@eggjs/tegg-runtime": "^3.64.2",
-    "@eggjs/tegg-types": "^3.64.2",
+    "@eggjs/aop-decorator": "^3.64.3",
+    "@eggjs/core-decorator": "^3.64.3",
+    "@eggjs/tegg-common-util": "^3.64.3",
+    "@eggjs/tegg-lifecycle": "^3.64.3",
+    "@eggjs/tegg-metadata": "^3.64.3",
+    "@eggjs/tegg-runtime": "^3.64.3",
+    "@eggjs/tegg-types": "^3.64.3",
     "koa-compose": "^4.1.0"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.64.2",
-    "@eggjs/tegg-loader": "^3.64.2",
+    "@eggjs/module-test-util": "^3.64.3",
+    "@eggjs/tegg-loader": "^3.64.3",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
