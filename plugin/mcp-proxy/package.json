@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-proxy",
-  "version": "3.64.3",
+  "version": "3.64.4",
   "eggPlugin": {
     "name": "mcpProxy"
   },
@@ -51,8 +51,8 @@
   },
   "dependencies": {
     "@eggjs/core": "^6.5.0",
-    "@eggjs/tegg-controller-plugin": "^3.64.3",
-    "@eggjs/tegg-types": "^3.64.3",
+    "@eggjs/tegg-controller-plugin": "^3.64.4",
+    "@eggjs/tegg-types": "^3.64.4",
     "@modelcontextprotocol/sdk": "^1.23.0",
     "await-event": "^2.1.0",
     "cluster-client": "^3.7.0",
@@ -63,12 +63,12 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
-    "@eggjs/egg-module-common": "^3.64.3",
-    "@eggjs/tegg": "^3.64.3",
-    "@eggjs/tegg-aop-runtime": "^3.64.3",
-    "@eggjs/tegg-config": "^3.64.3",
-    "@eggjs/tegg-metadata": "^3.64.3",
-    "@eggjs/tegg-plugin": "^3.64.3",
+    "@eggjs/egg-module-common": "^3.64.4",
+    "@eggjs/tegg": "^3.64.4",
+    "@eggjs/tegg-aop-runtime": "^3.64.4",
+    "@eggjs/tegg-config": "^3.64.4",
+    "@eggjs/tegg-metadata": "^3.64.4",
+    "@eggjs/tegg-plugin": "^3.64.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
@@ -83,5 +83,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
+  "gitHead": "240a3e9f40fda65ebb7589727d197db5ce17916c"
 }

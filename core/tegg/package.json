@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.64.3",
+  "version": "3.64.4",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -35,25 +35,25 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/ajv-decorator": "^3.64.3",
-    "@eggjs/aop-decorator": "^3.64.3",
-    "@eggjs/controller-decorator": "^3.64.3",
-    "@eggjs/core-decorator": "^3.64.3",
-    "@eggjs/dal-decorator": "^3.64.3",
-    "@eggjs/eventbus-decorator": "^3.64.3",
-    "@eggjs/standalone-decorator": "^3.64.3",
-    "@eggjs/tegg-background-task": "^3.64.3",
-    "@eggjs/tegg-common-util": "^3.64.3",
-    "@eggjs/tegg-dynamic-inject": "^3.64.3",
-    "@eggjs/tegg-langchain-decorator": "^3.64.3",
-    "@eggjs/tegg-lifecycle": "^3.64.3",
-    "@eggjs/tegg-loader": "^3.64.3",
-    "@eggjs/tegg-metadata": "^3.64.3",
-    "@eggjs/tegg-orm-decorator": "^3.64.3",
-    "@eggjs/tegg-runtime": "^3.64.3",
-    "@eggjs/tegg-schedule-decorator": "^3.64.3",
-    "@eggjs/tegg-transaction-decorator": "^3.64.3",
-    "@eggjs/tegg-types": "^3.64.3"
+    "@eggjs/ajv-decorator": "^3.64.4",
+    "@eggjs/aop-decorator": "^3.64.4",
+    "@eggjs/controller-decorator": "^3.64.4",
+    "@eggjs/core-decorator": "^3.64.4",
+    "@eggjs/dal-decorator": "^3.64.4",
+    "@eggjs/eventbus-decorator": "^3.64.4",
+    "@eggjs/standalone-decorator": "^3.64.4",
+    "@eggjs/tegg-background-task": "^3.64.4",
+    "@eggjs/tegg-common-util": "^3.64.4",
+    "@eggjs/tegg-dynamic-inject": "^3.64.4",
+    "@eggjs/tegg-langchain-decorator": "^3.64.4",
+    "@eggjs/tegg-lifecycle": "^3.64.4",
+    "@eggjs/tegg-loader": "^3.64.4",
+    "@eggjs/tegg-metadata": "^3.64.4",
+    "@eggjs/tegg-orm-decorator": "^3.64.4",
+    "@eggjs/tegg-runtime": "^3.64.4",
+    "@eggjs/tegg-schedule-decorator": "^3.64.4",
+    "@eggjs/tegg-transaction-decorator": "^3.64.4",
+    "@eggjs/tegg-types": "^3.64.4"
   },
   "peerDependencies": {
     "@eggjs/tegg-dal-plugin": "^3.60.1"
@@ -69,5 +69,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
-  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
+  "gitHead": "240a3e9f40fda65ebb7589727d197db5ce17916c"
 }
