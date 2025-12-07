@@ -17,3 +17,10 @@ mcp:
       version: 1.0.0
       transportType: SSE
       type: http
+
+langchain:
+  agents:
+    FooGraph:
+      path: /graph/stream
+      type: http
+      stream: true

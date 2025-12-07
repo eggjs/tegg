@@ -108,11 +108,34 @@ export const ChatModelConfigModuleConfigSchema = Type.Object({
   name: 'ChatModel',
 });
 
+
+export const LangChainConfigSchema = Type.Object({
+  agents: Type.Record(Type.String(), Type.Object({
+    path: Type.Optional(Type.String({
+      description: 'http path',
+    })),
+    stream: Type.Optional(Type.Boolean({
+      description: '是否流式返回',
+    })),
+    type: Type.Optional(Type.String({
+      description: 'Http',
+    })),
+    timeout: Type.Optional(Type.Number({
+      description: '接口超时时间',
+    })),
+  })),
+}, {
+  title: 'langchain 设置',
+  name: 'langchain',
+});
+
 export type ChatModelConfigModuleConfigType = Static<typeof ChatModelConfigModuleConfigSchema>;
+export type LangChainConfigSchemaType = Static<typeof LangChainConfigSchema>;
 
 declare module '@eggjs/tegg' {
   export type LangChainModuleConfig = {
     ChatModel?: ChatModelConfigModuleConfigType;
+    langchain?: LangChainConfigSchema;
   };
 
   export interface ModuleConfig extends LangChainModuleConfig {
