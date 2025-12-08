@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/ajv-decorator",
-  "version": "3.64.4",
+  "version": "3.64.5",
   "description": "tegg ajv decorator",
   "keywords": [
     "egg",
