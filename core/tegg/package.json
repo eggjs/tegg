@@ -45,7 +45,6 @@
     "@eggjs/tegg-background-task": "^3.64.4",
     "@eggjs/tegg-common-util": "^3.64.4",
     "@eggjs/tegg-dynamic-inject": "^3.64.4",
-    "@eggjs/tegg-langchain-decorator": "^3.64.4",
     "@eggjs/tegg-lifecycle": "^3.64.4",
     "@eggjs/tegg-loader": "^3.64.4",
     "@eggjs/tegg-metadata": "^3.64.4",
