@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-langchain-decorator",
-  "version": "3.64.0",
+  "version": "3.64.5",
   "description": "tegg langchain decorator",
   "main": "dist/index.js",
   "files": [
@@ -36,10 +36,10 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.64.0",
-    "@eggjs/tegg-common-util": "^3.64.0",
-    "@eggjs/tegg-metadata": "^3.64.0",
-    "@eggjs/tegg-types": "^3.64.0",
+    "@eggjs/core-decorator": "^3.64.5",
+    "@eggjs/tegg-common-util": "^3.64.5",
+    "@eggjs/tegg-metadata": "^3.64.5",
+    "@eggjs/tegg-types": "^3.64.5",
     "@langchain/community": "^1.0.5",
     "@langchain/core": "^1.1.0",
     "@langchain/langgraph": "^1.0.2",
@@ -59,5 +59,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
-  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
+  "gitHead": "240a3e9f40fda65ebb7589727d197db5ce17916c"
 }

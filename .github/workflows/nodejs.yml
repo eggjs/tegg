@@ -5,82 +5,6 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  Runner-ubuntu-20-:
-    runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: true
-          MYSQL_DATABASE: test
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [ 16, 18 ]
-    steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@master
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Install Npm
-      run: npm i -g npm@9
-
-    - name: Install Dependencies
-      run: npm i
-
-    - name: Continuous integration
-      run: |
-        npm run ci:20-
-        npm run tsc:pub
-
-    - name: Code Coverage
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-  Runner-macos-20-:
-    runs-on: macOS-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [ 16, 18 ]
-    steps:
-      - name: Checkout Git Source
-        uses: actions/checkout@master
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install Mysql
-        run: brew install mysql
-
-      - name: Start Mysql
-        ## arm64/x86 homebrew mysql path different
-        run: brew services start mysql
-
-      - name: Install Npm
-        run: npm i -g npm@9
-
-      - name: Install Dependencies
-        run: npm i
-
-      - name: Continuous integration
-        run: npm run ci:20-
-
-      - name: Code Coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
   Runner-ubuntu:
     runs-on: ubuntu-latest
     services:
@@ -96,38 +20,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 20 ]
+        node-version: [ 16, 18, 20 ]
     steps:
-      - name: Checkout Git Source
-        uses: actions/checkout@master
+    - name: Checkout Git Source
+      uses: actions/checkout@master
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      - name: Install Npm
-        run: npm i -g npm@9
+    - name: Install Utoo
+      uses: utooland/setup-utoo@v1
 
-      - name: Install Dependencies
-        run: npm i
+    - name: Install Dependencies
+      run: ut install --ignore-scripts
 
-      - name: Continuous integration
-        run: |
-          npm run ci
-          npm run tsc:pub
+    - name: Continuous integration
+      run: |
+        ut ci
+        ut tsc:pub
 
-      - name: Code Coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Code Coverage
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
   Runner-macos:
     runs-on: macOS-latest
 
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 20 ]
+        node-version: [ 16, 18, 20 ]
     steps:
       - name: Checkout Git Source
         uses: actions/checkout@master
@@ -144,14 +68,14 @@ jobs:
         ## arm64/x86 homebrew mysql path different
         run: brew services start mysql
 
-      - name: Install Npm
-        run: npm i -g npm@9
+      - name: Install Utoo
+        uses: utooland/setup-utoo@v1
 
       - name: Install Dependencies
-        run: npm i
+        run: ut install --ignore-scripts
 
       - name: Continuous integration
-        run: npm run ci
+        run: ut ci
 
       - name: Code Coverage
         uses: codecov/codecov-action@v1

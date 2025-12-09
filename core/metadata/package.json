@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-metadata",
-  "version": "3.64.0",
+  "version": "3.64.5",
   "description": "tegg metadata",
   "keywords": [
     "egg",
@@ -17,8 +17,8 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -35,10 +35,10 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.64.0",
-    "@eggjs/tegg-common-util": "^3.64.0",
-    "@eggjs/tegg-lifecycle": "^3.64.0",
-    "@eggjs/tegg-types": "^3.64.0",
+    "@eggjs/core-decorator": "^3.64.5",
+    "@eggjs/tegg-common-util": "^3.64.5",
+    "@eggjs/tegg-lifecycle": "^3.64.5",
+    "@eggjs/tegg-types": "^3.64.5",
     "egg-errors": "^2.2.3"
   },
   "devDependencies": {
@@ -54,5 +54,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
+  "gitHead": "240a3e9f40fda65ebb7589727d197db5ce17916c"
 }

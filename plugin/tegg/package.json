@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "3.64.0",
+  "version": "3.64.5",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -28,9 +28,9 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
-    "tsc": "npm run clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc": "ut clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
   },
   "homepage": "https://github.com/eggjs/tegg",
   "bugs": {
@@ -45,21 +45,21 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/egg-module-common": "^3.64.0",
-    "@eggjs/tegg": "^3.64.0",
-    "@eggjs/tegg-background-task": "^3.64.0",
-    "@eggjs/tegg-common-util": "^3.64.0",
-    "@eggjs/tegg-dynamic-inject-runtime": "^3.64.0",
-    "@eggjs/tegg-loader": "^3.64.0",
-    "@eggjs/tegg-metadata": "^3.64.0",
-    "@eggjs/tegg-runtime": "^3.64.0",
+    "@eggjs/egg-module-common": "^3.64.5",
+    "@eggjs/tegg": "^3.64.5",
+    "@eggjs/tegg-background-task": "^3.64.5",
+    "@eggjs/tegg-common-util": "^3.64.5",
+    "@eggjs/tegg-dynamic-inject-runtime": "^3.64.5",
+    "@eggjs/tegg-loader": "^3.64.5",
+    "@eggjs/tegg-metadata": "^3.64.5",
+    "@eggjs/tegg-runtime": "^3.64.5",
     "await-event": "^2.1.0",
     "await-first": "^1.0.0",
     "extend2": "^1.0.0",
     "sdk-base": "^4.2.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^3.64.0",
+    "@eggjs/tegg-config": "^3.64.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
@@ -75,5 +75,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
+  "gitHead": "240a3e9f40fda65ebb7589727d197db5ce17916c"
 }

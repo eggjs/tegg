@@ -48,6 +48,9 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
       assert.deepStrictEqual(res.body, {
         tools: [
           {
+            execution: {
+              taskSupport: 'forbidden',
+            },
             name: 'add',
             inputSchema: {
               $schema: 'http://json-schema.org/draft-07/schema#',
@@ -78,6 +81,9 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
         tools: [
           {
             name: 'add',
+            execution: {
+              taskSupport: 'forbidden',
+            },
             inputSchema: {
               $schema: 'http://json-schema.org/draft-07/schema#',
               type: 'object',
@@ -107,6 +113,9 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
         tools: [
           {
             name: 'add',
+            execution: {
+              taskSupport: 'forbidden',
+            },
             inputSchema: {
               $schema: 'http://json-schema.org/draft-07/schema#',
               type: 'object',

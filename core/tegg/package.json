@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg",
-  "version": "3.64.0",
+  "version": "3.64.5",
   "description": "tegg decorator packages",
   "keywords": [
     "egg",
@@ -17,8 +17,8 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
-    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
-    "prepublishOnly": "npm run tsc:pub"
+    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
@@ -35,24 +35,24 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/ajv-decorator": "^3.64.0",
-    "@eggjs/aop-decorator": "^3.64.0",
-    "@eggjs/controller-decorator": "^3.64.0",
-    "@eggjs/core-decorator": "^3.64.0",
-    "@eggjs/dal-decorator": "^3.64.0",
-    "@eggjs/eventbus-decorator": "^3.64.0",
-    "@eggjs/standalone-decorator": "^3.64.0",
-    "@eggjs/tegg-background-task": "^3.64.0",
-    "@eggjs/tegg-common-util": "^3.64.0",
-    "@eggjs/tegg-dynamic-inject": "^3.64.0",
-    "@eggjs/tegg-lifecycle": "^3.64.0",
-    "@eggjs/tegg-loader": "^3.64.0",
-    "@eggjs/tegg-metadata": "^3.64.0",
-    "@eggjs/tegg-orm-decorator": "^3.64.0",
-    "@eggjs/tegg-runtime": "^3.64.0",
-    "@eggjs/tegg-schedule-decorator": "^3.64.0",
-    "@eggjs/tegg-transaction-decorator": "^3.64.0",
-    "@eggjs/tegg-types": "^3.64.0"
+    "@eggjs/ajv-decorator": "^3.64.5",
+    "@eggjs/aop-decorator": "^3.64.5",
+    "@eggjs/controller-decorator": "^3.64.5",
+    "@eggjs/core-decorator": "^3.64.5",
+    "@eggjs/dal-decorator": "^3.64.5",
+    "@eggjs/eventbus-decorator": "^3.64.5",
+    "@eggjs/standalone-decorator": "^3.64.5",
+    "@eggjs/tegg-background-task": "^3.64.5",
+    "@eggjs/tegg-common-util": "^3.64.5",
+    "@eggjs/tegg-dynamic-inject": "^3.64.5",
+    "@eggjs/tegg-lifecycle": "^3.64.5",
+    "@eggjs/tegg-loader": "^3.64.5",
+    "@eggjs/tegg-metadata": "^3.64.5",
+    "@eggjs/tegg-orm-decorator": "^3.64.5",
+    "@eggjs/tegg-runtime": "^3.64.5",
+    "@eggjs/tegg-schedule-decorator": "^3.64.5",
+    "@eggjs/tegg-transaction-decorator": "^3.64.5",
+    "@eggjs/tegg-types": "^3.64.5"
   },
   "peerDependencies": {
     "@eggjs/tegg-dal-plugin": "^3.60.1"
@@ -68,5 +68,5 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
-  "gitHead": "5f24bacd9131435188be15568d86ef4575f85636"
+  "gitHead": "240a3e9f40fda65ebb7589727d197db5ce17916c"
 }

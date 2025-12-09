@@ -6,7 +6,7 @@ export function GraphBuildHook(globalGraph: GlobalGraph) {
   let langchainGraphTracerProtoNode;
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {
     for (const protoNode of moduleNode.val.protos) {
-      if ((protoNode.val.proto as ClassProtoDescriptor)?.clazz === LangGraphTracer) {
+      if ((protoNode.val.proto as ClassProtoDescriptor)?.clazz && (LangGraphTracer.isPrototypeOf((protoNode.val.proto as ClassProtoDescriptor).clazz) || (protoNode.val.proto as ClassProtoDescriptor).clazz === LangGraphTracer)) {
         langchainGraphTracerProtoNode = protoNode;
       }
     }
