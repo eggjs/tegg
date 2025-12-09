@@ -77,6 +77,29 @@ dataSource:
     port: 3306
 ```
 
+#### executeType 配置
+
+可以通过在 `dataSource` 下配置 `executeType` 来指定 SQL 执行模式：
+
+```yaml
+dataSource:
+  foo:
+    connectionLimit: 100
+    database: 'test'
+    host: '127.0.0.1'
+    user: root
+    port: 3306
+    executeType: execute  # 可选值: execute | query，默认为 query
+```
+
+**执行模式说明：**
+- `execute`: 使用 SQL 参数化查询，采用服务端序列化参数模式，通过预编译语句执行，某些情况下能提升查询性能
+- `query`: 使用文本 SQL 模式，在本地将参数序列化到 SQL 语句中（nodejs 生态中 mysql1 只有这种模式）
+
+**注意事项：**
+- 由于 MySQL execute 模式反序列化 float 采用二进制模式，可能会导致精度丢失，建议使用 decimal 类型
+- 当使用 `executeType: execute` 时，请确保数据库中的浮点数字段使用 `DECIMAL` 类型而不是 `FLOAT` 或 `DOUBLE` 类型，以避免精度问题
+
 ### Table
 
 `TableModel` 定义一个表结构，包括表配置、列、索引。

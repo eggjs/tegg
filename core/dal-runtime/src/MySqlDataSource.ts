@@ -1,5 +1,5 @@
 import { RDSClient } from '@eggjs/rds';
-import type { RDSClientOptions } from '@eggjs/rds';
+import type { QueryOptions, RDSClientOptions } from '@eggjs/rds';
 import Base from 'sdk-base';
 import { Logger } from '@eggjs/tegg-types';
 
@@ -10,6 +10,7 @@ export interface DataSourceOptions extends RDSClientOptions {
   forkDb?: boolean;
   initRetryTimes?: number;
   logger?: Logger;
+  executeType?: 'execute' | 'query';
 }
 
 const DEFAULT_OPTIONS: RDSClientOptions = {
@@ -17,6 +18,10 @@ const DEFAULT_OPTIONS: RDSClientOptions = {
   bigNumberStrings: true,
   trace: true,
 };
+
+export interface EggQueryOptions extends QueryOptions {
+  executeType?: 'execute' | 'query';
+}
 
 export class MysqlDataSource extends Base {
   private client: RDSClient;
@@ -27,16 +32,18 @@ export class MysqlDataSource extends Base {
   readonly forkDb?: boolean;
   readonly #initRetryTimes?: number;
   readonly #logger?: Logger;
+  private readonly executeType: 'execute' | 'query';
 
   constructor(options: DataSourceOptions) {
     super({ initMethod: '_init' });
-    const { name, initSql, forkDb, initRetryTimes, logger, ...mysqlOptions } = options;
+    const { name, initSql, forkDb, initRetryTimes, logger, executeType, ...mysqlOptions } = options;
     this.#logger = logger;
     this.forkDb = forkDb;
     this.initSql = initSql ?? 'SELECT 1 + 1';
     this.#initRetryTimes = initRetryTimes;
     this.name = name;
     this.timezone = options.timezone;
+    this.executeType = executeType ?? 'query';
     this.rdsOptions = Object.assign({}, DEFAULT_OPTIONS, mysqlOptions);
     this.client = new RDSClient(this.rdsOptions);
   }
@@ -62,11 +69,13 @@ export class MysqlDataSource extends Base {
     }
   }
 
-  async query<T = any>(sql: string, params?: any[]): Promise<T> {
-    if (params && params.length > 0) {
-      return this.client.query(sql, params);
+  async query<T = any>(sql: string, params?: any[], options?: EggQueryOptions): Promise<T> {
+    const executeType = options?.executeType || this.executeType;
+
+    if (executeType === 'execute') {
+      return this.client.execute(sql, params, options);
     }
-    return this.client.query(sql);
+    return this.client.query(sql, params, options);
   }
 
   async beginTransactionScope<T>(scope: () => Promise<T>): Promise<T> {
