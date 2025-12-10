@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.65.0](https://github.com/eggjs/tegg/compare/v3.64.5...v3.65.0) (2025-12-10)
+
+
+### Features
+
+* add parameterized query ([#366](https://github.com/eggjs/tegg/issues/366)) ([6d7d8d8](https://github.com/eggjs/tegg/commit/6d7d8d8383f4eea574d13e87ee03c57a33a319e7))
+
+
+
+
+
 ## [3.64.5](https://github.com/eggjs/tegg/compare/v3.64.4...v3.64.5) (2025-12-08)
 
 **Note:** Version bump only for package @eggjs/tegg-dal-plugin
