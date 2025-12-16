@@ -7,10 +7,16 @@ import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import * as z from 'zod/v4';
 import assert from 'assert';
 
-import { MCPServerHelper } from '../../lib/impl/mcp/MCPServerHelper';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
 describe('plugin/controller/test/mcp/mcp.test.ts', () => {
+
+  if (parseInt(process.versions.node, 10) < 18) {
+    return;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { MCPServerHelper } = require('../../lib/impl/mcp/MCPServerHelper');
   it('MCPServerHelper should work', async () => {
     const PromptType = {
       name: z.string(),

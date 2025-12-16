@@ -11,7 +11,6 @@ import { ControllerMetadataManager } from './lib/ControllerMetadataManager';
 import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
-import { MCPControllerRegister } from './lib/impl/mcp/MCPControllerRegister';
 import { middlewareGraphHook } from './lib/MiddlewareGraphHook';
 import assert from 'node:assert';
 
@@ -28,6 +27,8 @@ export default class ControllerAppBootHook {
   private controllerLoadUnitHandler: ControllerLoadUnitHandler;
   private readonly controllerPrototypeHook: EggControllerPrototypeHook;
 
+  private mcpControllerRegister?: typeof import('./lib/impl/mcp/MCPControllerRegister').MCPControllerRegister;
+
   constructor(app: Application) {
     this.app = app;
     this.controllerRegisterFactory = new ControllerRegisterFactory(this.app);
@@ -36,6 +37,11 @@ export default class ControllerAppBootHook {
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
     this.loadUnitHook = new AppLoadUnitControllerHook(this.controllerRegisterFactory, this.app.rootProtoManager);
     this.controllerPrototypeHook = new EggControllerPrototypeHook();
+
+    if (parseInt(process.versions.node.split('.')[0], 10) >= 18) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      this.mcpControllerRegister = require('./lib/impl/mcp/MCPControllerRegister').MCPControllerRegister;
+    }
   }
 
   configWillLoad() {
@@ -75,8 +81,8 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
-    if (this.mcpEnable()) {
-      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, MCPControllerRegister.create);
+    if (this.mcpEnable() && this.mcpControllerRegister) {
+      this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, this.mcpControllerRegister.create);
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
 
@@ -134,7 +140,7 @@ export default class ControllerAppBootHook {
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
 
-    this.app.config.mcp.hooks = MCPControllerRegister.hooks;
+    this.app.config.mcp.hooks = this.mcpControllerRegister?.hooks;
   }
 
   configDidLoad() {
@@ -142,12 +148,12 @@ export default class ControllerAppBootHook {
   }
 
   async willReady() {
-    if (this.mcpEnable()) {
-      await MCPControllerRegister.connectStatelessStreamTransport();
-      const names = MCPControllerRegister.instance?.mcpConfig.getMultipleServerNames();
+    if (this.mcpEnable() && this.mcpControllerRegister) {
+      await this.mcpControllerRegister.connectStatelessStreamTransport();
+      const names = this.mcpControllerRegister.instance?.mcpConfig.getMultipleServerNames();
       if (names && names.length > 0) {
         for (const name of names) {
-          await MCPControllerRegister.connectStatelessStreamTransport(name);
+          await this.mcpControllerRegister.connectStatelessStreamTransport(name);
         }
       }
     }
@@ -165,6 +171,6 @@ export default class ControllerAppBootHook {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
     HTTPControllerRegister.clean();
-    MCPControllerRegister.clean();
+    this.mcpControllerRegister?.clean();
   }
 }

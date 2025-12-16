@@ -70,10 +70,10 @@ class InnerSSEServerTransport extends SSEServerTransport {
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
       const map = MCPControllerRegister.instance?.sseTransportsRequestMap.get(this);
       if (map && 'id' in message) {
-        const { resolve, reject } = map[message.id] ?? {};
+        const { resolve, reject } = map[message.id!] ?? {};
         if (resolve) {
           res ? reject(res) : resolve(res);
-          delete map[message.id];
+          delete map[String(message.id)];
         }
       }
     }
