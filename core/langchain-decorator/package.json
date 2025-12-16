@@ -41,10 +41,10 @@
     "@eggjs/tegg-metadata": "^3.65.3",
     "@eggjs/tegg-types": "^3.65.3",
     "@langchain/community": "^1.0.5",
-    "@langchain/core": "^1.1.0",
-    "@langchain/langgraph": "^1.0.2",
     "@langchain/openai": "^1.1.0",
-    "langchain": "^1.1.0",
+    "@langchain/core": "1.1.1",
+    "@langchain/langgraph": "1.0.2",
+    "langchain": "1.1.2",
     "lodash": "^4.17.21",
     "pluralize": "^8.0.0"
   },
