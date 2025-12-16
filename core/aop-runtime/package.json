@@ -21,8 +21,8 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean && rm -rf dist",
-    "tsc": "ut clean && tsc -p ./tsconfig.json",
-    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "tsc": "ut run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "ut run clean && tsc -p ./tsconfig.pub.json",
     "prepublishOnly": "ut tsc:pub"
   },
   "author": "killagu <killa123@126.com>",

@@ -21,7 +21,7 @@
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
-    "clean": "ut clean --workspaces",
+    "clean": "ut run clean --workspaces",
     "prepare-test": "ut prepare-test --workspaces",
     "tsc": "ut tsc --workspaces",
     "tsc:pub": "ut tsc:pub --workspaces",
