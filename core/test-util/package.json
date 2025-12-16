@@ -17,7 +17,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "tsc -b --clean",
-    "tsc:pub": "ut clean && tsc -p ./tsconfig.pub.json",
+    "tsc:pub": "ut run clean && tsc -p ./tsconfig.pub.json",
     "prepublishOnly": "ut tsc:pub"
   },
   "author": "killagu <killa123@126.com>",
