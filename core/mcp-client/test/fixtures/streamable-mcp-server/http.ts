@@ -1,7 +1,6 @@
 import http from 'node:http';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import * as z from 'zod/v4';
 
 // Create an MCP server
@@ -39,6 +38,7 @@ export const headers = {};
 export let httpServer;
 export async function startStreamableServer(port = 17243){
   const httpServer = http.createServer(async (req, res) => {
+    const { StreamableHTTPServerTransport } = require('@modelcontextprotocol/sdk/server/streamableHttp.js');
     const url = new URL(`http://127.0.0.1:${port}${req.url!}`);
     const headerKey = `${req.method}${url.pathname}`;
     const serverCode = req.headers['x-mcp-server-code'] as string;
@@ -47,7 +47,7 @@ export async function startStreamableServer(port = 17243){
     headers[serverCode][headerKey].push(req.headers);
     if (req.method === 'POST') {
       try {
-        const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
+        const transport: typeof StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
           sessionIdGenerator: undefined,
         });
         await server.connect(transport);
