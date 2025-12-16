@@ -73,7 +73,7 @@ class InnerSSEServerTransport extends SSEServerTransport {
         const { resolve, reject } = map[message.id!] ?? {};
         if (resolve) {
           res ? reject(res) : resolve(res);
-          delete map[message.id!];
+          delete map[String(message.id)];
         }
       }
     }

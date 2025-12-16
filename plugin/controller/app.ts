@@ -27,7 +27,7 @@ export default class ControllerAppBootHook {
   private controllerLoadUnitHandler: ControllerLoadUnitHandler;
   private readonly controllerPrototypeHook: EggControllerPrototypeHook;
 
-  private mcpControllerRegister: typeof import('./lib/impl/mcp/MCPControllerRegister').MCPControllerRegister;
+  private mcpControllerRegister?: typeof import('./lib/impl/mcp/MCPControllerRegister').MCPControllerRegister;
 
   constructor(app: Application) {
     this.app = app;
@@ -81,7 +81,7 @@ export default class ControllerAppBootHook {
 
     // init http root proto middleware
     this.prepareMiddleware(this.app.config.coreMiddleware);
-    if (this.mcpEnable()) {
+    if (this.mcpEnable() && this.mcpControllerRegister) {
       this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, this.mcpControllerRegister.create);
       // Don't let the mcp's body be consumed
       this.app.config.coreMiddleware.unshift('mcpBodyMiddleware');
@@ -148,7 +148,7 @@ export default class ControllerAppBootHook {
   }
 
   async willReady() {
-    if (this.mcpEnable()) {
+    if (this.mcpEnable() && this.mcpControllerRegister) {
       await this.mcpControllerRegister.connectStatelessStreamTransport();
       const names = this.mcpControllerRegister.instance?.mcpConfig.getMultipleServerNames();
       if (names && names.length > 0) {
