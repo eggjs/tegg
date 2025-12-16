@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.65.1](https://github.com/eggjs/tegg/compare/v3.65.0...v3.65.1) (2025-12-16)
+
+
+### Bug Fixes
+
+* hono node v16 ([#374](https://github.com/eggjs/tegg/issues/374)) ([870b5e3](https://github.com/eggjs/tegg/commit/870b5e34f41399a44023756614b8bb5c59efc6ee))
+
+
+
+
+
 # [3.65.0](https://github.com/eggjs/tegg/compare/v3.64.5...v3.65.0) (2025-12-10)
 
 **Note:** Version bump only for package @eggjs/mcp-client
