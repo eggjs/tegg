@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.66.0](https://github.com/eggjs/tegg/compare/v3.65.3...v3.66.0) (2025-12-16)
+
+
+### Features
+
+* use langchain for deepagents ([#376](https://github.com/eggjs/tegg/issues/376)) ([0af84c7](https://github.com/eggjs/tegg/commit/0af84c7b143cba9234dceb6675ea14004b8b3c9c))
+
+
+
+
+
 ## [3.65.3](https://github.com/eggjs/tegg/compare/v3.65.2...v3.65.3) (2025-12-16)
 
 **Note:** Version bump only for package @eggjs/tegg-langchain-decorator
