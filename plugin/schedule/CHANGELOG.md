@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.67.0](https://github.com/eggjs/tegg/compare/v3.66.0...v3.67.0) (2025-12-18)
+
+
+### Features
+
+* **schedule:** module schedule unregister on module destroy ([#377](https://github.com/eggjs/tegg/issues/377)) ([098e889](https://github.com/eggjs/tegg/commit/098e889db4f9c1e227d2e8c6390b83e7596b3e69))
+
+
+
+
+
 # [3.66.0](https://github.com/eggjs/tegg/compare/v3.65.3...v3.66.0) (2025-12-16)
 
 **Note:** Version bump only for package @eggjs/tegg-schedule-plugin
