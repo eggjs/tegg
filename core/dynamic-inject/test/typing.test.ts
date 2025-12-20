@@ -1,6 +1,6 @@
 import path from 'path';
 import coffee from 'coffee';
-import { HelloService } from './fixtures/modules/FactoryQualifier/HelloService';
+import { HelloService } from './fixtures/modules/dynamicRange/HelloService';
 import { AbstractContextHello } from './fixtures/modules/base/AbstractContextHello';
 import { FactoryQualifierUtil } from '../src/FactoryQualifierUtil';
 import assert from 'assert';
