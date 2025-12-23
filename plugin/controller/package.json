@@ -64,7 +64,7 @@
     "path-to-regexp": "^1.8.0",
     "raw-body": "^2.5.2",
     "sdk-base": "^4.2.0",
-    "zod": "^3.24.4"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.67.0",

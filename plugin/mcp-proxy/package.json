@@ -60,7 +60,7 @@
     "eventsource-parser": "^3.0.1",
     "raw-body": "^2.5.2",
     "sdk-base": "^5.0.1",
-    "zod": "^3.24.4"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@eggjs/egg-module-common": "^3.67.0",
