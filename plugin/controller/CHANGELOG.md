@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.67.1](https://github.com/eggjs/tegg/compare/v3.67.0...v3.67.1) (2025-12-23)
+
+
+### Bug Fixes
+
+* zod v4 ([#381](https://github.com/eggjs/tegg/issues/381)) ([43614c8](https://github.com/eggjs/tegg/commit/43614c8734084a98b1a25c6e907c9c12ff41cb8f))
+
+
+
+
+
 # [3.67.0](https://github.com/eggjs/tegg/compare/v3.66.0...v3.67.0) (2025-12-18)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
