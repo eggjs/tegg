@@ -41,7 +41,7 @@
     "@eggjs/tegg-metadata": "^3.67.1",
     "@eggjs/tegg-types": "^3.67.1",
     "@langchain/community": "^1.0.5",
-    "@langchain/core": "1.1.1",
+    "@langchain/core": "1.1.8",
     "@langchain/langgraph": "1.0.2",
     "@langchain/openai": "^1.1.0",
     "langchain": "1.1.2",
