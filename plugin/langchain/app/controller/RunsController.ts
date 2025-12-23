@@ -8,7 +8,7 @@ import {
 } from '@eggjs/tegg';
 import type { EggContext } from '@eggjs/tegg';
 import type { RunCreateDTO } from './types';
-import { streamSSE } from './sse-utils';
+import { streamSSE } from '../../lib/sse';
 import { RunCreate } from './schemas';
 import { ZodErrorMiddleware } from '../middleware/ZodErrorMiddleware';
 
