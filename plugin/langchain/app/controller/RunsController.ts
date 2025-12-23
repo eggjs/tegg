@@ -4,6 +4,7 @@ import {
   HTTPMethodEnum,
   HTTPBody,
   Context,
+  HTTPParam,
 } from '@eggjs/tegg';
 import type { EggContext } from '@eggjs/tegg';
 import type { RunCreateDTO } from './types';
@@ -17,6 +18,13 @@ import { streamSSE } from './sse-utils';
   path: '/api',
 })
 export class RunsController {
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/runs/:run_id/stream'
+  })
+  async runsHello(@HTTPParam({ name: 'run_id' }) run_id: string ) {
+    return { run_id };
+  }
   /**
    * POST /api/runs/stream
    * 流式创建无状态 Run (SSE)
@@ -27,8 +35,9 @@ export class RunsController {
     method: HTTPMethodEnum.POST,
     path: '/runs/stream',
   })
-  async streamStatelessRun(@HTTPBody() payload: RunCreateDTO, @Context() ctx: EggContext) {
+  async streamStatelessRun(@Context() ctx: EggContext, @HTTPBody() payload: RunCreateDTO) {
     // TODO: 验证 payload
+    console.log('streamStatelessRun', payload);
     // const validated = RunCreate.parse(payload);
 
     // Mock: 生成一个假的 run_id
@@ -38,7 +47,7 @@ export class RunsController {
     ctx.set('Content-Location', `/runs/${runId}`);
 
     // 类型断言帮助访问 input 中的 messages
-    const inputData = payload.input as { messages?: Array<{ content: string }> } | undefined;
+    const inputData = payload.input as { messages?: Array<{ role: string; content: string }> } | undefined;
 
     // 使用 SSE 流式返回
     return streamSSE(ctx, async (stream) => {
