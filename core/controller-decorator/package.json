@@ -48,7 +48,7 @@
     "path-to-regexp": "^1.8.0",
     "reflect-metadata": "^0.1.13",
     "undici": "^5.26.5",
-    "zod": "^3.24.4"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
