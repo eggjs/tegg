@@ -26,17 +26,38 @@ describe.only('plugin/langchain/test/agent.test.ts', () => {
     after(async () => {
       await app.close();
     });
-
-    it('should return SSE stream by run_id', async () => {
-      const res = await app.httpRequest()
-        .get('/api/runs/112233/stream')
-        .expect(200);
-
-      assert.deepStrictEqual(res.body, { run_id: '112233' });
-    });
   
+        it('should return 422 when validation fails', async () => {
+      const res = await app.httpRequest()
+        .post('/api/runs/stream')
+        .send({
+          assistant_id: 123, // 应该是字符串，但传了数字
+          input: {
+            messages: [
+              {
+                role: 'human',
+                content: 'hello',
+              },
+            ],
+          },
+          stream_mode: 'invalid_mode', // 无效的 stream_mode
+        })
+        .expect(422);
+
+      // 验证响应格式
+      assert(res.body.error, 'Should have error field');
+      assert.strictEqual(res.body.error, 'Validation failed');
+      assert(Array.isArray(res.body.details), 'Should have details array');
+      assert(res.body.details.length > 0, 'Should have at least one error detail');
+
+      // 验证 details 结构
+      const firstError = res.body.details[0];
+      assert(firstError.path, 'Error should have path');
+      assert(firstError.message, 'Error should have message');
+      assert(firstError.code, 'Error should have code');
+    });
+    
     it('should return SSE stream', async () => {
-      app.mockCsrf();
       const res = await app.httpRequest()
         .post('/api/runs/stream')
         .send({

@@ -4,11 +4,13 @@ import {
   HTTPMethodEnum,
   HTTPBody,
   Context,
-  HTTPParam,
+  Middleware,
 } from '@eggjs/tegg';
 import type { EggContext } from '@eggjs/tegg';
 import type { RunCreateDTO } from './types';
 import { streamSSE } from './sse-utils';
+import { RunCreate } from './schemas';
+import { ZodErrorMiddleware } from '../middleware/ZodErrorMiddleware';
 
 /**
  * LangGraph Runs Controller
@@ -17,14 +19,8 @@ import { streamSSE } from './sse-utils';
 @HTTPController({
   path: '/api',
 })
+@Middleware(ZodErrorMiddleware)
 export class RunsController {
-  @HTTPMethod({
-    method: HTTPMethodEnum.GET,
-    path: '/runs/:run_id/stream'
-  })
-  async runsHello(@HTTPParam({ name: 'run_id' }) run_id: string ) {
-    return { run_id };
-  }
   /**
    * POST /api/runs/stream
    * 流式创建无状态 Run (SSE)
@@ -36,10 +32,8 @@ export class RunsController {
     path: '/runs/stream',
   })
   async streamStatelessRun(@Context() ctx: EggContext, @HTTPBody() payload: RunCreateDTO) {
-    // TODO: 验证 payload
-    console.log('streamStatelessRun', payload);
-    // const validated = RunCreate.parse(payload);
-
+    const validated = RunCreate.parse(payload);
+    console.log('streamStatelessRun', validated);
     // Mock: 生成一个假的 run_id
     const runId = `run_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
@@ -47,12 +41,12 @@ export class RunsController {
     ctx.set('Content-Location', `/runs/${runId}`);
 
     // 类型断言帮助访问 input 中的 messages
-    const inputData = payload.input as { messages?: Array<{ role: string; content: string }> } | undefined;
+    const inputData = validated.input as { messages?: Array<{ role: string; content: string }> } | undefined;
 
     // 使用 SSE 流式返回
     return streamSSE(ctx, async (stream) => {
       // 如果需要在断开连接时取消，创建 AbortSignal
-      // const cancelOnDisconnect = payload.on_disconnect === 'cancel'
+      // const cancelOnDisconnect = validated.on_disconnect === 'cancel'
       //   ? getDisconnectAbortSignal(ctx, stream)
       //   : undefined;
 
@@ -63,7 +57,7 @@ export class RunsController {
         //   undefined,
         //   {
         //     cancelOnDisconnect,
-        //     lastEventId: payload.stream_resumable ? "-1" : undefined,
+        //     lastEventId: validated.stream_resumable ? "-1" : undefined,
         //     ignore404: true,
         //   },
         //   auth
@@ -77,7 +71,7 @@ export class RunsController {
           event: 'metadata',
           data: JSON.stringify({
             run_id: runId,
-            assistant_id: payload.assistant_id || 'mock_assistant',
+            assistant_id: validated.assistant_id || 'mock_assistant',
           }),
         });
 
