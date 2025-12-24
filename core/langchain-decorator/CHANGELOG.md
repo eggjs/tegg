@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.67.2](https://github.com/eggjs/tegg/compare/v3.67.1...v3.67.2) (2025-12-24)
+
+
+### Bug Fixes
+
+* langchain version ([#384](https://github.com/eggjs/tegg/issues/384)) ([2bdb3b4](https://github.com/eggjs/tegg/commit/2bdb3b49a1891bdbd9bb24c30ca52295ef4833d4))
+
+
+
+
+
 ## [3.67.1](https://github.com/eggjs/tegg/compare/v3.67.0...v3.67.1) (2025-12-23)
 
 **Note:** Version bump only for package @eggjs/tegg-langchain-decorator
