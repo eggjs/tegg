@@ -30,7 +30,7 @@ describe('plugin/controller/test/http/request.test.ts', () => {
   });
   const [ nodeMajor ] = process.versions.node.split('.').map(v => Number(v));
   if (nodeMajor >= 16) {
-    it.only('Request should work', async () => {
+    it('Request should work', async () => {
       app.mockCsrf();
       const param = {
         name: 'foo',

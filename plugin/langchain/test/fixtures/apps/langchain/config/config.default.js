@@ -8,9 +8,6 @@ module.exports = function() {
         enable: false,
       },
     },
-    bodyParser: {
-      enable: false,
-    },
   };
   return config;
 };
