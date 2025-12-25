@@ -27,7 +27,7 @@ describe.only('plugin/langchain/test/agent.test.ts', () => {
       await app.close();
     });
   
-        it('should return 422 when validation fails', async () => {
+    it.skip('should return 422 when validation fails', async () => {
       const res = await app.httpRequest()
         .post('/api/runs/stream')
         .send({

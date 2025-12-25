@@ -5,12 +5,14 @@ import {
   HTTPBody,
   Context,
   Middleware,
+  Inject,
 } from '@eggjs/tegg';
 import type { EggContext } from '@eggjs/tegg';
 import type { RunCreateDTO } from './types';
 import { streamSSE } from '../../lib/sse';
 import { RunCreate } from './schemas';
 import { ZodErrorMiddleware } from '../middleware/ZodErrorMiddleware';
+import { RunsService } from '../../lib/runs/RunsService';
 
 /**
  * LangGraph Runs Controller
@@ -21,6 +23,8 @@ import { ZodErrorMiddleware } from '../middleware/ZodErrorMiddleware';
 })
 @Middleware(ZodErrorMiddleware)
 export class RunsController {
+  @Inject()
+  runsService: RunsService;
   /**
    * POST /api/runs/stream
    * 流式创建无状态 Run (SSE)
@@ -33,7 +37,7 @@ export class RunsController {
   })
   async streamStatelessRun(@Context() ctx: EggContext, @HTTPBody() payload: RunCreateDTO) {
     const validated = RunCreate.parse(payload);
-    console.log('streamStatelessRun', validated);
+    console.log('streamStatelessRun', this.runsService.getConfigs());
     // Mock: 生成一个假的 run_id
     const runId = `run_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
