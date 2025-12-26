@@ -12,6 +12,7 @@ export interface DnsResolverOptions {
   dnsCacheLookupInterval?: number;
   servers?: string[];
   addressRotation?: boolean;
+  resolveLocalhost: boolean;
 }
 
 export interface DnsCacheRecord {
@@ -34,6 +35,7 @@ export class DnsResolver {
   private dnsCacheLookupInterval: number;
   private enableAddressRotation: boolean;
   private resolver?: dns.Resolver;
+  private fixedLocalhostResolution: boolean;
   resolverPromises?: {
     resolve4: typeof dns.resolve4.__promisify__;
   };
@@ -50,14 +52,21 @@ export class DnsResolver {
    * @param options.dnsCacheLookupInterval - DNS cache lookup interval in milliseconds, effective when useResolver == false, default is 10000
    * @param options.servers - Custom DNS nameservers, effective when useResolver == true, e.g. ['8.8.8.8', '1.1.1.1']
    * @param options.addressRotation - Enable address rotation for both lookup and resolve modes, default is true
+   * @param options.resolveLocalhost - Always resolve 'localhost' to '127.0.0.1', default is true
    */
-  constructor(options: DnsResolverOptions = {}, args: { logger: EggLogger }) {
+  constructor(
+    options: DnsResolverOptions = {
+      resolveLocalhost: true,
+    },
+    args: { logger: EggLogger },
+  ) {
     this._maxCacheSize = options.max || 1000;
     this._dnsCache = new LRU(this._maxCacheSize);
     this.logger = args.logger;
 
     // Set useResolver before using it
     this.useResolver = options.useResolver === true;
+    this.fixedLocalhostResolution = options.resolveLocalhost;
 
     this.dnsCacheLookupInterval = options.dnsCacheLookupInterval || 10000;
 
@@ -155,23 +164,24 @@ export class DnsResolver {
 
       // keep original dns.lookup behavior for literal IPs without hitting the network
       if (IP_REGEX.test(hostname)) {
+        // theoretically this code will never be reached because urllib will
+        // directly return for literal IPs before calling lookup function
         const family = typeof options.family === 'number' ? options.family : 4;
-        const ttl = this.useResolver
-          ? 1000
-          : this.dnsCacheLookupInterval || 1000;
         this.logger.debug(
           `[dns-cache] literal IP ${hostname} lookup, bypassing cache`,
         );
-        return this._callbackWithRecord(
-          {
-            records: [
-              { ip: hostname, family, ttl, timestamp: Date.now(), index: 0 },
-            ],
-            currentIndex: 0,
-          },
-          options as LookupOneOptions,
-          callback,
-        );
+        if (options?.all) {
+          return callback(null, [{ address: hostname, family }]);
+        }
+        return callback(null, hostname, family);
+      }
+      // handle localhost (some name servers may not resolve it)
+      if (hostname === 'localhost' && this.fixedLocalhostResolution) {
+        this.logger.debug('[dns-cache] localhost lookup, bypassing cache');
+        if (options?.all) {
+          return callback(null, [{ address: '127.0.0.1', family: 4 }]);
+        }
+        return callback(null, '127.0.0.1', 4);
       }
 
       const record = this._dnsCache.get(hostname) as CacheEntry | undefined;
@@ -344,7 +354,6 @@ export class DnsResolver {
         currentIndex: 0,
       };
       this._dnsCache.set(hostname, cacheEntry);
-
       this._debugLog(
         `[dns-cache] dns.resolve4 succeeded for ${hostname}, resolved ${
           records.length

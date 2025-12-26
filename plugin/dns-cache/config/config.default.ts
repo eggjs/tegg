@@ -16,6 +16,7 @@
  *   are returned for a hostname, default is true. Helps distribute load across multiple servers.
  * @property {Array<String>} dnsServers - Custom DNS nameservers for dns.resolve mode, e.g. ['8.8.8.8', '1.1.1.1'].
  *   Only effective when mode is 'resolve'. If not set, uses system default DNS servers.
+ * @property {Boolean} resolveLocalhost - Always resolve 'localhost' to '127.0.0.1', default is true.
  */
 
 export const dnsCache = {
@@ -24,4 +25,5 @@ export const dnsCache = {
   lookupInterval: 10000,
   addressRotation: true,
   dnsServers: undefined as string[] | undefined,
+  resolveLocalhost: true,
 };

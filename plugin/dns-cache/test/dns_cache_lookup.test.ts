@@ -76,9 +76,6 @@ describe('test/dns_cache_lookup.test.ts', () => {
   });
 
   it('should throw error when the first dns lookup fail', async () => {
-    if (!process.env.CI) {
-      dns.setServers([ '223.5.5.5', '223.6.6.6' ]);
-    }
     await app
       .httpRequest()
       .get(

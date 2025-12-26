@@ -8,21 +8,15 @@ module.exports = function () {
       consoleLevel: 'DEBUG',
     },
     httpclient: {
-      useHttpClientNext: true,
-      request: {
-        reset: true,
-        timeout: 3000,
-      },
       httpAgent: {
         keepAlive: false,
         timeout: 30000,
       },
     },
     dnsCache: {
-      mode: 'lookup',
-      lookupInterval: 3000,
+      mode: 'resolve',
       addressRotation: true,
-      resolveLocalhost: false,
+      resolveLocalhost: true,
     }
   }
   return config;

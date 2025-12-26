@@ -17,6 +17,7 @@ module.exports = function () {
       mode: 'lookup',
       lookupInterval: 3000,
       addressRotation: true,
+      resolveLocalhost: false,
     }
   }
   return config;

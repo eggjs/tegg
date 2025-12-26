@@ -16,6 +16,7 @@ module.exports = function () {
     dnsCache: {
       mode: 'resolve',
       addressRotation: true,
+      resolveLocalhost: false,
     }
   }
   return config;

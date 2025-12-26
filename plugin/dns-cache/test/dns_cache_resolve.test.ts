@@ -22,7 +22,7 @@ describe('test/dns_cache_resolve.test.ts', () => {
   after(() => app.close());
   afterEach(mm.restore);
 
-  it('should query', () => {
+  it('should dns resolver exist', () => {
     assert(app.dnsResolver);
     assert(app.dnsResolver.getDnsCache());
   });
