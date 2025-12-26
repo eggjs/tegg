@@ -7,4 +7,10 @@ export class ModuleConfigs {
   get(moduleName: string): ModuleConfig | undefined {
     return this.inner[moduleName]?.config;
   }
+
+  *[Symbol.iterator](): Iterator<[string, ModuleConfigHolder]> {
+    for (const [moduleName, moduleConfigHolder] of Object.entries(this.inner)) {
+      yield [moduleName, moduleConfigHolder];
+    }
+  }
 }
