@@ -9,8 +9,6 @@ export class ModuleConfigs {
   }
 
   *[Symbol.iterator](): Iterator<[string, ModuleConfigHolder]> {
-    for (const [moduleName, moduleConfigHolder] of Object.entries(this.inner)) {
-      yield [moduleName, moduleConfigHolder];
-    }
+    yield* Object.entries(this.inner);
   }
 }
