@@ -29,8 +29,6 @@ declare module 'egg' {
       lookupInterval?: number;
       /** Enable round-robin address rotation, default is true */
       addressRotation?: boolean;
-      /** Always resolve 'localhost' to '127.0.0.1', default is true */
-      resolveLocalhost?: boolean;
     };
   }
 }

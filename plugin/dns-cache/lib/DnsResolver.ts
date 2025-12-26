@@ -12,7 +12,6 @@ export interface DnsResolverOptions {
   dnsCacheLookupInterval?: number;
   servers?: string[];
   addressRotation?: boolean;
-  resolveLocalhost: boolean;
 }
 
 export interface DnsCacheRecord {
@@ -35,13 +34,8 @@ export class DnsResolver {
   private dnsCacheLookupInterval: number;
   private enableAddressRotation: boolean;
   private resolver?: dns.Resolver;
-  private fixedLocalhostResolution: boolean;
-  resolverPromises?: {
-    resolve4: typeof dns.resolve4.__promisify__;
-  };
-  lookupPromises?: {
-    lookup: typeof dns.lookup.__promisify__;
-  };
+  private _resolve4?: typeof dns.resolve4.__promisify__;
+  private _lookup?: typeof dns.lookup.__promisify__;
   logger: EggLogger;
 
   /**
@@ -52,21 +46,14 @@ export class DnsResolver {
    * @param options.dnsCacheLookupInterval - DNS cache lookup interval in milliseconds, effective when useResolver == false, default is 10000
    * @param options.servers - Custom DNS nameservers, effective when useResolver == true, e.g. ['8.8.8.8', '1.1.1.1']
    * @param options.addressRotation - Enable address rotation for both lookup and resolve modes, default is true
-   * @param options.resolveLocalhost - Always resolve 'localhost' to '127.0.0.1', default is true
    */
-  constructor(
-    options: DnsResolverOptions = {
-      resolveLocalhost: true,
-    },
-    args: { logger: EggLogger },
-  ) {
+  constructor(options: DnsResolverOptions = {}, args: { logger: EggLogger }) {
     this._maxCacheSize = options.max || 1000;
     this._dnsCache = new LRU(this._maxCacheSize);
     this.logger = args.logger;
 
     // Set useResolver before using it
     this.useResolver = options.useResolver === true;
-    this.fixedLocalhostResolution = options.resolveLocalhost;
 
     this.dnsCacheLookupInterval = options.dnsCacheLookupInterval || 10000;
 
@@ -77,9 +64,7 @@ export class DnsResolver {
       this._initializeResolver(options.servers);
     } else {
       // Use dns.lookup mode (old behavior)
-      this.lookupPromises = {
-        lookup: util.promisify(dns.lookup),
-      };
+      this._lookup = util.promisify(dns.lookup);
     }
 
     this.resetCache = this.resetCache.bind(this);
@@ -128,9 +113,7 @@ export class DnsResolver {
         )}`,
       );
     }
-    this.resolverPromises = {
-      resolve4: util.promisify(this.resolver.resolve4.bind(this.resolver)),
-    };
+    this._resolve4 = util.promisify(this.resolver.resolve4.bind(this.resolver));
   }
 
   /**
@@ -174,14 +157,6 @@ export class DnsResolver {
           return callback(null, [{ address: hostname, family }]);
         }
         return callback(null, hostname, family);
-      }
-      // handle localhost (some name servers may not resolve it)
-      if (hostname === 'localhost' && this.fixedLocalhostResolution) {
-        this.logger.debug('[dns-cache] localhost lookup, bypassing cache');
-        if (options?.all) {
-          return callback(null, [{ address: '127.0.0.1', family: 4 }]);
-        }
-        return callback(null, '127.0.0.1', 4);
       }
 
       const record = this._dnsCache.get(hostname) as CacheEntry | undefined;
@@ -277,6 +252,45 @@ export class DnsResolver {
     throw new Error('[dns_cache_error]: Invalid cache record structure');
   }
 
+  async lookup(hostname: string): Promise<LookupAddress[]> {
+    // handle localhost (some name servers may not resolve it)
+    if (hostname === 'localhost') {
+      this.logger.debug('[dns-cache] localhost lookup, bypassing cache');
+      return [{ address: '127.0.0.1', family: 4 }];
+    }
+    if (!this._lookup) {
+      throw new Error('DNS Resolver not initialized for lookup mode');
+    }
+
+    // Use { all: true } to get all addresses for rotation support
+    const addresses = await this._lookup(hostname, {
+      family: 4,
+      all: true,
+    });
+    return addresses;
+  }
+
+  async resolve4(hostname: string): Promise<dns.RecordWithTtl[]> {
+    // handle localhost (some name servers may not resolve it)
+    if (hostname === 'localhost') {
+      this.logger.debug('[dns-cache] localhost resolve, bypassing cache');
+      return [
+        {
+          address: '127.0.0.1',
+          ttl: Math.floor(Number.MAX_SAFE_INTEGER / 1000),
+        },
+      ]; // provide a default TTL
+    }
+    if (!this._resolve4) {
+      throw new Error('DNS Resolver not initialized for resolve mode');
+    }
+
+    const addresses = await this._resolve4(hostname, {
+      ttl: true,
+    });
+    return addresses;
+  }
+
   /**
    * Update DNS cache with fresh resolution
    * Supports both dns.lookup and dns.resolve modes
@@ -287,11 +301,7 @@ export class DnsResolver {
     // Use dns.lookup
     if (!this.useResolver) {
       try {
-        // Use {all: true} to get all addresses for rotation support
-        const addresses = await this.lookupPromises!.lookup(hostname, {
-          family: 4,
-          all: true,
-        });
+        const addresses = await this.lookup(hostname);
         const addressArray = Array.isArray(addresses) ? addresses : [ addresses ];
         if (addressArray.length === 0) {
           throw new Error(`empty address for ${hostname}`);
@@ -325,9 +335,7 @@ export class DnsResolver {
 
     // Use dns.resolve
     try {
-      const addresses = await this.resolverPromises!.resolve4(hostname, {
-        ttl: true,
-      });
+      const addresses = await this.resolve4(hostname);
       const addressArray = Array.isArray(addresses) ? addresses : [ addresses ];
 
       // Store all addresses with rotation index

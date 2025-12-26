@@ -19,7 +19,6 @@ export default class DnsCacheAppHook {
 
     // Create DNS resolver instance
     const useDNSResolver = config.mode !== 'lookup';
-    const resolveLocalhost = config.resolveLocalhost !== false;
     this.dnsResolver = new DnsResolver(
       {
         useResolver: useDNSResolver,
@@ -27,7 +26,6 @@ export default class DnsCacheAppHook {
         max: config.maxCacheLength || 1000,
         dnsCacheLookupInterval: config.lookupInterval || 10000,
         addressRotation: config.addressRotation !== false,
-        resolveLocalhost,
       },
       { logger: this.app.logger },
     );

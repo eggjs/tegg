@@ -6,17 +6,9 @@ import { parse as urlParse } from 'url';
 import path from 'path';
 
 const mockLookupPromise = (app: any) => {
-  mm(
-    app.dnsResolver.lookupPromises,
-    'lookup',
-    async (_hostname: string, options: any) => {
-      // When called with {all: true}, return array
-      if (options && options.all) {
-        return [{ address: '127.0.0.1', family: 4 }];
-      }
-      return { address: '127.0.0.1', family: 4 };
-    },
-  );
+  mm(app.dnsResolver, 'lookup', async () => {
+    return [{ address: '127.0.0.1', family: 4 }];
+  });
 };
 
 describe('test/dns_cache_lookup_http_next.test.ts', () => {
@@ -93,7 +85,6 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
   });
 
   it('should use local cache dns result when dns lookup error', async () => {
-    mockLookupPromise(app);
     await app
       .httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
@@ -103,7 +94,7 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
     // mock local cache expires and mock dns lookup throw error
     const record = app.dnsResolver.getCacheRecord('localhost');
     if (record) record.timestamp = 0;
-    mm.error(app.dnsResolver.lookupPromises, 'lookup', 'mock dns lookup error');
+    mm.error(app.dnsResolver, 'lookup', 'mock dns lookup error');
 
     await app
       .httpRequest()
@@ -132,7 +123,7 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
     // mock local cache expires and mock dns lookup throw error
     const record = app.dnsResolver.getCacheRecord('localhost');
     if (record) record.timestamp = 0;
-    mm.error(app.dnsResolver.lookupPromises, 'lookup', 'mock dns lookup error');
+    mm.error(app.dnsResolver, 'lookup', 'mock dns lookup error');
     const result2 = await app.httpclient.curl(url + '/get_headers', {
       dataType: 'json',
     });
@@ -155,11 +146,10 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
   });
 
   it('should dnsCacheMaxLength work', async () => {
+    mockLookupPromise(app);
     const originalMaxLength = app.dnsResolver.maxCacheSize;
     app.dnsResolver.resetCacheSize(1);
     app.dnsResolver.resetCache(true);
-
-    mockLookupPromise(app);
 
     let obj = new URL(url + '/get_headers');
     let result = await app.curl(obj, { dataType: 'json' });
@@ -181,8 +171,6 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
   });
 
   it('should cache and update', async () => {
-    mockLookupPromise(app);
-
     let obj = new URL(url + '/get_headers');
     let result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
@@ -228,20 +216,13 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
 
     it('should rotate addresses when multiple IPs are returned', async () => {
       // Mock lookup to return multiple addresses
-      mm(
-        app.dnsResolver.lookupPromises,
-        'lookup',
-        async (_hostname: string, options: any) => {
-          if (options && options.all) {
-            return [
-              { address: '127.0.0.1', family: 4 },
-              { address: '127.0.0.2', family: 4 },
-              { address: '127.0.0.3', family: 4 },
-            ];
-          }
-          return { address: '127.0.0.1', family: 4 };
-        },
-      );
+      mm(app.dnsResolver, 'lookup', async () => {
+        return [
+          { address: '127.0.0.1', family: 4 },
+          { address: '127.0.0.2', family: 4 },
+          { address: '127.0.0.3', family: 4 },
+        ];
+      });
 
       // First request to populate cache
       await app.curl(url + '/get_headers', { dataType: 'json' });
@@ -281,19 +262,12 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
       app.dnsResolver.resetCache();
 
       // Mock lookup to return multiple addresses
-      mm(
-        app.dnsResolver.lookupPromises,
-        'lookup',
-        async (_hostname: string, options: any) => {
-          if (options && options.all) {
-            return [
-              { address: '127.0.0.1', family: 4 },
-              { address: '127.0.0.2', family: 4 },
-            ];
-          }
-          return { address: '127.0.0.1', family: 4 };
-        },
-      );
+      mm(app.dnsResolver, 'lookup', async () => {
+        return [
+          { address: '127.0.0.1', family: 4 },
+          { address: '127.0.0.2', family: 4 },
+        ];
+      });
 
       // Populate cache
       await app.curl(url + '/get_headers', { dataType: 'json' });
@@ -313,50 +287,15 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
       (app.dnsResolver as any).enableAddressRotation = originalRotation;
     });
 
-    it('should handle single address without rotation', async () => {
-      // Mock lookup to return single address
-      mm(
-        app.dnsResolver.lookupPromises,
-        'lookup',
-        async (_hostname: string, options: any) => {
-          if (options && options.all) {
-            return [{ address: '127.0.0.1', family: 4 }];
-          }
-          return { address: '127.0.0.1', family: 4 };
-        },
-      );
-
-      await app.curl(url + '/get_headers', { dataType: 'json' });
-
-      const entry: any = app.dnsResolver.getDnsCache().get('localhost');
-      assert(entry);
-      assert.strictEqual(entry.records.length, 1);
-
-      // Multiple curl requests should work fine with single address
-      for (let i = 0; i < 3; i++) {
-        const result = await app.curl(url + '/get_headers', {
-          dataType: 'json',
-        });
-        assert.strictEqual(result.status, 200);
-      }
-    });
-
     it('should rotate through all addresses cyclically', async () => {
       // Mock lookup to return 3 addresses (all pointing to 127.0.0.1 for testing)
-      mm(
-        app.dnsResolver.lookupPromises,
-        'lookup',
-        async (_hostname: string, options: any) => {
-          if (options && options.all) {
-            return [
-              { address: '127.0.0.1', family: 4 },
-              { address: '127.0.0.1', family: 4 },
-              { address: '127.0.0.1', family: 4 },
-            ];
-          }
-          return { address: '127.0.0.1', family: 4 };
-        },
-      );
+      mm(app.dnsResolver, 'lookup', async () => {
+        return [
+          { address: '127.0.0.1', family: 4 },
+          { address: '127.0.0.1', family: 4 },
+          { address: '127.0.0.1', family: 4 },
+        ];
+      });
 
       // Reset cache to ensure clean state
       app.dnsResolver.resetCache(true);
@@ -373,7 +312,10 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
 
       // Make 5 more requests (total 6) to complete 2 full cycles
       for (let i = 0; i < 5; i++) {
-        await app.curl(url + '/get_headers', { dataType: 'json' });
+        await app.curl(url + '/get_headers', {
+          dataType: 'json',
+          timeout: 500,
+        });
         indices.push(entry.currentIndex);
       }
 

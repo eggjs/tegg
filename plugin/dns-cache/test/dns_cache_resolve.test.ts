@@ -37,24 +37,14 @@ describe('test/dns_cache_resolve.test.ts', () => {
 
     // Test with real domain name (requires DNS resolution)
     url = url.replace('127.0.0.1', 'localhost');
-    try {
-      const result2 = await app.curl(url + '/get_headers', { method: 'GET' });
-      assert(result2.status === 500);
-    } catch (error) {
-      // google name server won't resolve localhost, so it should fail
-      assert(error);
-      assert(error.message.includes('queryA ENOTFOUND localhost'));
-    }
+    const result2 = await app.curl(url + '/get_headers', { method: 'GET' });
+    assert(result2.status === 200);
 
-    app.dnsResolver.setServers([ '223.5.5.5', '223.6.6.6' ]);
-    const result3 = await app.curl(url + '/get_headers', { method: 'GET' });
-    // aliyun name server can resolve localhost
-    assert(result3.status === 200);
-
-    const res = await app
+    const result3 = await app
       .httpRequest()
       .get('/?url=' + encodeURIComponent('https://www.aliyun.com/'));
-    assert(res.status === 200 || res.status === 301 || res.status === 302);
+    const status = result3.status;
+    assert(status === 200 || status === 301 || status === 302);
   });
 
   it('should throw error when the first dns lookup fail', async () => {
