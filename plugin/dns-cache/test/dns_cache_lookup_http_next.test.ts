@@ -34,14 +34,27 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
     url = url.replace('127.0.0.1', 'localhost');
     host = new URL(url).host!;
     originalDNSServers = dns.getServers();
+    if (!process.env.CI) {
+      try {
+        dns.setServers([ '223.5.5.5', '223.6.6.6' ]);
+      } catch (error) {
+        app.logger.error('set dns servers error:', error);
+      }
+    }
   });
 
-  after(() => app.close());
+  after(() => {
+    try {
+      dns.setServers(originalDNSServers);
+    } catch (error) {
+      app.logger.error('set dns servers error:', error);
+    }
+    app.close();
+  });
 
   afterEach(() => {
     app.dnsResolver.resetCache(true);
     mm.restore();
-    dns.setServers(originalDNSServers);
   });
 
   it('should ctx.curl work and set host', async () => {
@@ -71,9 +84,6 @@ describe('test/dns_cache_lookup_http_next.test.ts', () => {
   });
 
   it('should throw error when the first dns lookup fail', async () => {
-    if (!process.env.CI) {
-      dns.setServers([ '223.5.5.5', '223.6.6.6' ]);
-    }
     await app
       .httpRequest()
       .get(

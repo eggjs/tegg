@@ -199,9 +199,18 @@ export class DnsResolver {
     }) as typeof dns.lookup;
   }
 
+  /**
+   * This method may throw error if there is dns query in progress!
+   * @throws Error
+   * @param {string[]} servers eg. ['8.8.8.8']
+   */
   setServers(servers: string[]) {
     if (this.resolver) {
       this.resolver.setServers(servers);
+    } else {
+      this.logger.warn(
+        '[dns-cache] Cannot set DNS servers when useResolver is false',
+      );
     }
   }
 

@@ -31,14 +31,27 @@ describe('test/dns_cache_lookup.test.ts', () => {
     url = url.replace('127.0.0.1', 'localhost');
     host = new URL(url).host!;
     originalDNSServers = dns.getServers();
+    if (!process.env.CI) {
+      try {
+        dns.setServers([ '223.5.5.5', '223.6.6.6' ]);
+      } catch (error) {
+        app.logger.error('set dns servers error:', error);
+      }
+    }
   });
 
-  after(() => app.close());
+  after(() => {
+    try {
+      dns.setServers(originalDNSServers);
+    } catch (error) {
+      app.logger.error('set dns servers error:', error);
+    }
+    app.close();
+  });
 
   afterEach(() => {
     app.dnsResolver.resetCache(true);
     mm.restore();
-    dns.setServers(originalDNSServers);
   });
 
   it('should ctx.curl work and set host', async () => {
@@ -261,12 +274,6 @@ describe('test/dns_cache_lookup.test.ts', () => {
     it('should throw error when the first fetch dns lookup fail', async () => {
       if (!app.fetch) {
         return;
-      }
-      if (!process.env.CI) {
-        // Avoid Network service provider DNS pollution
-        // alidns http://www.alidns.com/node-distribution/
-        // Not sure it will work for all servers
-        dns.setServers([ '223.5.5.5', '223.6.6.6' ]);
       }
       try {
         await utils.sleep(3000);

@@ -18,6 +18,13 @@ describe('test/dns_cache_resolve.test.ts', () => {
     });
     await app.ready();
     url = await utils.startLocalServer();
+    try {
+      app.dnsResolver.setServers([ '223.5.5.5', '223.6.6.6' ]);
+    } catch (error) {
+      app.logger.error(
+        `[dns-cache] Failed to set DNS servers: ${error.message}`,
+      );
+    }
   });
   after(() => app.close());
   afterEach(mm.restore);
@@ -28,8 +35,6 @@ describe('test/dns_cache_resolve.test.ts', () => {
   });
 
   it('should ctx.curl dns work', async () => {
-    app.dnsResolver.setServers([ '8.8.8.8' ]);
-
     // Test with 127.0.0.1 (no DNS lookup needed for IP addresses)
     const result1 = await app.curl(url + '/get_headers', { method: 'GET' });
     assert(result1.status === 200);
@@ -48,7 +53,6 @@ describe('test/dns_cache_resolve.test.ts', () => {
   });
 
   it('should throw error when the first dns lookup fail', async () => {
-    app.dnsResolver.setServers([ '223.5.5.5', '223.6.6.6' ]);
     await app
       .httpRequest()
       .get(
