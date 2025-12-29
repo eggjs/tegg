@@ -8,7 +8,7 @@ export class ModuleConfigs {
     return this.inner[moduleName]?.config;
   }
 
-  *[Symbol.iterator](): Iterator<[string, ModuleConfigHolder]> {
+  * [Symbol.iterator](): Iterator<[string, ModuleConfigHolder]> {
     yield* Object.entries(this.inner);
   }
 }

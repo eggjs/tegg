@@ -143,43 +143,43 @@ describe('test/ModuleConfig.test.ts', () => {
   });
 
   it('should iterate over all module configs', () => {
-      const mockInner = {
-        module1: {
-          name: 'module1',
-          reference: { path: '/path/to/module1', name: 'module1' },
-          config: { foo: 'bar' },
-        },
-        module2: {
-          name: 'module2',
-          reference: { path: '/path/to/module2', name: 'module2' },
-          config: { baz: 'qux' },
-        },
-      };
+    const mockInner = {
+      module1: {
+        name: 'module1',
+        reference: { path: '/path/to/module1', name: 'module1' },
+        config: { foo: 'bar' },
+      },
+      module2: {
+        name: 'module2',
+        reference: { path: '/path/to/module2', name: 'module2' },
+        config: { baz: 'qux' },
+      },
+    };
 
-      const moduleConfigs = new ModuleConfigs(mockInner);
-      const result: Array<[string, any]> = [];
+    const moduleConfigs = new ModuleConfigs(mockInner);
+    const result: Array<[string, any]> = [];
 
-      for (const [name, holder] of moduleConfigs) {
-        result.push([name, holder]);
-      }
+    for (const [ name, holder ] of moduleConfigs) {
+      result.push([ name, holder ]);
+    }
 
-      assert.strictEqual(result.length, 2);
-      assert.strictEqual(result[0][0], 'module1');
-      assert.deepStrictEqual(result[0][1], mockInner.module1);
-      assert.strictEqual(result[1][0], 'module2');
-      assert.deepStrictEqual(result[1][1], mockInner.module2);
-    });
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0][0], 'module1');
+    assert.deepStrictEqual(result[0][1], mockInner.module1);
+    assert.strictEqual(result[1][0], 'module2');
+    assert.deepStrictEqual(result[1][1], mockInner.module2);
+  });
 
-    it('should work with empty configs', () => {
-      const moduleConfigs = new ModuleConfigs({});
-      const result: Array<[string, any]> = [];
+  it('should work with empty configs', () => {
+    const moduleConfigs = new ModuleConfigs({});
+    const result: Array<[string, any]> = [];
 
-      for (const [name, holder] of moduleConfigs) {
-        result.push([name, holder]);
-      }
+    for (const [ name, holder ] of moduleConfigs) {
+      result.push([ name, holder ]);
+    }
 
-      assert.strictEqual(result.length, 0);
-    });
+    assert.strictEqual(result.length, 0);
+  });
 });
 
 describe('ModuleConfigUtil.deduplicateModules', () => {
