@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { ModuleConfigUtil } from '../src/ModuleConfig';
+import { ModuleConfigs } from '../src/ModuleConfigs';
 import type { ModuleReference } from '@eggjs/tegg-types';
 
 describe('test/ModuleConfig.test.ts', () => {
@@ -139,6 +140,45 @@ describe('test/ModuleConfig.test.ts', () => {
         name: 'a',
       }]);
     });
+  });
+
+  it('should iterate over all module configs', () => {
+    const mockInner = {
+      module1: {
+        name: 'module1',
+        reference: { path: '/path/to/module1', name: 'module1' },
+        config: { foo: 'bar' },
+      },
+      module2: {
+        name: 'module2',
+        reference: { path: '/path/to/module2', name: 'module2' },
+        config: { baz: 'qux' },
+      },
+    };
+
+    const moduleConfigs = new ModuleConfigs(mockInner);
+    const result: Array<[string, any]> = [];
+
+    for (const [ name, holder ] of moduleConfigs) {
+      result.push([ name, holder ]);
+    }
+
+    assert.strictEqual(result.length, 2);
+    assert.strictEqual(result[0][0], 'module1');
+    assert.deepStrictEqual(result[0][1], mockInner.module1);
+    assert.strictEqual(result[1][0], 'module2');
+    assert.deepStrictEqual(result[1][1], mockInner.module2);
+  });
+
+  it('should work with empty configs', () => {
+    const moduleConfigs = new ModuleConfigs({});
+    const result: Array<[string, any]> = [];
+
+    for (const [ name, holder ] of moduleConfigs) {
+      result.push([ name, holder ]);
+    }
+
+    assert.strictEqual(result.length, 0);
   });
 });
 
@@ -323,3 +363,4 @@ describe('ModuleConfigUtil.deduplicateModules', () => {
     });
   });
 });
+
