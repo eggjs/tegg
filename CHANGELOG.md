@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.68.0](https://github.com/eggjs/tegg/compare/v3.67.2...v3.68.0) (2025-12-29)
+
+
+### Features
+
+* impl dns cache plugin ([#385](https://github.com/eggjs/tegg/issues/385)) ([d319448](https://github.com/eggjs/tegg/commit/d31944827c02cb967f4335b0ac66eeea4e10251c))
+* impl iterator of moduleConfigs ([#386](https://github.com/eggjs/tegg/issues/386)) ([ee1f1a2](https://github.com/eggjs/tegg/commit/ee1f1a27a5a7de09bc6ee2c35376211541be409b))
+
+
+
+
+
 ## [3.67.2](https://github.com/eggjs/tegg/compare/v3.67.1...v3.67.2) (2025-12-24)
 
 
