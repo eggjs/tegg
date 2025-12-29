@@ -76,5 +76,38 @@ describe('plugin/langchain/test/llm.test.ts', () => {
         .get('/llm/graph')
         .expect(200, { value: 'hello graph toolhello world' });
     });
+
+    it('should structured work', async () => {
+      const res = await app.httpRequest()
+        .get('/llm/structured')
+        .expect(200);
+      assert.deepStrictEqual(res.body, {
+        name: 'search',
+        description: 'Call the foo tool',
+        schema: {
+          '~standard': {
+            vendor: 'zod',
+            version: 1,
+          },
+          def: {
+            type: 'object',
+            shape: {
+              query: {
+                '~standard': {
+                  vendor: 'zod',
+                  version: 1,
+                },
+                def: {
+                  type: 'string',
+                },
+                format: null,
+                minLength: null,
+                maxLength: null,
+              },
+            },
+          },
+        },
+      });
+    });
   }
 });

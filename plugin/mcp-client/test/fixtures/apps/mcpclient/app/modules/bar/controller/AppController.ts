@@ -63,4 +63,20 @@ export class AppController {
     const res = await client.listTools();
     return res;
   }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/hello-langchain-tools',
+  })
+  async langchainTools() {
+    const tools = await this.mcpClient.getLangChainTool();
+    return {
+      length: tools.length,
+      tools: tools.map(tool => ({
+        name: tool.name,
+        description: tool.description,
+        schema: tool.schema,
+      })),
+    };
+  }
 }
