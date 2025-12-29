@@ -1,21 +1,30 @@
-import { EggProtoImplClass, LifecycleHook } from '@eggjs/tegg';
+import { AccessLevel, EggProtoImplClass, LifecycleHook, LifecyclePostInject, MCPInfoUtil, SingletonProto } from '@eggjs/tegg';
 import {
+  ClassProtoDescriptor,
+  EggPrototypeCreatorFactory,
   EggPrototypeFactory,
+  EggPrototypeWithClazz,
   LoadUnit,
   LoadUnitLifecycleContext,
+  ProtoDescriptorHelper,
 } from '@eggjs/tegg-metadata';
 import { CompiledStateGraphProto } from './CompiledStateGraphProto';
-import { GraphInfoUtil, IGraphMetadata } from '@eggjs/tegg-langchain-decorator';
+import { GraphInfoUtil, GraphToolInfoUtil, IGraphMetadata, IGraphTool, IGraphToolMetadata } from '@eggjs/tegg-langchain-decorator';
 import assert from 'node:assert';
+import { EggContainerFactory } from '@eggjs/tegg-runtime';
+import { DynamicStructuredTool } from 'langchain';
+import * as z from 'zod/v4';
 
 export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly eggPrototypeFactory: EggPrototypeFactory;
   clazzMap: Map<EggProtoImplClass, IGraphMetadata>;
   graphCompiledNameMap: Map<string, CompiledStateGraphProto> = new Map();
+  tools: Map<EggProtoImplClass, IGraphToolMetadata>;
 
   constructor(eggPrototypeFactory: EggPrototypeFactory) {
     this.eggPrototypeFactory = eggPrototypeFactory;
     this.clazzMap = GraphInfoUtil.getAllGraphMetadata();
+    this.tools = GraphToolInfoUtil.getAllGraphToolMetadata();
   }
 
   async preCreate(ctx: LoadUnitLifecycleContext, loadUnit: LoadUnit): Promise<void> {
@@ -30,7 +39,41 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
         this.eggPrototypeFactory.registerPrototype(proto, loadUnit);
         this.graphCompiledNameMap.set(protoName, proto);
       }
+      const toolMeta = this.tools.get(clazz as EggProtoImplClass);
+      if (toolMeta) {
+        const StructuredTool = this.createStructuredTool(clazz, toolMeta);
+        const protoDescriptor = ProtoDescriptorHelper.createByInstanceClazz(StructuredTool, {
+          moduleName: loadUnit.name,
+          unitPath: loadUnit.unitPath,
+        }) as ClassProtoDescriptor;
+        const proto = await EggPrototypeCreatorFactory.createProtoByDescriptor(protoDescriptor, loadUnit);
+        this.eggPrototypeFactory.registerPrototype(proto, loadUnit);
+      }
     }
+  }
+
+  createStructuredTool(clazz: EggProtoImplClass, toolMeta: IGraphToolMetadata) {
+    class StructuredTool {
+      @LifecyclePostInject()
+      async init() {
+        const toolsObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
+        const toolMetadata = GraphToolInfoUtil.getGraphToolMetadata((toolsObj.proto as unknown as EggPrototypeWithClazz).clazz!);
+        const ToolDetail = MCPInfoUtil.getMCPToolArgsIndex((toolsObj.proto as unknown as EggPrototypeWithClazz).clazz!, 'execute');
+        if (toolMetadata && ToolDetail) {
+          const tool = new DynamicStructuredTool({
+            description: toolMetadata.description,
+            name: toolMetadata.toolName,
+            func: (toolsObj.obj as unknown as IGraphTool<any>).execute.bind(toolsObj.obj),
+            schema: z.object(ToolDetail.argsSchema) as any,
+          });
+          Object.setPrototypeOf(this, tool);
+        } else {
+          throw new Error(`graph tool ${toolMeta.name ?? clazz.name} not found`);
+        }
+      }
+    }
+    SingletonProto({ name: `structured${toolMeta.name ?? clazz.name}`, accessLevel: AccessLevel.PUBLIC })(StructuredTool);
+    return StructuredTool;
   }
 
   async postCreate(_ctx: LoadUnitLifecycleContext, obj: LoadUnit): Promise<void> {

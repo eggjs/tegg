@@ -6,6 +6,7 @@ import { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { fetch } from 'urllib';
 import { mergeHeaders } from './HeaderUtil';
 import type { Logger } from '@eggjs/tegg';
+import { loadMcpTools } from '@langchain/mcp-adapters';
 export interface BaseHttpClientOptions extends ClientOptions {
   logger: Logger;
   fetch?: typeof fetch;
@@ -30,12 +31,14 @@ export class HttpMCPClient extends Client {
   #transport: SSEClientTransport | StreamableHTTPClientTransport;
   #fetch: typeof fetch;
   url: string;
+  clientInfo: Implementation;
   constructor(clientInfo: Implementation, options: HttpClientOptions) {
     super(clientInfo, options);
     this.options = options;
     this.#fetch = options.fetch ?? fetch;
     this.logger = options.logger;
     this.url = options.url;
+    this.clientInfo = clientInfo;
   }
   async #buildSSESTransport() {
     const self = this;
@@ -112,5 +115,12 @@ export class HttpMCPClient extends Client {
       await this.#buildStreamableHTTPTransport();
     }
     await this.connect(this.#transport, this.options.requestOptions);
+  }
+  async getLangChainTool() {
+    return await loadMcpTools(this.clientInfo.name, this as any, {
+      throwOnLoadError: true,
+      prefixToolNameWithServerName: false,
+      additionalToolNamePrefix: '',
+    });
   }
 }

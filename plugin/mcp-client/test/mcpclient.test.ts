@@ -136,5 +136,36 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
         ],
       });
     });
+
+    it('should langchain tools work', async () => {
+      const res = await app.httpRequest()
+        .get('/mcpclient/hello-langchain-tools')
+        .expect(200);
+      assert.deepStrictEqual(res.body, {
+        length: 1,
+        tools: [
+          {
+            name: 'add',
+            description: '',
+            schema: {
+              type: 'object',
+              properties: {
+                a: {
+                  type: 'number',
+                },
+                b: {
+                  type: 'number',
+                },
+              },
+              required: [
+                'a',
+                'b',
+              ],
+              $schema: 'http://json-schema.org/draft-07/schema#',
+            },
+          },
+        ],
+      });
+    });
   }
 });
