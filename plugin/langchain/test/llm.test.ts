@@ -114,29 +114,6 @@ describe('plugin/langchain/test/llm.test.ts', () => {
       assert.deepStrictEqual(res.body, {
         name: 'search',
         description: 'Call the foo tool',
-        schema: {
-          '~standard': {
-            vendor: 'zod',
-            version: 1,
-          },
-          def: {
-            type: 'object',
-            shape: {
-              query: {
-                '~standard': {
-                  vendor: 'zod',
-                  version: 1,
-                },
-                def: {
-                  type: 'string',
-                },
-                format: null,
-                minLength: null,
-                maxLength: null,
-              },
-            },
-          },
-        },
       });
     });
   }
