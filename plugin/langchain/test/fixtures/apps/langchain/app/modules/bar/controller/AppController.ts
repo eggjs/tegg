@@ -68,7 +68,6 @@ export class AppController {
     return {
       name: this.structuredFooTool.name,
       description: this.structuredFooTool.description,
-      schema: this.structuredFooTool.schema,
     };
   }
 }
