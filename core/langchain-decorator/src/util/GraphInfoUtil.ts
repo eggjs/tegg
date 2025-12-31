@@ -15,6 +15,15 @@ export class GraphInfoUtil {
     return MetadataUtil.getMetaData(GRAPH_GRAPH_METADATA, clazz);
   }
 
+  static getGraphByName(graphName: string): { clazz: EggProtoImplClass; metadata: IGraphMetadata } | undefined {
+    for (const [ clazz, metadata ] of GraphInfoUtil.graphMap.entries()) {
+      if (metadata.name === graphName) {
+        return { clazz, metadata };
+      }
+    }
+    return undefined;
+  }
+
   static getAllGraphMetadata(): Map<EggProtoImplClass, IGraphMetadata> {
     return GraphInfoUtil.graphMap;
   }

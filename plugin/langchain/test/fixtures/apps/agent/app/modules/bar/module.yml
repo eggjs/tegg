@@ -17,3 +17,6 @@ mcp:
       version: 1.0.0
       transportType: SSE
       type: http
+
+agents: 
+  FooGraph: {}

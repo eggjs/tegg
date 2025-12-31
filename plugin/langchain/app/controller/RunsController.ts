@@ -37,18 +37,30 @@ export class RunsController {
   })
   async streamStatelessRun(@Context() ctx: EggContext, @HTTPBody() payload: RunCreateDTO) {
     const validated = RunCreate.parse(payload);
-    console.log('streamStatelessRun', this.runsService.getConfigs());
-    // Mock: 生成一个假的 run_id
-    const runId = `run_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+    // 使用 RunsService 创建并验证 run
+    const run = await this.runsService.createValidRun(
+      undefined, // threadId (无状态 run)
+      validated,
+      {
+        // auth: ctx.auth, // TODO: 集成认证系统
+        headers: ctx.headers,
+      },
+    );
+
+    console.log('streamStatelessRun', {
+      run,
+      agentConfigs: this.runsService.getAllAgentConfigs(),
+    });
 
     // 设置 Content-Location header
-    ctx.set('Content-Location', `/runs/${runId}`);
+    ctx.set('Content-Location', `/runs/${run.run_id}`);
 
     // 类型断言帮助访问 input 中的 messages
     const inputData = validated.input as { messages?: Array<{ role: string; content: string }> } | undefined;
 
     // 使用 SSE 流式返回
-    return streamSSE(ctx, async (stream) => {
+    return streamSSE(ctx, async stream => {
       // 如果需要在断开连接时取消，创建 AbortSignal
       // const cancelOnDisconnect = validated.on_disconnect === 'cancel'
       //   ? getDisconnectAbortSignal(ctx, stream)
@@ -74,7 +86,7 @@ export class RunsController {
         await stream.writeSSE({
           event: 'metadata',
           data: JSON.stringify({
-            run_id: runId,
+            run_id: run.run_id,
             assistant_id: validated.assistant_id || 'mock_assistant',
           }),
         });
@@ -119,7 +131,7 @@ export class RunsController {
         await stream.writeSSE({
           event: 'end',
           data: JSON.stringify({
-            run_id: runId,
+            run_id: run.run_id,
             status: 'completed',
           }),
         });
