@@ -36,7 +36,7 @@ export class DnsResolver {
   private resolver?: dns.Resolver;
   private _resolve4?: typeof dns.resolve4.__promisify__;
   private _lookup?: typeof dns.lookup.__promisify__;
-  logger: EggLogger;
+  private logger: EggLogger;
 
   /**
    * Create a DNS cache resolver instance
@@ -328,7 +328,7 @@ export class DnsResolver {
           currentIndex: 0,
         };
         this._dnsCache.set(hostname, cacheEntry);
-        this._debugLog(
+        this.logger.info(
           `[dns-cache] dns.lookup succeeded for ${hostname}, resolved ${
             records.length
           } address(es): ${records.map(r => r.ip).join(', ')}, TTL: ${
@@ -352,6 +352,11 @@ export class DnsResolver {
         const address = typeof addr === 'string' ? addr : addr.address;
         const ttlSeconds =
           addr && Number.isInteger(addr.ttl) && addr.ttl >= 0 ? addr.ttl : 0;
+        if (ttlSeconds === 0) {
+          this.logger.warn(
+            `[dns-cache] Warning: TTL is 0 for ${hostname} address ${address}`,
+          );
+        }
         return {
           ip: address,
           family: 4,
@@ -371,7 +376,7 @@ export class DnsResolver {
         currentIndex: 0,
       };
       this._dnsCache.set(hostname, cacheEntry);
-      this._debugLog(
+      this.logger.info(
         `[dns-cache] dns.resolve4 succeeded for ${hostname}, resolved ${
           records.length
         } address(es): ${records
@@ -393,7 +398,7 @@ export class DnsResolver {
    */
   private _errorDNS(err: any, mode: 'lookup' | 'resolve', hostname: string) {
     this.logger.error(
-      `error occurred when resolving ${hostname} with dns.${mode}: ${
+      `[dns-cache] error occurred when resolving ${hostname} with dns.${mode}: ${
         err && err.message ? err.message : err
       }`,
     );

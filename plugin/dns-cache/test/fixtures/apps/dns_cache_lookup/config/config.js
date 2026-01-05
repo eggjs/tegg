@@ -1,11 +1,13 @@
 'use strict';
 
-module.exports = function () {
+const path = require('path');
+
+module.exports = function (appInfo) {
   const config = {
     keys: 'test key',
     logger: {
       level: 'DEBUG',
-      consoleLevel: 'DEBUG',
+      consoleLevel: 'NONE',
     },
     httpclient: {
       httpAgent: {
@@ -18,7 +20,14 @@ module.exports = function () {
       lookupInterval: 3000,
       addressRotation: true,
       resolveLocalhost: false,
-    }
+    },
+    customLogger: {
+      dnsCacheLogger: {
+        file: path.join(appInfo.root, 'logs/dns-cache.log'),
+        level: 'DEBUG',
+        consoleLevel: 'NONE',
+      },
+    },
   }
   return config;
 };
