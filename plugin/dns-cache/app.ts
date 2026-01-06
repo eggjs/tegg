@@ -15,9 +15,7 @@ export default class DnsCacheAppHook {
         '[tegg-dns-cache-plugin] DNS cache is disabled, please setup dnsCache config.',
       );
     }
-  }
 
-  async configDidLoad() {
     const config = this.app.config.dnsCache || {};
 
     // Create DNS resolver instance
@@ -37,7 +35,9 @@ export default class DnsCacheAppHook {
     const lookupFunction = this.dnsResolver.getLookupFunction();
     this.app.config.httpclient = this.app.config.httpclient || {};
     this.app.config.httpclient.lookup = lookupFunction;
+  }
 
+  async configDidLoad() {
     // Add dnsResolver to app
     this.app.dnsResolver = this.dnsResolver;
   }

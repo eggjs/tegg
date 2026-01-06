@@ -62,7 +62,6 @@
     "egg": ">=3.32.0"
   },
   "dependencies": {
-    "@eggjs/tegg": "^3.69.0",
     "ylru": "^2.0.0"
   },
   "devDependencies": {

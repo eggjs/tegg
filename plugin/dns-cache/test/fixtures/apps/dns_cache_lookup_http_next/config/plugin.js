@@ -14,13 +14,8 @@ exports.teggConfig = {
 };
 
 exports.dnsCache = {
+  enable: true,
   path: path.join(__dirname, '../../../../../'),
-  enable: true,
-};
-
-exports.teggController = {
-  package: '@eggjs/tegg-controller-plugin',
-  enable: true,
 };
 
 exports.watcher = false;
