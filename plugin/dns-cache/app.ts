@@ -20,13 +20,9 @@ export default class DnsCacheAppHook {
   async configDidLoad() {
     const config = this.app.config.dnsCache || {};
 
-    // Get or create dedicated logger for DNS cache plugin
-    // If custom logger not configured, fallback to app logger
-    const dnsCacheLogger =
-      this.app.getLogger('dnsCacheLogger') || this.app.logger;
-
     // Create DNS resolver instance
     const useDNSResolver = config.mode !== 'lookup';
+    const dnsCacheLogger = this.app.coreLogger;
     this.dnsResolver = new DnsResolver(
       {
         useResolver: useDNSResolver,

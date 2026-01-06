@@ -69,7 +69,7 @@ export class DnsResolver {
 
     this.resetCache = this.resetCache.bind(this);
 
-    this.logger.debug(
+    this._debugLog(
       `[dns-cache] DNS Resolver initialized in ${
         this.useResolver ? 'resolve' : 'lookup'
       } mode, maxCacheSize: ${this._maxCacheSize}, addressRotation: ${

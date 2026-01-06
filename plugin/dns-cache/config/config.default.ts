@@ -1,14 +1,5 @@
-import path from 'path';
-
-export default appInfo => {
+export default () => {
   const config = {
-    customLogger: {
-      dnsCacheLogger: {
-        file: path.join(appInfo.root, 'logs/dns-cache.log'),
-        level: 'INFO',
-        consoleLevel: 'NONE',
-      },
-    },
     /**
      * DNS Cache Configuration
      *
@@ -36,5 +27,6 @@ export default appInfo => {
       dnsServers: undefined as string[] | undefined,
     },
   };
+
   return config;
 };
