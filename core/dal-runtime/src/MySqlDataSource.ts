@@ -19,6 +19,8 @@ const DEFAULT_OPTIONS: RDSClientOptions = {
   trace: true,
 };
 
+const DEFAULT_RETRY_TIMES = 3;
+
 export interface EggQueryOptions extends QueryOptions {
   executeType?: 'execute' | 'query';
 }
@@ -40,7 +42,7 @@ export class MysqlDataSource extends Base {
     this.#logger = logger;
     this.forkDb = forkDb;
     this.initSql = initSql ?? 'SELECT 1 + 1';
-    this.#initRetryTimes = initRetryTimes;
+    this.#initRetryTimes = initRetryTimes ?? DEFAULT_RETRY_TIMES;
     this.name = name;
     this.timezone = options.timezone;
     this.executeType = executeType ?? 'query';
