@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "3.69.0",
+  "version": "3.70.0",
   "types": "typings/index.d.ts",
   "description": "tegg dns cache plugin",
   "keywords": [
@@ -65,8 +65,8 @@
     "ylru": "^2.0.0"
   },
   "devDependencies": {
-    "@eggjs/tegg-config": "^3.69.0",
-    "@eggjs/tegg-plugin": "^3.69.0",
+    "@eggjs/tegg-config": "^3.70.0",
+    "@eggjs/tegg-plugin": "^3.70.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",

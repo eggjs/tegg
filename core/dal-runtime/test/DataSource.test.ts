@@ -32,7 +32,7 @@ describe('test/Datasource.test.ts', () => {
       mm.errorOnce(RDSClient.prototype, 'query', new Error('fake error'));
       const query: any = RDSClient.prototype.query;
 
-      const mysql = new MysqlDataSource(mysqlOptions);
+      const mysql = new MysqlDataSource({ ...mysqlOptions, initRetryTimes: 0 });
       await assert.rejects(mysql.ready(), /fake error/);
       assert.strictEqual(query.called, 1);
       assert.deepStrictEqual(query.lastCalledArguments, [ mysqlOptions.initSql ]);

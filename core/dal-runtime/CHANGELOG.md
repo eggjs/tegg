@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.70.0](https://github.com/eggjs/tegg/compare/v3.69.0...v3.70.0) (2026-01-07)
+
+
+### Features
+
+* set default retry time to 3 for dal init ([#390](https://github.com/eggjs/tegg/issues/390)) ([afde48c](https://github.com/eggjs/tegg/commit/afde48c39990f5b000520cb1ba3ba1a336222ce2))
+
+
+
+
+
 # [3.69.0](https://github.com/eggjs/tegg/compare/v3.68.0...v3.69.0) (2026-01-06)
 
 **Note:** Version bump only for package @eggjs/dal-runtime
