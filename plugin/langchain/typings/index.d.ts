@@ -113,6 +113,17 @@ export type ChatModelConfigModuleConfigType = Static<typeof ChatModelConfigModul
 declare module '@eggjs/tegg' {
   export type LangChainModuleConfig = {
     ChatModel?: ChatModelConfigModuleConfigType;
+    agents?: Record<string, {}>;
+  };
+
+  export interface ModuleConfig extends LangChainModuleConfig {
+  }
+}
+
+declare module '@eggjs/tegg-types' {
+  export type LangChainModuleConfig = {
+    ChatModel?: ChatModelConfigModuleConfigType;
+    agents?: Record<string, {}>;
   };
 
   export interface ModuleConfig extends LangChainModuleConfig {
