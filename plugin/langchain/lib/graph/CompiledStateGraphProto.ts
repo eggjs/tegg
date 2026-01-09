@@ -24,6 +24,7 @@ export class CompiledStateGraphProto implements EggPrototype {
   readonly name: EggPrototypeName;
   readonly graphMetadata: GraphMetadata;
   readonly graphName: string;
+  readonly unitPath: string;
 
   constructor(loadUnit: LoadUnit, protoName: string, graphName: string, graphMetadata: GraphMetadata) {
     this.loadUnitId = loadUnit.id;
@@ -31,6 +32,7 @@ export class CompiledStateGraphProto implements EggPrototype {
     this.name = protoName;
     this.graphMetadata = graphMetadata;
     this.graphName = graphName;
+    this.unitPath = loadUnit.unitPath;
     this.id = IdenticalUtil.createProtoId(loadUnit.id, protoName);
   }
 

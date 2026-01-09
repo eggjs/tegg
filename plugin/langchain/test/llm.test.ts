@@ -76,5 +76,60 @@ describe('plugin/langchain/test/llm.test.ts', () => {
         .get('/llm/graph')
         .expect(200, { value: 'hello graph toolhello world' });
     });
+
+    it('should agent controller work', async () => {
+      const url = await app.httpRequest()
+        .post('/graph/stream').url;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: [{ role: 'human', content: 'hello world' }] }),
+      });
+
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      if (!response.body) {
+        throw new Error('Response body is null');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      const messages: object[] = [];
+
+      try {
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          lines.forEach(line => {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              try {
+                const parsed = JSON.parse(data);
+                messages.push(parsed);
+              } catch (e) {
+                throw e;
+              }
+            }
+          });
+        }
+      } finally {
+        reader.releaseLock();
+      }
+      assert(messages.length === 3);
+    });
   }
 });
