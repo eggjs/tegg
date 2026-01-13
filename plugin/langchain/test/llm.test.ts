@@ -72,9 +72,11 @@ describe('plugin/langchain/test/llm.test.ts', () => {
     });
 
     it('should graph work', async () => {
+      app.mockLog();
       await app.httpRequest()
         .get('/llm/graph')
         .expect(200, { value: 'hello graph toolhello world' });
+      app.expectLog(/agent_run/);
     });
   }
 });
