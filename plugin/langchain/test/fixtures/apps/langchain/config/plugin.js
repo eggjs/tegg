@@ -28,4 +28,9 @@ exports.teggMcpClient = {
   package: '@eggjs/tegg-mcp-client',
 };
 
+exports.tracer = {
+  package: 'egg-tracer',
+  enable: true,
+};
+
 exports.watcher = false;
