@@ -77,6 +77,7 @@ describe('plugin/langchain/test/llm.test.ts', () => {
         .get('/llm/graph')
         .expect(200, { value: 'hello graph toolhello world' });
       app.expectLog(/agent_run/);
+      app.expectLog(/Executing FooNode thread_id is 1/);
     });
   }
 });

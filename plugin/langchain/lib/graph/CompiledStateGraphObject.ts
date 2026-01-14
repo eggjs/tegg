@@ -95,7 +95,7 @@ export class CompiledStateGraphObject implements EggObject {
         if (TeggToolNode.prototype.isPrototypeOf(nodeObj)) {
           graphObj.addNode(nodeMetadata.nodeName, (nodeObj as unknown as TeggToolNode).toolNode);
         } else {
-          graphObj.addNode(nodeMetadata.nodeName, nodeObj.execute.bind(nodeObj));
+          graphObj.addNode(nodeMetadata.nodeName, nodeObj.execute.bind(nodeObj), nodeObj.options);
         }
       }
     }

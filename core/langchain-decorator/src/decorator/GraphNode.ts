@@ -8,7 +8,7 @@ import {
 
 import { IGraphNodeMetadata } from '../model/GraphNodeMetadata';
 import { GraphNodeInfoUtil } from '../util/GraphNodeInfoUtil';
-import { AnnotationRoot, StateDefinition, UpdateType } from '@langchain/langgraph';
+import { AnnotationRoot, Runtime, StateDefinition, StateGraph, UpdateType } from '@langchain/langgraph';
 import { ConfigurableModel } from 'langchain/chat_models/universal';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { BaseChatOpenAI } from '@langchain/openai';
@@ -26,10 +26,14 @@ export function GraphNode<S extends StateDefinition = StateDefinition>(params: I
   };
 }
 
+export type StateGraphAddNodeOptions = Parameters<typeof StateGraph['prototype']['addNode']>[2];
+
+export type GraphRuntime<ContextType = Record<string, unknown>, InterruptType = any, WriterType = any> = Runtime<ContextType, InterruptType, WriterType>;
+
 export interface IGraphNode<S extends StateDefinition = StateDefinition, T = any> {
 
-  execute(state: AnnotationRoot<S>['State']): Promise<UpdateType<S> & Record<string, any>> | Promise<ToolNode<T>>;
-
+  options?: StateGraphAddNodeOptions;
+  execute(state: AnnotationRoot<S>['State'], options?: GraphRuntime): Promise<UpdateType<S> & Record<string, any>> | Promise<ToolNode<T>>;
   build?: (tools: Parameters<ConfigurableModel['bindTools']>['0']) => Promise<ReturnType<ConfigurableModel['bindTools']> | ReturnType<BaseChatOpenAI<any>['bindTools']>>;
 }
 
