@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.70.1](https://github.com/eggjs/tegg/compare/v3.70.0...v3.70.1) (2026-01-14)
+
+
+### Bug Fixes
+
+* add stream log and fix add node options ([#394](https://github.com/eggjs/tegg/issues/394)) ([9fce038](https://github.com/eggjs/tegg/commit/9fce038b876100f22344ced707a8c8039594aa3b))
+
+
+
+
+
 # [3.70.0](https://github.com/eggjs/tegg/compare/v3.69.0...v3.70.0) (2026-01-07)
 
 **Note:** Version bump only for package @eggjs/tegg-langchain-decorator
