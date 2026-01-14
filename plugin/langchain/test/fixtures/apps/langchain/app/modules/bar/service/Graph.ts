@@ -1,5 +1,5 @@
-import { AccessLevel, SingletonProto, ToolArgs, ToolArgsSchema } from '@eggjs/tegg';
-import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, TeggToolNode } from '@eggjs/tegg-langchain-decorator';
+import { AccessLevel, Inject, Logger, SingletonProto, ToolArgs, ToolArgsSchema } from '@eggjs/tegg';
+import { Graph, GraphEdge, IGraphEdge, AbstractStateGraph, GraphNode, IGraphNode, GraphStateType, GraphTool, IGraphTool, TeggToolNode, GraphRuntime } from '@eggjs/tegg-langchain-decorator';
 import { Annotation, MemorySaver } from '@langchain/langgraph';
 // import { AIMessage, BaseMessage, ToolMessage } from '@langchain/core/messages';
 import * as z from 'zod/v4';
@@ -54,7 +54,11 @@ export class FooTool implements IGraphTool {
   mcpServers: [ 'bar' ],
 })
 export class FooNode implements IGraphNode<fooAnnotationStateDefinitionType> {
-  async execute(state: GraphStateType<fooAnnotationStateDefinitionType>) {
+  @Inject()
+  logger: Logger;
+
+  async execute(state: GraphStateType<fooAnnotationStateDefinitionType>, options: GraphRuntime) {
+    this.logger.info('Executing FooNode thread_id is', options.configurable?.thread_id);
     console.log('response: ', state.messages);
     const messages = state.messages;
     const lastMessage = messages[messages.length - 1];

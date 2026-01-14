@@ -37,6 +37,7 @@ export class CompiledStateGraphObject implements EggObject {
     const graph = this._obj as CompiledStateGraph<any, any>;
 
     const originalInvoke = graph.invoke;
+    const originalStream = graph.stream;
     const langGraphTraceObj = await EggContainerFactory.getOrCreateEggObjectFromName('langGraphTracer');
     const tracer = langGraphTraceObj.obj as LangGraphTracer;
     tracer.setName(this.graphName);
@@ -45,6 +46,13 @@ export class CompiledStateGraphObject implements EggObject {
         config.callbacks = [ tracer, ...(config?.callbacks || []) ];
       }
       return await originalInvoke.call(graph, input, config);
+    };
+
+    graph.stream = async (input: any, config?: any) => {
+      if (config?.tags?.includes('trace-log')) {
+        config.callbacks = [ tracer, ...(config?.callbacks || []) ];
+      }
+      return await originalStream.call(graph, input, config) as any;
     };
 
     this.status = EggObjectStatus.READY;
@@ -87,7 +95,7 @@ export class CompiledStateGraphObject implements EggObject {
         if (TeggToolNode.prototype.isPrototypeOf(nodeObj)) {
           graphObj.addNode(nodeMetadata.nodeName, (nodeObj as unknown as TeggToolNode).toolNode);
         } else {
-          graphObj.addNode(nodeMetadata.nodeName, nodeObj.execute.bind(nodeObj));
+          graphObj.addNode(nodeMetadata.nodeName, nodeObj.execute.bind(nodeObj), nodeObj.options);
         }
       }
     }

@@ -51,6 +51,7 @@ export class AppController {
       configurable: {
         thread_id: '1',
       },
+      tags: [ 'trace-log' ],
     });
 
     return {
