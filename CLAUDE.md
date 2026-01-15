@@ -736,3 +736,241 @@ Main Egg.js plugin that integrates tegg into an Egg application.
 2. `configDidLoad`: Setup EggContextHandler, ModuleHandler
 3. `didLoad`: Register hooks, call `moduleHandler.init()` to load all modules
 4. `beforeClose`: Cleanup and destroy
+
+#### @eggjs/tegg-standalone (`standalone/standalone`)
+
+Provides a standalone runtime for tegg that works without Egg.js. This enables using tegg's dependency injection in CLI tools, background workers, or any Node.js application.
+
+```
+├── src/
+│   ├── Runner.ts                   # Main orchestrator: loads modules, manages lifecycle
+│   ├── main.ts                     # Simple entry point: main() function
+│   ├── EggModuleLoader.ts          # Loads modules using tegg-loader
+│   ├── StandaloneContext.ts        # EggContext implementation for standalone
+│   ├── StandaloneContextHandler.ts # AsyncLocalStorage-based context management
+│   ├── StandaloneLoadUnit.ts       # LoadUnit for inner objects (logger, config, etc.)
+│   └── StandaloneInnerObjectProto.ts # EggPrototype for inner objects
+└── index.ts                        # Exports all public APIs
+```
+
+### Standalone Mode: How tegg Runs Without Egg.js
+
+The standalone package replicates Egg.js plugin functionality using pure Node.js primitives:
+
+**Key Differences from Egg.js Mode:**
+
+| Aspect | Egg.js Mode | Standalone Mode |
+|--------|------------|-----------------|
+| Context storage | Egg.js request context | `AsyncLocalStorage` via `StandaloneContextHandler` |
+| Context object | `EggContextImpl` (wraps Egg ctx) | `StandaloneContext` (extends `AbstractEggContext`) |
+| Inner objects | From `app` and `ctx` | Manually provided via `innerObjectHandlers` |
+| HTTP handling | Egg.js middleware | Not provided (bring your own) |
+| Config loading | Egg.js config system | `ModuleConfigUtil` reads `module.yml` files |
+
+**Initialization Flow:**
+
+```
+1. new Runner(cwd, options)
+   ├── Read module references from cwd
+   ├── Load module configs (module.default.yml, module.{env}.yml)
+   ├── Register lifecycle hooks (AOP, DAL, etc.)
+   └── Create GlobalGraph instance
+
+2. runner.init()
+   ├── Register StandaloneContextHandler (AsyncLocalStorage)
+   ├── Register StandaloneLoadUnit factory (for inner objects)
+   ├── Load all modules via EggModuleLoader
+   │   ├── LoaderFactory.loadApp() → ModuleDescriptors
+   │   ├── GlobalGraph.create() → build dependency graph
+   │   ├── GlobalGraph.build() → resolve all injections
+   │   └── GlobalGraph.sort() → topological sort for init order
+   ├── Create LoadUnitInstance for each LoadUnit
+   └── Find @Runner decorated class
+
+3. runner.run()
+   ├── Create StandaloneContext
+   ├── ContextHandler.run(ctx, async () => {...})
+   │   └── Uses AsyncLocalStorage.run() internally
+   ├── Get @Runner class instance via EggContainerFactory
+   ├── Call runner.main()
+   └── Cleanup context on completion
+
+4. runner.destroy()
+   ├── Destroy all LoadUnitInstances
+   ├── Destroy all LoadUnits
+   └── Unregister lifecycle hooks
+```
+
+**Context Management Without Egg.js:**
+
+In Egg.js, each HTTP request has a context object (`ctx`). Standalone mode simulates this using `AsyncLocalStorage`:
+
+```typescript
+// StandaloneContextHandler.ts
+export class StandaloneContextHandler {
+  static storage = new AsyncLocalStorage<EggContext>();
+
+  static register() {
+    // Tell ContextHandler how to get/run context
+    ContextHandler.getContextCallback = () => {
+      return StandaloneContextHandler.storage.getStore();
+    };
+    ContextHandler.runInContextCallback = (context, fn) => {
+      return StandaloneContextHandler.storage.run(context, fn);
+    };
+  }
+}
+```
+
+This allows `@ContextProto` objects to work correctly - they are stored per-context in the `AsyncLocalStorage`.
+
+**Inner Objects (Replacing Egg.js app/ctx):**
+
+In Egg.js, objects like `logger`, `config` come from `app` or `ctx`. Standalone mode uses `innerObjectHandlers`:
+
+```typescript
+// Runner creates these automatically:
+this.innerObjects = {
+  moduleConfigs: [{ obj: new ModuleConfigs(...) }],
+  moduleConfig: [...],  // per-module configs with qualifiers
+  runtimeConfig: [{ obj: { baseDir, name, env } }],
+  mysqlDataSourceManager: [{ obj: MysqlDataSourceManager.instance }],
+};
+
+// Users can add custom inner objects:
+const runner = new Runner(cwd, {
+  innerObjectHandlers: {
+    logger: [{ obj: myLogger }],
+    customService: [{
+      obj: myService,
+      qualifiers: [{ attribute: 'type', value: 'production' }],
+    }],
+  },
+});
+```
+
+These inner objects are wrapped as `StandaloneInnerObjectProto` and registered in a special `StandaloneLoadUnit`, making them injectable via `@Inject()`.
+
+### Using Standalone Mode
+
+**Basic Usage:**
+
+```typescript
+// main.ts
+import { ContextProto, Inject, SingletonProto } from '@eggjs/tegg';
+import { Runner, MainRunner } from '@eggjs/tegg/standalone';
+
+@SingletonProto()
+export class MyService {
+  async doSomething() {
+    return 'hello';
+  }
+}
+
+@ContextProto()
+@Runner()  // Mark as entry point
+export class MyApp implements MainRunner<string> {
+  @Inject()
+  myService: MyService;
+
+  async main(): Promise<string> {
+    return await this.myService.doSomething();
+  }
+}
+
+// Run it
+import { main } from '@eggjs/tegg-standalone';
+
+const result = await main<string>(__dirname);
+console.log(result);  // 'hello'
+```
+
+**With Dependencies and Custom Objects:**
+
+```typescript
+import { main, Runner } from '@eggjs/tegg-standalone';
+
+const result = await main(__dirname, {
+  // Environment name (affects config loading)
+  env: 'production',
+
+  // Application name
+  name: 'my-app',
+
+  // Additional module paths to load
+  dependencies: [
+    '/path/to/other/module',
+    { baseDir: '/path/to/module', extraFilePattern: ['!**/test'] },
+  ],
+
+  // Custom injectable objects
+  innerObjectHandlers: {
+    logger: [{ obj: myLogger }],
+    config: [{
+      obj: myConfig,
+      qualifiers: [{ attribute: 'env', value: 'production' }],
+    }],
+  },
+
+  // Disable module descriptor dump (default: true)
+  dump: false,
+});
+```
+
+**Advanced: Manual Runner Control:**
+
+```typescript
+import { Runner, StandaloneContext } from '@eggjs/tegg-standalone';
+
+const runner = new Runner(__dirname, options);
+await runner.init();
+
+// Custom context with pre-set values
+const ctx = new StandaloneContext();
+ctx.set('requestId', '12345');
+
+// Run multiple times with different contexts
+const result1 = await runner.run(ctx);
+const result2 = await runner.run(new StandaloneContext());
+
+// Cleanup when done
+await runner.destroy();
+```
+
+**PreLoad for Faster Startup:**
+
+Use `preLoad()` to run lifecycle `preLoad` hooks before `main()`. This is useful for warming up caches or validating configuration:
+
+```typescript
+import { preLoad, main } from '@eggjs/tegg-standalone';
+
+// Run preLoad hooks (e.g., validate config, warm caches)
+await preLoad(__dirname, dependencies);
+
+// Then run main
+const result = await main(__dirname, { dependencies });
+```
+
+### Creating Standalone-Compatible Plugins
+
+Plugins that support standalone mode need an `eggModule` field in `package.json`:
+
+```json
+{
+  "name": "@eggjs/tegg-my-plugin",
+  "eggPlugin": {
+    "name": "myPlugin",
+    "dependencies": ["tegg"]
+  },
+  "eggModule": {
+    "name": "teggMyPlugin"
+  }
+}
+```
+
+The `eggModule.name` is used by standalone mode to identify the module. The plugin's prototypes will be loaded automatically when the plugin path is included in `dependencies`.
+
+Plugins should avoid depending on Egg.js-specific APIs (`app`, `ctx`) directly. Instead:
+- Use `@Inject()` for dependencies
+- Use lifecycle hooks (`init()`, `destroy()`) instead of Egg.js lifecycle
+- Provide factories that accept configuration via injection
