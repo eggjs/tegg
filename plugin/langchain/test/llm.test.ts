@@ -1,7 +1,7 @@
 import mm from 'egg-mock';
 import path from 'path';
 import assert from 'assert';
-
+import Tracer from 'egg-tracer/lib/tracer';
 
 describe('plugin/langchain/test/llm.test.ts', () => {
   // https://github.com/langchain-ai/langchainjs/blob/main/libs/langchain/package.json#L9
@@ -72,9 +72,14 @@ describe('plugin/langchain/test/llm.test.ts', () => {
     });
 
     it('should graph work', async () => {
+      app.mockLog();
+      mm(Tracer.prototype, 'traceId', 'test-trace-id');
       await app.httpRequest()
         .get('/llm/graph')
         .expect(200, { value: 'hello graph toolhello world' });
+      app.expectLog(/agent_run/);
+      app.expectLog(/Executing FooNode thread_id is 1/);
+      app.expectLog(/traceId=test-trace-id/);
     });
   }
 });

@@ -11,6 +11,7 @@ import { EggPrototype } from '@eggjs/tegg-metadata';
 import { ChatCheckpointSaverInjectName, ChatCheckpointSaverQualifierAttribute, GRAPH_EDGE_METADATA, GRAPH_NODE_METADATA, GraphEdgeMetadata, GraphMetadata, GraphNodeMetadata, IGraph, IGraphEdge, IGraphNode, TeggToolNode } from '@eggjs/tegg-langchain-decorator';
 import { LangGraphTracer } from '../tracing/LangGraphTracer';
 import { BaseCheckpointSaver, CompiledStateGraph } from '@langchain/langgraph';
+import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
 export class CompiledStateGraphObject implements EggObject {
   private status: EggObjectStatus = EggObjectStatus.PENDING;
@@ -37,15 +38,17 @@ export class CompiledStateGraphObject implements EggObject {
     const graph = this._obj as CompiledStateGraph<any, any>;
 
     const originalInvoke = graph.invoke;
+    const originalStream = graph.stream;
     const langGraphTraceObj = await EggContainerFactory.getOrCreateEggObjectFromName('langGraphTracer');
     const tracer = langGraphTraceObj.obj as LangGraphTracer;
     tracer.setName(this.graphName);
-    graph.invoke = async (input: any, config?: any) => {
-      if (config?.tags?.includes('trace-log')) {
-        config.callbacks = [ tracer, ...(config?.callbacks || []) ];
-      }
-      return await originalInvoke.call(graph, input, config);
-    };
+
+
+    graph.invoke = (input: any, config?: any) =>
+      this.wrapGraphMethod(originalInvoke.bind(graph), input, config);
+
+    graph.stream = (input: any, config?: any) =>
+      this.wrapGraphMethod(originalStream.bind(graph), input, config);
 
     this.status = EggObjectStatus.READY;
   }
@@ -87,7 +90,7 @@ export class CompiledStateGraphObject implements EggObject {
         if (TeggToolNode.prototype.isPrototypeOf(nodeObj)) {
           graphObj.addNode(nodeMetadata.nodeName, (nodeObj as unknown as TeggToolNode).toolNode);
         } else {
-          graphObj.addNode(nodeMetadata.nodeName, nodeObj.execute.bind(nodeObj));
+          graphObj.addNode(nodeMetadata.nodeName, nodeObj.execute.bind(nodeObj), nodeObj.options);
         }
       }
     }
@@ -108,6 +111,42 @@ export class CompiledStateGraphObject implements EggObject {
         }
       }
     }
+  }
+
+
+  /**
+   * 包装 graph 方法，添加 tracing
+   */
+  async wrapGraphMethod(
+    originalMethod: (input: any, config?: any) => Promise<any>,
+    input: any,
+    config?: any,
+  ) {
+    // 确保 config 对象存在
+    const finalConfig = config || {};
+
+    // 准备 tracer
+    const shouldTrace = finalConfig.tags?.includes('trace-log');
+    if (shouldTrace) {
+      const langGraphTraceObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(LangGraphTracer);
+      const tracer = langGraphTraceObj.obj as LangGraphTracer;
+      tracer.setName(this.graphName);
+
+      finalConfig.callbacks = [ tracer, ...(finalConfig.callbacks || []) ];
+    }
+
+    // 设置 runId
+    if (!finalConfig.runId) {
+      const trace = await this.getTracer();
+      finalConfig.runId = trace?.traceId;
+    }
+
+    return await originalMethod(input, finalConfig);
+  }
+
+  async getTracer() {
+    const ctx = ContextHandler.getContext()!.get(EGG_CONTEXT);
+    return ctx.tracer;
   }
 
   injectProperty() {
