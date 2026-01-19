@@ -28,3 +28,5 @@ export interface IGraphTool<ToolSchema = ToolSchemaBase> {
   execute: DynamicStructuredTool<ToolSchema>['func'];
 }
 
+export type IGraphStructuredTool<T extends IGraphTool> = DynamicStructuredTool<Parameters<T['execute']>[0]>;
+

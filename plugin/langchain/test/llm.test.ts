@@ -81,5 +81,15 @@ describe('plugin/langchain/test/llm.test.ts', () => {
       app.expectLog(/Executing FooNode thread_id is 1/);
       app.expectLog(/traceId=test-trace-id/);
     });
+
+    it('should structured work', async () => {
+      const res = await app.httpRequest()
+        .get('/llm/structured')
+        .expect(200);
+      assert.deepStrictEqual(res.body, {
+        name: 'search',
+        description: 'Call the foo tool',
+      });
+    });
   }
 });
