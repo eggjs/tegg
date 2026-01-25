@@ -71,9 +71,13 @@
     "@langchain/mcp-adapters": "^1.0.0",
     "@langchain/openai": "^1.0.0",
     "@types/koa-router": "^7.0.40",
+    "agentfs-sdk": "^0.5.3",
+    "deepagents": "^1.5.1",
     "koa-compose": "^3.2.1",
     "langchain": "^1.1.2",
+    "micromatch": "^4.0.8",
     "sdk-base": "^4.2.0",
+    "sqlstring": "^2.3.3",
     "urllib": "^4.4.0"
   },
   "devDependencies": {
@@ -83,6 +87,7 @@
     "@eggjs/tegg-controller-plugin": "^3.70.1",
     "@eggjs/tegg-plugin": "^3.70.1",
     "@types/mocha": "^10.0.1",
+    "@types/micromatch": "^4.0.10",
     "@types/node": "^20.2.4",
     "cross-env": "^7.0.3",
     "egg": "^3.9.1",
