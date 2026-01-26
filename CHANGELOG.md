@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.71.0](https://github.com/eggjs/tegg/compare/v3.70.1...v3.71.0) (2026-01-26)
+
+
+### Features
+
+* add trace to log ([#395](https://github.com/eggjs/tegg/issues/395)) ([bcfb895](https://github.com/eggjs/tegg/commit/bcfb89554f1ad0d83acba6e1fc424edbe93ad774))
+
+
+
+
+
 ## [3.70.1](https://github.com/eggjs/tegg/compare/v3.70.0...v3.70.1) (2026-01-14)
 
 
