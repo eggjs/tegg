@@ -4,6 +4,7 @@ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
+import { fetch } from 'urllib';
 
 async function listTools(client: Client) {
   const toolsRequest: ListToolsRequest = {
@@ -133,7 +134,17 @@ describe('plugin/mcp-proxy/test/proxy.test.ts', () => {
       });
       const baseUrl = await app.httpRequest()
         .post('/stream').url;
-      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl));
+      const streamableTransport = new StreamableHTTPClientTransport(new URL(baseUrl), {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        fetch: async (...args) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          const res = await fetch(...args);
+          assert.deepEqual(res.headers.has('content-length'), !res.headers.has('transfer-encoding'));
+          return res;
+        },
+      });
       const streamableNotifications: { level: string, data: string }[] = [];
       streamableClient.setNotificationHandler(LoggingMessageNotificationSchema, notification => {
         streamableNotifications.push({ level: notification.params.level, data: notification.params.data as string });

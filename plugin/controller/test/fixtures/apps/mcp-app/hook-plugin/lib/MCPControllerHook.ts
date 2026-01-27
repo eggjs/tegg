@@ -6,7 +6,6 @@ export const GetAlipayTeggHook = (app: Application) => {
     ctx.set({
       'content-type': 'text/event-stream',
       'cache-control': 'no-cache',
-      'transfer-encoding': 'chunked',
     });
     try {
       const auth = ctx.get('authorization');

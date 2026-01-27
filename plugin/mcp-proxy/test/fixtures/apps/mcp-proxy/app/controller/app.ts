@@ -166,7 +166,6 @@ export default class App extends Controller {
     this.ctx.set({
       'content-type': 'text/event-stream',
       'cache-control': 'no-cache',
-      'transfer-encoding': 'chunked',
     });
     const self = this;
     const transport = new SSEServerTransport('/message', this.ctx.res);
@@ -255,7 +254,6 @@ export default class App extends Controller {
         this.ctx.set({
           'content-type': 'text/event-stream',
           'cache-control': 'no-cache',
-          'transfer-encoding': 'chunked',
         });
         const eventStore = new InMemoryEventStore();
         const self = this;
@@ -305,7 +303,6 @@ export default class App extends Controller {
         this.ctx.set({
           'content-type': 'text/event-stream',
           'cache-control': 'no-cache',
-          'transfer-encoding': 'chunked',
         });
         const transport = transports[sessionId] as StreamableHTTPServerTransport;
         await transport.handleRequest(this.ctx.req, this.ctx.res);
