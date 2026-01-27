@@ -24,4 +24,5 @@ export * from './src/util/BoundModelInfoUtil';
 
 export * from './src/qualifier/ChatModelQualifier';
 export * from './src/qualifier/ChatCheckpointSaverQualifier';
+export * from './src/qualifier/FileSystemQualifier';
 export * from './src/type/metadataKey';

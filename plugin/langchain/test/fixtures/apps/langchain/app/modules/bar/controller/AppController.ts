@@ -4,10 +4,11 @@ import {
   HTTPMethodEnum,
   Inject,
 } from '@eggjs/tegg';
-import { ChatModelQualifier, TeggBoundModel, TeggCompiledStateGraph } from '@eggjs/tegg-langchain-decorator';
+import { ChatModelQualifier, FileSystemQualifier, TeggBoundModel, TeggCompiledStateGraph } from '@eggjs/tegg-langchain-decorator';
 import { ChatOpenAIModel } from '../../../../../../../../lib/ChatOpenAI';
 import { BoundChatModel } from '../service/BoundChatModel';
 import { FooGraph } from '../service/Graph';
+import { MysqlFilesystem } from '../../../../../../../../lib/filesystem/MysqlFilesystem';
 import { AIMessage } from 'langchain';
 
 @HTTPController({
@@ -23,6 +24,10 @@ export class AppController {
 
   @Inject()
   compiledFooGraph: TeggCompiledStateGraph<FooGraph>;
+
+  @Inject()
+  @FileSystemQualifier('foo')
+  teggFilesystem: MysqlFilesystem;
 
   @HTTPMethod({
     method: HTTPMethodEnum.GET,

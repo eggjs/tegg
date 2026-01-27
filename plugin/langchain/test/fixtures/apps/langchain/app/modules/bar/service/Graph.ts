@@ -42,6 +42,8 @@ export const ToolType = {
 })
 export class FooTool implements IGraphTool {
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   async execute(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>) {
     console.log('query: ', args.query);
     return `hello ${args.query}`;

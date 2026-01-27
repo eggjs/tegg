@@ -13,6 +13,8 @@ const server = new McpServer({
 // Add an addition tool
 server.registerTool('add',
   {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     inputSchema: { a: z.number(), b: z.number() },
   },
   async ({ a, b }) => ({

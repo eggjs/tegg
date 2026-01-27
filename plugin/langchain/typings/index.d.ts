@@ -110,9 +110,29 @@ export const ChatModelConfigModuleConfigSchema = Type.Object({
 
 export type ChatModelConfigModuleConfigType = Static<typeof ChatModelConfigModuleConfigSchema>;
 
+export const FileSystemConfigModuleConfigSchema = Type.Object({
+  clients: Type.Record(Type.String(), Type.Object({
+    dataSource: Type.String({
+      description: 'The name of the data source to use for the MySQL filesystem middleware.',
+    }),
+    cwd: Type.Optional(Type.String({
+      description: 'The current working directory for the filesystem middleware. Defaults to "/"',
+    })),
+    virtualMode: Type.Optional(Type.Boolean({
+      description: 'Whether to enable virtual mode, which restricts file operations to within the specified cwd.',
+    })),
+  })),
+}, {
+  title: 'FsMiddleware 设置',
+  name: 'FsMiddleware',
+});
+
+export type FilesystemConfigModuleConfigType = Static<typeof FileSystemConfigModuleConfigSchema>;
+
 declare module '@eggjs/tegg' {
   export type LangChainModuleConfig = {
     ChatModel?: ChatModelConfigModuleConfigType;
+    filesystem?: FilesystemConfigModuleConfigType;
   };
 
   export interface ModuleConfig extends LangChainModuleConfig {

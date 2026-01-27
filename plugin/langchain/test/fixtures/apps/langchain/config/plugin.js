@@ -33,4 +33,9 @@ exports.tracer = {
   enable: true,
 };
 
+exports.teggDal = {
+  package: '@eggjs/tegg-dal-plugin',
+  enable: true,
+};
+
 exports.watcher = false;
