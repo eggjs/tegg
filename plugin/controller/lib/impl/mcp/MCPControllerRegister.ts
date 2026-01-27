@@ -219,7 +219,6 @@ export class MCPControllerRegister implements ControllerRegister {
       ctx.respond = false;
       ctx.set({
         'content-type': 'text/event-stream',
-        'transfer-encoding': 'chunked',
       });
       await ctx.app.ctxStorage.run(ctx, async () => {
         await mw(ctx, async () => {
@@ -352,7 +351,6 @@ export class MCPControllerRegister implements ControllerRegister {
 
           ctx.set({
             'content-type': 'text/event-stream',
-            'transfer-encoding': 'chunked',
           });
 
           await mcpServerHelper.server.connect(transport);
@@ -402,7 +400,6 @@ export class MCPControllerRegister implements ControllerRegister {
           ctx.respond = false;
           ctx.set({
             'content-type': 'text/event-stream',
-            'transfer-encoding': 'chunked',
           });
 
           await ctx.app.ctxStorage.run(ctx, async () => {
@@ -471,7 +468,6 @@ export class MCPControllerRegister implements ControllerRegister {
       self.transports[id] = transport;
       ctx.set({
         'content-type': 'text/event-stream',
-        'transfer-encoding': 'chunked',
       });
       ctx.respond = false;
       const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
