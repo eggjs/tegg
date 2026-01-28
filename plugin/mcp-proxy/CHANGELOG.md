@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.71.1](https://github.com/eggjs/tegg/compare/v3.71.0...v3.71.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* mcp proxy header ([#397](https://github.com/eggjs/tegg/issues/397)) ([d79cf73](https://github.com/eggjs/tegg/commit/d79cf735e535fe41756a4a349e1b04a556f81ce9))
+
+
+
+
+
 # [3.71.0](https://github.com/eggjs/tegg/compare/v3.70.1...v3.71.0) (2026-01-26)
 
 **Note:** Version bump only for package @eggjs/mcp-proxy
