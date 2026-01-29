@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.23.0",
+    "@langchain/mcp-adapters": "^1.0.0",
     "sdk-base": "^5.0.1",
     "urllib": "^4.6.11"
   },

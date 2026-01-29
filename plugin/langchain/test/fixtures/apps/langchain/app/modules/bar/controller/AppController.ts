@@ -4,10 +4,10 @@ import {
   HTTPMethodEnum,
   Inject,
 } from '@eggjs/tegg';
-import { ChatModelQualifier, TeggBoundModel, TeggCompiledStateGraph } from '@eggjs/tegg-langchain-decorator';
+import { ChatModelQualifier, IGraphStructuredTool, TeggBoundModel, TeggCompiledStateGraph } from '@eggjs/tegg-langchain-decorator';
 import { ChatOpenAIModel } from '../../../../../../../../lib/ChatOpenAI';
 import { BoundChatModel } from '../service/BoundChatModel';
-import { FooGraph } from '../service/Graph';
+import { FooGraph, FooTool } from '../service/Graph';
 import { AIMessage } from 'langchain';
 
 @HTTPController({
@@ -23,6 +23,9 @@ export class AppController {
 
   @Inject()
   compiledFooGraph: TeggCompiledStateGraph<FooGraph>;
+
+  @Inject()
+  structuredFooTool: IGraphStructuredTool<FooTool>;
 
   @HTTPMethod({
     method: HTTPMethodEnum.GET,
@@ -58,6 +61,14 @@ export class AppController {
       value: res.messages.filter(msg => AIMessage.prototype.isPrototypeOf(msg)).reduce((pre, cur) => {
         return cur.content + pre;
       }, ''),
+    };
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/structured' })
+  async structured() {
+    return {
+      name: this.structuredFooTool.name,
+      description: this.structuredFooTool.description,
     };
   }
 }
