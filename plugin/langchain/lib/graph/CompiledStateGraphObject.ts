@@ -37,16 +37,10 @@ export class CompiledStateGraphObject implements EggObject {
     this._obj = await this.build();
     const graph = this._obj as CompiledStateGraph<any, any>;
 
-    const originalInvoke = graph.invoke;
     const originalStream = graph.stream;
     const langGraphTraceObj = await EggContainerFactory.getOrCreateEggObjectFromName('langGraphTracer');
     const tracer = langGraphTraceObj.obj as LangGraphTracer;
     tracer.setName(this.graphName);
-
-
-    graph.invoke = (input: any, config?: any) =>
-      this.wrapGraphMethod(originalInvoke.bind(graph), input, config);
-
     graph.stream = (input: any, config?: any) =>
       this.wrapGraphMethod(originalStream.bind(graph), input, config);
 
