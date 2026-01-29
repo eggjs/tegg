@@ -17,3 +17,20 @@ mcp:
       version: 1.0.0
       transportType: SSE
       type: http
+
+dataSource:
+  foo:
+    connectionLimit: 100
+    database: 'test_dal_plugin'
+    host: '127.0.0.1'
+    user: root
+    port: 3306
+    timezone: '+08:00'
+    forkDb: true
+
+filesystem:
+  clients:
+    foo:
+      dataSource: foo
+      cwd: '/langchain-plugin'
+      virtualMode: false
