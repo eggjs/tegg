@@ -1,0 +1,20 @@
+{
+  "name": "@eggjs/tegg-claude-code-plugin",
+  "version": "0.0.1",
+  "description": "WIP: Claude Code SDK v2-like session plumbing for tegg (ctx session + in-memory store)",
+  "main": "app.ts",
+  "types": "typings/index.d.ts",
+  "files": [
+    "app.ts",
+    "app",
+    "lib",
+    "config",
+    "typings"
+  ],
+  "eggPlugin": {
+    "name": "teggClaudeCode"
+  },
+  "dependencies": {
+    "uuid": "^9.0.1"
+  }
+}
