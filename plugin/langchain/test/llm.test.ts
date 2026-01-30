@@ -81,5 +81,30 @@ describe('plugin/langchain/test/llm.test.ts', () => {
       app.expectLog(/Executing FooNode thread_id is 1/);
       app.expectLog(/traceId=test-trace-id/);
     });
+
+    it('should persistRun be triggered when graph.invoke is called', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { LangGraphTracer } = require('../lib/tracing/LangGraphTracer');
+
+      const persistRunCalls: any[] = [];
+      const originalPersistRun = LangGraphTracer.prototype.persistRun;
+      mm(LangGraphTracer.prototype, 'persistRun', function(this: any, run: any) {
+        persistRunCalls.push(run);
+        return originalPersistRun.call(this, run);
+      });
+
+      app.mockLog();
+      mm(Tracer.prototype, 'traceId', 'test-persist-run-trace-id');
+
+      await app.httpRequest().get('/llm/graph');
+
+      assert(persistRunCalls.length > 0, 'persistRun should be called at least once');
+
+      const hasCorrectTraceId = persistRunCalls.some(run => run.trace_id === 'test-persist-run-trace-id');
+      assert(hasCorrectTraceId, 'persistRun should receive correct trace_id from invoke call');
+
+      app.expectLog(/agent_run/);
+      app.expectLog(/traceId=test-persist-run-trace-id/);
+    });
   }
 });
