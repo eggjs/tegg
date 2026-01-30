@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.71.2](https://github.com/eggjs/tegg/compare/v3.71.1...v3.71.2) (2026-01-30)
+
+
+### Bug Fixes
+
+* duplicate wrap tracer ([#398](https://github.com/eggjs/tegg/issues/398)) ([c20f55c](https://github.com/eggjs/tegg/commit/c20f55c8ad26ee2236911b3153466cfc17c95c19))
+
+
+
+
+
 ## [3.71.1](https://github.com/eggjs/tegg/compare/v3.71.0...v3.71.1) (2026-01-28)
 
 **Note:** Version bump only for package @eggjs/tegg-langchain
