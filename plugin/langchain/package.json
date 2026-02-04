@@ -74,7 +74,8 @@
     "koa-compose": "^3.2.1",
     "langchain": "^1.1.2",
     "sdk-base": "^4.2.0",
-    "urllib": "^4.4.0"
+    "urllib": "^4.4.0",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "^3.71.2",
