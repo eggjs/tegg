@@ -161,7 +161,6 @@ describe('plugin/mcp-client/test/mcpclient.test.ts', () => {
                 'a',
                 'b',
               ],
-              $schema: 'http://json-schema.org/draft-07/schema#',
             },
           },
         ],
