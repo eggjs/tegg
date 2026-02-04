@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-lifecycle",
-  "version": "3.71.2",
+  "version": "3.72.0",
   "description": "tegg lifecycle definition",
   "keywords": [
     "egg",
@@ -39,8 +39,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.71.2",
-    "@eggjs/tegg-types": "^3.71.2"
+    "@eggjs/core-decorator": "^3.72.0",
+    "@eggjs/tegg-types": "^3.72.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
