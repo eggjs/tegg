@@ -1,0 +1,60 @@
+{
+  "name": "@eggjs/tegg-vitest-adapter",
+  "version": "3.72.0",
+  "description": "Vitest adapter for tegg context injection",
+  "keywords": [
+    "egg",
+    "tegg",
+    "vitest",
+    "test",
+    "adapter"
+  ],
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./runner": {
+      "types": "./dist/runner.d.ts",
+      "default": "./dist/runner.js"
+    }
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "tsc -b --clean",
+    "tsc:pub": "ut run clean && tsc -p ./tsconfig.pub.json",
+    "test": "vitest run"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/tegg.git",
+    "directory": "core/vitest-adapter"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "egg-mock": "^5.5.0"
+  },
+  "peerDependencies": {
+    "vitest": "^1.6.0 || ^2.0.0 || ^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.4",
+    "typescript": "^5.0.4",
+    "vitest": "^1.6.0",
+    "egg": "^3.9.1",
+    "egg-tracer": "^2.0.0"
+  }
+}
