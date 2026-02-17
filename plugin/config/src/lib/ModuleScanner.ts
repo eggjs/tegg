@@ -25,7 +25,7 @@ export class ModuleScanner {
     const appPkg: { egg?: { framework?: string } } = JSON.parse(readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8'));
     const framework = appPkg.egg?.framework;
     if (!framework) {
-      return moduleReferences;
+      return ModuleConfigUtil.deduplicateModules(moduleReferences);
     }
     const frameworkPkg = importResolve(`${framework}/package.json`, {
       paths: [ this.baseDir ],
@@ -33,17 +33,13 @@ export class ModuleScanner {
     const frameworkDir = path.dirname(frameworkPkg);
     debug('loadModuleReferences from framework:%o, frameworkDir:%o', framework, frameworkDir);
     const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});
-    const result = [
+
+    // Merge all module references and deduplicate
+    const allModuleReferences = [
       ...moduleReferences,
+      ...optionalModuleReferences.map(ref => ({ ...ref, optional: true })),
     ];
-    for (const optionalModuleReference of optionalModuleReferences) {
-      if (!result.some(t => t.path === optionalModuleReference.path)) {
-        result.push({
-          ...optionalModuleReference,
-          optional: true,
-        });
-      }
-    }
-    return result;
+
+    return ModuleConfigUtil.deduplicateModules(allModuleReferences);
   }
 }
