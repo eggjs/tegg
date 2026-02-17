@@ -81,7 +81,11 @@
     "@eggjs/tegg-transaction-decorator": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
+  "peerDependencies": {
+    "@eggjs/tegg-dal-plugin": "workspace:*"
+  },
   "devDependencies": {
+    "@eggjs/tegg-dal-plugin": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
