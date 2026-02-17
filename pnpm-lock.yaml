@@ -1053,6 +1053,9 @@ importers:
         specifier: workspace:*
         version: link:../types
     devDependencies:
+      '@eggjs/tegg-dal-plugin':
+        specifier: workspace:*
+        version: link:../../plugin/dal
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8

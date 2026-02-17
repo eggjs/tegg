@@ -32,7 +32,7 @@ export class BaseSqlMapGenerator {
                FROM \`${this.tableModel.name}\`
                WHERE `;
 
-    sql += primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{$${indexKey.propertyName}}}`)
+    sql += primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{$${indexKey.propertyName} | param}}`)
       .join(' AND ');
     if (primary.keys.length === 1) {
       result.push({
@@ -60,7 +60,7 @@ export class BaseSqlMapGenerator {
                  WHERE `;
 
       sql += index.keys.map(indexKey => {
-        const s = `\`${indexKey.columnName}\` {{ "IS" if $${indexKey.propertyName} == null else "=" }} {{$${indexKey.propertyName}}}`;
+        const s = `\`${indexKey.columnName}\` {{ "IS" if $${indexKey.propertyName} == null else "=" }} {{$${indexKey.propertyName} | param}}`;
         return s;
       })
         .join(' AND ');
@@ -144,7 +144,7 @@ export class BaseSqlMapGenerator {
           ,
           {% endif %}
 
-          {{$${propertyName}}}
+          {{$${propertyName} | param}}
         {% endif %}
         `).trim());
         }
@@ -184,7 +184,7 @@ export class BaseSqlMapGenerator {
         ,
         {% endif %}
 
-        {{ $${propertyName} if $${propertyName} !== undefined else '${now}' }}
+        {{ ($${propertyName} | param) if $${propertyName} !== undefined else '${now}' }}
         `).trim());
       }
     }
@@ -230,7 +230,7 @@ export class BaseSqlMapGenerator {
         ,
         {% endif %}
 
-        \`${columnName}\` = {{$${propertyName}}}
+        \`${columnName}\` = {{$${propertyName} | param}}
       {% endif %}
       ` :
 
@@ -242,13 +242,13 @@ export class BaseSqlMapGenerator {
       {% endif %}
 
       \`${columnName}\` =
-      {{ $${propertyName} if $${propertyName} !== undefined else '${now}' }}
+      {{ ($${propertyName} | param) if $${propertyName} !== undefined else '${now}' }}
       `;
       kv.push(temp);
     }
 
     sql += kv.join('');
-    sql += `WHERE ${primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{primary.${indexKey.propertyName}}}`)
+    sql += `WHERE ${primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{primary.${indexKey.propertyName} | param}}`)
       .join(' AND ')}`;
 
     return sql;
@@ -265,7 +265,7 @@ export class BaseSqlMapGenerator {
                FROM \`${this.tableModel.name}\`
                WHERE `;
 
-    sql += primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{${indexKey.propertyName}}}`)
+    sql += primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{${indexKey.propertyName} | param}}`)
       .join(' AND ');
 
     return sql;

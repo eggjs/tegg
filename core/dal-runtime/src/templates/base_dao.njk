@@ -140,12 +140,14 @@ export class Base{{ clazzName }}DAO {
   {% for idx in table.indices %}
   // empty-line
   {# 某个索引 #}
+  {% if idx.type !== 'PRIMARY' %}
   {% set tmpName = ((idx.keys[0].propertyName if (idx.keys | length) === 1 else idx.name) | pascalCase) %}
   {% set findName = 'findBy' + tmpName %}
   {% set findOneName = 'findOneBy' + tmpName %}
     {{ findLogic(findName, findName, idx, false) }}
     // empty-line
     {{ findLogic(findOneName, findOneName, idx, true) }}
+  {% endif %}
   {% endfor %}
 
   // empty-line
@@ -154,10 +156,10 @@ export class Base{{ clazzName }}DAO {
     {% set tmpName = ((primaryIndex.keys[0].propertyName if (primaryIndex.keys | length) === 1 else primaryIndex.name) | pascalCase) %}
     {% set findName = 'findBy' + tmpName %}
     {% set findOneName = 'findOneBy' + tmpName %}
-      {{ findLogic(findName, findName, primaryIndex, true) }}
-      {% if (primaryIndex.keys | length) === 1 %}
+      {{ findLogic(findName, 'findByPrimary', primaryIndex, true) }}
+      {% if (primaryIndex.keys | length) > 0 %}
       // empty-line
-      {{ findLogic('findByPrimary', findName, primaryIndex, true) }}
+      {{ findLogic('findByPrimary', 'findByPrimary', primaryIndex, true) }}
       {% endif %}
   {% endif %}
 }
