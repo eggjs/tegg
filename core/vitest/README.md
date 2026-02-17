@@ -1,4 +1,4 @@
-# @eggjs/tegg-vitest-adapter
+# @eggjs/tegg-vitest
 
 Vitest adapter that provides tegg context injection and lifecycle handling via a custom Vitest runner.
 
@@ -14,7 +14,7 @@ This package lives in the tegg monorepo workspace.
 // vitest.setup.ts
 import path from 'path';
 import mm from 'egg-mock';
-import { configureTeggRunner } from '@eggjs/tegg-vitest-adapter';
+import { configureTeggRunner } from '@eggjs/tegg-vitest';
 
 const app = mm.app({
   baseDir: path.join(__dirname, 'fixtures/apps/my-app'),
@@ -37,7 +37,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
-    runner: '@eggjs/tegg-vitest-adapter/runner',
+    runner: '@eggjs/tegg-vitest/runner',
   },
 });
 ```

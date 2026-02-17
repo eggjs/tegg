@@ -29,15 +29,18 @@ describe('vitest adapter ctx semantics', () => {
   });
 
   afterAll(async () => {
-    afterCtx = getCtx();
-    assert(beforeCtx);
-    assert(beforeCtx !== itCtxList.foo);
-    assert(itCtxList.foo !== itCtxList.bar);
-    assert.strictEqual(afterCtx, beforeCtx);
-    assert.strictEqual(beforeEachCtxList.foo, afterEachCtxList.foo);
-    assert.strictEqual(beforeEachCtxList.foo, itCtxList.foo);
-    await app.close();
-    await mm.restore();
+    try {
+      afterCtx = getCtx();
+      assert(beforeCtx);
+      assert(beforeCtx !== itCtxList.foo);
+      assert(itCtxList.foo !== itCtxList.bar);
+      assert.strictEqual(afterCtx, beforeCtx);
+      assert.strictEqual(beforeEachCtxList.foo, afterEachCtxList.foo);
+      assert.strictEqual(beforeEachCtxList.foo, itCtxList.foo);
+    } finally {
+      await app.close();
+      await mm.restore();
+    }
   });
 
   describe('foo', () => {

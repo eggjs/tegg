@@ -99,15 +99,18 @@ describe('ctxStorage.getStore restore', () => {
   });
 
   afterAll(async () => {
-    // After all tests, suite context is restored
-    assert.strictEqual(getCtx(), suiteCtx);
-    assert.strictEqual(testCtxList.length, afterEachCtxList.length);
-    testCtxList.forEach((ctx, index) => {
-      assert.notStrictEqual(ctx, suiteCtx);
-      assert.strictEqual(ctx, afterEachCtxList[index]);
-    });
-    assert.notStrictEqual(testCtxList[0], testCtxList[1]);
-    await app.close();
-    await mm.restore();
+    try {
+      // After all tests, suite context is restored
+      assert.strictEqual(getCtx(), suiteCtx);
+      assert.strictEqual(testCtxList.length, afterEachCtxList.length);
+      testCtxList.forEach((ctx, index) => {
+        assert.notStrictEqual(ctx, suiteCtx);
+        assert.strictEqual(ctx, afterEachCtxList[index]);
+      });
+      assert.notStrictEqual(testCtxList[0], testCtxList[1]);
+    } finally {
+      await app.close();
+      await mm.restore();
+    }
   });
 });
