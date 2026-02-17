@@ -43,10 +43,10 @@ export class DataSource<T> implements IDataSource<T> {
     };
   }
 
-  async count(sqlName: string, data?: any): Promise<number> {
+  async count(sqlName: string, data?: any, options?: EggQueryOptions): Promise<number> {
     const newData = Object.assign({ $$count: true }, data);
     const executeSql = await this.generateSql(sqlName, newData);
-    return await this.#paginateCount(executeSql.sql, executeSql.params);
+    return await this.#paginateCount(executeSql.sql, executeSql.params, options);
   }
 
   async execute(sqlName: string, data?: any, options?: EggQueryOptions): Promise<Array<T>> {
@@ -83,7 +83,7 @@ export class DataSource<T> implements IDataSource<T> {
 
     const ret = await Promise.all([
       this.mysqlDataSource.query(sql, generated.params, options),
-      this.#paginateCount(countGenerated.sql, countGenerated.params),
+      this.#paginateCount(countGenerated.sql, countGenerated.params, options),
     ]);
 
     return {
@@ -93,10 +93,10 @@ export class DataSource<T> implements IDataSource<T> {
     };
   }
 
-  async #paginateCount(baseSQL: string, params?: any[]): Promise<number> {
+  async #paginateCount(baseSQL: string, params: any[], options?: EggQueryOptions): Promise<number> {
     const sql = `${PAGINATE_COUNT_WRAPPER[0]}${baseSQL}${PAGINATE_COUNT_WRAPPER[1]}`;
 
-    const result = await this.mysqlDataSource.query(sql, params);
+    const result = await this.mysqlDataSource.query(sql, params, options);
 
     return result[0].count;
   }
