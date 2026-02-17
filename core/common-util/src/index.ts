@@ -11,3 +11,4 @@ export * from './ProxyUtil.ts';
 export * from './ModuleConfig.ts';
 export * from './ModuleConfigs.ts';
 export * from './TimerUtil.ts';
+export * from './StreamUtil.ts';

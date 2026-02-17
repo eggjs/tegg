@@ -1,6 +1,9 @@
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import type { Context, Next } from 'egg';
 import { type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
+import { StreamUtil } from '@eggjs/tegg-common-util';
+// @ts-expect-error - no type declarations available
+import awaitFirst from 'await-first';
 
 import { EggContextImpl } from './EggContextImpl.ts';
 
@@ -23,14 +26,27 @@ export async function ctxLifecycleMiddleware(ctx: Context, next: Next) {
   if (teggCtx.init) {
     await teggCtx.init(lifecycleCtx);
   }
+
+  async function doDestroy() {
+    if (StreamUtil.isStream(ctx.response.body)) {
+      try {
+        await awaitFirst(ctx.response.body, [ 'close', 'error' ]);
+      } catch (error) {
+        ctx.res.destroy(error as Error);
+      }
+    }
+    try {
+      if (teggCtx.destroy) {
+        await teggCtx.destroy(lifecycleCtx);
+      }
+    } catch (e: any) {
+      e.message = '[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed:' + e.message;
+      ctx.logger.error(e);
+    }
+  }
   try {
     await next();
   } finally {
-    if (teggCtx.destroy) {
-      teggCtx.destroy(lifecycleCtx).catch(e => {
-        e.message = `[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed: ${e.message}`;
-        ctx.logger.error(e);
-      });
-    }
+    doDestroy();
   }
 }

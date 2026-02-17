@@ -75,6 +75,8 @@
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
+    "await-event": "catalog:",
+    "await-first": "catalog:",
     "extend2": "catalog:",
     "sdk-base": "catalog:"
   },
