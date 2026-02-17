@@ -1,0 +1,65 @@
+import mm, { type MockApplication } from 'egg-mock';
+import assert from 'assert';
+import path from 'path';
+import * as utils from './utils';
+
+describe('test/dns_cache_resolve.test.ts', () => {
+  let app: MockApplication;
+  let url = '';
+
+  before(async () => {
+    mm(process.env, 'EGG_TYPESCRIPT', true);
+    mm(process, 'cwd', () => {
+      return path.join(__dirname, '..');
+    });
+    app = mm.app({
+      baseDir: path.join(__dirname, './fixtures/apps/dns_cache_resolve'),
+      framework: require.resolve('egg'),
+    });
+    await app.ready();
+    url = await utils.startLocalServer();
+    try {
+      app.dnsResolver.setServers([ '223.5.5.5', '223.6.6.6' ]);
+    } catch (error) {
+      app.logger.error(
+        `[dns-cache] Failed to set DNS servers: ${error.message}`,
+      );
+    }
+  });
+  after(() => app.close());
+  afterEach(mm.restore);
+
+  it('should dns resolver exist', () => {
+    assert(app.dnsResolver);
+    assert(app.dnsResolver.getDnsCache());
+  });
+
+  it('should ctx.curl dns work', async () => {
+    // Test with 127.0.0.1 (no DNS lookup needed for IP addresses)
+    const result1 = await app.curl(url + '/get_headers', { method: 'GET' });
+    assert(result1.status === 200);
+    assert(result1.data);
+
+    // Test with real domain name (requires DNS resolution)
+    url = url.replace('127.0.0.1', 'localhost');
+    const result2 = await app.curl(url + '/get_headers', { method: 'GET' });
+    assert(result2.status === 200);
+
+    const result3 = await app
+      .httpRequest()
+      .get('/?url=' + encodeURIComponent('https://www.aliyun.com/'));
+    const status = result3.status;
+    assert(status === 200 || status === 301 || status === 302);
+  });
+
+  it('should throw error when the first dns lookup fail', async () => {
+    await app
+      .httpRequest()
+      .get(
+        '/?url=' +
+          encodeURIComponent('http://notexists-1111111local-domain.com'),
+      )
+      .expect(500)
+      .expect(/queryA ENOTFOUND notexists-1111111local-domain\.com/);
+  });
+});
