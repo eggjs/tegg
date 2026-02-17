@@ -3,3 +3,7 @@ export * from './HTTPCookies.ts';
 export * from './HTTPMethodMeta.ts';
 export * from './HTTPRequest.ts';
 export * from './HTTPResponse.ts';
+export * from './MCPControllerMeta.ts';
+export * from './MCPPromptMeta.ts';
+export * from './MCPResourceMeta.ts';
+export * from './MCPToolMeta.ts';

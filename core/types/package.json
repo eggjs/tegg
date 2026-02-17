@@ -27,6 +27,10 @@
     "./controller-decorator/HTTPMethod": "./src/controller-decorator/HTTPMethod.ts",
     "./controller-decorator/HTTPParam": "./src/controller-decorator/HTTPParam.ts",
     "./controller-decorator/MetadataKey": "./src/controller-decorator/MetadataKey.ts",
+    "./controller-decorator/MCPController": "./src/controller-decorator/MCPController.ts",
+    "./controller-decorator/MCPPromptParams": "./src/controller-decorator/MCPPromptParams.ts",
+    "./controller-decorator/MCPResourceParams": "./src/controller-decorator/MCPResourceParams.ts",
+    "./controller-decorator/MCPToolParams": "./src/controller-decorator/MCPToolParams.ts",
     "./controller-decorator/model": "./src/controller-decorator/model/index.ts",
     "./controller-decorator/model/ControllerMetadata": "./src/controller-decorator/model/ControllerMetadata.ts",
     "./controller-decorator/model/MethodMeta": "./src/controller-decorator/model/MethodMeta.ts",
@@ -143,6 +147,10 @@
       "./controller-decorator/HTTPMethod": "./dist/controller-decorator/HTTPMethod.js",
       "./controller-decorator/HTTPParam": "./dist/controller-decorator/HTTPParam.js",
       "./controller-decorator/MetadataKey": "./dist/controller-decorator/MetadataKey.js",
+      "./controller-decorator/MCPController": "./dist/controller-decorator/MCPController.js",
+      "./controller-decorator/MCPPromptParams": "./dist/controller-decorator/MCPPromptParams.js",
+      "./controller-decorator/MCPResourceParams": "./dist/controller-decorator/MCPResourceParams.js",
+      "./controller-decorator/MCPToolParams": "./dist/controller-decorator/MCPToolParams.js",
       "./controller-decorator/model": "./dist/controller-decorator/model/index.js",
       "./controller-decorator/model/ControllerMetadata": "./dist/controller-decorator/model/ControllerMetadata.js",
       "./controller-decorator/model/MethodMeta": "./dist/controller-decorator/model/MethodMeta.js",
@@ -216,6 +224,9 @@
       "./transaction": "./dist/transaction.js",
       "./package.json": "./package.json"
     }
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.23.0"
   },
   "peerDependencies": {
     "egg": "catalog:"

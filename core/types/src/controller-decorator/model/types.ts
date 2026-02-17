@@ -7,6 +7,7 @@ export type { IncomingHttpHeaders } from 'node:http';
 
 export enum ControllerType {
   HTTP = 'HTTP',
+  MCP = 'MCP',
   SOFA_RPC = 'SOFA_RPC',
   SOFA_RPC_STREAM = 'SOFA_RPC_STREAM',
   MGW_RPC = 'MGW_RPC',
