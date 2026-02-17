@@ -26,7 +26,7 @@ export class MCPControllerMeta implements ControllerMetadata {
   readonly timeout?: number;
 
   get id() {
-    return `${this.name ?? this.controllerName}:${1.0}`;
+    return `${this.name ?? this.controllerName}:${this.version}`;
   }
 
   constructor(

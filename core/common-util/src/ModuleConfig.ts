@@ -346,9 +346,6 @@ export class ModuleConfigUtil {
           if (nameMap.get(existingRef.name) === existingRef) {
             nameMap.delete(existingRef.name);
           }
-          if (existingRef.name !== newModuleRef.name) {
-            nameMap.delete(existingRef.name);
-          }
           nameMap.set(newModuleRef.name, newModuleRef);
           continue;
         }

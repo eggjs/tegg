@@ -35,10 +35,11 @@ function findCrossCuttedClazz(globalGraph: GlobalGraph, protoNode: GraphNode<Pro
   }
   const crosscutInfoList = CrosscutInfoUtil.getCrosscutInfoList(proto.clazz);
   const result: GraphNode<ProtoNode, ProtoDependencyMeta>[] = [];
-  for (const crosscutInfo of crosscutInfoList) {
-    for (const protoNode of globalGraph.protoGraph.nodes.values()) {
+  for (const protoNode of globalGraph.protoGraph.nodes.values()) {
+    for (const crosscutInfo of crosscutInfoList) {
       if (checkClazzMatchCrossCut(protoNode, crosscutInfo)) {
         result.push(protoNode);
+        break;
       }
     }
   }

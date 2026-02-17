@@ -226,9 +226,19 @@ export class MCPProxyApiClient extends APIClientBase {
 
   async _init() {
     if (!this.isAgent) {
+      const validProxyActions = new Set<string>(['MCP_STDIO_PROXY', 'MCP_SEE_PROXY', 'MCP_STREAM_PROXY']);
       const server = http.createServer(async (req, res) => {
-        const type = req.headers['mcp-proxy-type'] as ProxyAction;
-        await this.proxyHandlerMap[type]?.(req, res);
+        const type = req.headers['mcp-proxy-type'] as string;
+        if (!type || !validProxyActions.has(type)) {
+          res.writeHead(400, { 'content-type': 'application/json' });
+          res.end(JSON.stringify({
+            jsonrpc: '2.0',
+            error: { code: -32600, message: 'Invalid proxy type' },
+            id: null,
+          }));
+          return;
+        }
+        await this.proxyHandlerMap[type as ProxyAction]?.(req, res);
       });
       this.port = this.app.config.mcp?.proxyPort + (cluster.worker?.id ?? 0);
       await new Promise(resolve => server.listen(this.port, () => {

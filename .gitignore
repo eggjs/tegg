@@ -50,3 +50,4 @@ plugin/tegg/test/fixtures/apps/**/*.js
 .egg
 .eslintcache
 !scripts/*.js
+!plugin/tegg/types.js
