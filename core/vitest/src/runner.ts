@@ -1,4 +1,5 @@
 import { VitestTestRunner } from 'vitest/runners';
+import type { VitestRunnerImportSource } from 'vitest/runners';
 import type { Suite, Task, File } from 'vitest';
 import {
   debugLog,
@@ -91,7 +92,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
    * Override importFile to capture per-file config set by configureTeggRunner()
    * and await app.ready() during collection phase.
    */
-  async importFile(filepath: string, source: string): Promise<unknown> {
+  async importFile(filepath: string, source: VitestRunnerImportSource): Promise<unknown> {
     // Clear stale state for this file before re-collection in watch mode
     if (source === 'collect') {
       this.fileAppMap.delete(filepath);
@@ -100,7 +101,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
     // Clear any stale config before importing
     delete (globalThis as any).__teggVitestConfig;
 
-    const result = await super.importFile(filepath, source as any);
+    const result = await super.importFile(filepath, source);
 
     if (source === 'collect') {
       const rawConfig = (globalThis as any).__teggVitestConfig;
