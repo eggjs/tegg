@@ -138,7 +138,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   }
 
   configDidLoad() {
-    GlobalGraph.instance!.registerBuildHook(middlewareGraphHook);
+    GlobalGraph.instance?.registerBuildHook(middlewareGraphHook);
   }
 
   async willReady() {

@@ -103,4 +103,11 @@ export class BaseMultiPrimaryKeyDAO {
       $id2,
     });
   }
+
+  public async findByPrimary($id1: ColumnTsType['INT'], $id2: ColumnTsType['INT']): Promise<MultiPrimaryKey | null> {
+    return this.dataSource.executeScalar('findByPrimary', {
+      $id1,
+      $id2,
+    });
+  }
 }
