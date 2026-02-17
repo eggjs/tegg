@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "baseUrl": "./"
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}

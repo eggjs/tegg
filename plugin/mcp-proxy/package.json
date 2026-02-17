@@ -1,0 +1,92 @@
+{
+  "name": "@eggjs/mcp-proxy",
+  "eggPlugin": {
+    "name": "mcpProxy",
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "eggModule": {
+    "name": "mcpProxy"
+  },
+  "version": "4.0.0-beta.11",
+  "description": "tegg mcp proxy plugin",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "aop",
+    "tegg"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./agent": "./src/agent.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/mcp-proxy",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/mcp-proxy"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/tegg-controller-plugin": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "await-event": "catalog:",
+    "cluster-client": "^3.7.0",
+    "content-type": "^1.0.5",
+    "eventsource-parser": "^3.0.1",
+    "koa-compose": "catalog:",
+    "raw-body": "^2.5.2",
+    "sdk-base": "catalog:",
+    "zod": "^4.0.0"
+  },
+  "peerDependencies": {
+    "egg": "catalog:",
+    "@eggjs/tegg-plugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "catalog:",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-aop-runtime": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "catalog:",
+    "eventsource": "^3.0.5",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./agent": "./dist/agent.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
