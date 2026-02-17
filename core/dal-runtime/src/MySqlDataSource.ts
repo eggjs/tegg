@@ -74,7 +74,7 @@ export class MysqlDataSource extends Base {
   async query<T = any>(sql: string, params?: any[], options?: EggQueryOptions): Promise<T> {
     const executeType = options?.executeType || this.executeType;
     if (executeType === 'execute') {
-      return (this.client as any).execute(sql, params, options);
+      return this.client.execute(sql, params, options);
     }
     return this.client.query(sql, params, options);
   }
