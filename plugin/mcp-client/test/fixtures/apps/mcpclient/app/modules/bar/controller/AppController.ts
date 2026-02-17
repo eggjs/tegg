@@ -59,7 +59,6 @@ export class AppController {
       transportType: 'STREAMABLE_HTTP',
       url: 'http://127.0.0.1:17263/',
     });
-    await client.init();
     const res = await client.listTools();
     return res;
   }
