@@ -491,13 +491,13 @@ export class BaseFooDAO {
   }
 
   public async findById($id: ColumnTsType['INT']): Promise<Foo | null> {
-    return this.dataSource.executeScalar('findById', {
+    return this.dataSource.executeScalar('findByPrimary', {
       $id,
     });
   }
 
   public async findByPrimary($id: ColumnTsType['INT']): Promise<Foo | null> {
-    return this.dataSource.executeScalar('findById', {
+    return this.dataSource.executeScalar('findByPrimary', {
       $id,
     });
   }

@@ -32,7 +32,7 @@ describe('test/Datasource.test.ts', () => {
         throw new Error('fake error');
       });
 
-      const mysql = new MysqlDataSource(mysqlOptions);
+      const mysql = new MysqlDataSource({ ...mysqlOptions, initRetryTimes: 1 });
       await assert.rejects(mysql.ready(), /fake error/);
       assert.equal(tracker.mock.callCount(), 1);
     });
