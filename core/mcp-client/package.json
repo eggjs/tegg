@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-client",
-  "version": "3.71.2",
+  "version": "3.72.0",
   "description": "tegg mcp client",
   "main": "dist/index.js",
   "files": [
@@ -36,6 +36,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
+    "@langchain/mcp-adapters": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.23.0",
     "sdk-base": "^5.0.1",
     "urllib": "^4.6.11"

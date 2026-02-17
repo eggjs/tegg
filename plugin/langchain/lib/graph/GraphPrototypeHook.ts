@@ -230,7 +230,7 @@ export class GraphPrototypeHook implements LifecycleHook<EggPrototypeLifecycleCo
       // 注入到所有依赖这个 graph node 的 graph
       for (const [ graphProto, nodeProtos ] of this.graphNodeProtoMap.entries()) {
         if (nodeProtos.includes(ctx.clazz)) {
-          if (!graphProto.injectObjects.find(injectObject => injectObject.refName === `__GRAPH_NODE_${String(ctx.clazz)}__`)) {
+          if (graphProto.injectObjects.find(injectObject => injectObject.refName === `__GRAPH_NODE_${String(ctx.clazz)}__`)) {
             continue;
           }
           graphProto.injectObjects.push({
@@ -250,7 +250,7 @@ export class GraphPrototypeHook implements LifecycleHook<EggPrototypeLifecycleCo
       // 注入到所有依赖这个 graph edge 的 graph
       for (const [ graphProto, edgeProtos ] of this.graphEdgeProtoMap.entries()) {
         if (edgeProtos.includes(ctx.clazz)) {
-          if (!graphProto.injectObjects.find(injectObject => injectObject.refName === `__GRAPH_EDGE_${String(ctx.clazz)}__`)) {
+          if (graphProto.injectObjects.find(injectObject => injectObject.refName === `__GRAPH_EDGE_${String(ctx.clazz)}__`)) {
             continue;
           }
           graphProto.injectObjects.push({

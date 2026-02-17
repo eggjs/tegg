@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.72.0](https://github.com/eggjs/tegg/compare/v3.71.2...v3.72.0) (2026-02-04)
+
+
+### Features
+
+* add structured tool ([#387](https://github.com/eggjs/tegg/issues/387)) ([56c23ad](https://github.com/eggjs/tegg/commit/56c23adb0af25ce0fd3624491eaf7af3fb1570cf))
+
+
+
+
+
 ## [3.71.2](https://github.com/eggjs/tegg/compare/v3.71.1...v3.71.2) (2026-01-30)
 
 **Note:** Version bump only for package @eggjs/mcp-client
