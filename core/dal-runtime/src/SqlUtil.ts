@@ -112,7 +112,15 @@ export class SqlUtil {
             case '\'': state = 'SINGLE_QUOTE'; break;
             case '-': state = 'MAY_BE_FIRST_COMMENT'; break;
             case '#': state = 'IN_COMMENT'; break;
-            case '/': state = 'MAY_BE_FIRST_BLOCK_COMMENT'; break;
+            case '/':
+              if (sql[i + 1] === '+') {
+                state = 'IN_BLOCK_COMMENT_HINT';
+                ret += '/*+';
+                i++;
+              } else {
+                state = 'IN_BLOCK_COMMENT';
+              }
+              break;
             default: state = 'CONTENT'; break;
           }
           if (!COMMENT_CHARS.includes(ch)) ret += ch;
