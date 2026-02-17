@@ -10,6 +10,10 @@ export class ModuleConfigs {
   get(moduleName: string): ModuleConfig | undefined {
     return this.inner[moduleName]?.config;
   }
+
+  * [Symbol.iterator](): Iterator<[string, ModuleConfigHolder]> {
+    yield* Object.entries(this.inner);
+  }
 }
 
 export type { ModuleConfig };
