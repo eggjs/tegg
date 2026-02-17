@@ -272,4 +272,26 @@ describe('test/aop-runtime.test.ts', () => {
       });
     });
   });
+
+  describe('mutil aop', () => {
+    it('should work', async () => {
+      const modules = await CoreTestHelper.prepareModules([
+        path.join(__dirname, '..'),
+        path.join(__dirname, 'fixtures/mutli/a'),
+        path.join(__dirname, 'fixtures/mutli/b'),
+        path.join(__dirname, 'fixtures/mutli/c'),
+        path.join(__dirname, 'fixtures/mutli/cross'),
+      ], [
+        crossCutGraphHook,
+        pointCutGraphHook,
+      ]);
+      assert.deepStrictEqual(modules.map(module => module.id), [
+        'LOAD_UNIT:teggAopRuntime:INSTANCE',
+        'LOAD_UNIT:helloPointCut:INSTANCE',
+        'LOAD_UNIT:aopModuleA:INSTANCE',
+        'LOAD_UNIT:aopModuleB:INSTANCE',
+        'LOAD_UNIT:aopModuleC:INSTANCE',
+      ]);
+    });
+  });
 });
