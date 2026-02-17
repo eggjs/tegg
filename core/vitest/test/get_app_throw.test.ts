@@ -3,7 +3,7 @@ import { describe, it, afterAll, vi } from 'vitest';
 import { configureTeggRunner } from '../src';
 
 let getAppCalls = 0;
-const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => { /* noop */ });
 
 configureTeggRunner({
   getApp() {

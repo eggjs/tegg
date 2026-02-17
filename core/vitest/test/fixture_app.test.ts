@@ -7,7 +7,7 @@ import { configureTeggRunner } from '../src';
 
 const require = createRequire(import.meta.url);
 const { HelloService } = require(
-  path.join(__dirname, 'fixtures/apps/demo-app/modules/demo-module/HelloService')
+  path.join(__dirname, 'fixtures/apps/demo-app/modules/demo-module/HelloService'),
 );
 
 const app = mm.app({
