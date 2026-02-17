@@ -94,10 +94,8 @@ export class MCPControllerRegister implements ControllerRegister {
   >();
   mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
   mcpServerMap: Record<string, McpServer> = {};
-  statelessMcpServerHelperMap: Record<string, MCPServerHelper> = {};
   private controllerMeta: MCPControllerMeta;
   mcpConfig: MCPConfig;
-  statelessTransportMap: Record<string, StreamableHTTPServerTransport> = {};
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
   // eslint-disable-next-line no-spaced-func
   sseTransportsRequestMap = new Map<
@@ -140,47 +138,10 @@ export class MCPControllerRegister implements ControllerRegister {
     MCPControllerRegister.hooks.push(hook);
   }
 
-  static async connectStatelessStreamTransport(name?: string) {
-    if (
-      MCPControllerRegister.instance &&
-      MCPControllerRegister.instance.statelessTransportMap
-    ) {
-      const serverHelper =
-        MCPControllerRegister.instance.statelessMcpServerHelperMap[
-          name ?? 'default'
-        ];
-      const statelessTransport =
-        MCPControllerRegister.instance.statelessTransportMap[name ?? 'default'];
-      if (serverHelper && statelessTransport) {
-        await serverHelper.server.connect(statelessTransport);
-        // 由于 mcp server stateless 需要我们在这里 init
-        // 以防止后续请求进入时初次 init 后，请求打到别的进程，而别的进程没有 init
-        const socket = new Socket();
-        const req = new IncomingMessage(socket);
-        const res = new ServerResponse(req);
-        req.method = 'POST';
-        req.url =
-          MCPControllerRegister.instance.mcpConfig.getStatelessStreamPath(name);
-        req.headers = {
-          accept: 'application/json, text/event-stream',
-          'content-type': 'application/json',
-        };
-        const initBody = {
-          jsonrpc: '2.0',
-          id: 0,
-          method: 'initialize',
-          params: {
-            protocolVersion: '2024-11-05',
-            capabilities: {},
-            clientInfo: {
-              name: 'init-client',
-              version: '1.0.0',
-            },
-          },
-        };
-        await statelessTransport.handleRequest(req, res, initBody);
-      }
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  static async connectStatelessStreamTransport(_name?: string) {
+    // No-op: MCP SDK >= 1.26 requires stateless transports to be single-use,
+    // so transports are now created per-request in the route handler.
   }
 
   static clean() {
@@ -193,24 +154,50 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpStatelessStreamServerInit(name?: string) {
     const postRouterFunc = this.router.post;
     const self = this;
-    const transport: StreamableHTTPServerTransport =
-      new StreamableHTTPServerTransport({
-        sessionIdGenerator: undefined,
-      });
-    self.statelessTransportMap[name ?? 'default'] = transport;
     let mw = self.app.middleware.teggCtxLifecycleMiddleware();
     if (self.globalMiddlewares) {
       mw = compose([ mw, self.globalMiddlewares ]);
     }
-    const onmessage = transport.onmessage;
-
-    transport.onmessage = async (message: JSONRPCMessage, extra?: MessageExtraInfo) => {
-      if (self.app.currentContext) {
-        self.app.currentContext.mcpArg = message;
-      }
-      onmessage && await onmessage(message, extra);
-    };
     const initHandler = async (ctx: Context) => {
+      // Create fresh transport and server per request
+      // MCP SDK >= 1.26 requires stateless transports to be single-use
+      const transport: StreamableHTTPServerTransport =
+        new StreamableHTTPServerTransport({
+          sessionIdGenerator: undefined,
+        });
+      const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
+      const registerEntry = self.registerMap[name ?? 'default'];
+      if (registerEntry) {
+        for (const tool of registerEntry.tools) {
+          await mcpServerHelper.mcpToolRegister(
+            tool.getOrCreateEggObject,
+            tool.proto,
+            tool.meta,
+          );
+        }
+        for (const resource of registerEntry.resources) {
+          await mcpServerHelper.mcpResourceRegister(
+            resource.getOrCreateEggObject,
+            resource.proto,
+            resource.meta,
+          );
+        }
+        for (const prompt of registerEntry.prompts) {
+          await mcpServerHelper.mcpPromptRegister(
+            prompt.getOrCreateEggObject,
+            prompt.proto,
+            prompt.meta,
+          );
+        }
+      }
+      await mcpServerHelper.server.connect(transport);
+      const onmessage = transport.onmessage;
+      transport.onmessage = async (message: JSONRPCMessage, extra?: MessageExtraInfo) => {
+        if (self.app.currentContext) {
+          self.app.currentContext.mcpArg = message;
+        }
+        onmessage && await onmessage(message, extra);
+      };
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
           await hook.preHandle?.(self.app.currentContext);
@@ -701,14 +688,6 @@ export class MCPControllerRegister implements ControllerRegister {
             hooks: MCPControllerRegister.hooks,
           });
         };
-        this.statelessMcpServerHelperMap[metadata.name ?? 'default'] =
-          new MCPServerHelper({
-            name:
-              this.controllerMeta.name ??
-              `chair-mcp-${metadata.name ?? this.app.name}-server`,
-            version: this.controllerMeta.version ?? '1.0.0',
-            hooks: MCPControllerRegister.hooks,
-          });
         this.mcpStatelessStreamServerInit(metadata.name);
         this.mcpStreamServerInit(metadata.name);
         this.mcpServerInit(metadata.name);
@@ -717,8 +696,6 @@ export class MCPControllerRegister implements ControllerRegister {
           this.mcpConfig.setMultipleServerPath(this.app, metadata.name);
         }
       }
-      const statelessMcpServerHelper =
-        this.statelessMcpServerHelperMap[metadata.name ?? 'default'];
       for (const prompt of metadata.prompts) {
         if (!this.registerMap[metadata.name ?? 'default']) {
           this.registerMap[metadata.name ?? 'default'] = {
@@ -734,13 +711,6 @@ export class MCPControllerRegister implements ControllerRegister {
           proto,
           meta: prompt,
         });
-        await statelessMcpServerHelper.mcpPromptRegister(
-          this.eggContainerFactory.getOrCreateEggObject.bind(
-            this.eggContainerFactory,
-          ),
-          proto,
-          prompt,
-        );
       }
       for (const resource of metadata.resources) {
         if (!this.registerMap[metadata.name ?? 'default']) {
@@ -757,13 +727,6 @@ export class MCPControllerRegister implements ControllerRegister {
           proto,
           meta: resource,
         });
-        await statelessMcpServerHelper.mcpResourceRegister(
-          this.eggContainerFactory.getOrCreateEggObject.bind(
-            this.eggContainerFactory,
-          ),
-          proto,
-          resource,
-        );
       }
       for (const tool of metadata.tools) {
         if (!this.registerMap[metadata.name ?? 'default']) {
@@ -780,13 +743,6 @@ export class MCPControllerRegister implements ControllerRegister {
           proto,
           meta: tool,
         });
-        await statelessMcpServerHelper.mcpToolRegister(
-          this.eggContainerFactory.getOrCreateEggObject.bind(
-            this.eggContainerFactory,
-          ),
-          proto,
-          tool,
-        );
       }
       this.registeredControllerProtos.push(proto);
     }
