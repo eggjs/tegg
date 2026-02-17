@@ -18,7 +18,7 @@ export default class ModuleLangChainHook implements IBoot {
   constructor(app: Application) {
     this.#app = app;
     this.#graphObjectHook = new GraphObjectHook();
-    this.#graphLoadUnitHook = new GraphLoadUnitHook(this.#app.eggPrototypeFactory);
+    this.#graphLoadUnitHook = new GraphLoadUnitHook(this.#app.eggPrototypeFactory as any);
     this.#boundModelObjectHook = new BoundModelObjectHook();
     this.#graphPrototypeHook = new GraphPrototypeHook();
     this.#app.loadUnitLifecycleUtil.registerLifecycle(this.#graphLoadUnitHook);
@@ -27,7 +27,7 @@ export default class ModuleLangChainHook implements IBoot {
   configWillLoad() {
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#graphObjectHook);
     this.#app.eggObjectLifecycleUtil.registerLifecycle(this.#boundModelObjectHook);
-    this.#app.eggObjectFactory.registerEggObjectCreateMethod(CompiledStateGraphProto, CompiledStateGraphObject.createObject);
+    this.#app.eggObjectFactory.registerEggObjectCreateMethod(CompiledStateGraphProto as any, CompiledStateGraphObject.createObject);
     this.#app.eggPrototypeLifecycleUtil.registerLifecycle(this.#graphPrototypeHook);
   }
 

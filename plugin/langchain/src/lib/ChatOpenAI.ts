@@ -45,11 +45,11 @@ export class ChatOpenAIModel extends ChatOpenAI {
     @Inject() readonly moduleConfig: ModuleConfig,
     @MultiInstanceInfo([ ChatModelQualifierAttribute ]) objInfo: ObjectInfo,
   ) {
-    const chatConfig = getChatModelConfig(moduleConfig, objInfo);
+    const chatConfig = getChatModelConfig(moduleConfig, objInfo) as any;
     chatConfig.configuration = chatConfig.configuration || {};
     // 如果依赖中存在低版本 urllib 会引发问题，因此需要手动设置好
     FetchFactory.setDispatcher(new Agent({ allowH2: true }));
-    (chatConfig.configuration as any).fetch = fetch as any;
-    super(chatConfig as any);
+    chatConfig.configuration.fetch = fetch as any;
+    super(chatConfig);
   }
 }

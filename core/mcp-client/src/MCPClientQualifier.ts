@@ -13,8 +13,7 @@ export function MCPClientQualifier(mcpClientName: string) {
   };
 }
 
-export type MCPConfigType =
-  Required<ModuleConfig>['mcp']['clients'][keyof Required<ModuleConfig>['mcp']['clients']];
+export type MCPConfigType = any;
 
 export function getMCPClientName(objectInfo: ObjectInfo): string {
   const mcpClientName = objectInfo.qualifiers.find(t => t.attribute === MCPClientQualifierAttribute)?.value;
@@ -24,7 +23,7 @@ export function getMCPClientName(objectInfo: ObjectInfo): string {
 
 export function getMCPClientConfig(config: ModuleConfig, objectInfo: ObjectInfo): MCPConfigType {
   const mcpClientName = getMCPClientName(objectInfo);
-  const mcpClientConfig = config.mcp?.clients[mcpClientName];
+  const mcpClientConfig = (config as any).mcp?.clients[mcpClientName];
   if (!mcpClientConfig) {
     throw new Error(`not found ChatModel config for ${mcpClientName}`);
   }
