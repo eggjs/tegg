@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function () {
+module.exports = function (appInfo) {
   const config = {
     keys: 'test key',
     logger: {
       level: 'DEBUG',
-      consoleLevel: 'DEBUG',
+      consoleLevel: 'NONE',
     },
     httpclient: {
       httpAgent: {
@@ -18,7 +18,7 @@ module.exports = function () {
       lookupInterval: 3000,
       addressRotation: true,
       resolveLocalhost: false,
-    }
+    },
   }
   return config;
 };
