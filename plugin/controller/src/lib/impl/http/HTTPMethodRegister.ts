@@ -12,6 +12,7 @@ import {
   QueryParamMeta,
   HTTPCookies,
 } from '@eggjs/tegg';
+import { TimerUtil } from '@eggjs/tegg-common-util';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
 import pathToRegexp from 'path-to-regexp';
@@ -56,6 +57,7 @@ export class HTTPMethodRegister {
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
     const methodArgsLength = argsLength + (hasContext ? 1 : 0);
+    const timeout = this.controllerMeta.getMethodTimeout(methodMeta);
     // eslint-disable-next-line
     const self = this;
     return async function(ctx: Context, next: Next) {
@@ -109,7 +111,17 @@ export class HTTPMethodRegister {
             assert.fail('never arrive');
         }
       }
-      const body = await Reflect.apply(realMethod, realObj, args);
+      let body: unknown;
+      try {
+        body = await TimerUtil.timeout<unknown>(() => Reflect.apply(realMethod, realObj, args), timeout);
+      } catch (e: any) {
+        if (e instanceof TimerUtil.TimeoutError) {
+          ctx.logger.error(`timeout after ${timeout}ms`);
+          ctx.throw(500, 'timeout');
+        }
+        throw e;
+      }
+
       // https://github.com/koajs/koa/blob/master/lib/response.js#L88
       // ctx.status is set
       const explicitStatus = (ctx.response as any)._explicitStatus;

@@ -1939,6 +1939,12 @@ importers:
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
+      await-event:
+        specifier: 'catalog:'
+        version: 2.1.0
+      await-first:
+        specifier: 'catalog:'
+        version: 1.0.0
       extend2:
         specifier: 'catalog:'
         version: 4.0.0
