@@ -3,6 +3,7 @@ import {
   CONTROLLER_HOST,
   CONTROLLER_MIDDLEWARES,
   CONTROLLER_NAME,
+  CONTROLLER_TIMEOUT_METADATA,
   CONTROLLER_TYPE, type IAdvice,
 } from '@eggjs/tegg-types';
 import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@eggjs/tegg-types';
@@ -61,5 +62,13 @@ export class ControllerInfoUtil {
 
   static getControllerHosts(clazz: EggProtoImplClass): string[] | undefined {
     return MetadataUtil.getMetaData(CONTROLLER_HOST, clazz);
+  }
+
+  static setControllerTimeout(timeout: number, clazz: EggProtoImplClass) {
+    MetadataUtil.defineMetaData(CONTROLLER_TIMEOUT_METADATA, timeout, clazz);
+  }
+
+  static getControllerTimeout(clazz: EggProtoImplClass): number | undefined {
+    return MetadataUtil.getMetaData(CONTROLLER_TIMEOUT_METADATA, clazz);
   }
 }

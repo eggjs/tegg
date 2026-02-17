@@ -424,6 +424,9 @@ importers:
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.23.0
+        version: 1.26.0(@cfworker/json-schema@4.1.1)(zod@4.3.6)
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -1124,6 +1127,9 @@ importers:
 
   core/types:
     dependencies:
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.23.0
+        version: 1.26.0(@cfworker/json-schema@4.1.1)(zod@4.3.6)
       egg:
         specifier: 'catalog:'
         version: 4.1.0-beta.26
@@ -1324,18 +1330,36 @@ importers:
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../../core/types
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.23.0
+        version: 1.26.0(@cfworker/json-schema@4.1.1)(zod@4.3.6)
+      await-event:
+        specifier: 'catalog:'
+        version: 2.1.0
+      content-type:
+        specifier: ^1.0.5
+        version: 1.0.5
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
       globby:
         specifier: 'catalog:'
         version: 14.1.0
+      koa-compose:
+        specifier: 'catalog:'
+        version: 4.1.0
       path-to-regexp:
         specifier: 'catalog:'
         version: 1.9.0
+      raw-body:
+        specifier: ^2.5.2
+        version: 2.5.2
       sdk-base:
         specifier: 'catalog:'
         version: 5.0.1
+      zod:
+        specifier: ^4.0.0
+        version: 4.3.6
     devDependencies:
       '@eggjs/mock':
         specifier: 'catalog:'
@@ -1352,6 +1376,9 @@ importers:
       '@eggjs/tracer':
         specifier: 'catalog:'
         version: 4.0.0-beta.26(egg@4.1.0-beta.26)
+      '@types/koa-compose':
+        specifier: 'catalog:'
+        version: 3.2.8
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8
@@ -9330,7 +9357,7 @@ snapshots:
     dependencies:
       '@types/node': 18.19.130
       extend: 3.0.2
-      form-data: 4.0.4
+      form-data: 4.0.5
       ibm-cloud-sdk-core: 5.4.6
     transitivePeerDependencies:
       - supports-color
@@ -10017,7 +10044,7 @@ snapshots:
   '@types/node-fetch@2.6.13':
     dependencies:
       '@types/node': 20.19.33
-      form-data: 4.0.4
+      form-data: 4.0.5
 
   '@types/node@18.19.130':
     dependencies:
@@ -11684,11 +11711,11 @@ snapshots:
       dotenv: 16.6.1
       extend: 3.0.2
       file-type: 16.5.4
-      form-data: 4.0.4
+      form-data: 4.0.5
       isstream: 0.1.2
       jsonwebtoken: 9.0.3
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.13.5(debug@4.4.3))
+      retry-axios: 2.6.0(axios@1.13.5)
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -12846,7 +12873,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.13.5(debug@4.4.3)):
+  retry-axios@2.6.0(axios@1.13.5):
     dependencies:
       axios: 1.13.5(debug@4.4.3)
 
@@ -13558,7 +13585,7 @@ snapshots:
       formstream: 1.5.2
       mime-types: 2.1.35
       pump: 3.0.3
-      qs: 6.14.0
+      qs: 6.15.0
       type-fest: 4.41.0
       undici: 5.29.0
       ylru: 1.4.0
