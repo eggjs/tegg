@@ -32,7 +32,7 @@ import assert from 'node:assert';
   getObjects(ctx: MultiInstancePrototypeGetObjectsContext) {
     const config = ModuleConfigUtil.loadModuleConfigSync(ctx.unitPath) as ModuleConfig | undefined;
     const moduleName = ModuleConfigUtil.readModuleNameSync(ctx.unitPath);
-    const clients = config?.mcp?.clients;
+    const clients = (config as any)?.mcp?.clients;
     if (!clients) return [];
     return Object.keys(clients)
       .filter(clientName => {

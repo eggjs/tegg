@@ -40,7 +40,7 @@ export class GraphLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext
         const graphMetadata = GraphInfoUtil.getGraphMetadata(clazz as EggProtoImplClass);
         assert(graphMetadata, `${clazz.name} graphMetadata should not be null`);
         const proto = new CompiledStateGraphProto(loadUnit, `compiled${protoName.replace(protoName[0], protoName[0].toUpperCase())}`, protoName, graphMetadata);
-        this.eggPrototypeFactory.registerPrototype(proto, loadUnit);
+        this.eggPrototypeFactory.registerPrototype(proto as any, loadUnit);
         this.graphCompiledNameMap.set(protoName, proto);
       }
       const toolMeta = this.tools.get(clazz as EggProtoImplClass);

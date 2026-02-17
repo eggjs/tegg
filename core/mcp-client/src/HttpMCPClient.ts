@@ -121,7 +121,7 @@ export class HttpMCPClient extends Client {
     }
     await this.connect(this.#transport, this.options.requestOptions);
   }
-  async getLangChainTool() {
+  async getLangChainTool(): Promise<any[]> {
     return await loadMcpTools(this.clientInfo.name, this as any, {
       throwOnLoadError: true,
       prefixToolNameWithServerName: false,

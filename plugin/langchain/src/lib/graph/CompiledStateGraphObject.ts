@@ -157,7 +157,7 @@ export class CompiledStateGraphObject implements EggObject {
   }
 
   static async createObject(name: EggObjectName, proto: EggPrototype): Promise<CompiledStateGraphObject> {
-    const compiledStateGraphObject = new CompiledStateGraphObject(name, proto as CompiledStateGraphProto);
+    const compiledStateGraphObject = new CompiledStateGraphObject(name, proto as unknown as CompiledStateGraphProto);
     await compiledStateGraphObject.init();
     return compiledStateGraphObject;
   }

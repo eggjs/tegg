@@ -15,6 +15,7 @@ import type {
 import type { GraphMetadata } from '@eggjs/tegg-langchain-decorator';
 
 export class CompiledStateGraphProto implements EggPrototype {
+  [key: symbol]: PropertyDescriptor;
   private readonly qualifiers: QualifierInfo[];
   readonly accessLevel = AccessLevel.PUBLIC;
   id: Id;
@@ -38,7 +39,7 @@ export class CompiledStateGraphProto implements EggPrototype {
     return {};
   }
 
-  getMetaData<T>(): T | undefined {
+  getMetaData<T>(_metadataKey?: any): T | undefined {
     // TODO set default metadata
     return;
   }
