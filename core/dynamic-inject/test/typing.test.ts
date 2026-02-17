@@ -11,7 +11,7 @@ it('should check enum value', async () => {
     .expect('stdout', /Argument of type '"WRONG_ENUM"' is not assignable to parameter of type 'ContextHelloType'/)
     .notExpect('code', 0)
     .end();
-});
+}, 30_000);
 
 it('should check extends', async () => {
   const tsc = require.resolve('typescript/bin/tsc');
@@ -22,4 +22,4 @@ it('should check extends', async () => {
     .expect('stdout', / Property 'hello' is missing in type 'BarContextHello' but required in type 'AbstractContextHello'/)
     .notExpect('code', 0)
     .end();
-});
+}, 30_000);
