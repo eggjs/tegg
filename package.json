@@ -38,6 +38,17 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
+  "pnpm": {
+    "overrides": {
+      "egg": "4.1.0-beta.26",
+      "@eggjs/mock": "7.0.0-beta.26",
+      "@eggjs/bin": "8.0.0-beta.26",
+      "@eggjs/tracer": "4.0.0-beta.26",
+      "@eggjs/router": "4.0.0-beta.26",
+      "@eggjs/cookies": "4.0.0-beta.26",
+      "@eggjs/utils": "5.0.0-beta.26"
+    }
+  },
   "devDependencies": {
     "@eggjs/tsconfig": "catalog:",
     "@vitest/coverage-v8": "catalog:",

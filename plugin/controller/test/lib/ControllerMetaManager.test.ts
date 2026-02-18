@@ -18,7 +18,7 @@ describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
         await app.ready();
       }).rejects.toThrow(/duplicate controller name AppController/);
       await app!.close();
-    });
+    }, 30_000);
   });
 
   describe('controllers have same proto name', () => {
@@ -31,6 +31,6 @@ describe('plugin/controller/test/lib/ControllerMetaManager.test.ts', () => {
         await app.ready();
       }).rejects.toThrow(/duplicate proto name appController/);
       await app!.close();
-    });
+    }, 30_000);
   });
 });

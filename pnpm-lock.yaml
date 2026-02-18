@@ -6,30 +6,12 @@ settings:
 
 catalogs:
   default:
-    '@eggjs/bin':
-      specifier: beta
-      version: 8.0.0-beta.26
-    '@eggjs/cookies':
-      specifier: beta
-      version: 4.0.0-beta.26
-    '@eggjs/mock':
-      specifier: beta
-      version: 7.0.0-beta.26
     '@eggjs/rds':
       specifier: ^1.5.0
       version: 1.5.0
-    '@eggjs/router':
-      specifier: beta
-      version: 4.0.0-beta.36
-    '@eggjs/tracer':
-      specifier: beta
-      version: 4.0.0-beta.26
     '@eggjs/tsconfig':
       specifier: 3.1.0-beta.19
       version: 3.1.0-beta.19
-    '@eggjs/utils':
-      specifier: beta
-      version: 5.0.0-beta.26
     '@sinclair/typebox':
       specifier: ^0.32.20
       version: 0.32.35
@@ -78,9 +60,6 @@ catalogs:
     coffee:
       specifier: ^5.1.0
       version: 5.5.1
-    egg:
-      specifier: beta
-      version: 4.1.0-beta.26
     egg-errors:
       specifier: ^2.3.0
       version: 2.3.2
@@ -186,6 +165,15 @@ catalogs:
     vitest:
       specifier: 4.0.0-beta.16
       version: 4.0.0-beta.16
+
+overrides:
+  egg: 4.1.0-beta.26
+  '@eggjs/mock': 7.0.0-beta.26
+  '@eggjs/bin': 8.0.0-beta.26
+  '@eggjs/tracer': 4.0.0-beta.26
+  '@eggjs/router': 4.0.0-beta.26
+  '@eggjs/cookies': 4.0.0-beta.26
+  '@eggjs/utils': 5.0.0-beta.26
 
 importers:
 
@@ -348,7 +336,7 @@ importers:
         specifier: workspace:*
         version: link:../types
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
     devDependencies:
       '@eggjs/tegg-common-util':
@@ -373,7 +361,7 @@ importers:
         specifier: workspace:*
         version: link:../types
       '@eggjs/utils':
-        specifier: 'catalog:'
+        specifier: 5.0.0-beta.26
         version: 5.0.0-beta.26
       extend2:
         specifier: 'catalog:'
@@ -410,7 +398,7 @@ importers:
         specifier: workspace:*
         version: link:../aop-decorator
       '@eggjs/cookies':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26
       '@eggjs/core-decorator':
         specifier: workspace:*
@@ -438,7 +426,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
@@ -703,7 +691,7 @@ importers:
         specifier: 'catalog:'
         version: 5.5.1
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
@@ -1134,7 +1122,7 @@ importers:
         specifier: ^1.23.0
         version: 1.26.0(@cfworker/json-schema@4.1.1)(zod@4.3.6)
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
     devDependencies:
       '@types/node':
@@ -1153,15 +1141,15 @@ importers:
   core/vitest-adapter:
     dependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
-        version: 7.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
+        specifier: 7.0.0-beta.26
+        version: 7.0.0-beta.26(egg@4.1.0-beta.26)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
-        version: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
+        specifier: 4.1.0-beta.26
+        version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1191,7 +1179,7 @@ importers:
         version: 8.17.1
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg-config':
         specifier: workspace:*
@@ -1206,7 +1194,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
@@ -1240,7 +1228,7 @@ importers:
         version: link:../../core/runtime
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg-config':
         specifier: workspace:*
@@ -1252,7 +1240,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
@@ -1285,17 +1273,17 @@ importers:
         specifier: workspace:*
         version: link:../../core/common-util
       '@eggjs/utils':
-        specifier: 'catalog:'
+        specifier: 5.0.0-beta.26
         version: 5.0.0-beta.26
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
@@ -1313,7 +1301,7 @@ importers:
         specifier: workspace:*
         version: link:../common
       '@eggjs/router':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26
       '@eggjs/tegg':
         specifier: workspace:*
@@ -1365,7 +1353,7 @@ importers:
         version: 4.3.6
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/module-test-util':
         specifier: workspace:*
@@ -1377,7 +1365,7 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@eggjs/tracer':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/koa-compose':
         specifier: 'catalog:'
@@ -1386,7 +1374,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
@@ -1414,10 +1402,10 @@ importers:
         version: link:../../core/metadata
     devDependencies:
       '@eggjs/bin':
-        specifier: 'catalog:'
+        specifier: 8.0.0-beta.26
         version: 8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg-aop-plugin':
         specifier: workspace:*
@@ -1429,7 +1417,7 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@eggjs/tracer':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/mocha':
         specifier: 'catalog:'
@@ -1438,7 +1426,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       globby:
         specifier: 'catalog:'
@@ -1481,11 +1469,11 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       egg:
-        specifier: ^3.32.0
-        version: 3.34.0
+        specifier: 4.1.0-beta.26
+        version: 4.1.0-beta.26
       egg-mock:
         specifier: ^5.5.0
-        version: 5.15.2(egg@3.34.0)(mocha@10.8.2)(urllib@4.8.2)
+        version: 5.15.2(egg@4.1.0-beta.26)(mocha@10.8.2)(urllib@4.8.2)
       mocha:
         specifier: ^10.2.0
         version: 10.8.2
@@ -1515,10 +1503,10 @@ importers:
         version: link:../../core/runtime
     devDependencies:
       '@eggjs/bin':
-        specifier: 'catalog:'
+        specifier: 8.0.0-beta.26
         version: 8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg-common-util':
         specifier: workspace:*
@@ -1530,7 +1518,7 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@eggjs/tracer':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/mocha':
         specifier: 'catalog:'
@@ -1539,7 +1527,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       mocha:
         specifier: 'catalog:'
@@ -1621,14 +1609,14 @@ importers:
         version: 4.3.6
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
-        version: 7.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
+        specifier: 7.0.0-beta.26
+        version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/module-test-util':
         specifier: workspace:*
         version: link:../../core/test-util
       '@eggjs/router':
-        specifier: 'catalog:'
-        version: 4.0.0-beta.36
+        specifier: 4.0.0-beta.26
+        version: 4.0.0-beta.26
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
@@ -1639,14 +1627,14 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@eggjs/tracer':
-        specifier: 'catalog:'
-        version: 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
+        specifier: 4.0.0-beta.26
+        version: 4.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/node':
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
-        version: 4.1.0-beta.36(chokidar@3.6.0)
+        specifier: 4.1.0-beta.26
+        version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1685,8 +1673,8 @@ importers:
         version: 4.8.2
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
-        version: 7.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
+        specifier: 7.0.0-beta.26
+        version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
@@ -1697,8 +1685,8 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
-        version: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
+        specifier: 4.1.0-beta.26
+        version: 4.1.0-beta.26
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1746,8 +1734,8 @@ importers:
         version: 4.3.6
     devDependencies:
       '@eggjs/mock':
-        specifier: 'catalog:'
-        version: 7.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
+        specifier: 7.0.0-beta.26
+        version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg':
         specifier: workspace:*
         version: link:../../core/tegg
@@ -1767,8 +1755,8 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
-        version: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
+        specifier: 4.1.0-beta.26
+        version: 4.1.0-beta.26
       eventsource:
         specifier: ^3.0.5
         version: 3.0.7
@@ -1810,10 +1798,10 @@ importers:
         version: 5.0.1
     devDependencies:
       '@eggjs/bin':
-        specifier: 'catalog:'
+        specifier: 8.0.0-beta.26
         version: 8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/module-test-util':
         specifier: workspace:*
@@ -1825,7 +1813,7 @@ importers:
         specifier: workspace:*
         version: link:../tegg
       '@eggjs/tracer':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/mocha':
         specifier: 'catalog:'
@@ -1834,7 +1822,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       mocha:
         specifier: 'catalog:'
@@ -1877,10 +1865,10 @@ importers:
         version: link:../../core/schedule-decorator
     devDependencies:
       '@eggjs/bin':
-        specifier: 'catalog:'
+        specifier: 8.0.0-beta.26
         version: 8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/module-test-util':
         specifier: workspace:*
@@ -1901,7 +1889,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       mocha:
         specifier: 'catalog:'
@@ -1956,16 +1944,16 @@ importers:
         version: 5.0.1
     devDependencies:
       '@eggjs/bin':
-        specifier: 'catalog:'
+        specifier: 8.0.0-beta.26
         version: 8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/mock':
-        specifier: 'catalog:'
+        specifier: 7.0.0-beta.26
         version: 7.0.0-beta.26(egg@4.1.0-beta.26)
       '@eggjs/tegg-config':
         specifier: workspace:*
         version: link:../config
       '@eggjs/tracer':
-        specifier: 'catalog:'
+        specifier: 4.0.0-beta.26
         version: 4.0.0-beta.26(egg@4.1.0-beta.26)
       '@types/mocha':
         specifier: 'catalog:'
@@ -1974,7 +1962,7 @@ importers:
         specifier: 'catalog:'
         version: 22.18.8
       egg:
-        specifier: 'catalog:'
+        specifier: 4.1.0-beta.26
         version: 4.1.0-beta.26
       egg-logger:
         specifier: 'catalog:'
@@ -2020,7 +2008,7 @@ importers:
         version: link:../../core/runtime
     devDependencies:
       '@eggjs/bin':
-        specifier: 'catalog:'
+        specifier: 8.0.0-beta.26
         version: 8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)
       '@eggjs/core-decorator':
         specifier: workspace:*
@@ -2032,7 +2020,7 @@ importers:
         specifier: workspace:*
         version: link:../../plugin/ajv
       '@eggjs/utils':
-        specifier: 'catalog:'
+        specifier: 5.0.0-beta.26
         version: 5.0.0-beta.26
       '@types/mocha':
         specifier: 'catalog:'
@@ -2145,7 +2133,7 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/aop-runtime@4.0.0-beta.36':
     resolution: {integrity: sha512-MER+v/44lZ0LuNQJiFaHbmWCXCotHHFQwzsbQVQMnh6gvU6NsimqUR/7wXGDHbwV80iDZFyZ0db9pim0hW7sgw==}
@@ -2155,7 +2143,7 @@ packages:
     resolution: {integrity: sha512-tm4i3J/r2lg3zGL59YzN3MeJLcjAgwiLQ3SzWOozT0eAfaAl8EWGclO75LitrzfQ+WBJNQ39Npu+xyZQf59wCQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/bin@8.0.0-beta.26':
     resolution: {integrity: sha512-iJV+Jb0UnaJP3wfn3oKBvFxhyw/xOOf2lYk4aNozw4K2loOZ5XL68AuCIHLqSFj/hJ9vsTaJ7sHITgmXxo45RA==}
@@ -2196,18 +2184,10 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
-
-  '@eggjs/cookies@3.1.0':
-    resolution: {integrity: sha512-rFDJqUHYanrsKWtVqYutVYjQSgi60MSYagdG0N5795vGd9LyJdxFQCG9dMOWUzHumRMfxFi4EjcjDZA+CcErdw==}
-    engines: {node: '>= 18.19.0'}
+      egg: 4.1.0-beta.26
 
   '@eggjs/cookies@4.0.0-beta.26':
     resolution: {integrity: sha512-3jA9A8tfy4Z6bohmar6lIGv4vOU0kkDyomD4zXIyV5hwqVXmcJNxfXlBLZRXaCEroBBhc1JU7CCC2dWNX7IusQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/cookies@4.0.0-beta.36':
-    resolution: {integrity: sha512-3Gdg6Vre5cJYhWk/eVwlzPBXLYPQsv7217aLywdjz+9fk42veQGeXVPlPKu4TzR6e2uIFps7ps+hBpZKRHfT3A==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/core-decorator@3.72.0':
@@ -2247,7 +2227,7 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/dal-runtime@4.0.0-beta.11':
     resolution: {integrity: sha512-WUK+uHnm4FenXalrBq48Q19muJzHOSTFwZ1hb/jmqqX+QkUApiRqPrPi0SRPxFnkEctQATfWH6L2o0mDDcCP8g==}
@@ -2267,7 +2247,7 @@ packages:
     resolution: {integrity: sha512-+ftyzPQIJ0Nc2QMQ90/NvV3rN1UMs4OL7GB+wVQCJRgOH9R//7lpQr+P6NBRhaifX5l3wG1hVqKGKL2bgHnUKg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/dynamic-inject-runtime@4.0.0-beta.36':
     resolution: {integrity: sha512-KimcjM72QdZEYHgldGRVtUP6EkxQAAkJrt7xrQ0PWNSir96u8z4/bpNIYmCLjN/VZb10JLfEHqCJrizIRPCsfg==}
@@ -2302,7 +2282,7 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/eventbus-runtime@4.0.0-beta.36':
     resolution: {integrity: sha512-LZ3mCw392iLEopdfBCW8ry8S+Pzi0GAjuLlQdHOtB3gk+ObkXC1Ay+Ajrh//9PsKeaUy3u4yUCg4ddW17hwAIQ==}
@@ -2326,7 +2306,7 @@ packages:
     resolution: {integrity: sha512-4jUsuQ1xV1WN8s2EAJHSzKkoDNKAc8tc/XbferSNbDvYwFfCVaUzTNDOGxcBxEuS0/c/VniqapW9BCe9UXwLeQ==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/ip@2.1.0':
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
@@ -2342,7 +2322,7 @@ packages:
     resolution: {integrity: sha512-u20fOz5aogja9BsGHSAaIWsEKJewQUJOaYUtG/0ezft88NszwN7MUqaJ8OEoEJqZ+MFPAKP2pTSDzKLWPUORTQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/koa-static-cache@7.0.0-beta.26':
     resolution: {integrity: sha512-B3RygQL+ad5/ELukH1bj/GvHfRjx/Rt8DkvbTo63dCkmpj2+OxG4Gy7YVUJuprqYLbzB3wQY53x+zKlttc1ewg==}
@@ -2374,7 +2354,7 @@ packages:
     resolution: {integrity: sha512-9eIGk+HZh9jqGbcCXvq61BkPHcVO5ezjP5y7ApReR5bHzSkm7aCQfIs2Id8wiSr64eTSnyA8c0UD6YLNTKph/g==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/metadata@4.0.0-beta.36':
     resolution: {integrity: sha512-0FP/O3fRzhUB/ObtXIUTV1heh1xy800QYoujsoPxoAT55R5xvQuI7Rvl5a7GW1Ksshx9eQ6QTkzr2Pa8CO7m8w==}
@@ -2385,12 +2365,6 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       egg: 4.1.0-beta.26
-
-  '@eggjs/mock@7.0.0-beta.36':
-    resolution: {integrity: sha512-I7gVGIUzH9D8dvSoC/v1BVDsahuj7p3W3D9OxP4DUSY6DidwM8dC7hG1dx68XQXntPqlVFjBAlnPA2/i01cENg==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      egg: 4.1.0-beta.36
 
   '@eggjs/module-common@4.0.0-beta.36':
     resolution: {integrity: sha512-8V0sVom3Qa46eOTbb6m6aAugJ5JuILr4ObPTIwuiibHYsAyAgR2nG3tQ1zq+m/wFVUn2pi0RyORgA+R1TPJ5nw==}
@@ -2406,7 +2380,7 @@ packages:
     resolution: {integrity: sha512-9heBGJJiVla34jXxiHxYVVchWGrSshhhRVn0pruJuZEP5uJmpq+28vf69cEXdwWF/OcTe1QWmwysaqA2JvbUTg==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/onerror@4.0.0-beta.26':
     resolution: {integrity: sha512-HpnP1AEyHWdIVqH2+mnTUbB9bixZgxnVdeRApRIZnjhiWJRDMpCa4lmZPbYYCsuHs6esyCWrSrwFbAwdi3+e7g==}
@@ -2418,7 +2392,7 @@ packages:
     resolution: {integrity: sha512-TBft84DBV+wTxYfDLG1M2sr+WKGWcu04swzbmUBoudzVK20CMNNQ7yrossTh65PkmXBd24U9MkNCvT6/JDxCXg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/orm-decorator@4.0.0-beta.36':
     resolution: {integrity: sha512-d0VKGnq9O5a+KIDR+weJGArz6Vo+SCMJ7tei8QbrGO6/vWrv8v+BJF/DI72Gsu8KILjIpE6/BoVLIs9Qg5uYKQ==}
@@ -2429,30 +2403,18 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/path-matching@3.0.0-beta.36':
     resolution: {integrity: sha512-4xpBYl/CRACkyd9SWZsQSiyNL3LzgLk1rVPInJuxmHHflPi8UP5vSGbi2C+K8H2l7nnSYFwT0CfV5eNFAQaiZw==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/rds@1.3.0':
-    resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
-    engines: {node: '>= 16.17.0'}
-
   '@eggjs/rds@1.5.0':
     resolution: {integrity: sha512-RFgiEzAJhHbNTFo1s47VnlAgZvoW7f88/+KWsgGS8N+ES9Z9i30X/cxjva1BLm3ROg07nxYx98tr2RLWu30Pnw==}
     engines: {node: '>= 16.17.0'}
 
-  '@eggjs/router@2.2.0':
-    resolution: {integrity: sha512-EKnOrZ/pHMFQ1gAj3z0Yn1UnGYH/wSsc2jk06H6RrZp6ty9H6RWyP782e7FT8WL3pAevRY+SAQoH7aPh1SDSVA==}
-    engines: {node: '>= 8.5.0'}
-
   '@eggjs/router@4.0.0-beta.26':
     resolution: {integrity: sha512-YuXNRmBj0cdr06PcjlP7Sd8KLEmfyu/L8fb23JUhKmLE3XmPwtLwUmiQytAThNt6uG+WtbtJ1VQcQv/surmNVQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/router@4.0.0-beta.36':
-    resolution: {integrity: sha512-+fMgdU7O0pckI4iDWVrihMQWWZkcOxsBykPpT/qw5f3RneQvmJgS99qE/U39Pir6kHXCa4867z5Y3UrAMHUwug==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/schedule-decorator@4.0.0-beta.36':
@@ -2464,7 +2426,7 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/schedule@6.0.0-beta.26':
     resolution: {integrity: sha512-+NcvdnVObIO4yTW4g4tAntzejary6o45oV5f5Xyh7p3/094T4gSjLr9Gkpq4SbZVDk1aRqVurYDmLREE1MShWg==}
@@ -2476,7 +2438,7 @@ packages:
     resolution: {integrity: sha512-ThNgXz91yHpExSsoEHNrmAjdaN2ij3BWFI5dDdhZbEf7ccX8IR7GMJNAiNcmvCd0jFPdUSaBCWszURup//VOhQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/security@5.0.0-beta.26':
     resolution: {integrity: sha512-6BDCTg3XGxyra0dDr7Qljc/qVRx3yu33gO4ocRGFyE59U+DvgLtiNK2yWrIEeOCVSOQZ+TMNVF3GVTuKINNSyA==}
@@ -2488,7 +2450,7 @@ packages:
     resolution: {integrity: sha512-5yuwsKmR7G58uvPARQWVIdGn5rsNuKflyncMZGJ0Lp5ngexkJw2RKEu6g4yhq8q3qpKQqhgYEXoZVHfhN5yUCg==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/session@5.0.0-beta.26':
     resolution: {integrity: sha512-tRo+vDXkHdAiDk4Fymfw7vYycCS2wpDg9SXbhiZ73s0mHOYArtK8jUhNVyM7E22ZNxDITwKMyQHSNDWfFyTjsQ==}
@@ -2500,7 +2462,7 @@ packages:
     resolution: {integrity: sha512-O7bFL9QaqDCYwRXBdSL+94flKS72GaSvUU3UyKXQoKjY3EGn/vzOeiPACdXFk3WeaHJsJkS/sRdPmBgHMPfKYw==}
     engines: {node: '>= 22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/standalone-decorator@3.72.0':
     resolution: {integrity: sha512-/YK4ZaR/T7AmnmYyJOC1dDc1nfIP9NDouTzLYYq9IQCQCskGoUZZm1LH/TFtgDEDcTgS3jgz1juquM0YiD2JDw==}
@@ -2524,14 +2486,10 @@ packages:
     resolution: {integrity: sha512-c107LO3lmOxRoOIDZ5qeHtdZN9Fl7ZjdBZP37Kri8JjbokRhTSpYhajcLLndMi6tdQua/MTetRM1RMPyiUUr2w==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/supertest@9.0.0-beta.26':
     resolution: {integrity: sha512-uJiKc2LIkMToXDRwGx44qYVLKMzxyFPKEuWajRtjYjBa/tVY29UmzB9xaTIV3e5/sbdq4EiOXjCUY5MGVjavog==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/supertest@9.0.0-beta.36':
-    resolution: {integrity: sha512-H1iKJNQW2Tthayl7nIIZaXIV3i8lstEiw04O8JwK08rJ/lBBPjbQAM3hAYg6oqABUMN1jAqOS21pVvi0Opy/Zw==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/tegg-background-task@3.72.0':
@@ -2542,7 +2500,7 @@ packages:
     resolution: {integrity: sha512-dtATtPZQ2MMwdwdmluAPxylNKu48+JyvLVQta9UdAQQsDwJ3A4e1Jftpuh/FzXSFTSTYNcjkE8+v/DXEFM7FDA==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: beta
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-common-util@3.72.0':
     resolution: {integrity: sha512-mN10v8UpgUiSw0K8yuJLIAnTelPss7aXrWBPz0IY9/ti2qeweZW1NDhQQbztgv1leOmocwisG1bXCExBdKH6YQ==}
@@ -2564,14 +2522,14 @@ packages:
     resolution: {integrity: sha512-KMozCxnwCsD29p745jvWKSosKFlmCexQmFK1BjzNosRhUc0s+YDD5GrQoGJmBwyCipMkP41eCiUh0xkOjSWerg==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-dal-plugin@4.0.0-beta.11':
     resolution: {integrity: sha512-+dFNcDAJ0reeOzRmisduH5120EFIempXT1n8S8YeZyBa1rKIBfvTLXRPhmchB4+7BzFPTmWHZANDo9JtSlw3pw==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-plugin': 4.0.0-beta.11
-      egg: beta
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-dynamic-inject-runtime@3.72.0':
     resolution: {integrity: sha512-wR0357oleBPkbng0gDq1ztewy6F4eoZeFY0eNyNRXq47a3vwNbcWLmv0xoDtBnwxqVrRvPwoQxBmv+cDiC+MWg==}
@@ -2632,7 +2590,7 @@ packages:
     engines: {node: '>=22.18.0'}
     peerDependencies:
       '@eggjs/tegg-config': 4.0.0-beta.36
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-runtime@3.72.0':
     resolution: {integrity: sha512-SBoi6RP5mB7f6rDrI6GJBUwCvDGGIkSOQd3Hi38mM2nHJ2bD8YIVpXTIE6MoALrt3ta1uHctZbr85Lr3xXdgag==}
@@ -2670,13 +2628,13 @@ packages:
     resolution: {integrity: sha512-caHAEGgA3yiaT+5njaO3FaGFQLvasZohqD6QL20E1Ti99Rcw2vhQJT3TrPedqE9lycBsOmJtuE06OwL8bazz2A==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: beta
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-types@4.0.0-beta.36':
     resolution: {integrity: sha512-XABNR/vHuXdorBB5P/osXYDWF4nhOHU+gxB09eH50Tv2lSDUEip315qTddvFz6RNZ5McOt0H5QA5SAQ5EqblBA==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg@3.72.0':
     resolution: {integrity: sha512-DsSz/SOxZq+OXTTEfSPBQ9MZvMivqCUDAygqY4zKx54TpLNs+MI3/Ayqua5ds45K0eaF+mDH8opnHy9UxWyz3g==}
@@ -2698,12 +2656,6 @@ packages:
     peerDependencies:
       egg: 4.1.0-beta.26
 
-  '@eggjs/tracer@4.0.0-beta.36':
-    resolution: {integrity: sha512-eXWg3zEYcDhhjTwoN7NOdgXLt4p0jUzksTBc7dLgJHmlyIicO1DrhNZWSIL4J8YqTL2g2oEI8mA04mzp6ZW0WA==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      egg: 4.1.0-beta.36
-
   '@eggjs/transaction-decorator@4.0.0-beta.36':
     resolution: {integrity: sha512-kpNuolNdX78PTpQnFjSGsquOofbl2X7/mTK1dQj1CQIMwUgxsTjaYFJTlsbya9DDZq3ETeFM4X0GFneJqr7+kw==}
     engines: {node: '>=22.18.0'}
@@ -2712,15 +2664,8 @@ packages:
     resolution: {integrity: sha512-TFJOkTV8EWLCd3kbj+0vseWHPXDntgBpng66v3ehCLU/BI/hdfNVEtBS6g253lEALTl6oOGqsg7Vf3ux8beh/w==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/utils@4.4.1':
-    resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
-
   '@eggjs/utils@5.0.0-beta.26':
     resolution: {integrity: sha512-dyA87lPt//7oN8+o4HU4tyYJCRkCNklHkpS+DReud7UfSNNtg15LxG00gAloKu8tT4h0VFVt13s1jfm4qAf4Bw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/utils@5.0.0-beta.36':
-    resolution: {integrity: sha512-5/22DtRdG1qeozFBztillUTwO9QttM1ZpNtos+KKch1TK5iG95dCMXSWWo3YNig5N2kfarg1UZiLdm5sFSsQmQ==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/view@4.0.0-beta.26':
@@ -2733,7 +2678,7 @@ packages:
     resolution: {integrity: sha512-umIj5wVtChlWPxpmxRv34B5ybASt1rfAsWCiszEit3LXxDxkFgk+nzPjksvswPDsjcfyHEGwntjxhZ2/EXZsLw==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
+      egg: 4.1.0-beta.26
 
   '@eggjs/watcher@5.0.0-beta.26':
     resolution: {integrity: sha512-IPfpiS5/VKbXR5aDgqoynvMN2lWhMlmyZhCoiVYlzMtx6H3RkbxZBZ2dQrgopyP0KCZSZ8/YOceeJxV0gxZHag==}
@@ -2745,16 +2690,10 @@ packages:
     resolution: {integrity: sha512-lGV9RswuAuazwxlYvS4dC7eIF4msyn7Y+5NQwk+yJ8vJHKdm3p+piQ8DzSTZlZHlGC2Hx6zlorjr/HrDF1ndtQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
-      egg: 4.1.0-beta.36
-
-  '@emnapi/core@1.5.0':
-    resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
+      egg: 4.1.0-beta.26
 
   '@emnapi/core@1.8.1':
     resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
-
-  '@emnapi/runtime@1.5.0':
-    resolution: {integrity: sha512-97/BJ3iXHww3djw6hYIfErCZFee7qCtrneuLa20UXFCOTCfBM2cvQHjWJ2EG0s0MtdNwInarqCTz35i4wWXHsQ==}
 
   '@emnapi/runtime@1.8.1':
     resolution: {integrity: sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg==}
@@ -3432,9 +3371,6 @@ packages:
       '@cfworker/json-schema':
         optional: true
 
-  '@napi-rs/wasm-runtime@1.0.6':
-    resolution: {integrity: sha512-DXj75ewm11LIWUk198QSKUTxjyRjsBwk09MuMk5DGK+GDUtyPhhEHOGP/Xwwj3DjQXXkivoBirmOnKrLfc0+9g==}
-
   '@napi-rs/wasm-runtime@1.1.1':
     resolution: {integrity: sha512-p64ah1M1ld8xjWv3qbvFwHiFVWrq1yFvV4f7w+mzaqiR4IlSgkqhcRdHwsGgomwzBH51sRY4NEowLxnaBjcW/A==}
 
@@ -3974,9 +3910,6 @@ packages:
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
-  '@types/depd@1.1.37':
-    resolution: {integrity: sha512-PkEYFHnqDFgs+bJXJX0L8mq7sn3DWh+TP0m8BBJUJfZ2WcjRm7jd7Cq68jIJt+c31R1gX0cwSK1ZXOECvN97Rg==}
-
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -4016,12 +3949,6 @@ packages:
   '@types/koa-compose@3.2.8':
     resolution: {integrity: sha512-4Olc63RY+MKvxMwVknCUDhRQX1pFQoBZ/lXcRLP69PQkEpze/0cr8LNqJQe5NFb/b19DWi2a5bTi2VAlQzhJuA==}
 
-  '@types/koa-router@7.4.9':
-    resolution: {integrity: sha512-YibkqJrFWwwF55YtZo6dORpMj/1zfweHHIZA/qpA+2JPcVbBopAvLjejTcO1ojWAJfzf1tPC+CrPnLDuVRkUEA==}
-
-  '@types/koa@2.15.0':
-    resolution: {integrity: sha512-7QFsywoE5URbuVnG3loe03QXuGajrnotr3gQkXcEBShORai23MePfFYdhz90FEtBBpkyIYQbVD+evKtloCgX3g==}
-
   '@types/koa@3.0.0':
     resolution: {integrity: sha512-MOcVYdVYmkSutVHZZPh8j3+dAjLyR5Tl59CN0eKgpkE1h/LBSmPAsQQuWs+bKu7WtGNn+hKfJH9Gzml+PulmDg==}
 
@@ -4036,9 +3963,6 @@ packages:
 
   '@types/mime@1.3.5':
     resolution: {integrity: sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==}
-
-  '@types/minimatch@3.0.5':
-    resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
 
   '@types/mocha@10.0.10':
     resolution: {integrity: sha512-xPyYSz1cMPnJQhl0CLMH68j3gprKZaTjG3s5Vi+fDgx+uhG9NOXwbVt52eFS8ECyXhyKcjDLCBEqBExKuiZb7Q==}
@@ -4245,10 +4169,6 @@ packages:
     resolution: {integrity: sha512-LHE+8BuR7RYGDKvnrmcuSq3tDcKv9OFEXQt/HpbZhY7V6h0zlUXutnAD82GiFx9rdieCMjkvtcsPqBwgUl1Iiw==}
     engines: {node: '>= 0.4'}
 
-  array-differ@3.0.0:
-    resolution: {integrity: sha512-THtfYS6KtME/yIAhKjZ2ul7XI96lQGHRputJQHO80LAWQnuGP4iCIN8vdMRboGbIEYBwU33q8Tch1os2+X0kMg==}
-    engines: {node: '>=8'}
-
   array-differ@4.0.0:
     resolution: {integrity: sha512-Q6VPTLMsmXZ47ENG3V+wQyZS1ZxXMxFyYzA+Z/GMrJ6yIutAIEf9wTyroTzmGjNfox9/h3GdGBCVh43GVFx4Uw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
@@ -4260,10 +4180,6 @@ packages:
   array-union@3.0.1:
     resolution: {integrity: sha512-1OvF9IbWwaeiM9VhzYXVQacMibxpXOMYVNIvMtKRyX9SImBXpKcFr8XvFDeEslCyuH/t6KRt7HEO94AlP8Iatw==}
     engines: {node: '>=12'}
-
-  arrify@2.0.1:
-    resolution: {integrity: sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==}
-    engines: {node: '>=8'}
 
   asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
@@ -4319,9 +4235,6 @@ packages:
     resolution: {integrity: sha512-oP5VkATKlNwcgvxi0vM0p/D3n2C3EReYVX+DNYs5TjZFn/oQt2j+4sVJtSMr18pdRr8wjTcBl6LoV+FUwzPmNA==}
     engines: {node: '>=18'}
 
-  brace-expansion@1.1.12:
-    resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
-
   brace-expansion@2.0.2:
     resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
 
@@ -4349,9 +4262,6 @@ packages:
     resolution: {integrity: sha512-rNiK8YxOMvquToaBubKxA10sjRIZ/taDqtc/1jLQA4X7aNDlA1XGx4Ciml3YxL8DskFz1XX3WFskSp0peKYSKg==}
     engines: {node: '>= 8.0.0'}
 
-  bytes@2.2.0:
-    resolution: {integrity: sha512-zGRpnr2l5w/s8PxkrquUJoVeR06KvqPelrYqiSyQV7QEBqCYivpb6UzXYWC6JDBVtNFOT0rzJRFhkfJgxzmILA==}
-
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
@@ -4370,10 +4280,6 @@ packages:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
 
-  cache-content-type@1.0.1:
-    resolution: {integrity: sha512-IKufZ1o4Ut42YUrZSo8+qnMTrFuKkvyoLXUywKz9GJ5BrhOFGhLdkx9sG4KAnVvbY6kEcSFjLQul+DVmBm2bgA==}
-    engines: {node: '>= 6.0.0'}
-
   cache-content-type@2.1.0:
     resolution: {integrity: sha512-cunyfzwf3p86sXOE3PyWFWlPtIb21DyLV9KAq1HhrqLupxx+mtLrqXdEe9vxUmLpTLk/jP/Zf4YyAlSoAbEVEg==}
     engines: {node: '>= 18.0.0'}
@@ -4390,10 +4296,6 @@ packages:
     resolution: {integrity: sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==}
     engines: {node: '>= 0.4'}
 
-  camelcase@5.3.1:
-    resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
-    engines: {node: '>=6'}
-
   camelcase@6.3.0:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
@@ -4405,10 +4307,6 @@ packages:
   camelcase@9.0.0:
     resolution: {integrity: sha512-TO9xmyXTZ9HUHI8M1OnvExxYB0eYVS/1e5s7IDMTAoIcwUd+aNcFODs6Xk83mobk0velyHFQgA1yIrvYc6wclw==}
     engines: {node: '>=20'}
-
-  cfork@1.11.0:
-    resolution: {integrity: sha512-pYyWhuXPq5OoaVPaQZXFf243oQ/+eCXu7ufOZxqi8HFI7TcTxbsi1/16CpT75dSuk78ErMJQlTkpzz9O82G/Ig==}
-    engines: {node: '>= 0.12.0'}
 
   cfork@2.0.0:
     resolution: {integrity: sha512-J7u2GSj77TRvJmEfBL4ln5TROEka6X5tEOKF6qe6kritcltmrbmeiP2p9A2EA1dGOxR5UX7H804ByzIZAM+Nqg==}
@@ -4470,10 +4368,6 @@ packages:
     resolution: {integrity: sha512-n0pLGPWlAjaGDJrLKTenjF1qoHbDjuYFlvX4UBoWCt9NjUTZGQhfNafF6Gw4Rj7oJqqdBGrdiIdHSvtOMQX5AA==}
     engines: {node: '>=14.0.0'}
 
-  cluster-reload@1.1.0:
-    resolution: {integrity: sha512-lY3n9ohbJvDsDoaGGx/ER6eqaDKgVVmYjgoSL+XPxI0NHhkr4Ag60RSqVD1B9yZJz/q3FjB94bLfnuGuFuh7aw==}
-    engines: {node: '>=8.0.0'}
-
   cluster-reload@2.0.0:
     resolution: {integrity: sha512-B3QAtctNWehJgEFACdMxjhgWQtNeOjuVzHePjsKlo4ND0LSqOOsRVIEYj3LC+TzzeAJnzDdapBFuQ9Ol8YocFw==}
     engines: {node: '>= 18.19.0'}
@@ -4525,13 +4419,6 @@ packages:
 
   component-emitter@1.3.1:
     resolution: {integrity: sha512-T0+barUSQRTUQASh8bx02dl+DhF54GtIDY13Y3m9oWTklKbb3Wv974meRpeZ3lp1JpLVECWWNHC4vaG2XHXouQ==}
-
-  compressible@2.0.18:
-    resolution: {integrity: sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==}
-    engines: {node: '>= 0.6'}
-
-  concat-map@0.0.1:
-    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   confbox@0.2.2:
     resolution: {integrity: sha512-1NB+BKqhtNipMsov4xI/NnhCKp9XG9NamYp5PVm9klAT0fsrNPjaFICsCFhNhwZJKNh7zB/3q8qXz0E9oaMNtQ==}
@@ -4623,9 +4510,6 @@ packages:
   dayjs@1.11.18:
     resolution: {integrity: sha512-zFBQ7WFRvVRhKcWoUh+ZA1g2HVgUbsZm9sbddh8EC5iv93sui8DVVz1Npvz+r6meo9VKfa8NyLWBsQK1VvIKPA==}
 
-  debounce@1.2.1:
-    resolution: {integrity: sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==}
-
   debounce@2.2.0:
     resolution: {integrity: sha512-Xks6RUDLZFdz8LIdR6q0MTH44k7FikOmnh5xkSjMig6ch45afc8sjTjRQf3P6ax8dMgcQrYO/AR2RGWURrruqw==}
     engines: {node: '>=18'}
@@ -4633,14 +4517,6 @@ packages:
   debounce@3.0.0:
     resolution: {integrity: sha512-64byRbF0/AirwbuHqB3/ZpMG9/nckDa6ZA0yd6UnaQNwbbemCOwvz2sL5sjXLHhZHADyiwLm0M5qMhltUUx+TA==}
     engines: {node: '>=20'}
-
-  debug@2.6.9:
-    resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
 
   debug@3.2.7:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
@@ -4667,9 +4543,6 @@ packages:
     resolution: {integrity: sha512-9iE1PgSik9HeIIw2JO94IidnE3eBoQrFJ3w7sFuzSX4DpmZ3v5sZpUiV5Swcf6mQEF+Y0ru8Neo+p+nyh2J+hQ==}
     engines: {node: '>=10'}
 
-  deep-equal@1.0.1:
-    resolution: {integrity: sha512-bHtC0iYvWhyaTzvV3CZgPeZQqCOBGyGsVV7v4eevpdkLHfiSrXUdBG+qAuSz4RI70sszvjQ1QSZ98An1yNwpSw==}
-
   deep-equal@2.2.3:
     resolution: {integrity: sha512-ZIwpnevOurS8bpT4192sqAowWM76JDKSHYzMLty3BZGSswgq6pBaH3DhCSW5xVAZICZyKdOBPjwww5wfgT/6PA==}
     engines: {node: '>= 0.4'}
@@ -4677,10 +4550,6 @@ packages:
   deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
     engines: {node: '>=0.10.0'}
-
-  default-user-agent@1.0.0:
-    resolution: {integrity: sha512-bDF7bg6OSNcSwFWPu4zYKpVkJZQYVrAANMYB8bc9Szem1D0yKdm4sa/rOCs2aC9+2GMqQ7KnwtZRvDhmLF0dXw==}
-    engines: {node: '>= 0.10.0'}
 
   define-data-property@1.1.4:
     resolution: {integrity: sha512-rBMvIzlpA8v6E+SJZoo++HAYqsLrkg7MSfIinMPFhmkorw7X+dOXVJQs+QT69zGkzMyfDnIMN2Wid1+NbL3T+A==}
@@ -4697,16 +4566,9 @@ packages:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
-  delegates@1.0.0:
-    resolution: {integrity: sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==}
-
   denque@2.1.0:
     resolution: {integrity: sha512-HVQE3AAb/pxF8fQAoiqpvg9i3evqug3hoiwakOyZAwJm+6vZehbkYXZ0l4JxS+I3QxM97v5aaRNhj8v5oBhekw==}
     engines: {node: '>=0.10'}
-
-  depd@1.1.2:
-    resolution: {integrity: sha512-7emPTl6Dpo6JRXOXjLRxck+FlLRX5847cLKEn00PLAgc3g2hTZZgr+e4c2v6QpSmLeFP3n5yUo7ft6avBK/5jQ==}
-    engines: {node: '>= 0.6'}
 
   depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
@@ -4743,10 +4605,6 @@ packages:
   diff@8.0.2:
     resolution: {integrity: sha512-sSuxWU5j5SR9QQji/o2qMvqRNYRDOcBTgsJ/DeCf4iSN4gW+gNMXM7wFIP+fdXZxoNiAnHUTGjCr+TSWXdRDKg==}
     engines: {node: '>=0.3.1'}
-
-  digest-header@1.1.0:
-    resolution: {integrity: sha512-glXVh42vz40yZb9Cq2oMOt70FIoWiv+vxNvdKdU8CwjLad25qHM3trLxhl9bVjdr6WaslIXhWpn0NO8T/67Qjg==}
-    engines: {node: '>= 8.0.0'}
 
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -4790,99 +4648,29 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  egg-cluster@2.5.0:
-    resolution: {integrity: sha512-5ySrghDOL6eWvjWpyGKzmLKPkhhD590TWEtdEGBvKRTY/ATquL5/AuQMG5qHOv9dbo7lCxTi9elyVNuJGe0qsA==}
-    engines: {node: '>= 14.0.0'}
-
-  egg-cookies@2.10.1:
-    resolution: {integrity: sha512-fjlGF9jIu0GmU0bA+ZGOoz8OhbUECy18Y69wgpt8secmtaFzSbKay3DhKA13evqUDoiag5vQXQaN+N7Pp8vFsA==}
-    engines: {node: '>= 10.0.0'}
-
-  egg-core@5.5.1:
-    resolution: {integrity: sha512-6oLO6tLv40vraka+OxXHwaLeXHt/0XRuJlY7zlsz9tS6Z42xDGgjpYXUC2hsFEWQD+SdshC4kTEXllHvplxsqQ==}
-    engines: {node: '>= 14.19.0'}
-
-  egg-development@3.0.2:
-    resolution: {integrity: sha512-sxJzgw+EwfaZhrVcoGniLBT3B3Xd99VsNZnpLKrYp35upaLqw+tCB+kaTYmXZYqXv1Zm2c6RoGCvJbyqr+Mkjw==}
-    engines: {node: '>=14.0.0'}
-
   egg-errors@2.3.2:
     resolution: {integrity: sha512-E+Sx7IBVrfRyHSjFXaq4sCZ3Uk3ka9PYySaQ8VbRZmLEt9ENBCD99yVzLIeWUH2QfzvkrjY9El1eHmLeRx7cfw==}
     engines: {node: '>=8.9.0'}
-
-  egg-i18n@2.1.1:
-    resolution: {integrity: sha512-rpKP2nrUzeTOkjQObvlrLbb/BZAMtP7zeoGggwJLN9+zKbFKVkeF6Q0BrpuucDSekD+2oHQz7fC3w/5eQY1g8w==}
-    engines: {node: '>= 8.0.0'}
-
-  egg-jsonp@2.0.0:
-    resolution: {integrity: sha512-dno7BXAvSFO0WTb3GJD0aci9MFlaQhdgvEznwARam75GGJdLpg1K0XQq88/dEvYWHxEHa+iGIOXcNx5NOyyUHw==}
-    engines: {node: '>=8.0.0'}
 
   egg-logger@3.6.1:
     resolution: {integrity: sha512-lGiEumARJAT7NiwMm577NFiOEBMX9FlZzfuBsLLS6eu14R9udcTI1IzXLGJ63SrCmFIXB+zsWLQv5U11e8fq0Q==}
     engines: {node: '>=14.17.0'}
 
-  egg-logrotator@3.2.0:
-    resolution: {integrity: sha512-2KYN4wwBd15FYbNtLxL7IoIkFL7JuHHA3eXWZd5zVKfWgeoy4J+oTnCLDixW1UhVIdehL0q1oQxEldWm5af1Eg==}
-    engines: {node: '>=8.0.0'}
-
   egg-mock@5.15.2:
     resolution: {integrity: sha512-8g+GzGcjfPaM/XwGaoej27wfIw7qeKR3tqYZPB3mIRWMzChYnyI2Bb+5qud23Ealj0raNamE+85ZsBKI2kq8nw==}
     engines: {node: '>= 14.18.0'}
     peerDependencies:
-      egg: ^3.12.0
+      egg: 4.1.0-beta.26
       mocha: ^10.2.0
       urllib: ^3 || ^4
 
-  egg-multipart@3.5.0:
-    resolution: {integrity: sha512-AWJ50gr+toCvixgtHvLXbtzemJuqnbtJtBZbBNZ8/ADONvOZ9Ib7lkvzcA4Wq0lypfa0rtlLDRq8A09wOd6tVA==}
-    engines: {node: '>= 14.17.0'}
-
-  egg-onerror@2.4.0:
-    resolution: {integrity: sha512-btmUsP1m6H9awd1IaAlvlzqN+uIbUKzaxJ8ArZI71r5FQ9LShZGv2pOT5fhL9mSnGkrvHUsjb9I5KoX2AY63bA==}
-    engines: {node: '>=8.0.0'}
-
-  egg-path-matching@1.2.0:
-    resolution: {integrity: sha512-u88hY0tH8GfWu4iocWFxux/abXvi7bh4lr/GIRlUHCTJFk8RQNCCfk5H3Vm67pqTBljtBOCl0lLykOsxj8trXQ==}
-
   egg-path-matching@2.1.0:
     resolution: {integrity: sha512-g2V2ohTSf/WN1UNtUdeUAhu/xbA97uAJHgqRpRInR2KT77MRxrG4XtcsjbZudQmB5XRPvYSbnny/1m/57+UadA==}
-
-  egg-schedule@4.0.1:
-    resolution: {integrity: sha512-9BgIEOA5+jsqqvW8qLj/0SbTHkr9t2vNRBbZQkqqscejocViGysGd866vN+rcpuqd2zmnP6EQ0YqPAV5fI8P6Q==}
-    engines: {node: '>=14.17.0'}
-
-  egg-security@3.7.0:
-    resolution: {integrity: sha512-bIlPTBUW2FZ7MHntPExv0F7xigKMMK3irfEo8ypeG7S2G2vg/uFoNZumzBv4PnJeNwTzjUuG+G/YDHFOgSbTsQ==}
-    engines: {node: '>=14.20.0'}
-
-  egg-session@3.3.0:
-    resolution: {integrity: sha512-RCPWHLWi0Ak+xI/zXN71Wpva/wsqevmKDvkOGk2uu5UdwRHw5lKuTtYm161NMDGZi6lvcnzR2lN7xRcDuhGiIw==}
-    engines: {node: '>=8.0.0'}
-
-  egg-static@2.3.1:
-    resolution: {integrity: sha512-OODn2ccm4znFM/EdhiPUmIpgCkYvAdtjuVAy3N/Ub4cSRgqIPcjXajmDsbhEo43mCieukPhsOxgWD3vKZurzHQ==}
-    engines: {node: '>=14.0.0'}
 
   egg-ts-helper@3.1.1:
     resolution: {integrity: sha512-ZzgsNFLs+b5Uca7lh2luYpixa47e+XoZapbH6RYG52kbJhmSd9qgIODBNMVrfasgGuuiBWV+qrs/RSpvISRKEw==}
     engines: {node: '>= 18.19.0'}
     hasBin: true
-
-  egg-utils@2.5.0:
-    resolution: {integrity: sha512-zQDXcqD0v+6IDBxcxzpTWoDTMg0G3iISSSeOHN7dZzyJWXXmw4ijBPAwKQPVvqBoXB6jAXj5f8B8/LVM9AN//A==}
-
-  egg-view@2.1.4:
-    resolution: {integrity: sha512-8zJ/S7YU5SK3EbAYESlUCixLpDZPnyKimoowavrgW2vONnh8AJVuDGqgKCYmuymvWq3uaHoNx7mYbdMQwMTZ6A==}
-    engines: {node: '>=8.0.0'}
-
-  egg-watcher@3.1.1:
-    resolution: {integrity: sha512-fLo8f2GD9kSrAKeDoXaCckl9MaMMwTEkqU9gVDYWYGPYLsmX79ugA+Wo/2RGQkytsxSCk3bn8YqhPdMzsozgWA==}
-    engines: {node: '>= 8.0.0'}
-
-  egg@3.34.0:
-    resolution: {integrity: sha512-Zs4gwrp/iY7Vkdfm4/UTy1cZrEcWuK9ZiBix30Sco5ennR6k7TcsssYfIS40lgVvI7U4HwcR9HOmhYML3A0A3w==}
-    engines: {node: '>= 14.20.0'}
 
   egg@4.1.0-beta.26:
     resolution: {integrity: sha512-/5Rz6v3rGf0fq/9FJ/xiK41xadEtrMGHfwD4PGykQVhmHDhNJtl3XHjoSEW311QZvXteaVStAYNpZ3u2Zq2hUw==}
@@ -4910,16 +4698,9 @@ packages:
     resolution: {integrity: sha512-i6UzDscO/XfAcNYD75CfICkmfLedpyPDdozrLMmQc5ORaQcdMoc21OnlEylMIqI7U8eniKrPMxxtj8k0vhmJhA==}
     engines: {node: '>=14'}
 
-  encodeurl@1.0.2:
-    resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
-    engines: {node: '>= 0.8'}
-
   encodeurl@2.0.0:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
-
-  end-of-stream@1.4.5:
-    resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
   enquirer@2.4.1:
     resolution: {integrity: sha512-rRqJg/6gd538VHvR3PSrdRBb/1Vy2YfzHqzvbhGIQpDRKIa4FgV/54b5Q1xYSxOOwKvjXweS26E0Q+nAMwp2pQ==}
@@ -4981,9 +4762,6 @@ packages:
   etag@1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
-
-  event-stream@3.3.4:
-    resolution: {integrity: sha512-QHpkERcGsR0T7Qm3HNJSyXKEEj8AHNxkY3PK8TS2KJvQ7NiSHe3DDpwVKKtoYprL/AreyzFBeIkBIWChAqn60g==}
 
   event-stream@4.0.1:
     resolution: {integrity: sha512-qACXdu/9VHPBzcyhdOWR5/IahhGMf0roTeZJfzz077GwylcDd90yOHLouhmv7GJ5XzPi6ekaQWd8AvPP2nOvpA==}
@@ -5116,13 +4894,6 @@ packages:
   form-data-encoder@1.7.2:
     resolution: {integrity: sha512-qfqtYan3rxrnCk1VYaA4H+Ms9xdpPqvLZa6xmMgFvhO32x7/3J/ExcTd6qpxM0vH2GdMI+poehyBZvqfMTto8A==}
 
-  form-data-encoder@1.9.0:
-    resolution: {integrity: sha512-rahaRMkN8P8d/tgK/BLPX+WBVM27NbvdXBxqQujBtkDAIFspaRqN7Od7lfdGQA6KAD+f82fYCLBq1ipvcu8qLw==}
-
-  form-data@4.0.4:
-    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
-    engines: {node: '>= 6'}
-
   form-data@4.0.5:
     resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
@@ -5185,10 +4956,6 @@ packages:
   generate-function@2.3.1:
     resolution: {integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==}
 
-  generator-function@2.0.1:
-    resolution: {integrity: sha512-SFdFmIJi+ybC0vjlHN0ZGVGHc3lgE0DxPAT0djjVg+kjOnSqclqmj0KQ7ykTOLP6YxoqOvuAODGdcHJn+43q3g==}
-    engines: {node: '>= 0.4'}
-
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
@@ -5209,13 +4976,6 @@ packages:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
     engines: {node: '>= 0.4'}
 
-  get-ready@1.0.0:
-    resolution: {integrity: sha512-mFXCZPJIlcYcth+N8267+mghfYN9h3EhsDa6JSnbA3Wrhh/XFpuowviFcsDeYZtKspQyWyJqfs4O6P8CHeTwzw==}
-
-  get-ready@2.0.1:
-    resolution: {integrity: sha512-q2zoHPGbHognNvofksty0SOrviWowfUVxYcv3j3+Mf1BRRMHmq6q/1pciravEf8jkSL5iovloMWnonEc2QOpqA==}
-    engines: {node: '>= 4.0.0'}
-
   get-ready@3.4.0:
     resolution: {integrity: sha512-D7N1WED4f5rQUveyl19GxfJupMeR+y106EVK6na/zI+w34FcTAShvetX0X2k61x+lJXCEiOnGHk0xro6YRyrjQ==}
     engines: {node: '>= 16.13.0'}
@@ -5233,11 +4993,13 @@ packages:
 
   glob@10.4.5:
     resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@11.0.3:
     resolution: {integrity: sha512-2Nim7dha1KVkaiF4q6Dj+ngPPMdfvLJEOpZk/jKiUAkqKebpGAWQXAq9z1xu9HKu5lWfqw/FASuccEjyznjPaA==}
     engines: {node: 20 || >=22}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@8.1.0:
@@ -5260,16 +5022,9 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  graceful-process@1.3.0:
-    resolution: {integrity: sha512-tlldpcdxQgSgVD/A+OawlyjGU9Z+wbBTI6QroGo4u6znQNLgglp+V2KnixRHUXRttnrCpbQSSCJ6wvsMkzR9Aw==}
-
   graceful-process@2.2.0:
     resolution: {integrity: sha512-cDGvGtHfJ1SQSX8eLMgUGe86u96LxEm6jujcEjYUjWho+INwEOGOvfQPdum9jm4JxfU4lrWIpzLt8xEPgZrdcg==}
     engines: {node: '>= 18.19.0'}
-
-  graceful@1.1.0:
-    resolution: {integrity: sha512-sImEQVLLBo8hSeX4Vp6HVdWSdqCkHoVlZwBuBL65tNwcPTvnMaW40iWs1vdCbyP0znkCEuvv6rZ37QPloPi9Fw==}
-    engines: {node: '>= 0.10.0'}
 
   graceful@2.0.0:
     resolution: {integrity: sha512-q1SvWB1loG0xeZ2ZQBQC2m64RKmXmGjeNosFYKJrkDsQQI9rAgmXKSuaEqqTa90rJRShDnEG/MJDgqnFXI7Phw==}
@@ -5324,14 +5079,6 @@ packages:
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
 
-  http-assert@1.5.0:
-    resolution: {integrity: sha512-uPpH7OKX4H25hBmU6G1jWNaqJGpTXxey+YOUizJUAgu0AjLUeC8D73hTrhvDS5D+GJN1DN1+hhc/eF/wpxtp0w==}
-    engines: {node: '>= 0.8'}
-
-  http-errors@1.8.1:
-    resolution: {integrity: sha512-Kpk9Sm7NmI+RHhnj6OIWDI1d6fIoFAtFt9RLaTMRlg/8w49juAStsrBgp0Dp4OdxdVbRIeKhtCUvoi/RuAhO4g==}
-    engines: {node: '>= 0.6'}
-
   http-errors@2.0.0:
     resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
     engines: {node: '>= 0.8'}
@@ -5343,9 +5090,6 @@ packages:
   human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
-
-  humanize-bytes@1.0.1:
-    resolution: {integrity: sha512-OZMIHt5YhQM4S3R82KGoKnWv4vaNnWuEhPAK+u5v7rD2tRM3DU2NghYEHipAPYwyTR6+fMVZQ9ETpZIZeZUapQ==}
 
   humanize-ms@1.2.1:
     resolution: {integrity: sha512-Fl70vYtsAFb/C06PTS9dZBo7ihau+Tu/DNCk/OyHhea07S+aeMWpFFkUaXRa8fI+ScZbEI8dfSxwY7gxZ9SAVQ==}
@@ -5393,10 +5137,6 @@ packages:
   inflation@2.1.0:
     resolution: {integrity: sha512-t54PPJHG1Pp7VQvxyVCJ9mBbjG3Hqryges9bXoOO6GExCPa+//i/d5GSuFtpx3ALLd7lgIAur6zrIlBQyJuMlQ==}
     engines: {node: '>= 0.8.0'}
-
-  inflection@1.13.4:
-    resolution: {integrity: sha512-6I/HUDeYFfuNCVS3td055BaXBwKYuzw7K3ExVMStBowKo9oOAMJIXIHvdyR3iboTCp1b+1i5DSkIZTcwIktuDw==}
-    engines: {'0': node >= 0.4.0}
 
   inflection@3.0.2:
     resolution: {integrity: sha512-+Bg3+kg+J6JUWn8J6bzFmOWkTQ6L/NHfDRSYU+EVvuKHDxUDHAXgqixHfVlzuBQaPOTac8hn43aPhMNk6rMe3g==}
@@ -5483,10 +5223,6 @@ packages:
   is-fullwidth-code-point@5.1.0:
     resolution: {integrity: sha512-5XHYaSyiqADb4RnZ1Bdad6cPp8Toise4TzEjcOYDHZkTCbKgiUl7WTUCpNWHuxmDt91wnsZBc9xinNzopv3JMQ==}
     engines: {node: '>=18'}
-
-  is-generator-function@1.1.2:
-    resolution: {integrity: sha512-upqt1SkGkODW9tsGNG5mtXTXtECizwtS2kA161M+gJPc1xdb/Ax629af6YrTwcOeQHbewrPNlE5Dx7kzvXTizA==}
-    engines: {node: '>= 0.4'}
 
   is-glob@4.0.3:
     resolution: {integrity: sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==}
@@ -5681,10 +5417,6 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  jsonp-body@1.1.0:
-    resolution: {integrity: sha512-ZQyNWgHI8vvqclzz0l4/PatmeGureejrdMiLQGxTupMw0yQMHf+pQwS/7d5tpo2NBHsuwLCmXvZeNiz2RKdklA==}
-    engines: {node: '>= 0.10.0'}
-
   jsonp-body@2.0.0:
     resolution: {integrity: sha512-9VZNeFvIO6gjtYiob3KW3HzxMgq8UEO0xUaUaQ1e8eAeOVlCAs49CtrdMXLma8y3GC/lsyfnzZDTrBWkdGxi2g==}
     engines: {node: '>= 18.19.0'}
@@ -5711,38 +5443,12 @@ packages:
     resolution: {integrity: sha512-kBH3IYPMb+iAXnrxIhXnW+gXV8OTzCu8VPDqvcDHW9SQrbkHmqPQtiZwrltNmSq6/lpipHnT7k7PsjlVD7kK0w==}
     engines: {node: '>=8.0.0'}
 
-  koa-compose@3.2.1:
-    resolution: {integrity: sha512-8gen2cvKHIZ35eDEik5WOo8zbVp9t4cP8p4hW4uE55waxolLRexKKrqfCpwhGVppnB40jWeF8bZeTVg99eZgPw==}
-
   koa-compose@4.1.0:
     resolution: {integrity: sha512-8ODW8TrDuMYvXRwra/Kh7/rJo9BtOfPc6qO8eAfC80CnCvSjSl0bkRM24X6/XBBEyj0v1nRUQ1LyOy3dbqOWXw==}
-
-  koa-convert@1.2.0:
-    resolution: {integrity: sha512-K9XqjmEDStGX09v3oxR7t5uPRy0jqJdvodHa6wxWTHrTfDq0WUNnYTOOUZN6g8OM8oZQXprQASbiIXG2Ez8ehA==}
-    engines: {node: '>= 4'}
-
-  koa-convert@2.0.0:
-    resolution: {integrity: sha512-asOvN6bFlSnxewce2e/DK3p4tltyfC4VM7ZwuTuepI7dEQVcvpyFuBcEARu1+Hxg8DIwytce2n7jrZtRlPrARA==}
-    engines: {node: '>= 10'}
-
-  koa-is-json@1.0.0:
-    resolution: {integrity: sha512-+97CtHAlWDx0ndt0J8y3P12EWLwTLMXIfMnYDev3wOTwH/RpBGMlfn4bDXlMEg1u73K6XRE9BbUp+5ZAYoRYWw==}
-
-  koa-locales@1.12.0:
-    resolution: {integrity: sha512-lalx0OuvdZ39JppTVqHnYKIgJJbByon9xpt5KSKFOL6/VQS+XBMklMX83+fgkCXzsNacynWaN75ihWP2EGsWIQ==}
-    engines: {node: '>=4.0.0'}
-
-  koa-onerror@4.2.0:
-    resolution: {integrity: sha512-D15tp5rxevHqqcvOiEDbtQolG6z3NpBNupz3EUZz43pjYv5SGMom2Xz1FKM8oTya56+aq+hejPW/iBrNnC/UGQ==}
-    engines: {node: '>= 8.0.0'}
 
   koa-onerror@5.0.1:
     resolution: {integrity: sha512-mSdakWWkZASupPZe661zhSwa/szIvskdmNpLn9gRmrcI2iktDDLi+u0c6KuG6mI6E6Fh8btVMdx0u40/2IvxQw==}
     engines: {node: '>= 18.19.0'}
-
-  koa-override@3.0.0:
-    resolution: {integrity: sha512-w2rWCfapbQUZ8TrRBarj6iwryCTooEcdw9lr1hYC1q4FnaCZcAOhpjB1VpqtbODALVMgY3JGlzLSeYRXc5Ky0Q==}
-    engines: {node: '>= 8.0.0'}
 
   koa-override@4.0.0:
     resolution: {integrity: sha512-OxKEHerA4pVQ2W6qPX1sXWJ8HMCr94Q424C8qyzVpT70aCo9/NTKsqpCmKewPbdZAzxPTjnmlWdDkfa+WWlaDQ==}
@@ -5752,21 +5458,9 @@ packages:
     resolution: {integrity: sha512-Ich3pCz6RhtbajYXRWjIl6O5wtrLs6kE3nkXc9XmaWe+MysJyZO7K4L3oce1Jpg/iMgCbj+5UCiMm/rqVtcDIg==}
     engines: {node: '>=7'}
 
-  koa-session@6.4.0:
-    resolution: {integrity: sha512-h/dxmSOvNEXpHQPRs4TV03TZVFyZIjmYQiTAW5JBFTYBOZ0VdpZ8QEE6Dud75g8z9JNGXi3m++VqRmqToB+c2A==}
-    engines: {node: '>=8.0.0'}
-
   koa-session@7.0.2:
     resolution: {integrity: sha512-nMWJndLmIuKQMTYPr5NokGQOGD2Aqal5GVi1xAhrQjrrzKq1ASy1WTFVkZ/xhwhtC4KpWi5KdqNYewZo7KJb4w==}
     engines: {node: '>= 18.19.0'}
-
-  koa-static-cache@5.1.4:
-    resolution: {integrity: sha512-abVWOHY6z6qSTvNtapWMAnvHS9SUiUCaQQQubClSAT9ybQPsZ6ioKcRarnownS4fMD0sXQgQ5ey8CYEuwoa1Yg==}
-    engines: {node: '>= 7.6.0'}
-
-  koa@2.16.3:
-    resolution: {integrity: sha512-zPPuIt+ku1iCpFBRwseMcPYQ1cJL8l60rSmKeOuGfOXyE6YnTBmf2aEFNL2HQGrD0cPcLO/t+v9RTgC+fwEh/g==}
-    engines: {node: ^4.8.4 || ^6.10.1 || ^7.10.1 || >= 8.1.4}
 
   langchain@1.2.24:
     resolution: {integrity: sha512-NpaOmDZ4dP16sLkY+Y49Q9mrV2fdTy81t+yTw7f3K7/zZtvuQk6IH/bIzfy3bdOD8TERethvR2mOmgueRDbZBw==}
@@ -5975,9 +5669,6 @@ packages:
   map-stream@0.0.7:
     resolution: {integrity: sha512-C0X0KQmGm3N2ftbTGBhSyuydQ+vV1LC3f3zPvT3RXHXNZrvfPZcoXp/N5DOa8vedX/rTMm2CjTtivFg2STJMRQ==}
 
-  map-stream@0.1.0:
-    resolution: {integrity: sha512-CkYQrPYZfWnu/DAmVCpTSX/xHpKZ80eKh2lAkyA6AJTef6bW+6JpbQZN5rofum7da+SyN1bi5ctTm+lTfcCW3g==}
-
   matcher@4.0.0:
     resolution: {integrity: sha512-S6x5wmcDmsDRRU/c2dkccDwQPXoFczc5+HpQ2lON8pnvHlnvHAHj5WlLVvw6n6vNyHuVugYrFohYxbS+pvFpKQ==}
     engines: {node: '>=10'}
@@ -6031,10 +5722,6 @@ packages:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
 
-  mime-types@3.0.1:
-    resolution: {integrity: sha512-xRc4oEhT6eaBpU1XF7AjpOFD+xQmXNB5OVKwp4tqCuBpHLS/ZbBDrc07mYTDqVMg6PfxUjjNp85O6Cd2Z/5HWA==}
-    engines: {node: '>= 0.6'}
-
   mime-types@3.0.2:
     resolution: {integrity: sha512-Lbgzdk0h4juoQ9fCKXW4by0UJqj+nOOrI9MJ1sSj4nI8aI2eo1qmvQEie4VD1glsS250n15LsWsYtCugiStS5A==}
     engines: {node: '>=18'}
@@ -6055,9 +5742,6 @@ packages:
   minimatch@10.0.3:
     resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
     engines: {node: 20 || >=22}
-
-  minimatch@3.1.2:
-    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
 
   minimatch@5.1.6:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
@@ -6106,9 +5790,6 @@ packages:
   moment@2.30.1:
     resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
-  ms@2.0.0:
-    resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
-
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -6116,18 +5797,9 @@ packages:
     resolution: {integrity: sha512-NdkOVav3GoIkBZqMUneU435HW0a90zitpuO1erPRhOQdPtl65dXD3G9/1k46G6/0ZMau4CJFFUHkMKVsyNZT+w==}
     engines: {node: '>=4'}
 
-  multimatch@5.0.0:
-    resolution: {integrity: sha512-ypMKuglUrZUD99Tk2bUQ+xNQj43lPEfAeX2o9cTteAmShXy2VHDJpuwu1o0xqoKCt9jLVAvwyFKdLTPXKAfJyA==}
-    engines: {node: '>=10'}
-
   multimatch@7.0.0:
     resolution: {integrity: sha512-SYU3HBAdF4psHEL/+jXDKHO95/m5P2RvboHT2Y0WtTttvJLP4H/2WS9WlQPFvF6C8d6SpLw8vjCnQOnVIVOSJQ==}
     engines: {node: '>=18'}
-
-  mustache@2.3.2:
-    resolution: {integrity: sha512-KpMNwdQsYz3O/SBS1qJ/o3sqUJ5wSb8gb0pul8CO0S56b9Y2ALm8zCfsjPXsqGFfoNBkDwZuZIAjhsZI03gYVQ==}
-    engines: {npm: '>=1.4.0'}
-    hasBin: true
 
   mustache@4.2.0:
     resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
@@ -6157,10 +5829,6 @@ packages:
     resolution: {integrity: sha512-c7+7RQ+dMB5dPwwCp4ee1/iV/q2P6aK1mTZcfr1BTuVlyW9hJYiMPybJCcnBlQtuSmTIWNeazm/zqNoZSSElBg==}
     engines: {node: ^18 || >=20}
     hasBin: true
-
-  ndir@0.1.5:
-    resolution: {integrity: sha512-GEdViSiVHi63HASUGaQXNBbUNe5KDnuAYvOGBlY7y+CCCRT3NBeMWQlODb2GVV2cKwEIwHzo9KOCMsPBXlKsOg==}
-    engines: {node: '>= 0.4'}
 
   negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
@@ -6193,10 +5861,6 @@ packages:
   node-hex@1.0.1:
     resolution: {integrity: sha512-iwpZdvW6Umz12ICmu9IYPRxg0tOLGmU3Tq2tKetejCj3oZd7b2nUXwP3a7QA5M9glWy8wlPS1G3RwM/CdsUbdQ==}
     engines: {node: '>=8.0.0'}
-
-  node-homedir@1.1.1:
-    resolution: {integrity: sha512-Xsmf94D/DdeDISAECUaxXVxhh+kHdbOQE4CnP4igo3HXL3BSmmUpD5M7orH434EZZwBTFF2xe5SgsQr/wOBuNw==}
-    engines: {node: '>=4.0.0'}
 
   node-homedir@2.0.0:
     resolution: {integrity: sha512-KNUpQjYKNEzMxGAvgmfOcnz+h2h0bOkYsQQbrgXWCYnB83z74OQMdaEJ6vI3iljVXTOn4sFtA5zrwcZaC8rVqg==}
@@ -6264,9 +5928,6 @@ packages:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
 
-  only@0.0.2:
-    resolution: {integrity: sha512-Fvw+Jemq5fjjyWz6CpKx6w9s7xxqo3+JCyM0WXWeCSOboZ8ABkyvP8ID4CZuChA/wxSx+XSJmdOm8rGVyJ1hdQ==}
-
   openai@6.22.0:
     resolution: {integrity: sha512-7Yvy17F33Bi9RutWbsaYt5hJEEJ/krRPOrwan+f9aCPuMat1WVsb2VNSII5W1EksKT6fF69TG/xj4XzodK3JZw==}
     hasBin: true
@@ -6281,16 +5942,6 @@ packages:
 
   openapi-types@12.1.3:
     resolution: {integrity: sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw==}
-
-  os-name@1.0.3:
-    resolution: {integrity: sha512-f5estLO2KN8vgtTRaILIgEGBoBrMnZ3JQ7W9TMZCnOIGwHe8TRGSpcagnWDo+Dfhd/z08k9Xe75hvciJJ8Qaew==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-
-  osx-release@1.1.0:
-    resolution: {integrity: sha512-ixCMMwnVxyHFQLQnINhmIpWqXIfS2YOXchwQrk+OFzmo6nDjQ0E4KXAyyUh0T0MZgV4bUhkRrAbVqlE4yLVq4A==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
 
   oxlint-tsgolint@0.2.0:
     resolution: {integrity: sha512-37Hy+FT1sz8hHUo31JIgFDA8NcFndexrg5okutWRPXNejJwB9hKN+pyInaQQIv4XDsgNcQsSR2VJoq99eaGk9g==}
@@ -6423,9 +6074,6 @@ packages:
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
 
-  platform@1.3.6:
-    resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
-
   playwright-core@1.58.2:
     resolution: {integrity: sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==}
     engines: {node: '>=18'}
@@ -6471,24 +6119,12 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  ps-tree@1.2.0:
-    resolution: {integrity: sha512-0VnamPPYHl4uaU/nSFeZZpR21QAWRz+sRv4iW9+v/GS/J5U5iZB5BNN6J0RMoOvdx2gWM2+ZFMIm58q24e4UYA==}
-    engines: {node: '>= 0.10'}
-    hasBin: true
-
   psl@1.15.0:
     resolution: {integrity: sha512-JZd3gMVBAVQkSs6HdNZo9Sdo0LNcQeMNP3CozBJb3JYC/QUYZTnKxP+f8oWRX4rHP5EurWxqAHTSwUCjlNKa1w==}
-
-  pump@3.0.3:
-    resolution: {integrity: sha512-todwxLMY7/heScKmntwQG8CXVkWUOdYxIvY2s0VWAAMh/nd8SoYiRaKjlr7+iCs984f2P8zvrfWcDDYVb73NfA==}
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
-
-  qs@6.14.0:
-    resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
-    engines: {node: '>=0.6'}
 
   qs@6.15.0:
     resolution: {integrity: sha512-mAZTtNCeetKMH+pSjrb76NAM8V9a05I9aBZOHztWy/UqcJdQYNsf59vrRKWnojAT9Y+GbIvoTBC++CPHqpDBhQ==}
@@ -6541,10 +6177,6 @@ packages:
   readdirp@4.1.2:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
-
-  ready-callback@3.0.0:
-    resolution: {integrity: sha512-wGhjJMrxVEX35Ec+QlM2FW+ZsXhThNCbmdk+x22vzwRPPsDUNgq7C6nU0EpJRvNJSK/MiwQ73XZljo/IKhovXA==}
-    engines: {node: '>=14.0.0'}
 
   ready-callback@4.0.0:
     resolution: {integrity: sha512-4jkycmNcRk642rVKdYlqToVKoZ67TPWrOGCyvWYi074ZJli6J3cqr7L/IFtxqOrafrp05DReGzno6l/F7By7Dg==}
@@ -6697,13 +6329,6 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  scmp@2.1.0:
-    resolution: {integrity: sha512-o/mRQGk9Rcer/jEEw/yw4mwo3EU/NvYvp577/Btqrym9Qy5/MdWGBqipbALgd2lrdWTJ5/gqDusxfnQBxOxT2Q==}
-    deprecated: Just use Node.js's crypto.timingSafeEqual()
-
-  sdk-base@2.0.1:
-    resolution: {integrity: sha512-eeG26wRwhtwYuKGCDM3LixCaxY27Pa/5lK4rLKhQa7HBjJ3U3Y+f81MMZQRsDw/8SC2Dao/83yJTXJ8aULuN8Q==}
-
   sdk-base@3.6.0:
     resolution: {integrity: sha512-jxHUIrRLlAoRFRwiXKhOGjd6BeFWO/jz7tv+E7lbMSef6F9jzFN2Sv3hLW58oDDKscKaBGG6vQdkbXn7isE7fw==}
 
@@ -6726,14 +6351,6 @@ packages:
   send@1.2.1:
     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
     engines: {node: '>= 18'}
-
-  sendmessage@1.1.0:
-    resolution: {integrity: sha512-riI/U2etmtMKaVPe7zMnr++eG46F191F6Zycwrkm+/sEiHzucNXJETPJ5dQryNaDuHTpYdzmesEJQ2le1DxlMQ==}
-    engines: {node: '>= 0.10.0'}
-
-  sendmessage@2.0.0:
-    resolution: {integrity: sha512-//UAqD/jhpCAQd4zRJ8KRv5FoaM2jeT94p+C2DlR0yGXZyjJTIQnl/fG7KpLo+x6tH+1SglUUh88C6LOxtaZbA==}
-    engines: {node: '>= 14.17.0'}
 
   sendmessage@3.0.2:
     resolution: {integrity: sha512-nQWHp6obvkK9/ExmY8hjqzVPgcgAh1ZRgetV8bPcmXgQl6ujJVwWPeAfkk0aB+PKi4v4GY59Jxa0+c1qwXsrRw==}
@@ -6832,9 +6449,6 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
-  split@0.3.3:
-    resolution: {integrity: sha512-wD2AeVmxXRBoX44wAycgjVpMhvbwdI2aZjCkvfNcH1YqHQvJVa1duWc73OyVGJUc05fhFaTZeQ/PYsrmyH0JVA==}
-
   split@1.0.1:
     resolution: {integrity: sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==}
 
@@ -6851,10 +6465,6 @@ packages:
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
-  statuses@1.5.0:
-    resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
-    engines: {node: '>= 0.6'}
-
   statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
@@ -6870,18 +6480,11 @@ packages:
     resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
     engines: {node: '>= 0.4'}
 
-  stream-combiner@0.0.4:
-    resolution: {integrity: sha512-rT00SPnTVyRsaSz5zgSPma/aHSOic5U1prhYdRy5HS2kTZviFpmDgzilbtsJsxiroqACmayynDN/9VzIbX5DOw==}
-
   stream-combiner@0.2.2:
     resolution: {integrity: sha512-6yHMqgLYDzQDcAkL+tjJDC5nSNuNIx0vZtRZeiPh7Saef7VHX9H5Ijn9l2VIol2zaNYlYEX6KyuT/237A58qEQ==}
 
   stream-slice@0.1.2:
     resolution: {integrity: sha512-QzQxpoacatkreL6jsxnVb7X5R/pGw9OUv2qWTYWnmLpg4NdN31snPy/f3TdQE1ZUXaThRvj1Zw4/OGg0ZkaLMA==}
-
-  stream-wormhole@1.1.0:
-    resolution: {integrity: sha512-gHFfL3px0Kctd6Po0M8TzEvt3De/xu6cnRrjlfYNhwbhLPLwigI2t1nc6jrzNuaYg5C4YF78PPFuQPzRiqn9ew==}
-    engines: {node: '>=4.0.0'}
 
   stream-wormhole@2.0.1:
     resolution: {integrity: sha512-B31SiV7tNxOGqvC367O1dVL4nWBgCT7xqtHtikvxUkrbxgvtUemYc6WyO8+Z5cLW8/HUvYmNkgZIjTXYLIDYVw==}
@@ -6964,10 +6567,6 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
-  supports-hyperlinks@2.3.0:
-    resolution: {integrity: sha512-RpsAZlpWcDwOPQA22aCH4J0t7L8JmAvsCxfOSEwm7cQs3LshN36QaTkwd70DnBOXDWGssw2eUoc8CaRWT0XunA==}
-    engines: {node: '>=8'}
-
   supports-hyperlinks@4.3.0:
     resolution: {integrity: sha512-i6sWEzuwadSlcr2mOnb0ktlIl+K5FVxsPXmoPfknDd2gyw4ZBIAZ5coc0NQzYqDdEYXMHy8NaY9rWwa1Q1myiQ==}
     engines: {node: '>=20'}
@@ -6979,10 +6578,6 @@ packages:
   tcp-base@3.2.0:
     resolution: {integrity: sha512-fFAqH8QTbheuEbXLdbxTSe31Gkw6Lg3nq4loyrxIXM6+ILGdbYXEblgyuu7UltOkOHbP/q2iqaC+gIXXu0C5bg==}
     engines: {node: '>= 6.0.0'}
-
-  terminal-link@2.1.1:
-    resolution: {integrity: sha512-un0FmiRUQNr5PJqy9kP7c40F5BOfpGlYTrxonDChEZB7pzZxRNp/bt+ymiy9/npwXya9KH99nJ/GXFIiUkYGFQ==}
-    engines: {node: '>=8'}
 
   terminal-link@5.0.0:
     resolution: {integrity: sha512-qFAy10MTMwjzjU8U16YS4YoZD+NQLHzLssFMNqgravjbvIPNiqkGFR4yjhJfmY9R5OFU7+yHxc6y+uGHkKwLRA==}
@@ -7185,19 +6780,6 @@ packages:
   url-parse@1.5.10:
     resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
 
-  urllib@2.44.0:
-    resolution: {integrity: sha512-zRCJqdfYllRDA9bXUtx+vccyRqtJPKsw85f44zH7zPD28PIvjMqIgw9VwoTLV7xTBWZsbebUFVHU5ghQcWku2A==}
-    engines: {node: '>= 0.10.0'}
-    peerDependencies:
-      proxy-agent: ^5.0.0
-    peerDependenciesMeta:
-      proxy-agent:
-        optional: true
-
-  urllib@3.27.3:
-    resolution: {integrity: sha512-24ht/hHAkhWXbqSCM499B8gFPXaf4aFQJNqJH5pMsvfyo+aM3zKuQ/uiZ/mdz41Nnw6ItuiqMVMK5VDAlAHLlw==}
-    engines: {node: '>= 14.19.3'}
-
   urllib@4.8.2:
     resolution: {integrity: sha512-V5oo9kzQfF9UQAC9KOVFmmmbYPJ9nksgO8HM89BZse96QcCyjrssPVxKzL/9sVPRC8D4Sd3nAdaMCXAZ3dqEYA==}
     engines: {node: '>= 18.19.0'}
@@ -7216,10 +6798,6 @@ packages:
 
   uuid@13.0.0:
     resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
-    hasBin: true
-
-  uuid@8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -7360,10 +6938,6 @@ packages:
     resolution: {integrity: sha512-NsmoXalsWVDMGupxZ5R08ka9flZjjiLvHVAWYOKtiKM8ujtZWr9cRffak+uSE48+Ob8ObalXpwyeUiyDD6QFgg==}
     engines: {node: '>=8'}
 
-  win-release@1.1.1:
-    resolution: {integrity: sha512-iCRnKVvGxOQdsKhcQId2PXV1vV3J/sDPXKA4Oe9+Eti2nb2ESEsYHRYls/UjoUW3bIc5ZDO8dTH50A/5iVN+bw==}
-    engines: {node: '>=0.10.0'}
-
   wordwrap@1.0.0:
     resolution: {integrity: sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==}
 
@@ -7400,10 +6974,6 @@ packages:
       utf-8-validate:
         optional: true
 
-  wt@1.2.0:
-    resolution: {integrity: sha512-nJttxFyxnIvWBWYcy7Px4XkXbRoEe77by66d0FDof266Mv00vVBNcUGa00rL1+0DdsXG75LG1rwBnBfUa2bNLA==}
-    engines: {node: '>= 0.12.9'}
-
   xss@1.0.15:
     resolution: {integrity: sha512-FVdlVVC67WOIPvfOwhoMETV72f6GbW7aOabBC3WxN/oUdoEMDyLz4OgRv5/gck2ZeNqEQu+Tb0kloovXOfpYVg==}
     engines: {node: '>= 0.10.0'}
@@ -7437,10 +7007,6 @@ packages:
   yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
     engines: {node: '>=12'}
-
-  ylru@1.4.0:
-    resolution: {integrity: sha512-2OQsPNEmBCvXuFlIni/a+Rn+R2pHW9INm0BxXJ4hVDA8TirqMj+J/Rp9ItLatT/5pZqWwefVrTQcHpixsxnVlA==}
-    engines: {node: '>= 4.0.0'}
 
   ylru@2.0.0:
     resolution: {integrity: sha512-T6hTrKcr9lKeUG0MQ/tO72D3UGptWVohgzpHG8ljU1jeBt2RCjcWxvsTPD8ZzUq1t1FvwROAw1kxg2euvg/THg==}
@@ -7552,6 +7118,7 @@ snapshots:
     dependencies:
       ajv: 8.17.1
       typebox: 1.0.81
+    optional: true
 
   '@eggjs/ajv-formats@3.0.1':
     dependencies:
@@ -7572,17 +7139,7 @@ snapshots:
       ajv: 8.17.1
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/ajv-plugin@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/ajv-decorator': 4.0.0-beta.36
-      '@eggjs/ajv-formats': 3.0.1
-      '@eggjs/ajv-keywords': 5.1.1
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      ajv: 8.17.1
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/aop-decorator@3.72.0':
     dependencies:
@@ -7591,11 +7148,11 @@ snapshots:
       '@eggjs/tegg-metadata': 3.72.0
       '@eggjs/tegg-types': 3.72.0
 
-  '@eggjs/aop-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/aop-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -7606,14 +7163,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/aop-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/aop-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -7626,18 +7176,7 @@ snapshots:
       '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-
-  '@eggjs/aop-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/aop-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
+    optional: true
 
   '@eggjs/aop-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -7650,18 +7189,7 @@ snapshots:
       koa-compose: 4.1.0
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/aop-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      koa-compose: 4.1.0
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/background-task@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -7669,13 +7197,7 @@ snapshots:
       '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-
-  '@eggjs/background-task@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
+    optional: true
 
   '@eggjs/bin@8.0.0-beta.26(@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26))(@swc/core@1.13.5)(@types/node@22.18.8)(typescript@5.9.3)':
     dependencies:
@@ -7741,7 +7263,7 @@ snapshots:
 
   '@eggjs/cluster@4.0.0-beta.36':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       '@fengmk2/ps-tree': 2.0.2
       cfork: 2.0.0
       cluster-reload: 2.0.0
@@ -7752,6 +7274,7 @@ snapshots:
       sendmessage: 3.0.2
       terminal-link: 5.0.0
       utility: 2.5.0
+    optional: true
 
   '@eggjs/compressible@3.0.0':
     dependencies:
@@ -7760,7 +7283,7 @@ snapshots:
   '@eggjs/controller-decorator@3.72.0(@cfworker/json-schema@4.1.1)':
     dependencies:
       '@eggjs/aop-decorator': 3.72.0
-      '@eggjs/cookies': 3.1.0
+      '@eggjs/cookies': 4.0.0-beta.26
       '@eggjs/core-decorator': 3.72.0
       '@eggjs/tegg-common-util': 3.72.0
       '@eggjs/tegg-metadata': 3.72.0
@@ -7775,14 +7298,14 @@ snapshots:
       - '@cfworker/json-schema'
       - supports-color
 
-  '@eggjs/controller-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/controller-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/cookies': 4.0.0-beta.36
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/cookies': 4.0.0-beta.26
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
       is-type-of: 2.2.0
       path-to-regexp: 1.9.0
     transitivePeerDependencies:
@@ -7791,7 +7314,7 @@ snapshots:
   '@eggjs/controller-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
       '@eggjs/aop-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/cookies': 4.0.0-beta.36
+      '@eggjs/cookies': 4.0.0-beta.26
       '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
@@ -7800,19 +7323,7 @@ snapshots:
       path-to-regexp: 1.9.0
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/controller-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/cookies': 4.0.0-beta.36
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      is-type-of: 2.2.0
-      path-to-regexp: 1.9.0
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/controller-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -7821,7 +7332,7 @@ snapshots:
       '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/router': 4.0.0-beta.36
+      '@eggjs/router': 4.0.0-beta.26
       '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
@@ -7832,37 +7343,9 @@ snapshots:
       globby: 11.1.0
       path-to-regexp: 1.9.0
       sdk-base: 5.0.1
-
-  '@eggjs/controller-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/controller-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/router': 4.0.0-beta.36
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      egg-errors: 2.3.2
-      globby: 11.1.0
-      path-to-regexp: 1.9.0
-      sdk-base: 5.0.1
-
-  '@eggjs/cookies@3.1.0':
-    dependencies:
-      should-send-same-site-none: 2.0.5
-      utility: 2.5.0
+    optional: true
 
   '@eggjs/cookies@4.0.0-beta.26':
-    dependencies:
-      should-send-same-site-none: 2.0.5
-      utility: 2.5.0
-
-  '@eggjs/cookies@4.0.0-beta.36':
     dependencies:
       should-send-same-site-none: 2.0.5
       utility: 2.5.0
@@ -7873,10 +7356,10 @@ snapshots:
       '@eggjs/tegg-types': 3.72.0
       reflect-metadata: 0.1.14
 
-  '@eggjs/core-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/core-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -7886,13 +7369,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/core-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/core@7.0.0-beta.26':
     dependencies:
@@ -7916,8 +7393,8 @@ snapshots:
       '@eggjs/extend2': 5.0.0-beta.36
       '@eggjs/koa': 3.1.0-beta.36
       '@eggjs/path-matching': 3.0.0-beta.36
-      '@eggjs/router': 4.0.0-beta.36
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/router': 4.0.0-beta.26
+      '@eggjs/utils': 5.0.0-beta.26
       egg-logger: 3.6.1
       get-ready: 3.4.0
       globby: 11.1.0
@@ -7927,6 +7404,7 @@ snapshots:
       ready-callback: 4.0.0
       tsconfig-paths: 4.2.0
       utility: 2.5.0
+    optional: true
 
   '@eggjs/dal-decorator@3.72.0':
     dependencies:
@@ -7936,12 +7414,12 @@ snapshots:
       lodash.snakecase: 4.1.1
       pluralize: 8.0.0
 
-  '@eggjs/dal-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/dal-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/rds': 1.3.0
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/rds': 1.5.0
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
       lodash.snakecase: 4.1.1
       pluralize: 8.0.0
     transitivePeerDependencies:
@@ -7950,24 +7428,14 @@ snapshots:
   '@eggjs/dal-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
       '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/rds': 1.3.0
+      '@eggjs/rds': 1.5.0
       '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       lodash.snakecase: 4.1.1
       pluralize: 8.0.0
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/dal-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/rds': 1.3.0
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      lodash.snakecase: 4.1.1
-      pluralize: 8.0.0
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/dal-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(chokidar@3.6.0)(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -7985,31 +7453,15 @@ snapshots:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
     transitivePeerDependencies:
       - chokidar
+    optional: true
 
-  '@eggjs/dal-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(chokidar@3.6.0)(egg@4.1.0-beta.36(chokidar@3.6.0))':
+  '@eggjs/dal-runtime@4.0.0-beta.11(chokidar@3.6.0)(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dal-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dal-runtime': 4.0.0-beta.36(chokidar@3.6.0)(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/transaction-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-    transitivePeerDependencies:
-      - chokidar
-
-  '@eggjs/dal-runtime@4.0.0-beta.11(chokidar@3.6.0)(egg@3.34.0)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/rds': 1.3.0
-      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/rds': 1.5.0
+      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
       js-beautify: 1.15.4
       lodash: 4.17.21
       nunjucks: 3.2.4(chokidar@3.6.0)
@@ -8023,7 +7475,7 @@ snapshots:
     dependencies:
       '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/dal-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/rds': 1.3.0
+      '@eggjs/rds': 1.5.0
       '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       js-beautify: 1.15.4
@@ -8034,22 +7486,7 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
       - egg
-
-  '@eggjs/dal-runtime@4.0.0-beta.36(chokidar@3.6.0)(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dal-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/rds': 1.3.0
-      '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      js-beautify: 1.15.4
-      lodash: 4.17.21
-      nunjucks: 3.2.4(chokidar@3.6.0)
-      sdk-base: 5.0.1
-      sqlstring: 2.3.3
-    transitivePeerDependencies:
-      - chokidar
-      - egg
+    optional: true
 
   '@eggjs/development@5.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8064,13 +7501,7 @@ snapshots:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       multimatch: 7.0.0
       utility: 2.5.0
-
-  '@eggjs/development@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      debounce: 3.0.0
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      multimatch: 7.0.0
-      utility: 2.5.0
+    optional: true
 
   '@eggjs/dynamic-inject-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8083,18 +7514,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/dynamic-inject-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dynamic-inject': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/dynamic-inject@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8102,17 +7522,12 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/dynamic-inject@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/egg-module-common@3.72.0': {}
 
-  '@eggjs/errors@3.0.0-beta.36': {}
+  '@eggjs/errors@3.0.0-beta.36':
+    optional: true
 
   '@eggjs/eventbus-decorator@3.72.0':
     dependencies:
@@ -8121,11 +7536,11 @@ snapshots:
       '@eggjs/tegg-types': 3.72.0
       typed-emitter: 1.4.0
 
-  '@eggjs/eventbus-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/eventbus-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -8136,14 +7551,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/eventbus-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/eventbus-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8156,18 +7564,7 @@ snapshots:
       '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-
-  '@eggjs/eventbus-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/eventbus-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/eventbus-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
+    optional: true
 
   '@eggjs/eventbus-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8180,22 +7577,12 @@ snapshots:
       await-first: 1.0.0
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/eventbus-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/eventbus-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      await-event: 2.1.0
-      await-first: 1.0.0
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/extend2@5.0.0-beta.26': {}
 
-  '@eggjs/extend2@5.0.0-beta.36': {}
+  '@eggjs/extend2@5.0.0-beta.36':
+    optional: true
 
   '@eggjs/i18n@4.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8203,26 +7590,18 @@ snapshots:
       egg: 4.1.0-beta.26
       humanize-ms: 2.0.0
       ini: 5.0.0
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       utility: 2.5.0
 
   '@eggjs/i18n@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       humanize-ms: 2.0.0
       ini: 6.0.0
       js-yaml: 4.1.1
       utility: 2.5.0
-
-  '@eggjs/i18n@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      humanize-ms: 2.0.0
-      ini: 6.0.0
-      js-yaml: 4.1.1
-      utility: 2.5.0
+    optional: true
 
   '@eggjs/ip@2.1.0': {}
 
@@ -8235,25 +7614,22 @@ snapshots:
     dependencies:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       jsonp-body: 2.0.0
-
-  '@eggjs/jsonp@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      jsonp-body: 2.0.0
+    optional: true
 
   '@eggjs/koa-static-cache@7.0.0-beta.26':
     dependencies:
       '@eggjs/compressible': 3.0.0
       fs-readdir-recursive: 1.1.0
-      mime-types: 3.0.1
+      mime-types: 3.0.2
       utility: 2.5.0
 
   '@eggjs/koa-static-cache@7.0.0-beta.36':
     dependencies:
       '@eggjs/compressible': 3.0.0
       fs-readdir-recursive: 1.1.0
-      mime-types: 3.0.1
+      mime-types: 3.0.2
       utility: 2.5.0
+    optional: true
 
   '@eggjs/koa@3.1.0-beta.26':
     dependencies:
@@ -8268,7 +7644,7 @@ snapshots:
       escape-html: 1.0.3
       fresh: 0.5.2
       gals: 1.0.2
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       is-type-of: 2.2.0
       koa-compose: 4.1.0
       on-finished: 2.4.1
@@ -8279,7 +7655,7 @@ snapshots:
 
   '@eggjs/koa@3.1.0-beta.36':
     dependencies:
-      '@eggjs/cookies': 4.0.0-beta.36
+      '@eggjs/cookies': 4.0.0-beta.26
       '@types/content-disposition': 0.5.9
       accepts: 1.3.8
       cache-content-type: 2.1.0
@@ -8290,7 +7666,7 @@ snapshots:
       escape-html: 1.0.3
       fresh: 0.5.2
       gals: 1.0.2
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       is-type-of: 2.2.0
       koa-compose: 4.1.0
       on-finished: 2.4.1
@@ -8298,6 +7674,7 @@ snapshots:
       statuses: 2.0.2
       type-is: 2.0.1
       vary: 1.1.2
+    optional: true
 
   '@eggjs/lifecycle@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8305,13 +7682,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/lifecycle@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/logrotator@5.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8324,12 +7695,7 @@ snapshots:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       moment: 2.30.1
       utility: 2.5.0
-
-  '@eggjs/logrotator@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      moment: 2.30.1
-      utility: 2.5.0
+    optional: true
 
   '@eggjs/metadata@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8340,16 +7706,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/metadata@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/errors': 3.0.0-beta.36
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/mock@7.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8390,45 +7747,8 @@ snapshots:
       - supports-color
     optional: true
 
-  '@eggjs/mock@7.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
-    dependencies:
-      '@eggjs/extend2': 5.0.0-beta.36
-      '@eggjs/supertest': 9.0.0-beta.36
-      '@eggjs/utils': 5.0.0-beta.36
-      coffee: 5.5.1
-      detect-port: 2.1.0
-      egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-      egg-logger: 3.6.1
-      get-ready: 3.4.0
-      is-type-of: 2.2.0
-      merge-descriptors: 2.0.0
-      mm: 4.0.2
-      sdk-base: 5.0.1
-      urllib: 4.8.2
-      utility: 2.5.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eggjs/mock@7.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/extend2': 5.0.0-beta.36
-      '@eggjs/supertest': 9.0.0-beta.36
-      '@eggjs/utils': 5.0.0-beta.36
-      coffee: 5.5.1
-      detect-port: 2.1.0
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      egg-logger: 3.6.1
-      get-ready: 3.4.0
-      is-type-of: 2.2.0
-      merge-descriptors: 2.0.0
-      mm: 4.0.2
-      sdk-base: 5.0.1
-      urllib: 4.8.2
-      utility: 2.5.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eggjs/module-common@4.0.0-beta.36': {}
+  '@eggjs/module-common@4.0.0-beta.36':
+    optional: true
 
   '@eggjs/multipart@5.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8445,14 +7765,7 @@ snapshots:
       co-busboy: 2.0.2
       dayjs: 1.11.18
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-
-  '@eggjs/multipart@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/path-matching': 3.0.0-beta.36
-      bytes: 3.1.2
-      co-busboy: 2.0.2
-      dayjs: 1.11.18
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
+    optional: true
 
   '@eggjs/onerror@4.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8469,14 +7782,7 @@ snapshots:
       koa-onerror: 5.0.1
       mustache: 4.2.0
       stack-trace: 0.0.10
-
-  '@eggjs/onerror@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      cookie: 1.0.2
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      koa-onerror: 5.0.1
-      mustache: 4.2.0
-      stack-trace: 0.0.10
+    optional: true
 
   '@eggjs/orm-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8486,15 +7792,7 @@ snapshots:
       pluralize: 8.0.0
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/orm-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      lodash: 4.17.21
-      pluralize: 8.0.0
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/orm-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))(mysql2@3.15.1)':
     dependencies:
@@ -8515,35 +7813,12 @@ snapshots:
       - sql.js
       - sqlite3
       - supports-color
-
-  '@eggjs/orm-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/orm-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      leoric: 2.13.8(mysql2@3.15.1)
-      sdk-base: 5.0.1
-    transitivePeerDependencies:
-      - mysql
-      - mysql2
-      - pg
-      - sql.js
-      - sqlite3
-      - supports-color
+    optional: true
 
   '@eggjs/path-matching@3.0.0-beta.36':
     dependencies:
       path-to-regexp: 6.3.0
-
-  '@eggjs/rds@1.3.0':
-    dependencies:
-      mysql2: 3.15.1
-      sqlstring: 2.3.3
+    optional: true
 
   '@eggjs/rds@1.5.0':
     dependencies:
@@ -8551,32 +7826,9 @@ snapshots:
       onelogger: 1.0.1
       sqlstring: 2.3.3
 
-  '@eggjs/router@2.2.0':
-    dependencies:
-      co: 4.6.0
-      http-errors: 1.8.1
-      inflection: 1.13.4
-      koa-compose: 3.2.1
-      koa-convert: 1.2.0
-      methods: 1.1.2
-      path-to-regexp: 1.9.0
-      urijs: 1.19.11
-      utility: 1.18.0
-
   '@eggjs/router@4.0.0-beta.26':
     dependencies:
-      http-errors: 2.0.0
-      inflection: 3.0.2
-      is-type-of: 2.2.0
-      koa-compose: 4.1.0
-      methods: 1.1.2
-      path-to-regexp: 1.9.0
-      urijs: 1.19.11
-      utility: 2.5.0
-
-  '@eggjs/router@4.0.0-beta.36':
-    dependencies:
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       inflection: 3.0.2
       is-type-of: 2.2.0
       koa-compose: 4.1.0
@@ -8592,14 +7844,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/schedule-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/schedule-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -8612,18 +7857,7 @@ snapshots:
       '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-
-  '@eggjs/schedule-plugin@4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/schedule-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
+    optional: true
 
   '@eggjs/schedule@6.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8637,23 +7871,14 @@ snapshots:
 
   '@eggjs/schedule@6.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       cron-parser: 4.9.0
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       humanize-ms: 2.0.0
       is-type-of: 2.2.0
       safe-timers: 1.1.0
       utility: 2.5.0
-
-  '@eggjs/schedule@6.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
-      cron-parser: 4.9.0
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      humanize-ms: 2.0.0
-      is-type-of: 2.2.0
-      safe-timers: 1.1.0
-      utility: 2.5.0
+    optional: true
 
   '@eggjs/security@5.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8684,21 +7909,7 @@ snapshots:
       type-is: 2.0.1
       xss: 1.0.15
       zod: 3.25.76
-
-  '@eggjs/security@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/ip': 2.1.0
-      '@eggjs/path-matching': 3.0.0-beta.36
-      csrf: 3.1.0
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      escape-html: 1.0.3
-      extend: 3.0.2
-      koa-compose: 4.1.0
-      matcher: 4.0.0
-      nanoid: 5.1.6
-      type-is: 2.0.1
-      xss: 1.0.15
-      zod: 3.25.76
+    optional: true
 
   '@eggjs/session@5.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8711,12 +7922,7 @@ snapshots:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       koa-session: 7.0.2
       zod: 3.25.76
-
-  '@eggjs/session@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      koa-session: 7.0.2
-      zod: 3.25.76
+    optional: true
 
   '@eggjs/standalone-decorator@3.72.0':
     dependencies:
@@ -8725,7 +7931,8 @@ snapshots:
 
   '@eggjs/standalone-decorator@4.0.0-beta.11': {}
 
-  '@eggjs/standalone-decorator@4.0.0-beta.36': {}
+  '@eggjs/standalone-decorator@4.0.0-beta.36':
+    optional: true
 
   '@eggjs/static@4.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -8742,23 +7949,9 @@ snapshots:
       koa-compose: 4.1.0
       koa-range: 0.3.0
       ylru: 2.0.0
-
-  '@eggjs/static@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/koa-static-cache': 7.0.0-beta.36
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      koa-compose: 4.1.0
-      koa-range: 0.3.0
-      ylru: 2.0.0
+    optional: true
 
   '@eggjs/supertest@9.0.0-beta.26':
-    dependencies:
-      '@types/superagent': 8.1.9
-      superagent: 10.2.3
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eggjs/supertest@9.0.0-beta.36':
     dependencies:
       '@types/superagent': 8.1.9
       superagent: 10.2.3
@@ -8772,12 +7965,12 @@ snapshots:
       '@eggjs/tegg-runtime': 3.72.0
       '@eggjs/tegg-types': 3.72.0
 
-  '@eggjs/tegg-background-task@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-background-task@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
-      egg: 3.34.0
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-common-util@3.72.0':
     dependencies:
@@ -8786,10 +7979,10 @@ snapshots:
       globby: 11.1.0
       js-yaml: 3.14.2
 
-  '@eggjs/tegg-common-util@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-common-util@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/utils': 5.0.0-beta.26
       extend2: 4.0.0
       globby: 14.1.0
       js-yaml: 4.1.0
@@ -8800,24 +7993,14 @@ snapshots:
   '@eggjs/tegg-common-util@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       extend2: 4.0.0
       globby: 11.1.0
       js-yaml: 4.1.1
       reflect-metadata: 0.2.2
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/tegg-common-util@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/utils': 5.0.0-beta.36
-      extend2: 4.0.0
-      globby: 11.1.0
-      js-yaml: 4.1.1
-      reflect-metadata: 0.2.2
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/tegg-config@3.72.0':
     dependencies:
@@ -8826,23 +8009,18 @@ snapshots:
   '@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
       '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
+    optional: true
 
-  '@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
+  '@eggjs/tegg-dal-plugin@4.0.0-beta.11(@eggjs/tegg-plugin@3.72.0)(chokidar@3.6.0)(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/utils': 5.0.0-beta.36
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-
-  '@eggjs/tegg-dal-plugin@4.0.0-beta.11(@eggjs/tegg-plugin@3.72.0)(chokidar@3.6.0)(egg@3.34.0)':
-    dependencies:
-      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/dal-runtime': 4.0.0-beta.11(chokidar@3.6.0)(egg@3.34.0)
-      '@eggjs/tegg': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/dal-runtime': 4.0.0-beta.11(chokidar@3.6.0)(egg@4.1.0-beta.26)
+      '@eggjs/tegg': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@4.1.0-beta.26)
       '@eggjs/tegg-plugin': 3.72.0(@cfworker/json-schema@4.1.1)(@eggjs/tegg-dal-plugin@4.0.0-beta.11)(leoric@2.13.8(mysql2@3.15.1))
-      egg: 3.34.0
+      egg: 4.1.0-beta.26
     transitivePeerDependencies:
       - chokidar
 
@@ -8861,10 +8039,10 @@ snapshots:
       '@eggjs/core-decorator': 3.72.0
       '@eggjs/tegg-types': 3.72.0
 
-  '@eggjs/tegg-dynamic-inject@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-dynamic-inject@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -8873,10 +8051,10 @@ snapshots:
       '@eggjs/core-decorator': 3.72.0
       '@eggjs/tegg-types': 3.72.0
 
-  '@eggjs/tegg-lifecycle@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-lifecycle@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -8888,11 +8066,11 @@ snapshots:
       globby: 11.1.0
       is-type-of: 1.4.0
 
-  '@eggjs/tegg-loader@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-loader@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
       globby: 14.1.0
       is-type-of: 2.2.0
     transitivePeerDependencies:
@@ -8907,16 +8085,7 @@ snapshots:
       is-type-of: 2.2.0
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/tegg-loader@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      globby: 11.1.0
-      is-type-of: 2.2.0
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/tegg-metadata@3.72.0':
     dependencies:
@@ -8926,12 +8095,12 @@ snapshots:
       '@eggjs/tegg-types': 3.72.0
       egg-errors: 2.3.2
 
-  '@eggjs/tegg-metadata@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-metadata@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
       egg-errors: 2.3.2
     transitivePeerDependencies:
       - egg
@@ -8946,10 +8115,10 @@ snapshots:
       lodash: 4.17.21
       pluralize: 8.0.0
 
-  '@eggjs/tegg-orm-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-orm-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
       lodash: 4.17.21
       pluralize: 8.0.0
     transitivePeerDependencies:
@@ -8991,23 +8160,7 @@ snapshots:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       extend2: 4.0.0
       sdk-base: 5.0.1
-
-  '@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/background-task': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dynamic-inject-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/module-common': 4.0.0-beta.36
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-config': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      extend2: 4.0.0
-      sdk-base: 5.0.1
+    optional: true
 
   '@eggjs/tegg-runtime@3.72.0':
     dependencies:
@@ -9017,13 +8170,13 @@ snapshots:
       '@eggjs/tegg-metadata': 3.72.0
       '@eggjs/tegg-types': 3.72.0
 
-  '@eggjs/tegg-runtime@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-runtime@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -9036,16 +8189,7 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/tegg-runtime@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/tegg-schedule-decorator@3.72.0':
     dependencies:
@@ -9055,11 +8199,11 @@ snapshots:
       '@eggjs/tegg-types': 3.72.0
       cron-parser: 2.18.0
 
-  '@eggjs/tegg-schedule-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-schedule-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -9070,26 +8214,23 @@ snapshots:
       '@eggjs/tegg-metadata': 3.72.0
       '@eggjs/tegg-types': 3.72.0
 
-  '@eggjs/tegg-transaction-decorator@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-transaction-decorator@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
   '@eggjs/tegg-types@3.72.0': {}
 
-  '@eggjs/tegg-types@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg-types@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
-      egg: 3.34.0
+      egg: 4.1.0-beta.26
 
   '@eggjs/tegg-types@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
-
-  '@eggjs/tegg-types@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
+    optional: true
 
   '@eggjs/tegg@3.72.0(@cfworker/json-schema@4.1.1)(@eggjs/tegg-dal-plugin@4.0.0-beta.11)(leoric@2.13.8(mysql2@3.15.1))':
     dependencies:
@@ -9102,7 +8243,7 @@ snapshots:
       '@eggjs/standalone-decorator': 3.72.0
       '@eggjs/tegg-background-task': 3.72.0
       '@eggjs/tegg-common-util': 3.72.0
-      '@eggjs/tegg-dal-plugin': 4.0.0-beta.11(@eggjs/tegg-plugin@3.72.0)(chokidar@3.6.0)(egg@3.34.0)
+      '@eggjs/tegg-dal-plugin': 4.0.0-beta.11(@eggjs/tegg-plugin@3.72.0)(chokidar@3.6.0)(egg@4.1.0-beta.26)
       '@eggjs/tegg-dynamic-inject': 3.72.0
       '@eggjs/tegg-lifecycle': 3.72.0
       '@eggjs/tegg-loader': 3.72.0
@@ -9117,26 +8258,26 @@ snapshots:
       - leoric
       - supports-color
 
-  '@eggjs/tegg@4.0.0-beta.11(egg@3.34.0)':
+  '@eggjs/tegg@4.0.0-beta.11(egg@4.1.0-beta.26)':
     dependencies:
       '@eggjs/ajv-decorator': 4.0.0-beta.11
-      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/controller-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/eventbus-decorator': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/controller-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/eventbus-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
       '@eggjs/standalone-decorator': 4.0.0-beta.11
-      '@eggjs/tegg-background-task': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-orm-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-schedule-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-transaction-decorator': 4.0.0-beta.11(egg@3.34.0)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@3.34.0)
+      '@eggjs/tegg-background-task': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-orm-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-schedule-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-transaction-decorator': 4.0.0-beta.11(egg@4.1.0-beta.26)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@4.1.0-beta.26)
     transitivePeerDependencies:
       - egg
 
@@ -9162,37 +8303,11 @@ snapshots:
       '@eggjs/transaction-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/tegg@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/ajv-decorator': 4.0.0-beta.36
-      '@eggjs/aop-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/background-task': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/controller-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dal-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/dynamic-inject': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/eventbus-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/lifecycle': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/metadata': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/orm-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/schedule-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/standalone-decorator': 4.0.0-beta.36
-      '@eggjs/tegg-common-util': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-loader': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-runtime': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/transaction-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/tracer@4.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
       egg: 4.1.0-beta.26
-
-  '@eggjs/tracer@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
 
   '@eggjs/transaction-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
@@ -9200,21 +8315,11 @@ snapshots:
       '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
     transitivePeerDependencies:
       - egg
-
-  '@eggjs/transaction-decorator@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-types': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-    transitivePeerDependencies:
-      - egg
+    optional: true
 
   '@eggjs/tsconfig@3.1.0-beta.19': {}
 
-  '@eggjs/utils@4.4.1': {}
-
   '@eggjs/utils@5.0.0-beta.26': {}
-
-  '@eggjs/utils@5.0.0-beta.36': {}
 
   '@eggjs/view@4.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -9227,12 +8332,7 @@ snapshots:
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       is-type-of: 2.2.0
       utility: 2.5.0
-
-  '@eggjs/view@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      is-type-of: 2.2.0
-      utility: 2.5.0
+    optional: true
 
   '@eggjs/watcher@5.0.0-beta.26(egg@4.1.0-beta.26)':
     dependencies:
@@ -9243,32 +8343,15 @@ snapshots:
 
   '@eggjs/watcher@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))':
     dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       camelcase: 9.0.0
       egg: 4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)
       sdk-base: 5.0.1
-
-  '@eggjs/watcher@5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))':
-    dependencies:
-      '@eggjs/utils': 5.0.0-beta.36
-      camelcase: 9.0.0
-      egg: 4.1.0-beta.36(chokidar@3.6.0)
-      sdk-base: 5.0.1
-
-  '@emnapi/core@1.5.0':
-    dependencies:
-      '@emnapi/wasi-threads': 1.1.0
-      tslib: 2.8.1
     optional: true
 
   '@emnapi/core@1.8.1':
     dependencies:
       '@emnapi/wasi-threads': 1.1.0
-      tslib: 2.8.1
-    optional: true
-
-  '@emnapi/runtime@1.5.0':
-    dependencies:
       tslib: 2.8.1
     optional: true
 
@@ -9587,13 +8670,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@napi-rs/wasm-runtime@1.0.6':
-    dependencies:
-      '@emnapi/core': 1.5.0
-      '@emnapi/runtime': 1.5.0
-      '@tybys/wasm-util': 0.10.1
-    optional: true
-
   '@napi-rs/wasm-runtime@1.1.1':
     dependencies:
       '@emnapi/core': 1.8.1
@@ -9763,7 +8839,7 @@ snapshots:
 
   '@rolldown/binding-wasm32-wasi@1.0.0-beta.41':
     dependencies:
-      '@napi-rs/wasm-runtime': 1.0.6
+      '@napi-rs/wasm-runtime': 1.1.1
     optional: true
 
   '@rolldown/binding-wasm32-wasi@1.0.0-rc.4':
@@ -9973,10 +9049,6 @@ snapshots:
 
   '@types/deep-eql@4.0.2': {}
 
-  '@types/depd@1.1.37':
-    dependencies:
-      '@types/node': 20.19.33
-
   '@types/estree@1.0.8': {}
 
   '@types/express-serve-static-core@5.0.7':
@@ -10018,21 +9090,6 @@ snapshots:
     dependencies:
       '@types/koa': 3.0.0
 
-  '@types/koa-router@7.4.9':
-    dependencies:
-      '@types/koa': 3.0.0
-
-  '@types/koa@2.15.0':
-    dependencies:
-      '@types/accepts': 1.3.7
-      '@types/content-disposition': 0.5.9
-      '@types/cookies': 0.9.1
-      '@types/http-assert': 1.5.6
-      '@types/http-errors': 2.0.5
-      '@types/keygrip': 1.0.6
-      '@types/koa-compose': 3.2.8
-      '@types/node': 20.19.33
-
   '@types/koa@3.0.0':
     dependencies:
       '@types/accepts': 1.3.7
@@ -10053,8 +9110,6 @@ snapshots:
   '@types/methods@1.1.4': {}
 
   '@types/mime@1.3.5': {}
-
-  '@types/minimatch@3.0.5': {}
 
   '@types/mocha@10.0.10': {}
 
@@ -10107,7 +9162,7 @@ snapshots:
       '@types/cookiejar': 2.1.5
       '@types/methods': 1.1.4
       '@types/node': 20.19.33
-      form-data: 4.0.4
+      form-data: 4.0.5
 
   '@types/supertest@2.0.16':
     dependencies:
@@ -10193,7 +9248,7 @@ snapshots:
 
   accepts@2.0.0:
     dependencies:
-      mime-types: 3.0.1
+      mime-types: 3.0.2
       negotiator: 1.0.0
 
   acorn-walk@8.3.4:
@@ -10265,15 +9320,11 @@ snapshots:
       call-bound: 1.0.4
       is-array-buffer: 3.0.5
 
-  array-differ@3.0.0: {}
-
   array-differ@4.0.0: {}
 
   array-union@2.1.0: {}
 
   array-union@3.0.1: {}
-
-  arrify@2.0.1: {}
 
   asap@2.0.6: {}
 
@@ -10327,7 +9378,7 @@ snapshots:
       bytes: 3.1.2
       content-type: 1.0.5
       debug: 4.4.3(supports-color@8.1.1)
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       iconv-lite: 0.7.0
       on-finished: 2.4.1
       qs: 6.15.0
@@ -10335,11 +9386,6 @@ snapshots:
       type-is: 2.0.1
     transitivePeerDependencies:
       - supports-color
-
-  brace-expansion@1.1.12:
-    dependencies:
-      balanced-match: 1.0.2
-      concat-map: 0.0.1
 
   brace-expansion@2.0.2:
     dependencies:
@@ -10375,8 +9421,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  bytes@2.2.0: {}
-
   bytes@3.1.2: {}
 
   c8@10.1.3:
@@ -10394,11 +9438,6 @@ snapshots:
       yargs-parser: 21.1.1
 
   cac@6.7.14: {}
-
-  cache-content-type@1.0.1:
-    dependencies:
-      mime-types: 2.1.35
-      ylru: 1.4.0
 
   cache-content-type@2.1.0:
     dependencies:
@@ -10422,17 +9461,12 @@ snapshots:
       call-bind-apply-helpers: 1.0.2
       get-intrinsic: 1.3.0
 
-  camelcase@5.3.1: {}
-
   camelcase@6.3.0: {}
 
   camelcase@8.0.0: {}
 
-  camelcase@9.0.0: {}
-
-  cfork@1.11.0:
-    dependencies:
-      utility: 1.18.0
+  camelcase@9.0.0:
+    optional: true
 
   cfork@2.0.0:
     dependencies:
@@ -10511,15 +9545,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  cluster-reload@1.1.0: {}
-
   cluster-reload@2.0.0: {}
 
   co-body@6.2.0:
     dependencies:
       '@hapi/bourne': 3.0.0
       inflation: 2.1.0
-      qs: 6.14.0
+      qs: 6.15.0
       raw-body: 2.5.2
       type-is: 1.6.18
 
@@ -10561,12 +9593,6 @@ snapshots:
   commander@5.1.0: {}
 
   component-emitter@1.3.1: {}
-
-  compressible@2.0.18:
-    dependencies:
-      mime-db: 1.54.0
-
-  concat-map@0.0.1: {}
 
   confbox@0.2.2: {}
 
@@ -10654,15 +9680,10 @@ snapshots:
 
   dayjs@1.11.18: {}
 
-  debounce@1.2.1: {}
-
   debounce@2.2.0: {}
 
-  debounce@3.0.0: {}
-
-  debug@2.6.9:
-    dependencies:
-      ms: 2.0.0
+  debounce@3.0.0:
+    optional: true
 
   debug@3.2.7:
     dependencies:
@@ -10677,8 +9698,6 @@ snapshots:
   decamelize@1.2.0: {}
 
   decamelize@4.0.0: {}
-
-  deep-equal@1.0.1: {}
 
   deep-equal@2.2.3:
     dependencies:
@@ -10703,10 +9722,6 @@ snapshots:
 
   deepmerge@4.3.1: {}
 
-  default-user-agent@1.0.0:
-    dependencies:
-      os-name: 1.0.3
-
   define-data-property@1.1.4:
     dependencies:
       es-define-property: 1.0.1
@@ -10723,11 +9738,7 @@ snapshots:
 
   delayed-stream@1.0.0: {}
 
-  delegates@1.0.0: {}
-
   denque@2.1.0: {}
-
-  depd@1.1.2: {}
 
   depd@2.0.0: {}
 
@@ -10751,8 +9762,6 @@ snapshots:
   diff@7.0.0: {}
 
   diff@8.0.2: {}
-
-  digest-header@1.1.0: {}
 
   dir-glob@3.0.1:
     dependencies:
@@ -10789,71 +9798,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  egg-cluster@2.5.0:
-    dependencies:
-      await-event: 2.1.0
-      cfork: 1.11.0
-      cluster-reload: 1.1.0
-      detect-port: 2.1.0
-      egg-logger: 3.6.1
-      egg-utils: 2.5.0
-      get-ready: 2.0.1
-      graceful-process: 1.3.0
-      is-type-of: 1.4.0
-      ps-tree: 1.2.0
-      sendmessage: 1.1.0
-      terminal-link: 2.1.1
-      utility: 1.18.0
-
-  egg-cookies@2.10.1:
-    dependencies:
-      scmp: 2.1.0
-      should-send-same-site-none: 2.0.5
-      utility: 1.18.0
-
-  egg-core@5.5.1:
-    dependencies:
-      '@eggjs/router': 2.2.0
-      '@types/depd': 1.1.37
-      '@types/koa': 2.15.0
-      co: 4.6.0
-      debug: 4.4.3(supports-color@8.1.1)
-      depd: 2.0.0
-      egg-logger: 3.6.1
-      egg-path-matching: 1.2.0
-      extend2: 1.0.1
-      gals: 1.0.2
-      get-ready: 2.0.1
-      globby: 11.1.0
-      is-type-of: 1.4.0
-      koa: 2.16.3
-      koa-convert: 1.2.0
-      node-homedir: 1.1.1
-      ready-callback: 3.0.0
-      tsconfig-paths: 4.2.0
-      utility: 1.18.0
-    transitivePeerDependencies:
-      - supports-color
-
-  egg-development@3.0.2:
-    dependencies:
-      debounce: 1.2.1
-      multimatch: 5.0.0
-      utility: 2.5.0
-
   egg-errors@2.3.2: {}
-
-  egg-i18n@2.1.1:
-    dependencies:
-      debug: 3.2.7
-      koa-locales: 1.12.0
-    transitivePeerDependencies:
-      - supports-color
-
-  egg-jsonp@2.0.0:
-    dependencies:
-      is-type-of: 1.4.0
-      jsonp-body: 1.1.0
 
   egg-logger@3.6.1:
     dependencies:
@@ -10864,20 +9809,15 @@ snapshots:
       iconv-lite: 0.6.3
       utility: 2.5.0
 
-  egg-logrotator@3.2.0:
+  egg-mock@5.15.2(egg@4.1.0-beta.26)(mocha@10.8.2)(urllib@4.8.2):
     dependencies:
-      moment: 2.30.1
-      mz: 2.7.0
-
-  egg-mock@5.15.2(egg@3.34.0)(mocha@10.8.2)(urllib@4.8.2):
-    dependencies:
-      '@eggjs/utils': 4.4.1
+      '@eggjs/utils': 5.0.0-beta.26
       '@types/supertest': 2.0.16
       await-event: 2.1.0
       co: 4.6.0
       coffee: 5.5.1
       detect-port: 2.1.0
-      egg: 3.34.0
+      egg: 4.1.0-beta.26
       egg-logger: 3.6.1
       extend2: 1.0.1
       get-ready: 3.4.0
@@ -10893,72 +9833,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  egg-multipart@3.5.0:
-    dependencies:
-      co-busboy: 2.0.2
-      dayjs: 1.11.18
-      egg-path-matching: 1.2.0
-      humanize-bytes: 1.0.1
-
-  egg-onerror@2.4.0:
-    dependencies:
-      cookie: 0.7.2
-      koa-onerror: 4.2.0
-      mustache: 2.3.2
-      stack-trace: 0.0.10
-
-  egg-path-matching@1.2.0:
-    dependencies:
-      path-to-regexp: 1.9.0
-
   egg-path-matching@2.1.0:
     dependencies:
       path-to-regexp: 6.3.0
 
-  egg-schedule@4.0.1:
-    dependencies:
-      cron-parser: 2.18.0
-      humanize-ms: 1.2.1
-      is-type-of: 1.4.0
-      safe-timers: 1.1.0
-      utility: 1.18.0
-
-  egg-security@3.7.0:
-    dependencies:
-      '@eggjs/ip': 2.1.0
-      csrf: 3.1.0
-      delegates: 1.0.0
-      egg-path-matching: 1.2.0
-      escape-html: 1.0.3
-      extend: 3.0.2
-      koa-compose: 4.1.0
-      matcher: 4.0.0
-      methods: 1.1.2
-      nanoid: 3.3.11
-      platform: 1.3.6
-      statuses: 2.0.2
-      type-is: 1.6.18
-      xss: 1.0.15
-
-  egg-session@3.3.0:
-    dependencies:
-      koa-session: 6.4.0
-    transitivePeerDependencies:
-      - supports-color
-
-  egg-static@2.3.1:
-    dependencies:
-      is-type-of: 1.4.0
-      koa-compose: 4.1.0
-      koa-range: 0.3.0
-      koa-static-cache: 5.1.4
-      ylru: 1.4.0
-    transitivePeerDependencies:
-      - supports-color
-
   egg-ts-helper@3.1.1(@swc/core@1.13.5)(@types/node@22.18.8):
     dependencies:
-      '@eggjs/utils': 4.4.1
+      '@eggjs/utils': 5.0.0-beta.26
       chalk: 4.1.2
       chokidar: 3.6.0
       commander: 2.20.3
@@ -10974,71 +9855,6 @@ snapshots:
       - '@swc/core'
       - '@swc/wasm'
       - '@types/node'
-
-  egg-utils@2.5.0:
-    dependencies:
-      mkdirp: 0.5.6
-      utility: 1.18.0
-
-  egg-view@2.1.4:
-    dependencies:
-      mz: 2.7.0
-
-  egg-watcher@3.1.1:
-    dependencies:
-      camelcase: 5.3.1
-      sdk-base: 3.6.0
-      wt: 1.2.0
-    transitivePeerDependencies:
-      - supports-color
-
-  egg@3.34.0:
-    dependencies:
-      '@types/accepts': 1.3.7
-      '@types/koa': 2.15.0
-      '@types/koa-router': 7.4.9
-      accepts: 1.3.8
-      agentkeepalive: 4.6.0
-      cache-content-type: 1.0.1
-      circular-json-for-egg: 1.0.0
-      cluster-client: 3.7.0
-      delegates: 1.0.0
-      egg-cluster: 2.5.0
-      egg-cookies: 2.10.1
-      egg-core: 5.5.1
-      egg-development: 3.0.2
-      egg-errors: 2.3.2
-      egg-i18n: 2.1.1
-      egg-jsonp: 2.0.0
-      egg-logger: 3.6.1
-      egg-logrotator: 3.2.0
-      egg-multipart: 3.5.0
-      egg-onerror: 2.4.0
-      egg-schedule: 4.0.1
-      egg-security: 3.7.0
-      egg-session: 3.3.0
-      egg-static: 2.3.1
-      egg-view: 2.1.4
-      egg-watcher: 3.1.1
-      extend2: 1.0.1
-      graceful: 1.1.0
-      humanize-ms: 1.2.1
-      is-type-of: 2.2.0
-      koa-bodyparser: 4.4.1
-      koa-is-json: 1.0.0
-      koa-override: 3.0.0
-      ms: 2.1.3
-      on-finished: 2.4.1
-      onelogger: 1.0.1
-      sendmessage: 2.0.0
-      urllib: 2.44.0
-      urllib-next: urllib@3.27.3
-      urllib4: urllib@4.8.2
-      utility: 2.5.0
-      ylru: 1.4.0
-    transitivePeerDependencies:
-      - proxy-agent
-      - supports-color
 
   egg@4.1.0-beta.26:
     dependencies:
@@ -11076,66 +9892,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  egg@4.1.0-beta.36(chokidar@3.6.0):
-    dependencies:
-      '@eggjs/ajv-plugin': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/aop-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/cluster': 4.0.0-beta.36
-      '@eggjs/controller-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/cookies': 4.0.0-beta.36
-      '@eggjs/core': 7.0.0-beta.36
-      '@eggjs/dal-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(chokidar@3.6.0)(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/development': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/errors': 3.0.0-beta.36
-      '@eggjs/eventbus-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/extend2': 5.0.0-beta.36
-      '@eggjs/i18n': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/jsonp': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/logrotator': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/multipart': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/onerror': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/orm-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/schedule': 6.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/schedule-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/security': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/session': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/static': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-config': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)))(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/utils': 5.0.0-beta.36
-      '@eggjs/view': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      '@eggjs/watcher': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0))
-      circular-json-for-egg: 1.0.0
-      cluster-client: 3.7.0
-      egg-logger: 3.6.1
-      graceful: 2.0.0
-      humanize-ms: 2.0.0
-      is-type-of: 2.2.0
-      koa-bodyparser: 4.4.1
-      koa-override: 4.0.0
-      onelogger: 1.0.1
-      performance-ms: 1.1.0
-      sendmessage: 3.0.2
-      type-fest: 5.0.1
-      urllib: 4.8.2
-      utility: 2.5.0
-    transitivePeerDependencies:
-      - chokidar
-      - mysql
-      - mysql2
-      - pg
-      - sql.js
-      - sqlite3
-      - supports-color
-
   egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1):
     dependencies:
       '@eggjs/ajv-plugin': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/aop-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/cluster': 4.0.0-beta.36
       '@eggjs/controller-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/cookies': 4.0.0-beta.36
+      '@eggjs/cookies': 4.0.0-beta.26
       '@eggjs/core': 7.0.0-beta.36
       '@eggjs/dal-plugin': 4.0.0-beta.36(@eggjs/tegg-plugin@4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(chokidar@3.6.0)(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/development': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
@@ -11156,7 +9919,7 @@ snapshots:
       '@eggjs/tegg': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-config': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/tegg-plugin': 4.0.0-beta.36(@eggjs/tegg-config@4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1)))(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
-      '@eggjs/utils': 5.0.0-beta.36
+      '@eggjs/utils': 5.0.0-beta.26
       '@eggjs/view': 4.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       '@eggjs/watcher': 5.0.0-beta.36(egg@4.1.0-beta.36(chokidar@3.6.0)(mysql2@3.15.1))
       circular-json-for-egg: 1.0.0
@@ -11181,6 +9944,7 @@ snapshots:
       - sql.js
       - sqlite3
       - supports-color
+    optional: true
 
   ejs@3.1.10:
     dependencies:
@@ -11194,13 +9958,7 @@ snapshots:
 
   empathic@2.0.0: {}
 
-  encodeurl@1.0.2: {}
-
   encodeurl@2.0.0: {}
-
-  end-of-stream@1.4.5:
-    dependencies:
-      once: 1.4.0
 
   enquirer@2.4.1:
     dependencies:
@@ -11283,16 +10041,6 @@ snapshots:
 
   etag@1.8.1: {}
 
-  event-stream@3.3.4:
-    dependencies:
-      duplexer: 0.1.2
-      from: 0.1.7
-      map-stream: 0.1.0
-      pause-stream: 0.0.11
-      split: 0.3.3
-      stream-combiner: 0.0.4
-      through: 2.3.8
-
   event-stream@4.0.1:
     dependencies:
       duplexer: 0.1.2
@@ -11351,14 +10099,14 @@ snapshots:
       etag: 1.8.1
       finalhandler: 2.1.1
       fresh: 2.0.0
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       merge-descriptors: 2.0.0
-      mime-types: 3.0.1
+      mime-types: 3.0.2
       on-finished: 2.4.1
       once: 1.4.0
       parseurl: 1.3.3
       proxy-addr: 2.0.7
-      qs: 6.14.0
+      qs: 6.15.0
       range-parser: 1.2.1
       router: 2.2.0
       send: 1.2.1
@@ -11453,16 +10201,6 @@ snapshots:
 
   form-data-encoder@1.7.2: {}
 
-  form-data-encoder@1.9.0: {}
-
-  form-data@4.0.4:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
-      mime-types: 2.1.35
-
   form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
@@ -11481,7 +10219,7 @@ snapshots:
       '@paralleldrive/cuid2': 2.2.2
       dezalgo: 1.0.4
       once: 1.4.0
-      qs: 6.14.0
+      qs: 6.15.0
 
   formidable@3.5.4:
     dependencies:
@@ -11524,8 +10262,6 @@ snapshots:
     dependencies:
       is-property: 1.0.2
 
-  generator-function@2.0.1: {}
-
   get-caller-file@2.0.5: {}
 
   get-east-asian-width@1.4.0: {}
@@ -11549,12 +10285,6 @@ snapshots:
     dependencies:
       dunder-proto: 1.0.1
       es-object-atoms: 1.1.1
-
-  get-ready@1.0.0: {}
-
-  get-ready@2.0.1:
-    dependencies:
-      is-type-of: 1.4.0
 
   get-ready@3.4.0: {}
 
@@ -11616,19 +10346,9 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  graceful-process@1.3.0:
-    dependencies:
-      is-type-of: 1.4.0
-      once: 1.4.0
-
   graceful-process@2.2.0:
     dependencies:
       read-env-value: 1.1.0
-
-  graceful@1.1.0:
-    dependencies:
-      humanize-ms: 1.2.1
-      ps-tree: 1.2.0
 
   graceful@2.0.0:
     dependencies:
@@ -11674,19 +10394,6 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
-  http-assert@1.5.0:
-    dependencies:
-      deep-equal: 1.0.1
-      http-errors: 1.8.1
-
-  http-errors@1.8.1:
-    dependencies:
-      depd: 1.1.2
-      inherits: 2.0.4
-      setprototypeof: 1.2.0
-      statuses: 1.5.0
-      toidentifier: 1.0.1
-
   http-errors@2.0.0:
     dependencies:
       depd: 2.0.0
@@ -11704,10 +10411,6 @@ snapshots:
       toidentifier: 1.0.1
 
   human-signals@2.1.0: {}
-
-  humanize-bytes@1.0.1:
-    dependencies:
-      bytes: 2.2.0
 
   humanize-ms@1.2.1:
     dependencies:
@@ -11734,7 +10437,7 @@ snapshots:
       isstream: 0.1.2
       jsonwebtoken: 9.0.3
       mime-types: 2.1.35
-      retry-axios: 2.6.0(axios@1.13.5(debug@4.4.3))
+      retry-axios: 2.6.0(axios@1.13.5)
       tough-cookie: 4.1.4
     transitivePeerDependencies:
       - supports-color
@@ -11761,8 +10464,6 @@ snapshots:
 
   inflation@2.1.0: {}
 
-  inflection@1.13.4: {}
-
   inflection@3.0.2: {}
 
   inflight@1.0.6:
@@ -11776,7 +10477,8 @@ snapshots:
 
   ini@5.0.0: {}
 
-  ini@6.0.0: {}
+  ini@6.0.0:
+    optional: true
 
   internal-slot@1.1.0:
     dependencies:
@@ -11832,14 +10534,6 @@ snapshots:
   is-fullwidth-code-point@5.1.0:
     dependencies:
       get-east-asian-width: 1.4.0
-
-  is-generator-function@1.1.2:
-    dependencies:
-      call-bound: 1.0.4
-      generator-function: 2.0.1
-      get-proto: 1.0.1
-      has-tostringtag: 1.0.2
-      safe-regex-test: 1.1.0
 
   is-glob@4.0.3:
     dependencies:
@@ -12023,8 +10717,6 @@ snapshots:
 
   json5@2.2.3: {}
 
-  jsonp-body@1.1.0: {}
-
   jsonp-body@2.0.0: {}
 
   jsonpointer@5.0.1: {}
@@ -12063,46 +10755,12 @@ snapshots:
       copy-to: 2.0.1
       type-is: 1.6.18
 
-  koa-compose@3.2.1:
-    dependencies:
-      any-promise: 1.3.0
-
   koa-compose@4.1.0: {}
-
-  koa-convert@1.2.0:
-    dependencies:
-      co: 4.6.0
-      koa-compose: 3.2.1
-
-  koa-convert@2.0.0:
-    dependencies:
-      co: 4.6.0
-      koa-compose: 4.1.0
-
-  koa-is-json@1.0.0: {}
-
-  koa-locales@1.12.0:
-    dependencies:
-      debug: 2.6.9
-      humanize-ms: 1.2.1
-      ini: 1.3.8
-      object-assign: 4.1.1
-    transitivePeerDependencies:
-      - supports-color
-
-  koa-onerror@4.2.0:
-    dependencies:
-      escape-html: 1.0.3
-      stream-wormhole: 1.1.0
 
   koa-onerror@5.0.1:
     dependencies:
       escape-html: 1.0.3
       stream-wormhole: 2.0.1
-
-  koa-override@3.0.0:
-    dependencies:
-      methods: 1.1.2
 
   koa-override@4.0.0: {}
 
@@ -12110,58 +10768,11 @@ snapshots:
     dependencies:
       stream-slice: 0.1.2
 
-  koa-session@6.4.0:
-    dependencies:
-      crc: 3.8.0
-      debug: 4.4.3(supports-color@8.1.1)
-      is-type-of: 1.4.0
-      uuid: 8.3.2
-    transitivePeerDependencies:
-      - supports-color
-
   koa-session@7.0.2:
     dependencies:
       crc: 3.8.0
       is-type-of: 2.2.0
       zod: 3.25.76
-
-  koa-static-cache@5.1.4:
-    dependencies:
-      compressible: 2.0.18
-      debug: 3.2.7
-      fs-readdir-recursive: 1.1.0
-      mime-types: 2.1.35
-      mz: 2.7.0
-    transitivePeerDependencies:
-      - supports-color
-
-  koa@2.16.3:
-    dependencies:
-      accepts: 1.3.8
-      cache-content-type: 1.0.1
-      content-disposition: 0.5.4
-      content-type: 1.0.5
-      cookies: 0.9.1
-      debug: 4.4.3(supports-color@8.1.1)
-      delegates: 1.0.0
-      depd: 2.0.0
-      destroy: 1.2.0
-      encodeurl: 1.0.2
-      escape-html: 1.0.3
-      fresh: 0.5.2
-      http-assert: 1.5.0
-      http-errors: 1.8.1
-      is-generator-function: 1.1.2
-      koa-compose: 4.1.0
-      koa-convert: 2.0.0
-      on-finished: 2.4.1
-      only: 0.0.2
-      parseurl: 1.3.3
-      statuses: 1.5.0
-      type-is: 1.6.18
-      vary: 1.1.2
-    transitivePeerDependencies:
-      - supports-color
 
   langchain@1.2.24(@langchain/core@1.1.24(openai@6.22.0(ws@8.19.0)(zod@4.3.6)))(openai@6.22.0(ws@8.19.0)(zod@4.3.6))(zod-to-json-schema@3.25.1(zod@4.3.6)):
     dependencies:
@@ -12344,8 +10955,6 @@ snapshots:
 
   map-stream@0.0.7: {}
 
-  map-stream@0.1.0: {}
-
   matcher@4.0.0:
     dependencies:
       escape-string-regexp: 4.0.0
@@ -12381,10 +10990,6 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  mime-types@3.0.1:
-    dependencies:
-      mime-db: 1.54.0
-
   mime-types@3.0.2:
     dependencies:
       mime-db: 1.54.0
@@ -12398,10 +11003,6 @@ snapshots:
   minimatch@10.0.3:
     dependencies:
       '@isaacs/brace-expansion': 5.0.0
-
-  minimatch@3.1.2:
-    dependencies:
-      brace-expansion: 1.1.12
 
   minimatch@5.1.6:
     dependencies:
@@ -12446,7 +11047,7 @@ snapshots:
       find-up: 5.0.0
       glob: 8.1.0
       he: 1.2.0
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       log-symbols: 4.1.0
       minimatch: 5.1.6
       ms: 2.1.3
@@ -12469,7 +11070,7 @@ snapshots:
       glob: 10.4.5
       he: 1.2.0
       is-path-inside: 3.0.3
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
       log-symbols: 4.1.0
       minimatch: 9.0.5
       ms: 2.1.3
@@ -12488,27 +11089,15 @@ snapshots:
 
   moment@2.30.1: {}
 
-  ms@2.0.0: {}
-
   ms@2.1.3: {}
 
   muk-prop@1.2.1: {}
-
-  multimatch@5.0.0:
-    dependencies:
-      '@types/minimatch': 3.0.5
-      array-differ: 3.0.0
-      array-union: 2.1.0
-      arrify: 2.0.1
-      minimatch: 3.1.2
 
   multimatch@7.0.0:
     dependencies:
       array-differ: 4.0.0
       array-union: 3.0.1
       minimatch: 9.0.5
-
-  mustache@2.3.2: {}
 
   mustache@4.2.0: {}
 
@@ -12540,8 +11129,6 @@ snapshots:
 
   nanoid@5.1.6: {}
 
-  ndir@0.1.5: {}
-
   negotiator@0.6.3: {}
 
   negotiator@1.0.0: {}
@@ -12557,8 +11144,6 @@ snapshots:
       whatwg-url: 5.0.0
 
   node-hex@1.0.1: {}
-
-  node-homedir@1.1.1: {}
 
   node-homedir@2.0.0: {}
 
@@ -12618,23 +11203,12 @@ snapshots:
     dependencies:
       mimic-function: 5.0.1
 
-  only@0.0.2: {}
-
   openai@6.22.0(ws@8.19.0)(zod@4.3.6):
     optionalDependencies:
       ws: 8.19.0
       zod: 4.3.6
 
   openapi-types@12.1.3: {}
-
-  os-name@1.0.3:
-    dependencies:
-      osx-release: 1.1.0
-      win-release: 1.1.1
-
-  osx-release@1.1.0:
-    dependencies:
-      minimist: 1.2.8
 
   oxlint-tsgolint@0.2.0:
     optionalDependencies:
@@ -12747,8 +11321,6 @@ snapshots:
       exsolve: 1.0.7
       pathe: 2.0.3
 
-  platform@1.3.6: {}
-
   playwright-core@1.58.2: {}
 
   playwright@1.58.2:
@@ -12782,24 +11354,11 @@ snapshots:
 
   proxy-from-env@1.1.0: {}
 
-  ps-tree@1.2.0:
-    dependencies:
-      event-stream: 3.3.4
-
   psl@1.15.0:
     dependencies:
       punycode: 2.3.1
 
-  pump@3.0.3:
-    dependencies:
-      end-of-stream: 1.4.5
-      once: 1.4.0
-
   punycode@2.3.1: {}
-
-  qs@6.14.0:
-    dependencies:
-      side-channel: 1.1.0
 
   qs@6.15.0:
     dependencies:
@@ -12853,14 +11412,6 @@ snapshots:
 
   readdirp@4.1.2: {}
 
-  ready-callback@3.0.0:
-    dependencies:
-      debug: 4.4.3(supports-color@8.1.1)
-      get-ready: 2.0.1
-      once: 1.4.0
-    transitivePeerDependencies:
-      - supports-color
-
   ready-callback@4.0.0:
     dependencies:
       get-ready: 3.4.0
@@ -12892,7 +11443,7 @@ snapshots:
       onetime: 7.0.0
       signal-exit: 4.1.0
 
-  retry-axios@2.6.0(axios@1.13.5(debug@4.4.3)):
+  retry-axios@2.6.0(axios@1.13.5):
     dependencies:
       axios: 1.13.5(debug@4.4.3)
 
@@ -13040,12 +11591,6 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  scmp@2.1.0: {}
-
-  sdk-base@2.0.1:
-    dependencies:
-      get-ready: 1.0.0
-
   sdk-base@3.6.0:
     dependencies:
       await-event: 2.1.0
@@ -13086,10 +11631,6 @@ snapshots:
       statuses: 2.0.2
     transitivePeerDependencies:
       - supports-color
-
-  sendmessage@1.1.0: {}
-
-  sendmessage@2.0.0: {}
 
   sendmessage@3.0.2: {}
 
@@ -13197,10 +11738,6 @@ snapshots:
 
   source-map@0.6.1: {}
 
-  split@0.3.3:
-    dependencies:
-      through: 2.3.8
-
   split@1.0.1:
     dependencies:
       through: 2.3.8
@@ -13213,8 +11750,6 @@ snapshots:
 
   stackback@0.0.2: {}
 
-  statuses@1.5.0: {}
-
   statuses@2.0.1: {}
 
   statuses@2.0.2: {}
@@ -13226,18 +11761,12 @@ snapshots:
       es-errors: 1.3.0
       internal-slot: 1.1.0
 
-  stream-combiner@0.0.4:
-    dependencies:
-      duplexer: 0.1.2
-
   stream-combiner@0.2.2:
     dependencies:
       duplexer: 0.1.2
       through: 2.3.8
 
   stream-slice@0.1.2: {}
-
-  stream-wormhole@1.1.0: {}
 
   stream-wormhole@2.0.1: {}
 
@@ -13297,11 +11826,11 @@ snapshots:
       cookiejar: 2.1.4
       debug: 4.4.3(supports-color@8.1.1)
       fast-safe-stringify: 2.1.1
-      form-data: 4.0.4
+      form-data: 4.0.5
       formidable: 3.5.4
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.14.0
+      qs: 6.15.0
     transitivePeerDependencies:
       - supports-color
 
@@ -13311,11 +11840,11 @@ snapshots:
       cookiejar: 2.1.4
       debug: 4.4.3(supports-color@8.1.1)
       fast-safe-stringify: 2.1.1
-      form-data: 4.0.4
+      form-data: 4.0.5
       formidable: 2.1.5
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.14.0
+      qs: 6.15.0
       semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
@@ -13337,11 +11866,6 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  supports-hyperlinks@2.3.0:
-    dependencies:
-      has-flag: 4.0.0
-      supports-color: 7.2.0
-
   supports-hyperlinks@4.3.0:
     dependencies:
       has-flag: 5.0.1
@@ -13353,11 +11877,6 @@ snapshots:
     dependencies:
       is-type-of: 1.4.0
       sdk-base: 3.6.0
-
-  terminal-link@2.1.1:
-    dependencies:
-      ansi-escapes: 4.3.2
-      supports-hyperlinks: 2.3.0
 
   terminal-link@5.0.0:
     dependencies:
@@ -13517,9 +12036,10 @@ snapshots:
     dependencies:
       content-type: 1.0.5
       media-typer: 1.1.0
-      mime-types: 3.0.1
+      mime-types: 3.0.2
 
-  typebox@1.0.81: {}
+  typebox@1.0.81:
+    optional: true
 
   typed-emitter@1.4.0: {}
 
@@ -13580,41 +12100,12 @@ snapshots:
       querystringify: 2.2.0
       requires-port: 1.0.0
 
-  urllib@2.44.0:
-    dependencies:
-      any-promise: 1.3.0
-      content-type: 1.0.5
-      default-user-agent: 1.0.0
-      digest-header: 1.1.0
-      ee-first: 1.1.1
-      formstream: 1.5.2
-      humanize-ms: 1.2.1
-      iconv-lite: 0.6.3
-      pump: 3.0.3
-      qs: 6.14.0
-      statuses: 1.5.0
-      utility: 1.18.0
-
-  urllib@3.27.3:
-    dependencies:
-      default-user-agent: 1.0.0
-      digest-header: 1.1.0
-      form-data-encoder: 1.9.0
-      formdata-node: 4.4.1
-      formstream: 1.5.2
-      mime-types: 2.1.35
-      pump: 3.0.3
-      qs: 6.15.0
-      type-fest: 4.41.0
-      undici: 5.29.0
-      ylru: 1.4.0
-
   urllib@4.8.2:
     dependencies:
-      form-data: 4.0.4
+      form-data: 4.0.5
       formstream: 1.5.2
       mime-types: 2.1.35
-      qs: 6.14.0
+      qs: 6.15.0
       type-fest: 4.41.0
       undici: 7.16.0
       ylru: 2.0.0
@@ -13636,8 +12127,6 @@ snapshots:
   uuid@10.0.0: {}
 
   uuid@13.0.0: {}
-
-  uuid@8.3.2: {}
 
   v8-compile-cache-lib@3.0.1: {}
 
@@ -13769,10 +12258,6 @@ snapshots:
     dependencies:
       string-width: 4.2.3
 
-  win-release@1.1.1:
-    dependencies:
-      semver: 5.7.2
-
   wordwrap@1.0.0: {}
 
   workerpool@6.5.1: {}
@@ -13800,14 +12285,6 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.19.0: {}
-
-  wt@1.2.0:
-    dependencies:
-      debug: 2.6.9
-      ndir: 0.1.5
-      sdk-base: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
 
   xss@1.0.15:
     dependencies:
@@ -13848,8 +12325,6 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
-
-  ylru@1.4.0: {}
 
   ylru@2.0.0: {}
 
