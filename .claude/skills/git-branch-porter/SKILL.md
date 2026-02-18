@@ -36,7 +36,7 @@ Review each commit to assess portability. Skip version bumps (`chore(release)`) 
 Cherry-pick in small batches (5-10 commits) for manageable conflict resolution:
 
 ```bash
-git cherry-pick <oldest>..<newest> --no-commit
+git cherry-pick <oldest>^..<newest> --no-commit
 # Resolve conflicts, then:
 git commit --no-verify -m "port: batch N - description"
 ```
@@ -90,7 +90,7 @@ gh run view <RUN_ID> --log-failed # inspect failures
 
 ## Tips
 
-- Always use `--no-verify` for port commits (pre-commit hooks may not apply cleanly)
+- Use `--no-verify` when pre-commit hooks fail due to cross-branch incompatibilities; run lint separately before the final push
 - Commit after each batch for easier bisection if issues arise
 - When `pnpm dedupe --check` fails in CI but passes locally, check for `--frozen-lockfile` differences — CI uses frozen lockfile which preserves exact lockfile state
 - For packages that need new export paths, add them to both `exports` in `package.json` and create the corresponding source file

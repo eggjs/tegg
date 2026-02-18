@@ -67,10 +67,10 @@ catalog:
 }
 ```
 
-Create the source file if it doesn't exist:
+Create the source file if it doesn't exist. For example, `plugin/ajv` needs to re-export types from `@eggjs/tegg-plugin`:
 
 ```typescript
-// plugin/tegg/src/types.ts
+// plugin/ajv/src/types.ts
 import '@eggjs/tegg-plugin/types';
 ```
 

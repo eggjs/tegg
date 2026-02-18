@@ -68,11 +68,11 @@ export { foo, bar };
 const dir = __dirname;
 const file = __filename;
 
-// ESM (Node 22+)
+// ESM (Node 20.11+ / 21.2+)
 const dir = import.meta.dirname;
 const file = import.meta.filename;
 
-// ESM (Node < 22)
+// ESM (Node < 20.11)
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 const file = fileURLToPath(import.meta.url);
