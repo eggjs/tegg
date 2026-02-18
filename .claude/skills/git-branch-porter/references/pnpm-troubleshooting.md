@@ -71,7 +71,7 @@ Create the source file if it doesn't exist. For example, `plugin/ajv` needs to r
 
 ```typescript
 // plugin/ajv/src/types.ts
-import '@eggjs/tegg-plugin/types';
+export {}; // This creates an empty module. If re-exporting, change to 'export * from ...'
 ```
 
 ## Bundled Dependencies in Newer Versions
