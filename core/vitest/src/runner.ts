@@ -56,8 +56,13 @@ async function createHeldScope(ctx: any): Promise<HeldScope> {
     await gate;
   });
 
-  // Wait for init() inside beginModuleScope to finish
-  await readyPromise;
+  // Race readyPromise against scopePromise: if beginModuleScope rejects
+  // before invoking the callback (so scopeReady is never called), the error
+  // propagates immediately instead of hanging forever on readyPromise.
+  // Promise.race attaches a rejection handler to scopePromise, so there are
+  // no unhandled rejections. scopePromise itself is preserved as-is for
+  // gate/endScope behavior in releaseHeldScope.
+  await Promise.race([ readyPromise, scopePromise ]);
 
   return { scopePromise, endScope };
 }
@@ -86,11 +91,17 @@ export default class TeggVitestRunner extends VitestTestRunner {
    * Override importFile to capture per-file config set by configureTeggRunner()
    * and await app.ready() during collection phase.
    */
-  async importFile(filepath: string, source: string): Promise<unknown> {
+  async importFile(filepath: string, source: Parameters<VitestTestRunner['importFile']>[1]): Promise<unknown> {
+    // Clear stale state for this file before re-collection in watch mode
+    if (source === 'collect') {
+      this.fileAppMap.delete(filepath);
+      this.warned = false;
+    }
+
     // Clear any stale config before importing
     delete (globalThis as any).__teggVitestConfig;
 
-    const result = await super.importFile(filepath, source as any);
+    const result = await super.importFile(filepath, source);
 
     if (source === 'collect') {
       const rawConfig = (globalThis as any).__teggVitestConfig;
@@ -116,7 +127,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
           if (!this.warned) {
             this.warned = true;
             // eslint-disable-next-line no-console
-            console.warn('[tegg-vitest-adapter] getApp failed, skip context injection.', err);
+            console.warn('[tegg-vitest] getApp failed, skip context injection.', err);
           }
         }
       }
@@ -140,7 +151,6 @@ export default class TeggVitestRunner extends VitestTestRunner {
             reuseCtxStorage: false,
           });
 
-          // Use enterWith to set suite context for beforeAll/afterAll
           app.ctxStorage.enterWith(suiteCtx);
 
           let suiteScope: HeldScope | null = null;
@@ -150,7 +160,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
           }
 
           this.fileScopeMap.set(filepath, { app, config, suiteCtx, suiteScope });
-          debugLog('file suite scope created with enterWith');
+          debugLog('file suite scope created');
         }
       }
     }
@@ -168,12 +178,13 @@ export default class TeggVitestRunner extends VitestTestRunner {
         await releaseHeldScope(fileState.suiteScope);
         this.fileScopeMap.delete(filepath);
       }
+      this.fileAppMap.delete(filepath);
     }
 
     await super.onAfterRunSuite(suite);
   }
 
-  async onBeforeTryTask(test: Task, options: { retry: number; repeats: number }): Promise<void> {
+  async onBeforeTryTask(test: Task, options?: { retry: number; repeats: number }): Promise<void> {
     const filepath = getTaskFilepath(test);
     if (filepath) {
       const fileState = this.fileScopeMap.get(filepath);
@@ -184,14 +195,13 @@ export default class TeggVitestRunner extends VitestTestRunner {
           await releaseHeldScope(existing.testScope);
         }
 
-        debugLog(`onBeforeTryTask: ${test.name} (retry=${options.retry})`);
+        debugLog(`onBeforeTryTask: ${test.name} (retry=${options?.retry})`);
 
         const testCtx = fileState.app.mockContext!(undefined, {
           mockCtxStorage: false,
           reuseCtxStorage: false,
         });
 
-        // Use enterWith to set test context for beforeEach/fn/afterEach
         fileState.app.ctxStorage!.enterWith(testCtx);
 
         let testScope: HeldScope | null = null;
@@ -204,7 +214,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
       }
     }
 
-    await super.onBeforeTryTask(test, options);
+    await super.onBeforeTryTask(test);
   }
 
   async onAfterRunTask(test: Task): Promise<void> {
@@ -220,7 +230,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
         await restoreEggMocksIfNeeded(fileState.config.restoreMocks);
         // Restore suite context
         fileState.app.ctxStorage!.enterWith(fileState.suiteCtx);
-        debugLog('restored suite context with enterWith');
+        debugLog('restored suite context');
       }
     }
 

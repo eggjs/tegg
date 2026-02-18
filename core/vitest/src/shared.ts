@@ -25,17 +25,17 @@ export interface TeggVitestAdapterOptions {
   restoreMocks?: boolean;
 }
 
-export const DEBUG_ENABLED = process.env.DEBUG_TEGG_VITEST_ADAPTER === '1';
+export const DEBUG_ENABLED = process.env.DEBUG_TEGG_VITEST === '1';
 
 export function debugLog(message: string, extra?: unknown) {
   if (!DEBUG_ENABLED) return;
   if (extra === undefined) {
     // eslint-disable-next-line no-console
-    console.log(`[tegg-vitest-adapter] ${message}`);
+    console.log(`[tegg-vitest] ${message}`);
     return;
   }
   // eslint-disable-next-line no-console
-  console.log(`[tegg-vitest-adapter] ${message}`, extra);
+  console.log(`[tegg-vitest] ${message}`, extra);
 }
 
 export async function defaultGetApp(): Promise<EggMockApp | undefined> {
