@@ -24,6 +24,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./lib/Ajv": "./src/lib/Ajv.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [
