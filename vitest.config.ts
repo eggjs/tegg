@@ -23,7 +23,7 @@ export default defineConfig({
   ],
   test: {
     exclude: [
-      'core/(langchain-decorator|mcp-client|vitest-adapter)/test/**/*.test.ts',
+      'core/(langchain-decorator|mcp-client|vitest)/test/**/*.test.ts',
       'plugin/(dal|dns-cache|eventbus|langchain|mcp-client|mcp-proxy|schedule|tegg|orm)/test/**/*.test.ts',
       'standalone/standalone/test/**/*.test.ts',
       '**/node_modules',

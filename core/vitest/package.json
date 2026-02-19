@@ -1,5 +1,5 @@
 {
-  "name": "@eggjs/tegg-vitest-adapter",
+  "name": "@eggjs/tegg-vitest",
   "version": "4.0.0-beta.11",
   "description": "Vitest adapter for tegg context injection",
   "keywords": [
@@ -27,14 +27,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/vitest-adapter",
+  "homepage": "https://github.com/eggjs/tegg/tree/next/core/vitest",
   "bugs": {
     "url": "https://github.com/eggjs/tegg/issues"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/vitest-adapter"
+    "directory": "core/vitest"
   },
   "engines": {
     "node": ">=22.18.0"
