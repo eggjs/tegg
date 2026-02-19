@@ -184,7 +184,7 @@ export default class TeggVitestRunner extends VitestTestRunner {
     await super.onAfterRunSuite(suite);
   }
 
-  async onBeforeTryTask(test: Task, options?: { retry: number; repeats: number }): Promise<void> {
+  async onBeforeTryTask(test: Task, options: { retry: number; repeats: number }): Promise<void> {
     const filepath = getTaskFilepath(test);
     if (filepath) {
       const fileState = this.fileScopeMap.get(filepath);
