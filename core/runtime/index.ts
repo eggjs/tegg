@@ -9,6 +9,7 @@ export * from './src/factory/EggContainerFactory';
 export * from './src/factory/EggObjectFactory';
 export * from './src/factory/LoadUnitInstanceFactory';
 export * from './src/impl/ModuleLoadUnitInstance';
+export * from './src/impl/EggObjectUtil';
 export * from './src/model/ContextHandler';
 
 import './src/impl/EggAlwaysNewObjectContainer';

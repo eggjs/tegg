@@ -36,3 +36,9 @@ export const CONTROLLER_MCP_EXTRA_INDEX = Symbol.for('EggPrototype#controller#mc
 export const CONTROLLER_MCP_PROMPT_MAP = Symbol.for('EggPrototype#controller#mcp#prompt');
 export const CONTROLLER_MCP_PROMPT_PARAMS_MAP = Symbol.for('EggPrototype#controller#mcp#prompt#params');
 export const CONTROLLER_MCP_PROMPT_ARGS_INDEX = Symbol.for('EggPrototype#controller#mcp#prompt#args');
+
+export const CONTROLLER_AGENT_CONTROLLER = Symbol.for('EggPrototype#controller#agent#isAgent');
+export const CONTROLLER_AGENT_NOT_IMPLEMENTED = Symbol.for('EggPrototype#controller#agent#notImplemented');
+export const CONTROLLER_AGENT_ENHANCED = Symbol.for('EggPrototype#controller#agent#enhanced');
+
+export const AGENT_CONTROLLER_PROTO_IMPL_TYPE = 'AGENT_CONTROLLER_PROTO';

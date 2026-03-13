@@ -22,3 +22,6 @@ export * from './src/util/HTTPPriorityUtil';
 
 export { default as ControllerInfoUtil } from './src/util/ControllerInfoUtil';
 export { default as MethodInfoUtil } from './src/util/MethodInfoUtil';
+
+export * from './src/decorator/agent';
+export { AgentInfoUtil } from './src/util/AgentInfoUtil';

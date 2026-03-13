@@ -12,6 +12,9 @@ import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
 import { middlewareGraphHook } from './lib/MiddlewareGraphHook';
+import { AGENT_CONTROLLER_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
+import { AgentControllerProto } from './lib/AgentControllerProto';
+import { AgentControllerObject } from './lib/AgentControllerObject';
 import assert from 'node:assert';
 
 // Load Controller process
@@ -37,6 +40,11 @@ export default class ControllerAppBootHook {
     this.app.controllerMetaBuilderFactory = ControllerMetaBuilderFactory;
     this.loadUnitHook = new AppLoadUnitControllerHook(this.controllerRegisterFactory, this.app.rootProtoManager);
     this.controllerPrototypeHook = new EggControllerPrototypeHook();
+    this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
+      AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+      AgentControllerProto.createProto,
+    );
+    AgentControllerObject.setLogger(this.app.logger);
 
     if (parseInt(process.versions.node.split('.')[0], 10) >= 18) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -47,6 +55,7 @@ export default class ControllerAppBootHook {
   configWillLoad() {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
+    this.app.eggObjectFactory.registerEggObjectCreateMethod(AgentControllerProto, AgentControllerObject.createObject);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, unitPath => {
       return new EggControllerLoader(unitPath);
     });

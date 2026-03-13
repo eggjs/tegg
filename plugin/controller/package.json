@@ -48,6 +48,7 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
+    "@eggjs/agent-runtime": "^3.72.0",
     "@eggjs/egg-module-common": "^3.72.0",
     "@eggjs/router": "^2.0.1",
     "@eggjs/tegg": "^3.72.0",
