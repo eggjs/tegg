@@ -1,6 +1,5 @@
 import type { MessageObject, RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentErrorCode, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
-import { InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentErrorCode, AgentObjectType, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowUnix } from './AgentStoreUtils';
 

@@ -105,7 +105,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
 
   describe('context index', () => {
     it('should not set contextIndex on any method', () => {
-      const methods = ['createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun'];
+      const methods = [ 'createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun' ];
       for (const methodName of methods) {
         const contextIndex = MethodInfoUtil.getMethodContextIndex(AgentFooController, methodName);
         assert.strictEqual(contextIndex, undefined, `${methodName} should not have contextIndex`);
@@ -131,7 +131,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       // AgentFooController only implements execRun (smart defaults pattern)
       // All 7 route methods should have stub defaults that throw
       const proto = AgentFooController.prototype as any;
-      const routeMethods = ['createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun'];
+      const routeMethods = [ 'createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun' ];
       for (const methodName of routeMethods) {
         assert(typeof proto[methodName] === 'function', `${methodName} should be a function`);
         assert.strictEqual(
@@ -144,12 +144,12 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
 
     const stubMethods = [
       { name: 'createThread', args: [] },
-      { name: 'getThread', args: ['thread_1'] },
+      { name: 'getThread', args: [ 'thread_1' ] },
       { name: 'asyncRun', args: [{ input: { messages: [] } }] },
       { name: 'streamRun', args: [{ input: { messages: [] } }] },
       { name: 'syncRun', args: [{ input: { messages: [] } }] },
-      { name: 'getRun', args: ['run_1'] },
-      { name: 'cancelRun', args: ['run_1'] },
+      { name: 'getRun', args: [ 'run_1' ] },
+      { name: 'cancelRun', args: [ 'run_1' ] },
     ];
 
     for (const { name, args } of stubMethods) {
@@ -171,40 +171,40 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
     it('should produce correct route metadata for each method', () => {
       const meta = ControllerMetaBuilderFactory.build(AgentFooController, ControllerType.HTTP) as HTTPControllerMeta;
 
-      const createThread = meta.methods.find((m) => m.name === 'createThread')!;
+      const createThread = meta.methods.find(m => m.name === 'createThread')!;
       assert.strictEqual(createThread.path, '/threads');
       assert.strictEqual(createThread.method, HTTPMethodEnum.POST);
       assert.strictEqual(createThread.paramMap.size, 0);
 
-      const getThread = meta.methods.find((m) => m.name === 'getThread')!;
+      const getThread = meta.methods.find(m => m.name === 'getThread')!;
       assert.strictEqual(getThread.path, '/threads/:id');
       assert.strictEqual(getThread.method, HTTPMethodEnum.GET);
-      assert.deepStrictEqual(getThread.paramMap, new Map([[0, new PathParamMeta('id')]]));
+      assert.deepStrictEqual(getThread.paramMap, new Map([[ 0, new PathParamMeta('id') ]]));
 
-      const asyncRun = meta.methods.find((m) => m.name === 'asyncRun')!;
+      const asyncRun = meta.methods.find(m => m.name === 'asyncRun')!;
       assert.strictEqual(asyncRun.path, '/runs');
       assert.strictEqual(asyncRun.method, HTTPMethodEnum.POST);
-      assert.deepStrictEqual(asyncRun.paramMap, new Map([[0, new BodyParamMeta()]]));
+      assert.deepStrictEqual(asyncRun.paramMap, new Map([[ 0, new BodyParamMeta() ]]));
 
-      const streamRun = meta.methods.find((m) => m.name === 'streamRun')!;
+      const streamRun = meta.methods.find(m => m.name === 'streamRun')!;
       assert.strictEqual(streamRun.path, '/runs/stream');
       assert.strictEqual(streamRun.method, HTTPMethodEnum.POST);
-      assert.deepStrictEqual(streamRun.paramMap, new Map([[0, new BodyParamMeta()]]));
+      assert.deepStrictEqual(streamRun.paramMap, new Map([[ 0, new BodyParamMeta() ]]));
 
-      const syncRun = meta.methods.find((m) => m.name === 'syncRun')!;
+      const syncRun = meta.methods.find(m => m.name === 'syncRun')!;
       assert.strictEqual(syncRun.path, '/runs/wait');
       assert.strictEqual(syncRun.method, HTTPMethodEnum.POST);
-      assert.deepStrictEqual(syncRun.paramMap, new Map([[0, new BodyParamMeta()]]));
+      assert.deepStrictEqual(syncRun.paramMap, new Map([[ 0, new BodyParamMeta() ]]));
 
-      const getRun = meta.methods.find((m) => m.name === 'getRun')!;
+      const getRun = meta.methods.find(m => m.name === 'getRun')!;
       assert.strictEqual(getRun.path, '/runs/:id');
       assert.strictEqual(getRun.method, HTTPMethodEnum.GET);
-      assert.deepStrictEqual(getRun.paramMap, new Map([[0, new PathParamMeta('id')]]));
+      assert.deepStrictEqual(getRun.paramMap, new Map([[ 0, new PathParamMeta('id') ]]));
 
-      const cancelRun = meta.methods.find((m) => m.name === 'cancelRun')!;
+      const cancelRun = meta.methods.find(m => m.name === 'cancelRun')!;
       assert.strictEqual(cancelRun.path, '/runs/:id/cancel');
       assert.strictEqual(cancelRun.method, HTTPMethodEnum.POST);
-      assert.deepStrictEqual(cancelRun.paramMap, new Map([[0, new PathParamMeta('id')]]));
+      assert.deepStrictEqual(cancelRun.paramMap, new Map([[ 0, new PathParamMeta('id') ]]));
     });
 
     it('should have all real paths start with /', () => {

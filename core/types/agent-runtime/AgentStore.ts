@@ -1,7 +1,5 @@
 import type { InputMessage, MessageObject } from './AgentMessage';
 
-export type { InputMessage, MessageObject } from './AgentMessage';
-
 // ===== Object types =====
 
 export const AgentObjectType = {

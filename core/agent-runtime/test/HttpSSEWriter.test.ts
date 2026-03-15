@@ -54,7 +54,7 @@ describe('test/HttpSSEWriter.test.ts', () => {
     assert.ok(res.writtenHead);
     assert.equal(res.writtenHead.headers['content-type'], 'text/event-stream');
     assert.equal(res.writtenHead.headers['cache-control'], 'no-cache');
-    assert.equal(res.writtenHead.headers['connection'], 'keep-alive');
+    assert.equal(res.writtenHead.headers.connection, 'keep-alive');
   });
 
   it('should format SSE events correctly', () => {
@@ -88,7 +88,7 @@ describe('test/HttpSSEWriter.test.ts', () => {
 
     res.emit('close');
 
-    assert.deepStrictEqual(calls, [1, 2]);
+    assert.deepStrictEqual(calls, [ 1, 2 ]);
   });
 
   it('should handle end() idempotently', () => {

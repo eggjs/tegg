@@ -9,8 +9,7 @@ import type {
   AgentStreamMessage,
   AgentStore,
 } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentSSEEvent, AgentObjectType } from '@eggjs/tegg-types/agent-runtime';
-import { AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentSSEEvent, AgentObjectType, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 import type { EggLogger } from 'egg-logger';
 
 import { newMsgId } from './AgentStoreUtils';
@@ -108,7 +107,7 @@ export class AgentRuntime {
     // Use a real pending promise (not Promise.resolve()) so cancelRun's
     // `await task.promise` blocks until syncRun's try/finally completes.
     let resolveTask!: () => void;
-    const taskPromise = new Promise<void>((r) => {
+    const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
@@ -173,7 +172,7 @@ export class AgentRuntime {
     // Register in runningTasks before the IIFE starts executing to avoid a race
     // where the IIFE's finally block deletes the entry before it is set.
     let resolveTask!: () => void;
-    const taskPromise = new Promise<void>((r) => {
+    const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
@@ -242,7 +241,7 @@ export class AgentRuntime {
 
     // Register in runningTasks so cancelRun/destroy can manage streaming runs.
     let resolveTask!: () => void;
-    const taskPromise = new Promise<void>((r) => {
+    const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
@@ -290,7 +289,7 @@ export class AgentRuntime {
       // Persist and emit completion — append messages before marking run as completed
       // so a failure leaves the run in_progress (retryable) instead of completed-but-incomplete.
       // TODO(atomicity): add aggregate store method for full transactional guarantee.
-      const output: MessageObject[] = content.length > 0 ? [completedMsg] : [];
+      const output: MessageObject[] = content.length > 0 ? [ completedMsg ] : [];
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
         ...output,
@@ -431,7 +430,7 @@ export class AgentRuntime {
   /** Wait for all in-flight background tasks to complete naturally (without aborting). */
   async waitForPendingTasks(): Promise<void> {
     if (this.runningTasks.size) {
-      const pending = Array.from(this.runningTasks.values()).map((t) => t.promise);
+      const pending = Array.from(this.runningTasks.values()).map(t => t.promise);
       await Promise.allSettled(pending);
     }
   }

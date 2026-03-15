@@ -22,8 +22,8 @@ export class MessageConverter {
     }
     if (Array.isArray(content)) {
       return content
-        .filter((part) => part.type === ContentBlockType.Text)
-        .map((part) => ({ type: ContentBlockType.Text, text: { value: part.text, annotations: [] } }));
+        .filter(part => part.type === ContentBlockType.Text)
+        .map(part => ({ type: ContentBlockType.Text, text: { value: part.text, annotations: [] } }));
     }
     return [];
   }
@@ -50,9 +50,9 @@ export class MessageConverter {
     messages: AgentStreamMessage[],
     runId?: string,
   ): {
-    output: MessageObject[];
-    usage?: RunUsage;
-  } {
+      output: MessageObject[];
+      usage?: RunUsage;
+    } {
     const output: MessageObject[] = [];
     let promptTokens = 0;
     let completionTokens = 0;
@@ -113,7 +113,7 @@ export class MessageConverter {
         (m): m is typeof m & { role: Exclude<typeof m.role, typeof MessageRole.System> } =>
           m.role !== MessageRole.System,
       )
-      .map((m) => ({
+      .map(m => ({
         id: newMsgId(),
         object: AgentObjectType.ThreadMessage,
         createdAt: nowUnix(),
@@ -123,7 +123,7 @@ export class MessageConverter {
         content:
           typeof m.content === 'string'
             ? [{ type: ContentBlockType.Text, text: { value: m.content, annotations: [] } }]
-            : m.content.map((p) => ({ type: ContentBlockType.Text, text: { value: p.text, annotations: [] } })),
+            : m.content.map(p => ({ type: ContentBlockType.Text, text: { value: p.text, annotations: [] } })),
       }));
   }
 }

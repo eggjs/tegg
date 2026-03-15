@@ -69,7 +69,7 @@ describe('test/OSSObjectStorageClient.test.ts', () => {
       await client.put('threads/t1.json', '{"id":"t1"}');
 
       assert.equal(mockOSS.put.mock.calls.length, 1);
-      const [key, body] = mockOSS.put.mock.calls[0];
+      const [ key, body ] = mockOSS.put.mock.calls[0];
       assert.equal(key, 'threads/t1.json');
       assert(Buffer.isBuffer(body));
       assert.equal(body.toString('utf-8'), '{"id":"t1"}');
@@ -129,7 +129,7 @@ describe('test/OSSObjectStorageClient.test.ts', () => {
       await client.append('msgs.jsonl', '{"id":"m1"}\n');
 
       assert.equal(mockOSS.append.mock.calls.length, 1);
-      const [key, buf, opts] = mockOSS.append.mock.calls[0];
+      const [ key, buf, opts ] = mockOSS.append.mock.calls[0];
       assert.equal(key, 'msgs.jsonl');
       assert(Buffer.isBuffer(buf));
       assert.equal(buf.toString('utf-8'), '{"id":"m1"}\n');

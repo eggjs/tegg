@@ -1,8 +1,5 @@
-import type { InputContentPart, MessageContentBlock } from './AgentMessage';
-import type { AgentRunConfig, InputMessage, MessageObject, RunStatus } from './AgentStore';
-
-export { ContentBlockType } from './AgentMessage';
-export type { InputContentPart, MessageContentBlock, TextContentBlock } from './AgentMessage';
+import type { InputContentPart, InputMessage, MessageContentBlock, MessageObject } from './AgentMessage';
+import type { AgentRunConfig, RunStatus } from './AgentStore';
 
 // ===== Message roles =====
 

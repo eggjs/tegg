@@ -5,10 +5,8 @@ import type {
   MessageObject,
   RunRecord,
   ThreadRecord,
-} from '@eggjs/tegg-types/agent-runtime';
-import { AgentObjectType, RunStatus } from '@eggjs/tegg-types/agent-runtime';
-import { AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
-import type { ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
+  ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
+import { AgentObjectType, RunStatus, AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowUnix, newThreadId, newRunId } from './AgentStoreUtils';
 
@@ -108,7 +106,7 @@ export class OSSAgentStore implements AgentStore {
   }
 
   async getThread(threadId: string): Promise<ThreadRecord> {
-    const [metaData, messagesData] = await Promise.all([
+    const [ metaData, messagesData ] = await Promise.all([
       this.client.get(this.threadMetaKey(threadId)),
       this.client.get(this.threadMessagesKey(threadId)),
     ]);
@@ -120,10 +118,10 @@ export class OSSAgentStore implements AgentStore {
     // Parse messages JSONL — may not exist yet if no messages were appended.
     const messages: MessageObject[] = messagesData
       ? messagesData
-          .trim()
-          .split('\n')
-          .filter((line) => line.length > 0)
-          .map((line) => JSON.parse(line) as MessageObject)
+        .trim()
+        .split('\n')
+        .filter(line => line.length > 0)
+        .map(line => JSON.parse(line) as MessageObject)
       : [];
 
     return { ...meta, messages };
@@ -145,7 +143,7 @@ export class OSSAgentStore implements AgentStore {
     }
     if (messages.length === 0) return;
 
-    const lines = messages.map((m) => JSON.stringify(m)).join('\n') + '\n';
+    const lines = messages.map(m => JSON.stringify(m)).join('\n') + '\n';
     const messagesKey = this.threadMessagesKey(threadId);
 
     if (this.client.append) {
@@ -195,7 +193,9 @@ export class OSSAgentStore implements AgentStore {
   // conditional writes with retry, or use a database-backed AgentStore instead.
   async updateRun(runId: string, updates: Partial<RunRecord>): Promise<void> {
     const run = await this.getRun(runId);
-    const { id: _, object: __, ...safeUpdates } = updates;
+    const safeUpdates = { ...updates };
+    delete safeUpdates.id;
+    delete (safeUpdates as any).object;
     Object.assign(run, safeUpdates);
     await this.client.put(this.runKey(runId), JSON.stringify(run));
   }

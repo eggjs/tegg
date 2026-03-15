@@ -1,6 +1,5 @@
 import { AgentRuntime, type AgentExecutor, AGENT_RUNTIME, HttpSSEWriter } from '@eggjs/agent-runtime';
-import { AgentInfoUtil } from '@eggjs/tegg';
-import { IdenticalUtil } from '@eggjs/tegg';
+import { AgentInfoUtil, IdenticalUtil } from '@eggjs/tegg';
 import { LoadUnitFactory } from '@eggjs/tegg-metadata';
 import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 import { ContextHandler, EggContainerFactory, EggObjectLifecycleUtil, EggObjectUtil } from '@eggjs/tegg-runtime';
@@ -100,7 +99,7 @@ export class AgentControllerObject implements EggObject {
 
       // 5. Inject dependencies
       await Promise.all(
-        this.proto.injectObjects.map(async (injectObject) => {
+        this.proto.injectObjects.map(async injectObject => {
           const proto = injectObject.proto;
           const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
           if (!loadUnit) {
@@ -199,12 +198,12 @@ export class AgentControllerObject implements EggObject {
         stubMethods.add(name);
       }
     }
-    const streamRunFn = instance['streamRun'];
+    const streamRunFn = instance.streamRun;
     const streamRunIsStub = typeof streamRunFn !== 'function' || AgentInfoUtil.isNotImplemented(streamRunFn);
 
     // Create store — user must implement createStore()
     let store: AgentStore;
-    const createStoreFn = instance['createStore'];
+    const createStoreFn = instance.createStore;
     if (typeof createStoreFn === 'function') {
       store = (await Reflect.apply(createStoreFn, this._obj, [])) as AgentStore;
     } else {
@@ -234,7 +233,7 @@ export class AgentControllerObject implements EggObject {
 
     // streamRun needs special handling: create HttpSSEWriter from request context
     if (streamRunIsStub) {
-      instance['streamRun'] = async (input: CreateRunInput): Promise<void> => {
+      instance.streamRun = async (input: CreateRunInput): Promise<void> => {
         const runtimeCtx = ContextHandler.getContext();
         if (!runtimeCtx) {
           throw new Error('streamRun must be called within a request context');

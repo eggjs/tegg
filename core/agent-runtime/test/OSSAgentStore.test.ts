@@ -1,7 +1,6 @@
 import assert from 'node:assert';
 
-import { AgentNotFoundError } from '../index';
-import { OSSAgentStore } from '../index';
+import { AgentNotFoundError, OSSAgentStore } from '../index';
 import { MapStorageClient, MapStorageClientWithoutAppend } from './helpers';
 
 describe('test/OSSAgentStore.test.ts', () => {

@@ -30,11 +30,12 @@ interface AgentRouteDefinition {
 function createNotImplemented(methodName: string, hasParam: boolean) {
   let fn;
   if (hasParam) {
-    fn = async function (_arg: unknown) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    fn = async function(_arg: unknown) {
       throw new Error(`${methodName} not implemented`);
     };
   } else {
-    fn = async function () {
+    fn = async function() {
       throw new Error(`${methodName} not implemented`);
     };
   }
@@ -97,7 +98,7 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
 ];
 
 export function AgentController(): (constructor: EggProtoImplClass) => void {
-  return function (constructor: EggProtoImplClass): void {
+  return function(constructor: EggProtoImplClass): void {
     // Set controller type as HTTP so existing infrastructure handles it
     ControllerInfoUtil.setControllerType(constructor, ControllerType.HTTP);
 

@@ -4,7 +4,7 @@
  * to set the corresponding HTTP response status code.
  */
 export class AgentNotFoundError extends Error {
-  status: number = 404;
+  status = 404;
 
   constructor(message: string) {
     super(message);
@@ -17,7 +17,7 @@ export class AgentNotFoundError extends Error {
  * (e.g., cancelling a completed run).
  */
 export class AgentConflictError extends Error {
-  status: number = 409;
+  status = 409;
 
   constructor(message: string) {
     super(message);
@@ -30,7 +30,7 @@ export class AgentConflictError extends Error {
  * (e.g., calling `complete()` on a queued run).
  */
 export class InvalidRunStateTransitionError extends Error {
-  status: number = 409;
+  status = 409;
 
   constructor(from: string, to: string) {
     super(`Invalid run state transition: '${from}' -> '${to}'`);

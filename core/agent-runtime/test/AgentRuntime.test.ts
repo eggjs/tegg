@@ -8,9 +8,8 @@ import {
   MessageRole,
   MessageStatus,
   ContentBlockType,
-} from '@eggjs/tegg-types/agent-runtime';
+  AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 import type { RunRecord, RunObject, CreateRunInput, AgentStreamMessage } from '@eggjs/tegg-types/agent-runtime';
-import { AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 
 import { AgentRuntime } from '../src/AgentRuntime';
 import type { AgentExecutor, AgentRuntimeOptions } from '../src/AgentRuntime';
@@ -103,7 +102,7 @@ describe('test/AgentRuntime.test.ts', () => {
   beforeEach(() => {
     store = new OSSAgentStore({ client: new MapStorageClient() });
     executor = {
-      async *execRun(input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
+      async* execRun(input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
         const messages = input.input.messages;
         yield {
           message: {
@@ -322,7 +321,7 @@ describe('test/AgentRuntime.test.ts', () => {
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const eventNames = writer.events.map((e) => e.event);
+      const eventNames = writer.events.map(e => e.event);
       assert(eventNames.includes(AgentSSEEvent.ThreadRunCreated));
       assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
       assert(eventNames.includes(AgentSSEEvent.ThreadMessageCreated));
@@ -348,17 +347,17 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(runCompletedIdx < doneIdx);
 
       // Verify messages persisted to thread (consistent with syncRun/asyncRun tests)
-      const runCreatedEvent = writer.events.find((e) => e.event === AgentSSEEvent.ThreadRunCreated);
+      const runCreatedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadRunCreated);
       const threadId = (runCreatedEvent!.data as RunObject).threadId;
       const thread = await runtime.getThread(threadId);
       assert.equal(thread.messages.length, 2);
-      assert.equal(thread.messages[0]['role'], MessageRole.User);
-      assert.equal(thread.messages[1]['role'], MessageRole.Assistant);
+      assert.equal(thread.messages[0].role, MessageRole.User);
+      assert.equal(thread.messages[1].role, MessageRole.Assistant);
     });
 
     it('should emit cancelled event on client disconnect', async () => {
       let resolveYielded!: () => void;
-      const yieldedPromise = new Promise<void>((r) => {
+      const yieldedPromise = new Promise<void>(r => {
         resolveYielded = r;
       });
 
@@ -368,7 +367,7 @@ describe('test/AgentRuntime.test.ts', () => {
       ): AsyncGenerator<AgentStreamMessage> {
         yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'start' }] } };
         resolveYielded();
-        await new Promise<void>((resolve) => {
+        await new Promise<void>(resolve => {
           const timer = globalThis.setTimeout(resolve, 5000);
           if (signal) {
             signal.addEventListener(
@@ -392,7 +391,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       await streamPromise;
 
-      const eventNames = writer.events.map((e) => e.event);
+      const eventNames = writer.events.map(e => e.event);
       assert(eventNames.includes(AgentSSEEvent.ThreadRunCreated));
       assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
     });
@@ -405,7 +404,7 @@ describe('test/AgentRuntime.test.ts', () => {
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const eventNames = writer.events.map((e) => e.event);
+      const eventNames = writer.events.map(e => e.event);
       assert(eventNames.includes(AgentSSEEvent.ThreadRunFailed));
       assert(eventNames.includes(AgentSSEEvent.Done));
       assert(writer.closed);

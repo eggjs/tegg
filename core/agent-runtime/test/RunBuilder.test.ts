@@ -1,8 +1,7 @@
 import assert from 'node:assert';
 
 import type { RunRecord, MessageObject } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentObjectType, AgentErrorCode } from '@eggjs/tegg-types/agent-runtime';
-import { InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentObjectType, AgentErrorCode, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { RunBuilder } from '../src/RunBuilder';
 import type { RunUsage } from '../src/RunBuilder';

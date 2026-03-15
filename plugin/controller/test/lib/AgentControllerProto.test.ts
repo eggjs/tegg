@@ -30,7 +30,7 @@ function createMockDelegate(): EggPrototype {
       return q.attribute === 'valid';
     },
     verifyQualifiers(qs: Array<{ attribute: string }>) {
-      return qs.every((q) => q.attribute === 'valid');
+      return qs.every(q => q.attribute === 'valid');
     },
     getQualifier(attr: string) {
       if (attr === 'env') return 'prod';
@@ -139,7 +139,7 @@ describe('plugin/controller/test/lib/AgentControllerProto.test.ts', () => {
 
     it('should delegate constructEggObject', () => {
       const result = proto.constructEggObject('a', 'b');
-      assert.deepStrictEqual(result, { constructed: true, args: ['a', 'b'] });
+      assert.deepStrictEqual(result, { constructed: true, args: [ 'a', 'b' ] });
     });
   });
 
