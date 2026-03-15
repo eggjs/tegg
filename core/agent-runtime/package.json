@@ -1,0 +1,49 @@
+{
+  "name": "@eggjs/agent-runtime",
+  "version": "3.72.0",
+  "description": "Agent runtime with store abstraction for Egg.js tegg",
+  "keywords": [
+    "agent",
+    "egg",
+    "runtime",
+    "store",
+    "tegg"
+  ],
+  "homepage": "https://github.com/eggjs/tegg/tree/master/core/agent-runtime",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/tegg.git",
+    "directory": "core/agent-runtime"
+  },
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "tsc": "tsc -p tsconfig.json",
+    "tsc:pub": "tsc -p tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "@eggjs/tegg-types": "^3.72.0",
+    "egg-logger": "^3.0.1",
+    "oss-client": "^2.5.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^20.0.0",
+    "mocha": "^10.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">= 16.0.0"
+  }
+}

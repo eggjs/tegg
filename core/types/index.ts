@@ -10,3 +10,4 @@ export * from './orm';
 export * from './runtime';
 export * from './schedule';
 export * from './transaction';
+export * from './agent-runtime';
