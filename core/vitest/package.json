@@ -56,5 +56,6 @@
     "egg-tracer": "^2.0.0",
     "typescript": "^5.0.4",
     "vitest": "^1.6.0"
-  }
+  },
+  "gitHead": "045cc55cc66dbdf71c46350401336ae502c79af8"
 }
