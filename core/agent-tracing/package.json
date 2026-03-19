@@ -34,7 +34,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "test": "node --eval \"process.exit(parseInt(process.versions.node) < 18 ? 0 : 1)\" || cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
     "clean": "tsc -b --clean",
     "tsc": "ut run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "ut run clean && tsc -p ./tsconfig.pub.json",
@@ -50,7 +50,7 @@
     "directory": "core/agent-tracing"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
