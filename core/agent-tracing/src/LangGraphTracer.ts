@@ -24,6 +24,7 @@ export class LangGraphTracer extends BaseTracer {
     applyTracerConfig(this, config);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected persistRun(_: Run): Promise<void> {
     return Promise.resolve(undefined);
   }

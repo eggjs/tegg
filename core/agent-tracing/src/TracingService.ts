@@ -45,7 +45,7 @@ export class TracingService {
    */
   isOnlineEnv(): boolean {
     const env = this.getEnv();
-    return ['prod', 'pre', 'gray'].includes(env);
+    return [ 'prod', 'pre', 'gray' ].includes(env);
   }
 
   /**
@@ -111,7 +111,7 @@ export class TracingService {
       }
 
       const env = this.getEnv();
-      FIELDS_TO_OSS.forEach((field) => {
+      FIELDS_TO_OSS.forEach(field => {
         if (!runData[field]) {
           return;
         }
@@ -134,7 +134,7 @@ export class TracingService {
         (runData as any)[field] = { compress: 'none', key } as IResource;
       });
 
-      const runJSON = JSON.stringify({ ...runData, child_run_ids: childs?.map((child) => child.id) });
+      const runJSON = JSON.stringify({ ...runData, child_run_ids: childs?.map(child => child.id) });
       const logInfo = this.getLogInfoPrefix(run, status, name) + `,run=${runJSON}`;
 
       if (process.env.FAAS_ENV) {

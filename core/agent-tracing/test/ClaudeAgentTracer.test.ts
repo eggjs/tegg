@@ -27,7 +27,7 @@ function createMockInit(overrides?: Partial<any>): SDKMessage {
     subtype: 'init',
     session_id: 'test-session-001',
     uuid: 'uuid-init',
-    tools: ['Bash', 'Read'],
+    tools: [ 'Bash', 'Read' ],
     model: 'claude-sonnet-4-5-20250929',
     cwd: '/test',
     mcp_servers: [],
@@ -190,39 +190,39 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       }
 
       // Root run start + end
-      const rootStart = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.START);
+      const rootStart = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.START);
       assert(rootStart, 'Should have root_run start');
       assert.strictEqual(rootStart.run.run_type, 'chain');
 
-      const rootEnd = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.END);
+      const rootEnd = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.END);
       assert(rootEnd, 'Should have root_run end');
 
       // LLM child run
-      const llmRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'llm');
+      const llmRuns = capturedRuns.filter(e => !!e.run.parent_run_id && e.run.run_type === 'llm');
       assert(llmRuns.length >= 1, `Should have >= 1 LLM run, got ${llmRuns.length}`);
 
       // Tool child run start + end
-      const toolRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'tool');
+      const toolRuns = capturedRuns.filter(e => !!e.run.parent_run_id && e.run.run_type === 'tool');
       assert(toolRuns.length >= 2, `Should have >= 2 tool run entries (start+end), got ${toolRuns.length}`);
 
-      const toolStart = toolRuns.find((e) => e.status === RunStatus.START);
+      const toolStart = toolRuns.find(e => e.status === RunStatus.START);
       assert(toolStart, 'Should have tool start');
       assert.strictEqual(toolStart.run.name, 'Bash');
 
-      const toolEnd = toolRuns.find((e) => e.status === RunStatus.END);
+      const toolEnd = toolRuns.find(e => e.status === RunStatus.END);
       assert(toolEnd, 'Should have tool end');
 
       // All runs share the same trace_id = session_id
-      const traceIds = new Set(capturedRuns.map((e) => e.run.trace_id));
+      const traceIds = new Set(capturedRuns.map(e => e.run.trace_id));
       assert.strictEqual(traceIds.size, 1, `All runs should share one trace_id, got ${traceIds.size}`);
-      assert.strictEqual([...traceIds][0], 'test-session-001', 'trace_id should match session_id');
+      assert.strictEqual([ ...traceIds ][0], 'test-session-001', 'trace_id should match session_id');
 
       // Root run should carry session_id as thread_id in extra.metadata
       const rootExtra = rootStart.run.extra as Record<string, any>;
       assert.strictEqual(rootExtra?.metadata?.thread_id, 'test-session-001', 'thread_id should match session_id');
 
       // Child runs reference root run as parent
-      const childEntries = capturedRuns.filter((e) => !!e.run.parent_run_id);
+      const childEntries = capturedRuns.filter(e => !!e.run.parent_run_id);
       for (const child of childEntries) {
         assert.strictEqual(
           child.run.parent_run_id,
@@ -263,18 +263,18 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       assert(capturedRuns.length > 0, 'Should have tracing entries');
 
       // Root run start + end
-      const rootEntries = capturedRuns.filter((e) => !e.run.parent_run_id);
+      const rootEntries = capturedRuns.filter(e => !e.run.parent_run_id);
       assert(rootEntries.length >= 2, `Should have root start + end, got ${rootEntries.length}`);
 
-      const rootEnd = rootEntries.find((e) => e.status === RunStatus.END);
+      const rootEnd = rootEntries.find(e => e.status === RunStatus.END);
       assert(rootEnd, 'Should have root end');
 
       // LLM child run with text content
-      const llmRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'llm');
+      const llmRuns = capturedRuns.filter(e => !!e.run.parent_run_id && e.run.run_type === 'llm');
       assert(llmRuns.length >= 1, `Should have >= 1 LLM run, got ${llmRuns.length}`);
 
       // No tool runs
-      const toolRuns = capturedRuns.filter((e) => !!e.run.parent_run_id && e.run.run_type === 'tool');
+      const toolRuns = capturedRuns.filter(e => !!e.run.parent_run_id && e.run.run_type === 'tool');
       assert.strictEqual(toolRuns.length, 0, 'Should have no tool runs for text-only');
 
       // Cost and token counts
@@ -286,7 +286,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       assert.strictEqual(llmOutput.totalCost, 0.002);
 
       // trace_id consistency
-      const traceIds = new Set(capturedRuns.map((e) => e.run.trace_id));
+      const traceIds = new Set(capturedRuns.map(e => e.run.trace_id));
       assert.strictEqual(traceIds.size, 1, 'All runs should share one trace_id');
     });
   });
@@ -310,7 +310,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
           num_turns: 1,
           stop_reason: null,
           total_cost_usd: 0.001,
-          errors: ['Something went wrong', 'Another error'],
+          errors: [ 'Something went wrong', 'Another error' ],
           usage: {
             input_tokens: 50,
             output_tokens: 10,
@@ -327,7 +327,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       }
 
       // Root run should end with ERROR status
-      const rootError = capturedRuns.find((e) => !e.run.parent_run_id && e.status === RunStatus.ERROR);
+      const rootError = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.ERROR);
       assert(rootError, 'Should have root_run with error status');
       assert(rootError.run, 'Root error run should exist');
     });
@@ -374,7 +374,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       }
 
       // The pending tool run should have been force-closed with ERROR status
-      const toolErrors = capturedRuns.filter((e) => e.run.run_type === 'tool' && e.status === RunStatus.ERROR);
+      const toolErrors = capturedRuns.filter(e => e.run.run_type === 'tool' && e.status === RunStatus.ERROR);
       assert(toolErrors.length >= 1, `Should have at least one tool ERROR entry, got ${toolErrors.length}`);
     });
   });
@@ -392,7 +392,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
 
       // Only assistant and result, no system/init
-      const messages: SDKMessage[] = [createMockAssistantTextOnly(), createMockResult()];
+      const messages: SDKMessage[] = [ createMockAssistantTextOnly(), createMockResult() ];
 
       await claudeTracer.processMessages(messages);
 
@@ -428,7 +428,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
 
       // Should NOT throw — error is swallowed by the catch block
       await assert.doesNotReject(async () => {
-        await claudeTracer.processMessages([createMockInit()]);
+        await claudeTracer.processMessages([ createMockInit() ]);
       });
     });
   });

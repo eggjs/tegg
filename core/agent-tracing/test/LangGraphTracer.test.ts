@@ -8,7 +8,7 @@ import { LangGraphTracer } from '../src/LangGraphTracer';
 import { RunStatus } from '../src/types';
 import { type CapturedEntry, createCapturingTracingService, createMockRun } from './TestUtils';
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /** Shared state schema for test graphs */
 const GraphState = Annotation.Root({
@@ -50,18 +50,18 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('process', END)
         .compile();
 
-      await graph.invoke({ query: 'hello', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'hello', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
-      const startEntries = capturedRuns.filter((e) => e.status === RunStatus.START);
-      const endEntries = capturedRuns.filter((e) => e.status === RunStatus.END);
+      const startEntries = capturedRuns.filter(e => e.status === RunStatus.START);
+      const endEntries = capturedRuns.filter(e => e.status === RunStatus.END);
 
       assert(startEntries.length >= 1, `Should have at least one start entry, got ${startEntries.length}`);
       assert(endEntries.length >= 1, `Should have at least one end entry, got ${endEntries.length}`);
 
       // Verify a chain run is present with run_type=chain
-      const chainStart = startEntries.find((e) => e.run.run_type === 'chain');
+      const chainStart = startEntries.find(e => e.run.run_type === 'chain');
       assert(chainStart, 'Should have a chain start entry with run_type=chain');
     });
 
@@ -74,7 +74,7 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('echo', END)
         .compile();
 
-      await graph.invoke({ query: 'test', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'test', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
@@ -102,27 +102,27 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('respond', END)
         .compile();
 
-      await graph.invoke({ query: 'question', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'question', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
-      const chainEntries = capturedRuns.filter((e) => e.run.run_type === 'chain');
+      const chainEntries = capturedRuns.filter(e => e.run.run_type === 'chain');
       assert(
         chainEntries.length >= 2,
         `Should have at least 2 chain runs (root + child nodes), got ${chainEntries.length}`,
       );
 
       // The graph root run should have no parent_run_id
-      const rootRun = chainEntries.find((e) => !e.run.parent_run_id);
+      const rootRun = chainEntries.find(e => !e.run.parent_run_id);
       assert(rootRun, 'Should have a root chain run (no parent_run_id)');
 
       // Child node runs should have parent_run_id
-      const childRuns = chainEntries.filter((e) => e.run.parent_run_id);
+      const childRuns = chainEntries.filter(e => e.run.parent_run_id);
       assert(childRuns.length >= 1, 'Should have at least one child chain run with parent_run_id');
 
       // Verify root vs child distinction
-      const rootEntries = capturedRuns.filter((e) => !e.run.parent_run_id);
-      const childEntries = capturedRuns.filter((e) => !!e.run.parent_run_id);
+      const rootEntries = capturedRuns.filter(e => !e.run.parent_run_id);
+      const childEntries = capturedRuns.filter(e => !!e.run.parent_run_id);
       assert(rootEntries.length >= 1, 'Should have root run entries');
       assert(childEntries.length >= 1, 'Should have child run entries');
     });
@@ -140,11 +140,11 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('step2', END)
         .compile();
 
-      await graph.invoke({ query: 'hello', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'hello', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
-      const traceIds = new Set(capturedRuns.map((e) => e.run.trace_id).filter(Boolean));
+      const traceIds = new Set(capturedRuns.map(e => e.run.trace_id).filter(Boolean));
       assert.strictEqual(
         traceIds.size,
         1,
@@ -166,16 +166,16 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('ask_llm', END)
         .compile();
 
-      await graph.invoke({ query: 'what is LangGraph?', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'what is LangGraph?', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
       // Should have chain runs from the graph itself
-      const chainEntries = capturedRuns.filter((e) => e.run.run_type === 'chain');
+      const chainEntries = capturedRuns.filter(e => e.run.run_type === 'chain');
       assert(chainEntries.length >= 1, `Should have at least one chain run, got ${chainEntries.length}`);
 
       // Should have LLM runs from the FakeLLM invocation inside the node
-      const llmEntries = capturedRuns.filter((e) => e.run.run_type === 'llm');
+      const llmEntries = capturedRuns.filter(e => e.run.run_type === 'llm');
       assert(llmEntries.length >= 2, `Should have at least 2 LLM entries (start + end), got ${llmEntries.length}`);
     });
   });
@@ -191,7 +191,7 @@ describe('test/LangGraphTracer.test.ts', () => {
         .compile();
 
       try {
-        await graph.invoke({ query: 'trigger error', result: '' }, { callbacks: [tracer] });
+        await graph.invoke({ query: 'trigger error', result: '' }, { callbacks: [ tracer ] });
       } catch {
         // Expected error
       }
@@ -199,11 +199,11 @@ describe('test/LangGraphTracer.test.ts', () => {
       await sleep(500);
 
       // Should have a start entry
-      const startEntries = capturedRuns.filter((e) => e.status === RunStatus.START);
+      const startEntries = capturedRuns.filter(e => e.status === RunStatus.START);
       assert(startEntries.length >= 1, 'Should have at least one start entry before the error');
 
       // Should have an error entry
-      const errorEntries = capturedRuns.filter((e) => e.status === RunStatus.ERROR);
+      const errorEntries = capturedRuns.filter(e => e.status === RunStatus.ERROR);
       assert(errorEntries.length >= 1, `Should have at least one error entry, got ${errorEntries.length}`);
 
       // Verify the error run has the error field set
@@ -219,7 +219,7 @@ describe('test/LangGraphTracer.test.ts', () => {
       tracer.onToolEnd(run);
       tracer.onToolError({ ...run, error: 'tool failed' } as Run);
 
-      const toolEntries = capturedRuns.filter((e) => e.run.run_type === 'tool');
+      const toolEntries = capturedRuns.filter(e => e.run.run_type === 'tool');
       assert.strictEqual(toolEntries.length, 3);
       assert.strictEqual(toolEntries[0].status, RunStatus.START);
       assert.strictEqual(toolEntries[1].status, RunStatus.END);
@@ -232,7 +232,7 @@ describe('test/LangGraphTracer.test.ts', () => {
       tracer.onLLMEnd(run);
       tracer.onLLMError({ ...run, error: 'llm error' } as Run);
 
-      const llmEntries = capturedRuns.filter((e) => e.run.run_type === 'llm');
+      const llmEntries = capturedRuns.filter(e => e.run.run_type === 'llm');
       assert.strictEqual(llmEntries.length, 3);
       assert.strictEqual(llmEntries[0].status, RunStatus.START);
       assert.strictEqual(llmEntries[1].status, RunStatus.END);
@@ -245,7 +245,7 @@ describe('test/LangGraphTracer.test.ts', () => {
       tracer.onRetrieverEnd(run);
       tracer.onRetrieverError({ ...run, error: 'retriever error' } as Run);
 
-      const retrieverEntries = capturedRuns.filter((e) => e.run.run_type === 'retriever');
+      const retrieverEntries = capturedRuns.filter(e => e.run.run_type === 'retriever');
       assert.strictEqual(retrieverEntries.length, 3);
       assert.strictEqual(retrieverEntries[0].status, RunStatus.START);
       assert.strictEqual(retrieverEntries[1].status, RunStatus.END);
@@ -272,7 +272,7 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('check', END)
         .compile();
 
-      await graph.invoke({ query: 'check fields', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'check fields', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
@@ -298,11 +298,11 @@ describe('test/LangGraphTracer.test.ts', () => {
         .addEdge('output_node', END)
         .compile();
 
-      await graph.invoke({ query: 'output test', result: '' }, { callbacks: [tracer] });
+      await graph.invoke({ query: 'output test', result: '' }, { callbacks: [ tracer ] });
 
       await sleep(500);
 
-      const endEntries = capturedRuns.filter((e) => e.status === RunStatus.END);
+      const endEntries = capturedRuns.filter(e => e.status === RunStatus.END);
       assert(endEntries.length >= 1, 'Should have end entries');
 
       for (const entry of endEntries) {

@@ -73,8 +73,8 @@ export class TraceSession {
     }
 
     const content = message.message?.content || [];
-    const hasToolUse = content.some((c) => c.type === 'tool_use');
-    const hasText = content.some((c) => c.type === 'text');
+    const hasToolUse = content.some(c => c.type === 'tool_use');
+    const hasText = content.some(c => c.type === 'text');
 
     if (hasToolUse) {
       const eventTime = Date.now();
@@ -143,7 +143,7 @@ export class TraceSession {
     }
 
     // Complete any pending tool runs
-    for (const [toolUseId, toolRun] of this.pendingToolUses) {
+    for (const [ toolUseId, toolRun ] of this.pendingToolUses) {
       this.tracer.logger.warn(`[ClaudeAgentTracer] Tool run ${toolUseId} did not receive result`);
       toolRun.end_time = Date.now();
       this.tracer.logTrace(toolRun, RunStatus.ERROR);
@@ -238,7 +238,7 @@ export class ClaudeAgentTracer {
       }
 
       // Pre-validate: ensure there is an init message before creating session
-      const hasInit = sdkMessages.some((m) => m.type === 'system' && 'subtype' in m && m.subtype === 'init');
+      const hasInit = sdkMessages.some(m => m.type === 'system' && 'subtype' in m && m.subtype === 'init');
       if (!hasInit) {
         this.logger.warn('[ClaudeAgentTracer] No system/init message found');
         return;
@@ -367,22 +367,22 @@ export class ClaudeAgentTracer {
     const runId = msg.uuid || randomUUID();
     const content = msg.message?.content || [];
 
-    const textBlocks = content.filter((c) => c.type === 'text');
-    const toolBlocks = content.filter((c) => c.type === 'tool_use');
+    const textBlocks = content.filter(c => c.type === 'text');
+    const toolBlocks = content.filter(c => c.type === 'tool_use');
 
     const inputs = {
-      messages: textBlocks.map((c) => (c as any).text).filter(Boolean),
+      messages: textBlocks.map(c => (c as any).text).filter(Boolean),
     };
 
     const outputs: any = {};
     if (isToolCall) {
-      outputs.tool_calls = toolBlocks.map((c) => ({
+      outputs.tool_calls = toolBlocks.map(c => ({
         id: (c as any).id,
         name: (c as any).name,
         input: (c as any).input,
       }));
     } else {
-      outputs.content = textBlocks.map((c) => (c as any).text).join('');
+      outputs.content = textBlocks.map(c => (c as any).text).join('');
     }
 
     if (msg.message?.usage) {

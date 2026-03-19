@@ -191,7 +191,7 @@ describe('test/TracingService.test.ts', () => {
     it('should warn and skip when no OSS client is configured', async () => {
       const { service, warnLogs } = makeTracingService({ withOss: false });
       await service.uploadToOss('my/key', 'content');
-      assert(warnLogs.some((log) => log.includes('OSS client not configured')));
+      assert(warnLogs.some(log => log.includes('OSS client not configured')));
     });
   });
 
@@ -213,7 +213,7 @@ describe('test/TracingService.test.ts', () => {
     it('should warn when agentName is empty', async () => {
       const { service, warnLogs } = makeTracingService({ withLogService: true });
       await service.syncLocalToLogService('log', '');
-      assert(warnLogs.some((log) => log.includes('agentName is empty')));
+      assert(warnLogs.some(log => log.includes('agentName is empty')));
     });
 
     it('should handle log service errors gracefully', async () => {
@@ -224,7 +224,7 @@ describe('test/TracingService.test.ts', () => {
         },
       };
       await service.syncLocalToLogService('log', 'MyAgent');
-      assert(warnLogs.some((log) => log.includes('syncLocalToLogService error')));
+      assert(warnLogs.some(log => log.includes('syncLocalToLogService error')));
     });
   });
 
@@ -234,13 +234,13 @@ describe('test/TracingService.test.ts', () => {
       const { service, infoLogs } = makeTracingService();
       const run = createMockRun({ outputs: undefined });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
-      assert(infoLogs.some((log) => log.includes('[agent_run]')));
+      assert(infoLogs.some(log => log.includes('[agent_run]')));
     });
 
     it('should skip runs tagged with langsmith:hidden', () => {
       process.env.FAAS_ENV = 'dev';
       const { service, infoLogs } = makeTracingService();
-      const run = createMockRun({ tags: ['langsmith:hidden'] });
+      const run = createMockRun({ tags: [ 'langsmith:hidden' ] });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
       assert.strictEqual(infoLogs.length, 0);
     });
@@ -253,7 +253,7 @@ describe('test/TracingService.test.ts', () => {
       // backgroundTaskHelper runs synchronously in mock, so OSS put should be done
       assert(ossPuts.length >= 1, 'Should have uploaded to OSS');
       // The logged run should have outputs replaced with IResource
-      const logLine = infoLogs.find((log) => log.includes('[agent_run]'));
+      const logLine = infoLogs.find(log => log.includes('[agent_run]'));
       assert(logLine, 'Should have a log line');
       const runJson = logLine!.match(/,run=({.*})$/)?.[1];
       assert(runJson, 'Should have run JSON in log');
@@ -275,12 +275,12 @@ describe('test/TracingService.test.ts', () => {
       process.env.FAAS_ENV = 'dev';
       const { service, infoLogs } = makeTracingService();
       const childRun = createMockRun({ id: 'child-001' });
-      const run = createMockRun({ child_runs: [childRun], outputs: undefined });
+      const run = createMockRun({ child_runs: [ childRun ], outputs: undefined });
       service.logTrace(run, RunStatus.END, 'LangGraphTracer', 'MyAgent');
-      const logLine = infoLogs.find((log) => log.includes('[agent_run]'));
+      const logLine = infoLogs.find(log => log.includes('[agent_run]'));
       const runJson = logLine?.match(/,run=({.*})$/)?.[1];
       const parsed = JSON.parse(runJson!);
-      assert.deepStrictEqual(parsed.child_run_ids, ['child-001']);
+      assert.deepStrictEqual(parsed.child_run_ids, [ 'child-001' ]);
     });
 
     it('should warn when OSS upload fails inside backgroundTask', async () => {
@@ -309,7 +309,7 @@ describe('test/TracingService.test.ts', () => {
       await Promise.allSettled(pendingTasks);
 
       assert(
-        warnLogs.some((log) => log.includes('Failed to upload run data to OSS')),
+        warnLogs.some(log => log.includes('Failed to upload run data to OSS')),
         'Should warn about OSS upload failure',
       );
     });
@@ -333,7 +333,7 @@ describe('test/TracingService.test.ts', () => {
       });
 
       assert(
-        warnLogs.some((log) => log.includes('logTrace error')),
+        warnLogs.some(log => log.includes('logTrace error')),
         'Should warn about logTrace error',
       );
     });

@@ -123,7 +123,7 @@ export interface IRunCost {
   totalCost?: number;
 }
 
-const FIELDS_TO_OSS = ['inputs', 'outputs', 'attachments', 'serialized', 'events'] as const;
+const FIELDS_TO_OSS = [ 'inputs', 'outputs', 'attachments', 'serialized', 'events' ] as const;
 
 export const RunStatus = {
   START: 'start',
