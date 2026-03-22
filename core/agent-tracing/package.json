@@ -1,0 +1,91 @@
+{
+  "name": "@eggjs/agent-tracing",
+  "version": "3.72.0",
+  "description": "Tracing support for AI agents (LangGraph, Claude Agent SDK)",
+  "keywords": [
+    "agent",
+    "claude",
+    "egg",
+    "langchain",
+    "langgraph",
+    "tegg",
+    "tracing",
+    "typescript"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./claude": {
+      "types": "./dist/claude.d.ts",
+      "default": "./dist/claude.js"
+    },
+    "./langgraph": {
+      "types": "./dist/langgraph.d.ts",
+      "default": "./dist/langgraph.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node --eval \"process.exit(parseInt(process.versions.node) < 18 ? 0 : 1)\" || cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "clean": "tsc -b --clean",
+    "tsc": "ut run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "ut run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/agent-tracing"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eggjs/tegg-background-task": "^3.72.0",
+    "@eggjs/core-decorator": "^3.72.0",
+    "@eggjs/tegg-types": "^3.72.0",
+    "onelogger": "^1.0.1"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/claude-agent-sdk": ">=0.2.52",
+    "@langchain/core": ">=1.1.1"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/claude-agent-sdk": {
+      "optional": true
+    },
+    "@langchain/core": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.52",
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@eggjs/tegg-common-util": "^3.72.0",
+    "@langchain/core": "^1.1.29",
+    "@langchain/langgraph": "^0.2.74",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
