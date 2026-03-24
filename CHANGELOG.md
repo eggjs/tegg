@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.73.0-beta.1](https://github.com/eggjs/tegg/compare/v3.72.0...v3.73.0-beta.1) (2026-03-24)
+
+
+### Bug Fixes
+
+* compatibility with @modelcontextprotocol/sdk 1.26  ([#404](https://github.com/eggjs/tegg/issues/404)) ([dbda39a](https://github.com/eggjs/tegg/commit/dbda39ad2f4be5879f1e0540cf26a242cecd05e3))
+
+
+### Features
+
+* add @eggjs/agent-tracing package for AI agent tracing ([#412](https://github.com/eggjs/tegg/issues/412)) ([56f460d](https://github.com/eggjs/tegg/commit/56f460d17007a42b8643d8d5dd25d25c3f52dcc1))
+* add agent-runtime package with @AgentController decorator ([#411](https://github.com/eggjs/tegg/issues/411)) ([d4d0006](https://github.com/eggjs/tegg/commit/d4d00061e90230f82c0958bcf5268f8a511395db))
+* add tegg vitest workspace ([#401](https://github.com/eggjs/tegg/issues/401)) ([c853090](https://github.com/eggjs/tegg/commit/c853090c8da22c158b684d4e0ccabf0cba4c17b8))
+
+
+
+
+
 # [3.72.0](https://github.com/eggjs/tegg/compare/v3.71.2...v3.72.0) (2026-02-04)
 
 
