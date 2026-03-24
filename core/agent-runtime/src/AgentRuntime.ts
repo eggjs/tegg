@@ -80,10 +80,17 @@ export class AgentRuntime {
 
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
     if (input.threadId) {
-      return { threadId: input.threadId, input };
+      let isResume = false;
+      try {
+        const thread = await this.store.getThread(input.threadId);
+        isResume = thread.messages.length > 0;
+      } catch {
+        // thread lookup failed — conservatively treat as new conversation
+      }
+      return { threadId: input.threadId, input: { ...input, isResume } };
     }
     const thread = await this.store.createThread();
-    return { threadId: thread.id, input: { ...input, threadId: thread.id } };
+    return { threadId: thread.id, input: { ...input, threadId: thread.id, isResume: false } };
   }
 
   async syncRun(input: CreateRunInput, signal?: AbortSignal): Promise<RunObject> {
