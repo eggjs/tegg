@@ -1,6 +1,7 @@
 import { ModuleConfigUtil, ModuleReference, ReadModuleReferenceOptions, RuntimeConfig } from '@eggjs/tegg-common-util';
 import {
   EggPrototype,
+  EggPrototypeCreatorFactory,
   EggPrototypeLifecycleUtil, GlobalGraph,
   LoadUnit,
   LoadUnitFactory,
@@ -11,6 +12,7 @@ import {
   ContextHandler,
   EggContainerFactory,
   EggContext,
+  EggObjectFactory,
   EggObjectLifecycleUtil,
   LoadUnitInstance,
   LoadUnitInstanceFactory,
@@ -44,6 +46,9 @@ import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin';
 import { SqlMapManager } from '@eggjs/tegg-dal-plugin/lib/SqlMapManager';
 import { TableModelManager } from '@eggjs/tegg-dal-plugin/lib/TableModelManager';
 import { TransactionPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/TransactionPrototypeHook';
+import { AGENT_CONTROLLER_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
+import { AgentControllerProto } from '@eggjs/tegg-controller-plugin/lib/AgentControllerProto';
+import { AgentControllerObject } from '@eggjs/tegg-controller-plugin/lib/AgentControllerObject';
 
 export interface ModuleDependency extends ReadModuleReferenceOptions {
   baseDir: string;
@@ -179,6 +184,13 @@ export class Runner {
     EggPrototypeLifecycleUtil.registerLifecycle(this.dalTableEggPrototypeHook);
     EggPrototypeLifecycleUtil.registerLifecycle(this.transactionPrototypeHook);
     LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
+
+    // AgentController support
+    EggPrototypeCreatorFactory.registerPrototypeCreator(
+      AGENT_CONTROLLER_PROTO_IMPL_TYPE, AgentControllerProto.createProto);
+    AgentControllerObject.setLogger(logger as any);
+    EggObjectFactory.registerEggObjectCreateMethod(
+      AgentControllerProto, AgentControllerObject.createObject);
   }
 
   async load() {
