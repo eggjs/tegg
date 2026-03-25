@@ -77,6 +77,12 @@ export interface RunObject {
 
 export interface CreateRunInput {
   threadId?: string;
+  /**
+   * Populated by AgentRuntime before calling execRun.
+   * - true: threadId was provided (resume existing conversation)
+   * - false: no threadId provided, new thread created
+   */
+  isResume?: boolean;
   input: {
     messages: InputMessage[];
   };

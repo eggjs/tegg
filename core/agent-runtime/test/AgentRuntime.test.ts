@@ -236,6 +236,34 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(thread.messages[1].role, MessageRole.Assistant);
     });
 
+    it('should set isResume=false when no threadId provided (auto-create)', async () => {
+      let capturedInput: CreateRunInput | undefined;
+      executor.execRun = async function* (input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
+        capturedInput = input;
+        yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'hi' }] } };
+      };
+
+      await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(capturedInput!.isResume, false);
+    });
+
+    it('should set isResume=true when threadId provided', async () => {
+      let capturedInput: CreateRunInput | undefined;
+      executor.execRun = async function* (input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
+        capturedInput = input;
+        yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'hi' }] } };
+      };
+
+      const thread = await runtime.createThread();
+      await runtime.syncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(capturedInput!.isResume, true);
+    });
+
     it('should not throw when store.updateRun fails in catch block', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
         throw new Error('exec failed');
