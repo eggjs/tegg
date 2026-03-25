@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.73.0](https://github.com/eggjs/tegg/compare/v3.72.0...v3.73.0) (2026-03-25)
+
+
+### Bug Fixes
+
+* compatibility with @modelcontextprotocol/sdk 1.26  ([#404](https://github.com/eggjs/tegg/issues/404)) ([dbda39a](https://github.com/eggjs/tegg/commit/dbda39ad2f4be5879f1e0540cf26a242cecd05e3))
+
+
+
+
+
 # [3.72.0](https://github.com/eggjs/tegg/compare/v3.71.2...v3.72.0) (2026-02-04)
 
 

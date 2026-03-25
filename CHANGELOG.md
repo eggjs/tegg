@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.73.0](https://github.com/eggjs/tegg/compare/v3.72.0...v3.73.0) (2026-03-25)
+
+
+### Bug Fixes
+
+* compatibility with @modelcontextprotocol/sdk 1.26  ([#404](https://github.com/eggjs/tegg/issues/404)) ([dbda39a](https://github.com/eggjs/tegg/commit/dbda39ad2f4be5879f1e0540cf26a242cecd05e3))
+* mcp helper init ([#415](https://github.com/eggjs/tegg/issues/415)) ([58f15e1](https://github.com/eggjs/tegg/commit/58f15e176edf3e8229d2bcddcf034fd7d96d5f14))
+
+
+### Features
+
+* add @eggjs/agent-tracing package for AI agent tracing ([#412](https://github.com/eggjs/tegg/issues/412)) ([56f460d](https://github.com/eggjs/tegg/commit/56f460d17007a42b8643d8d5dd25d25c3f52dcc1))
+* add agent-runtime package with @AgentController decorator ([#411](https://github.com/eggjs/tegg/issues/411)) ([d4d0006](https://github.com/eggjs/tegg/commit/d4d00061e90230f82c0958bcf5268f8a511395db))
+* add tegg vitest workspace ([#401](https://github.com/eggjs/tegg/issues/401)) ([c853090](https://github.com/eggjs/tegg/commit/c853090c8da22c158b684d4e0ccabf0cba4c17b8))
+* **agent-runtime:** add isResume flag to CreateRunInput ([#414](https://github.com/eggjs/tegg/issues/414)) ([29ac989](https://github.com/eggjs/tegg/commit/29ac98995c0a37bb34d33f7ad81af7c664a67bce))
+
+
+
+
+
 # [3.72.0](https://github.com/eggjs/tegg/compare/v3.71.2...v3.72.0) (2026-02-04)
 
 

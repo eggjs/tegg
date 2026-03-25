@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-vitest",
-  "version": "3.72.0",
+  "version": "3.73.0",
   "description": "Vitest adapter for tegg context injection",
   "keywords": [
     "egg",
@@ -52,9 +52,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.2.4",
-    "typescript": "^5.0.4",
-    "vitest": "^1.6.0",
     "egg": "^3.9.1",
-    "egg-tracer": "^2.0.0"
+    "egg-tracer": "^2.0.0",
+    "typescript": "^5.0.4",
+    "vitest": "^1.6.0"
   }
 }
