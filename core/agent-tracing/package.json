@@ -86,7 +86,7 @@
     "typescript": "^5.0.4"
   },
   "eggModule": {
-    "name": "eggAgentTracing"
+    "name": "teggAgentTracing"
   },
   "publishConfig": {
     "access": "public"
