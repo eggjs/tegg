@@ -1,2 +1,3 @@
 export * from './index';
-export { ClaudeAgentTracer, Trace } from './src/ClaudeAgentTracer';
+export { ClaudeAgentTracer } from './src/ClaudeAgentTracer';
+export { Trace } from './src/Trace';
