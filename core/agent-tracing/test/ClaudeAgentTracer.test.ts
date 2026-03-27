@@ -173,7 +173,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Streaming mode + tool use', () => {
     it('should trace tool execution with session.processMessage', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession();
+      const trace = claudeTracer.createTrace();
 
       // Feed messages one-by-one, including noise messages that should be filtered
       const messages: SDKMessage[] = [
@@ -186,7 +186,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       ];
 
       for (const msg of messages) {
-        await session.processMessage(msg);
+        await trace.processMessage(msg);
       }
 
       // Root run start + end
@@ -243,7 +243,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Separate traceId and sessionId', () => {
     it('should use provided traceId and record threadId in metadata', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession({
+      const trace = claudeTracer.createTrace({
         traceId: 'server-trace-abc',
         threadId: 'my-thread-id',
       });
@@ -255,7 +255,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       ];
 
       for (const msg of messages) {
-        await session.processMessage(msg);
+        await trace.processMessage(msg);
       }
 
       // All runs should use the provided traceId
@@ -272,10 +272,10 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
 
     it('should fallback threadId to init message session_id when not provided', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession({ traceId: 'server-trace-xyz' });
+      const trace = claudeTracer.createTrace({ traceId: 'server-trace-xyz' });
 
-      await session.processMessage(createMockInit());
-      await session.processMessage(createMockResult());
+      await trace.processMessage(createMockInit());
+      await trace.processMessage(createMockResult());
 
       const rootStart = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.START);
       assert(rootStart);
@@ -284,6 +284,47 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
 
       const traceIds = new Set(capturedRuns.map(e => e.run.trace_id));
       assert.strictEqual([ ...traceIds ][0], 'server-trace-xyz');
+    });
+  });
+
+  describe('Trace inputs in root run', () => {
+    it('should merge inputs into root run inputs when provided via createTrace', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const trace = claudeTracer.createTrace({
+        inputs: { messages: [{ role: 'user', content: 'Hello, what is 1+1?' }] },
+      });
+
+      const messages: SDKMessage[] = [
+        createMockInit(),
+        createMockAssistantTextOnly(),
+        createMockResult(),
+      ];
+
+      for (const msg of messages) {
+        await trace.processMessage(msg);
+      }
+
+      const rootStart = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.START);
+      assert(rootStart, 'Should have root_run start');
+      assert.deepStrictEqual(
+        (rootStart.run.inputs as any).messages,
+        [{ role: 'user', content: 'Hello, what is 1+1?' }],
+      );
+      // Config fields should be in extra, not inputs
+      const rootExtra = rootStart.run.extra as Record<string, any>;
+      assert.deepStrictEqual(rootExtra.tools, [ 'Bash', 'Read' ]);
+    });
+
+    it('should not have extra inputs when not provided', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const trace = claudeTracer.createTrace();
+
+      await trace.processMessage(createMockInit());
+      await trace.processMessage(createMockResult());
+
+      const rootStart = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.START);
+      assert(rootStart, 'Should have root_run start');
+      assert.strictEqual((rootStart.run.inputs as any).messages, undefined);
     });
   });
 
@@ -341,7 +382,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Error scenario', () => {
     it('should trace an error result with ERROR status', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession();
+      const trace = claudeTracer.createTrace();
 
       const messages: SDKMessage[] = [
         createMockInit(),
@@ -370,7 +411,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       ];
 
       for (const msg of messages) {
-        await session.processMessage(msg);
+        await trace.processMessage(msg);
       }
 
       // Root run should end with ERROR status
@@ -383,10 +424,10 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Guard clauses — messages before init', () => {
     it('should warn and ignore assistant message received before init', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession();
+      const trace = claudeTracer.createTrace();
 
       // Send assistant message without a preceding init
-      await session.processMessage(createMockAssistantWithTool());
+      await trace.processMessage(createMockAssistantWithTool());
 
       // Nothing should have been traced
       assert.strictEqual(capturedRuns.length, 0, 'No runs should be captured before init');
@@ -394,10 +435,10 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
 
     it('should warn and ignore result message received before init', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession();
+      const trace = claudeTracer.createTrace();
 
       // Send result message without a preceding init
-      await session.processMessage(createMockResult());
+      await trace.processMessage(createMockResult());
 
       // Nothing should have been traced
       assert.strictEqual(capturedRuns.length, 0, 'No runs should be captured before init');
@@ -407,7 +448,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Pending tool runs cleanup on result', () => {
     it('should log ERROR for pending tool runs that never received a result', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
-      const session = claudeTracer.createSession();
+      const trace = claudeTracer.createTrace();
 
       // Init → assistant calls a tool → result arrives WITHOUT the tool_result
       const messages: SDKMessage[] = [
@@ -417,7 +458,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       ];
 
       for (const msg of messages) {
-        await session.processMessage(msg);
+        await trace.processMessage(msg);
       }
 
       // The pending tool run should have been force-closed with ERROR status
@@ -450,7 +491,7 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
   describe('Internal error handling', () => {
     it('should catch errors thrown inside processMessage without propagating', async () => {
       const { claudeTracer } = createTestEnv();
-      const session = claudeTracer.createSession();
+      const trace = claudeTracer.createTrace();
 
       // Force an error by replacing logTrace with a throwing stub
       (claudeTracer as any).tracingService = {
@@ -461,16 +502,16 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
 
       // Should NOT throw — error is swallowed by the catch block
       await assert.doesNotReject(async () => {
-        await session.processMessage(createMockInit());
+        await trace.processMessage(createMockInit());
       });
     });
 
     it('should catch errors thrown inside processMessages without propagating', async () => {
       const { claudeTracer } = createTestEnv();
 
-      // Replace createSession with a throwing stub to trigger the outer catch
-      (claudeTracer as any).createSession = () => {
-        throw new Error('unexpected createSession error');
+      // Replace createTrace with a throwing stub to trigger the outer catch
+      (claudeTracer as any).createTrace = () => {
+        throw new Error('unexpected createTrace error');
       };
 
       // Should NOT throw — error is swallowed by the catch block
