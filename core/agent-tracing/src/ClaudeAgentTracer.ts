@@ -12,19 +12,20 @@ import {
   type ClaudeContentBlock,
   type ClaudeTokenUsage,
   type IRunCost,
-  type CreateSessionOptions,
+  type CreateTraceOptions,
   RunStatus,
   type TracerConfig,
   applyTracerConfig,
 } from './types';
 
 /**
- * TraceSession - Manages state for a single agent execution with streaming support.
+ * Trace - Manages state for a single agent execution with streaming support.
  * Allows processing messages one-by-one and logging them immediately.
  */
-export class TraceSession {
+export class Trace {
   private traceId: string;
   private threadId?: string;
+  private inputs?: Record<string, any>;
   private rootRun: Run | null = null;
   private rootRunId: string;
   private startTime: number;
@@ -32,10 +33,11 @@ export class TraceSession {
   private pendingToolUses = new Map<string, Run>();
   private tracer: ClaudeAgentTracer;
 
-  constructor(tracer: ClaudeAgentTracer, options?: CreateSessionOptions) {
+  constructor(tracer: ClaudeAgentTracer, options?: CreateTraceOptions) {
     this.tracer = tracer;
     this.traceId = options?.traceId || randomUUID();
     this.threadId = options?.threadId;
+    this.inputs = options?.inputs;
     this.rootRunId = randomUUID();
     this.startTime = Date.now();
   }
@@ -69,6 +71,9 @@ export class TraceSession {
       this.threadId = message.session_id;
     }
     this.rootRun = this.tracer.createRootRunInternal(message, this.startTime, this.traceId, this.rootRunId, this.threadId);
+    if (this.inputs) {
+      Object.assign(this.rootRun.inputs, this.inputs);
+    }
     this.tracer.logTrace(this.rootRun, RunStatus.START);
   }
 
@@ -192,7 +197,7 @@ export class TraceSession {
  * ClaudeAgentTracer - Converts Claude SDK messages to LangChain Run format
  * and logs them to the same remote logging system as LangGraphTracer.
  *
- * Supports both batch processing (processMessages) and streaming (createSession).
+ * Supports both batch processing (processMessages) and streaming (createTrace).
  */
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -216,26 +221,31 @@ export class ClaudeAgentTracer {
   }
 
   /**
-   * Create a new trace session for streaming message processing.
-   * Use this for real-time tracing where messages arrive one-by-one.
+   * Create a new trace for one agent execution.
+   * Returns a Trace object for streaming message processing.
    *
    * @param options.traceId - Server-side trace ID for call chain linking. Defaults to a random UUID.
-   * @param options.threadId - Thread ID (Claude SDK session ID), recorded in metadata.
+   * @param options.threadId - Thread ID (conversation/session identifier), recorded in metadata.
+   * @param options.inputs - Additional inputs to merge into root run's inputs (e.g. user messages).
    *
    * @example
-   * const session = claudeTracer.createSession({ traceId: ctx.tracer.traceId, threadId });
+   * const trace = claudeTracer.createTrace({
+   *   traceId: ctx.tracer.traceId,
+   *   threadId,
+   *   inputs: { messages: [{ role: 'user', content: 'hello' }] },
+   * });
    * for await (const message of agent.run('task')) {
-   *   await session.processMessage(message);
+   *   await trace.processMessage(message);
    * }
    */
-  public createSession(options?: CreateSessionOptions): TraceSession {
-    return new TraceSession(this, options);
+  public createTrace(options?: CreateTraceOptions): Trace {
+    return new Trace(this, options);
   }
 
   /**
    * Main entry point - convert SDK messages to Run trees and log them.
    * Use this when you have all messages collected (batch processing).
-   * For real-time streaming, use createSession() instead.
+   * For real-time streaming, use createTrace() instead.
    *
    * Non-tracing message types (tool_progress, stream_event, status, etc.) are automatically filtered out.
    */
@@ -246,17 +256,17 @@ export class ClaudeAgentTracer {
         return;
       }
 
-      // Pre-validate: ensure there is an init message before creating session
+      // Pre-validate: ensure there is an init message before creating trace
       const hasInit = sdkMessages.some(m => m.type === 'system' && 'subtype' in m && m.subtype === 'init');
       if (!hasInit) {
         this.logger.warn('[ClaudeAgentTracer] No system/init message found');
         return;
       }
 
-      // Delegate to TraceSession for message processing
-      const session = this.createSession();
+      // Delegate to Trace for message processing
+      const trace = this.createTrace();
       for (const msg of sdkMessages) {
-        await session.processMessage(msg);
+        await trace.processMessage(msg);
       }
     } catch (e) {
       this.logger.warn('[ClaudeAgentTracer] processMessages error:', e);

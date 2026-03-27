@@ -132,12 +132,14 @@ export const RunStatus = {
 } as const;
 export type RunStatus = (typeof RunStatus)[keyof typeof RunStatus];
 
-/** Options for creating a new trace session. */
-export interface CreateSessionOptions {
+/** All context needed to create a trace for one agent execution. */
+export interface CreateTraceOptions {
   /** Server-side trace ID for linking to the request call chain. Defaults to a random UUID. */
   traceId?: string;
-  /** Thread ID (Claude SDK session ID), recorded in metadata. */
+  /** Thread ID (conversation/session identifier), recorded in metadata. */
   threadId?: string;
+  /** Additional inputs to merge into root run's inputs (e.g. user messages). */
+  inputs?: Record<string, any>;
 }
 
 /** User-facing config passed to tracer.configure() */

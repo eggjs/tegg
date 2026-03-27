@@ -1,2 +1,2 @@
 export * from './index';
-export { ClaudeAgentTracer, TraceSession } from './src/ClaudeAgentTracer';
+export { ClaudeAgentTracer, Trace } from './src/ClaudeAgentTracer';
