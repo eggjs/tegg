@@ -212,10 +212,10 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       const toolEnd = toolRuns.find(e => e.status === RunStatus.END);
       assert(toolEnd, 'Should have tool end');
 
-      // All runs share the same trace_id = session_id
+      // All runs share the same trace_id (auto-generated UUID, NOT session_id)
       const traceIds = new Set(capturedRuns.map(e => e.run.trace_id));
       assert.strictEqual(traceIds.size, 1, `All runs should share one trace_id, got ${traceIds.size}`);
-      assert.strictEqual([ ...traceIds ][0], 'test-session-001', 'trace_id should match session_id');
+      assert.notStrictEqual([ ...traceIds ][0], 'test-session-001', 'trace_id should NOT equal session_id');
 
       // Root run should carry session_id as thread_id in extra.metadata
       const rootExtra = rootStart.run.extra as Record<string, any>;
@@ -237,6 +237,53 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
       assert.strictEqual(llmOutput.promptTokens, 100);
       assert.strictEqual(llmOutput.completionTokens, 50);
       assert.strictEqual(llmOutput.totalCost, 0.003);
+    });
+  });
+
+  describe('Separate traceId and sessionId', () => {
+    it('should use provided traceId and record threadId in metadata', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const session = claudeTracer.createSession({
+        traceId: 'server-trace-abc',
+        threadId: 'my-thread-id',
+      });
+
+      const messages: SDKMessage[] = [
+        createMockInit(),
+        createMockAssistantTextOnly(),
+        createMockResult(),
+      ];
+
+      for (const msg of messages) {
+        await session.processMessage(msg);
+      }
+
+      // All runs should use the provided traceId
+      const traceIds = new Set(capturedRuns.map(e => e.run.trace_id));
+      assert.strictEqual(traceIds.size, 1);
+      assert.strictEqual([ ...traceIds ][0], 'server-trace-abc', 'trace_id should be the server-side traceId');
+
+      // thread_id in metadata should be the sessionId, not the traceId
+      const rootStart = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.START);
+      assert(rootStart);
+      const rootExtra = rootStart.run.extra as Record<string, any>;
+      assert.strictEqual(rootExtra?.metadata?.thread_id, 'my-thread-id', 'thread_id should be the provided threadId');
+    });
+
+    it('should fallback threadId to init message session_id when not provided', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const session = claudeTracer.createSession({ traceId: 'server-trace-xyz' });
+
+      await session.processMessage(createMockInit());
+      await session.processMessage(createMockResult());
+
+      const rootStart = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.START);
+      assert(rootStart);
+      const rootExtra = rootStart.run.extra as Record<string, any>;
+      assert.strictEqual(rootExtra?.metadata?.thread_id, 'test-session-001', 'thread_id should fallback to init session_id');
+
+      const traceIds = new Set(capturedRuns.map(e => e.run.trace_id));
+      assert.strictEqual([ ...traceIds ][0], 'server-trace-xyz');
     });
   });
 

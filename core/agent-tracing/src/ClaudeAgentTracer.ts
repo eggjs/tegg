@@ -12,6 +12,7 @@ import {
   type ClaudeContentBlock,
   type ClaudeTokenUsage,
   type IRunCost,
+  type CreateSessionOptions,
   RunStatus,
   type TracerConfig,
   applyTracerConfig,
@@ -23,6 +24,7 @@ import {
  */
 export class TraceSession {
   private traceId: string;
+  private threadId?: string;
   private rootRun: Run | null = null;
   private rootRunId: string;
   private startTime: number;
@@ -30,9 +32,10 @@ export class TraceSession {
   private pendingToolUses = new Map<string, Run>();
   private tracer: ClaudeAgentTracer;
 
-  constructor(tracer: ClaudeAgentTracer, sessionId?: string) {
+  constructor(tracer: ClaudeAgentTracer, options?: CreateSessionOptions) {
     this.tracer = tracer;
-    this.traceId = sessionId || randomUUID();
+    this.traceId = options?.traceId || randomUUID();
+    this.threadId = options?.threadId;
     this.rootRunId = randomUUID();
     this.startTime = Date.now();
   }
@@ -61,8 +64,11 @@ export class TraceSession {
   }
 
   private handleInit(message: ClaudeMessage): void {
-    this.traceId = message.session_id || this.traceId;
-    this.rootRun = this.tracer.createRootRunInternal(message, this.startTime, this.traceId, this.rootRunId);
+    // threadId: prefer constructor option, fallback to init message's session_id
+    if (!this.threadId) {
+      this.threadId = message.session_id;
+    }
+    this.rootRun = this.tracer.createRootRunInternal(message, this.startTime, this.traceId, this.rootRunId, this.threadId);
     this.tracer.logTrace(this.rootRun, RunStatus.START);
   }
 
@@ -213,14 +219,17 @@ export class ClaudeAgentTracer {
    * Create a new trace session for streaming message processing.
    * Use this for real-time tracing where messages arrive one-by-one.
    *
+   * @param options.traceId - Server-side trace ID for call chain linking. Defaults to a random UUID.
+   * @param options.threadId - Thread ID (Claude SDK session ID), recorded in metadata.
+   *
    * @example
-   * const session = claudeTracer.createSession();
+   * const session = claudeTracer.createSession({ traceId: ctx.tracer.traceId, threadId });
    * for await (const message of agent.run('task')) {
    *   await session.processMessage(message);
    * }
    */
-  public createSession(sessionId?: string): TraceSession {
-    return new TraceSession(this, sessionId);
+  public createSession(options?: CreateSessionOptions): TraceSession {
+    return new TraceSession(this, options);
   }
 
   /**
@@ -315,8 +324,9 @@ export class ClaudeAgentTracer {
    * @internal
    * Create root run from init message (used by TraceSession)
    */
-  createRootRunInternal(initMsg: ClaudeMessage, startTime: number, traceId: string, rootRunId?: string): Run {
+  createRootRunInternal(initMsg: ClaudeMessage, startTime: number, traceId: string, rootRunId?: string, threadId?: string): Run {
     const runId = rootRunId || initMsg.uuid || randomUUID();
+    const resolvedThreadId = threadId || initMsg.session_id;
 
     return {
       id: runId,
@@ -325,7 +335,7 @@ export class ClaudeAgentTracer {
       inputs: {
         tools: initMsg.tools || [],
         model: initMsg.model,
-        session_id: initMsg.session_id,
+        session_id: resolvedThreadId,
         mcp_servers: initMsg.mcp_servers,
         agents: initMsg.agents,
         slash_commands: initMsg.slash_commands,
@@ -342,7 +352,7 @@ export class ClaudeAgentTracer {
       tags: [],
       extra: {
         metadata: {
-          thread_id: initMsg.session_id,
+          thread_id: resolvedThreadId,
         },
         apiKeySource: initMsg.apiKeySource,
         claude_code_version: initMsg.claude_code_version,
