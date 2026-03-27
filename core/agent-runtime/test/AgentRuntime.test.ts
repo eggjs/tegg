@@ -249,7 +249,7 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(capturedInput!.isResume, false);
     });
 
-    it('should set isResume=true when threadId provided', async () => {
+    it('should set isResume=false when threadId provided but thread has no messages', async () => {
       let capturedInput: CreateRunInput | undefined;
       executor.execRun = async function* (input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
         capturedInput = input;
@@ -260,6 +260,26 @@ describe('test/AgentRuntime.test.ts', () => {
       await runtime.syncRun({
         threadId: thread.id,
         input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(capturedInput!.isResume, false);
+    });
+
+    it('should set isResume=true when threadId provided and thread has messages', async () => {
+      let capturedInput: CreateRunInput | undefined;
+      executor.execRun = async function* (input: CreateRunInput): AsyncGenerator<AgentStreamMessage> {
+        capturedInput = input;
+        yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'hi' }] } };
+      };
+
+      // First run creates thread with messages
+      const result = await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      // Second run on the same thread — now it has history
+      await runtime.syncRun({
+        threadId: result.threadId,
+        input: { messages: [{ role: 'user', content: 'Hello again' }] },
       });
       assert.equal(capturedInput!.isResume, true);
     });

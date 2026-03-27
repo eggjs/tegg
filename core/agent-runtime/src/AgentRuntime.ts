@@ -80,7 +80,9 @@ export class AgentRuntime {
 
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
     if (input.threadId) {
-      return { threadId: input.threadId, input: { ...input, isResume: true } };
+      const thread = await this.store.getThread(input.threadId);
+      const isResume = thread.messages.length > 0;
+      return { threadId: input.threadId, input: { ...input, isResume } };
     }
     const thread = await this.store.createThread();
     return { threadId: thread.id, input: { ...input, threadId: thread.id, isResume: false } };
