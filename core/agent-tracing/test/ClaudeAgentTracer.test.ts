@@ -310,8 +310,9 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
         (rootStart.run.inputs as any).messages,
         [{ role: 'user', content: 'Hello, what is 1+1?' }],
       );
-      // Original init fields should still be present
-      assert.deepStrictEqual((rootStart.run.inputs as any).tools, [ 'Bash', 'Read' ]);
+      // Config fields should be in extra, not inputs
+      const rootExtra = rootStart.run.extra as Record<string, any>;
+      assert.deepStrictEqual(rootExtra.tools, [ 'Bash', 'Read' ]);
     });
 
     it('should not have extra inputs when not provided', async () => {
