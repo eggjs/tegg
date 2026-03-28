@@ -4,6 +4,7 @@ import type {
   EggObjectLifecycle,
   EggObjectLifeCycleContext,
   EggObjectName,
+  EggProtoImplClass,
   EggPrototype, ObjectInfo, QualifierInfo,
 } from '@eggjs/tegg-types';
 import { EggObjectStatus, InjectType, ObjectInitType } from '@eggjs/tegg-types';
@@ -12,6 +13,7 @@ import { EggObjectLifecycleUtil } from '../model/EggObject';
 import { EggContainerFactory } from '../factory/EggContainerFactory';
 import { EggObjectUtil } from './EggObjectUtil';
 import { ContextHandler } from '../model/ContextHandler';
+import { FactoryQualifierUtil } from '@eggjs/tegg-dynamic-inject';
 
 export default class EggObjectImpl implements EggObject {
   private _obj: object;
@@ -59,7 +61,30 @@ export default class EggObjectImpl implements EggObject {
         if (this.proto.initType !== ObjectInitType.CONTEXT && injectObject.proto.initType === ObjectInitType.CONTEXT) {
           this.injectProperty(injectObject.refName, EggObjectUtil.contextEggObjectGetProperty(proto, injectObject.objName));
         } else {
-          const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
+          let injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
+          if (injectObj.proto.name === 'eggObjectFactory') {
+            const dynamics = FactoryQualifierUtil.getProperQualifiers(this._obj.constructor as unknown as EggProtoImplClass, injectObject.refName);
+            if (dynamics.length > 0) {
+              const obj: any = {
+                dynamics,
+              };
+              const originalGetEggObject = (injectObj.obj as any).getEggObject;
+              Object.setPrototypeOf(obj, injectObj.obj);
+              obj.getEggObject = function(...args: any[]) {
+                if (!this.dynamics.includes(args[0])) {
+                  throw new Error(`${args[0].name} is not in dynamic range: ${this.dynamics.map(item => item.name).join(', ')}`);
+                }
+                return originalGetEggObject.apply(this, args);
+              };
+              injectObj = Object.create(injectObj);
+              Object.defineProperty(injectObj, 'obj', {
+                value: obj,
+                writable: true,
+                enumerable: true,
+                configurable: true,
+              });
+            }
+          }
           this.injectProperty(injectObject.refName, EggObjectUtil.eggObjectGetProperty(injectObj));
         }
       }));
