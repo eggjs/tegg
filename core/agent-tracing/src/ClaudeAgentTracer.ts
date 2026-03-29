@@ -31,6 +31,7 @@ class Trace {
   private startTime: number;
   private executionOrder = 2; // Start at 2, root is 1
   private pendingToolUses = new Map<string, Run>();
+  private outputMessages: Array<{ role: string; content: ClaudeContentBlock[] }> = [];
   private tracer: ClaudeAgentTracer;
 
   constructor(tracer: ClaudeAgentTracer, options?: CreateTraceOptions) {
@@ -86,6 +87,11 @@ class Trace {
     const content = message.message?.content || [];
     const hasToolUse = content.some(c => c.type === 'tool_use');
     const hasText = content.some(c => c.type === 'text');
+
+    // Collect assistant message for outputs.messages
+    if (content.length > 0) {
+      this.outputMessages.push({ role: 'assistant', content });
+    }
 
     if (hasToolUse) {
       const eventTime = Date.now();
@@ -164,6 +170,7 @@ class Trace {
     // Update and log root run end
     this.rootRun.end_time = this.startTime + (message.duration_ms || 0);
     this.rootRun.outputs = {
+      messages: this.outputMessages,
       result: message.result,
       is_error: message.is_error,
       num_turns: message.num_turns,

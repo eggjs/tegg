@@ -328,6 +328,55 @@ describe('test/ClaudeAgentTracer.test.ts', () => {
     });
   });
 
+  describe('Trace outputs.messages in root run', () => {
+    it('should collect assistant text messages into outputs.messages', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const trace = claudeTracer.createTrace();
+
+      const messages: SDKMessage[] = [
+        createMockInit(),
+        createMockAssistantWithTool(),
+        createMockUserToolResult(),
+        createMockAssistantTextOnly(),
+        createMockResult(),
+      ];
+
+      for (const msg of messages) {
+        await trace.processMessage(msg);
+      }
+
+      const rootEnd = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.END);
+      assert(rootEnd, 'Should have root_run end');
+      const outputMessages = (rootEnd.run.outputs as any)?.messages;
+      assert(Array.isArray(outputMessages), 'outputs.messages should be an array');
+      assert.strictEqual(outputMessages.length, 2);
+      // First message has text + tool_use
+      assert.strictEqual(outputMessages[0].role, 'assistant');
+      assert.strictEqual(outputMessages[0].content.length, 2);
+      assert.strictEqual(outputMessages[0].content[0].type, 'text');
+      assert.strictEqual(outputMessages[0].content[0].text, 'Let me run that command for you.');
+      assert.strictEqual(outputMessages[0].content[1].type, 'tool_use');
+      assert.strictEqual(outputMessages[0].content[1].name, 'Bash');
+      // Second message has text only
+      assert.strictEqual(outputMessages[1].role, 'assistant');
+      assert.deepStrictEqual(outputMessages[1].content, [{ type: 'text', text: 'The answer is 21.' }]);
+    });
+
+    it('should have empty messages array when no assistant text', async () => {
+      const { claudeTracer, capturedRuns } = createTestEnv();
+      const trace = claudeTracer.createTrace();
+
+      await trace.processMessage(createMockInit());
+      await trace.processMessage(createMockResult());
+
+      const rootEnd = capturedRuns.find(e => !e.run.parent_run_id && e.status === RunStatus.END);
+      assert(rootEnd, 'Should have root_run end');
+      const outputMessages = (rootEnd.run.outputs as any)?.messages;
+      assert(Array.isArray(outputMessages), 'outputs.messages should be an array');
+      assert.strictEqual(outputMessages.length, 0);
+    });
+  });
+
   describe('Batch mode + text-only', () => {
     it('should trace a text-only response via processMessages', async () => {
       const { claudeTracer, capturedRuns } = createTestEnv();
