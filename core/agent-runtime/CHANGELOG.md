@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.74.0](https://github.com/eggjs/tegg/compare/v3.73.0...v3.74.0) (2026-03-30)
+
+
+### Bug Fixes
+
+* **agent-runtime:** set isResume based on thread message history ([#419](https://github.com/eggjs/tegg/issues/419)) ([8a7eacc](https://github.com/eggjs/tegg/commit/8a7eacca79a94815251a0d660f828ebef443d12a))
+
+
+
+
+
 # [3.73.0](https://github.com/eggjs/tegg/compare/v3.72.0...v3.73.0) (2026-03-25)
 
 
