@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.75.0](https://github.com/eggjs/tegg/compare/v3.74.0...v3.75.0) (2026-03-30)
+
+
+### Features
+
+* **agent-tracing:** add typesVersions for moduleResolution:node compatibility ([#424](https://github.com/eggjs/tegg/issues/424)) ([25b282c](https://github.com/eggjs/tegg/commit/25b282c947e5ce567ad72516d9c612cfb949d891))
+
+
+
+
+
 # [3.74.0](https://github.com/eggjs/tegg/compare/v3.73.0...v3.74.0) (2026-03-30)
 
 
