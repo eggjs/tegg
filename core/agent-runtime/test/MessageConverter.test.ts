@@ -185,19 +185,106 @@ describe('test/MessageConverter.test.ts', () => {
     });
   });
 
+  describe('consolidateContentBlocks', () => {
+    it('should merge adjacent text blocks into one', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'Hello ', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: 'world', annotations: [] } },
+      ];
+      const result = MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'Hello world');
+    });
+
+    it('should merge annotations from adjacent text blocks', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'a', annotations: [{ start: 0, end: 1 }] as any[] } },
+        { type: ContentBlockType.Text, text: { value: 'b', annotations: [{ start: 0, end: 1 }] as any[] } },
+      ];
+      const result = MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'ab');
+      assert.equal(result[0].text.annotations.length, 2);
+    });
+
+    it('should return empty array for empty input', () => {
+      assert.deepStrictEqual(MessageConverter.consolidateContentBlocks([]), []);
+    });
+
+    it('should return single block as-is', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'only', annotations: [] } },
+      ];
+      const result = MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'only');
+    });
+
+    it('should merge many consecutive text blocks', () => {
+      const blocks = Array.from({ length: 5 }, (_, i) => ({
+        type: ContentBlockType.Text,
+        text: { value: String(i), annotations: [] },
+      }));
+      const result = MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, '01234');
+    });
+
+    it('should not mutate the original blocks', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'a', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: 'b', annotations: [] } },
+      ];
+      MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(blocks[0].text.value, 'a');
+      assert.equal(blocks[1].text.value, 'b');
+    });
+
+    it('should preserve non-text blocks as natural boundaries', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'before ', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: 'tool call', annotations: [] } },
+        { type: ContentBlockType.ToolUse, id: 'toolu_1', name: 'search', input: { q: 'test' } },
+        { type: ContentBlockType.Text, text: { value: 'after tool', annotations: [] } },
+      ] as any;
+      const result = MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(result.length, 3);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'before tool call');
+      assert(isToolUseBlock(result[1]));
+      assert.equal((result[1] as ToolUseContentBlock).name, 'search');
+      assert(isTextBlock(result[2]));
+      assert.equal(result[2].text.value, 'after tool');
+    });
+
+    it('should not crash on tool_use blocks (no .text property)', () => {
+      const blocks = [
+        { type: ContentBlockType.ToolUse, id: 'toolu_1', name: 'search', input: {} },
+      ] as any;
+      const result = MessageConverter.consolidateContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isToolUseBlock(result[0]));
+      assert.equal((result[0] as ToolUseContentBlock).name, 'search');
+    });
+  });
+
   describe('extractFromStreamMessages', () => {
-    it('should extract messages and accumulate usage', () => {
+    it('should consolidate streaming chunks into a single message', () => {
       const messages: AgentStreamMessage[] = [
         { message: { content: 'chunk1' }, usage: { promptTokens: 10, completionTokens: 5 } },
         { message: { content: 'chunk2' }, usage: { promptTokens: 0, completionTokens: 8 } },
       ];
       const { output, usage } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
 
-      assert.equal(output.length, 2);
+      assert.equal(output.length, 1);
+      assert.equal(output[0].content.length, 1);
       assert(isTextBlock(output[0].content[0]));
-      assert.equal(output[0].content[0].text.value, 'chunk1');
-      assert(isTextBlock(output[1].content[0]));
-      assert.equal(output[1].content[0].text.value, 'chunk2');
+      assert.equal(output[0].content[0].text.value, 'chunk1chunk2');
+      assert.equal(output[0].runId, 'run_1');
       assert.ok(usage);
       assert.equal(usage.promptTokens, 10);
       assert.equal(usage.completionTokens, 13);
@@ -226,6 +313,8 @@ describe('test/MessageConverter.test.ts', () => {
       const messages: AgentStreamMessage[] = [{ message: { content: 'data' } }];
       const { output, usage } = MessageConverter.extractFromStreamMessages(messages);
       assert.equal(output.length, 1);
+      assert(isTextBlock(output[0].content[0]));
+      assert.equal(output[0].content[0].text.value, 'data');
       assert.equal(usage, undefined);
     });
 
@@ -241,6 +330,19 @@ describe('test/MessageConverter.test.ts', () => {
       const { output, usage } = MessageConverter.extractFromStreamMessages([]);
       assert.equal(output.length, 0);
       assert.equal(usage, undefined);
+    });
+
+    it('should consolidate many streaming chunks into single text block', () => {
+      const messages: AgentStreamMessage[] = [
+        { message: { content: 'Hello ' } },
+        { message: { content: 'world' } },
+        { message: { content: '!' } },
+      ];
+      const { output } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
+      assert.equal(output.length, 1);
+      assert.equal(output[0].content.length, 1);
+      assert(isTextBlock(output[0].content[0]));
+      assert.equal(output[0].content[0].text.value, 'Hello world!');
     });
   });
 

@@ -68,7 +68,39 @@ export class MessageConverter {
   }
 
   /**
+   * Merge adjacent text content blocks into a single block.
+   * Non-text blocks act as natural boundaries and are never merged.
+   */
+  static consolidateContentBlocks(blocks: MessageContentBlock[]): MessageContentBlock[] {
+    const result: MessageContentBlock[] = [];
+    for (const block of blocks) {
+      const prev = result[result.length - 1];
+      if (
+        prev && prev.type === ContentBlockType.Text && block.type === ContentBlockType.Text
+      ) {
+        const prevText = prev as TextContentBlock;
+        const curText = block as TextContentBlock;
+        prevText.text = {
+          value: prevText.text.value + curText.text.value,
+          annotations: [...prevText.text.annotations, ...curText.text.annotations],
+        };
+      } else if (block.type === ContentBlockType.Text) {
+        const curText = block as TextContentBlock;
+        result.push({
+          ...curText,
+          text: { ...curText.text, annotations: [...curText.text.annotations] },
+        });
+      } else {
+        result.push({ ...block });
+      }
+    }
+    return result;
+  }
+
+  /**
    * Extract MessageObjects and accumulated usage from AgentStreamMessage objects.
+   * Adjacent text content blocks from streaming chunks are consolidated into
+   * a single message with merged text, matching the OpenAI Assistants API behavior.
    */
   static extractFromStreamMessages(
     messages: AgentStreamMessage[],
@@ -77,14 +109,14 @@ export class MessageConverter {
       output: MessageObject[];
       usage?: RunUsage;
     } {
-    const output: MessageObject[] = [];
+    const allBlocks: MessageContentBlock[] = [];
     let promptTokens = 0;
     let completionTokens = 0;
     let hasUsage = false;
 
     for (const msg of messages) {
       if (msg.message) {
-        output.push(MessageConverter.toMessageObject(msg.message, runId));
+        allBlocks.push(...MessageConverter.toContentBlocks(msg.message));
       }
       if (msg.usage) {
         hasUsage = true;
@@ -92,6 +124,20 @@ export class MessageConverter {
         completionTokens += msg.usage.completionTokens ?? 0;
       }
     }
+
+    const consolidated = MessageConverter.consolidateContentBlocks(allBlocks);
+
+    const output: MessageObject[] = consolidated.length > 0
+      ? [{
+        id: newMsgId(),
+        object: AgentObjectType.ThreadMessage,
+        createdAt: nowUnix(),
+        runId,
+        role: MessageRole.Assistant,
+        status: MessageStatus.Completed,
+        content: consolidated,
+      }]
+      : [];
 
     let usage: RunUsage | undefined;
     if (hasUsage) {

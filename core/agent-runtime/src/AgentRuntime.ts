@@ -375,7 +375,7 @@ export class AgentRuntime {
     }
 
     return {
-      content,
+      content: MessageConverter.consolidateContentBlocks(content),
       usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
       aborted: false as const,
     };
