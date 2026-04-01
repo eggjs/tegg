@@ -119,6 +119,51 @@ export class MessageConverter {
   }
 
   /**
+   * Normalize raw SDK streaming event blocks (e.g. Anthropic content_block_start/delta/stop)
+   * into standard content blocks that mergeContentBlocks can process.
+   * This allows upstream code to transparently pass through SDK events without format conversion.
+   */
+  static normalizeContentBlocks(blocks: MessageContentBlock[]): MessageContentBlock[] {
+    const result: MessageContentBlock[] = [];
+    for (const block of blocks) {
+      const b = block as Record<string, any>;
+      // content_block_start[tool_use] → ToolUseContentBlock
+      if (b.type === 'content_block_start' && b.content_block?.type === ContentBlockType.ToolUse) {
+        const cb = b.content_block;
+        result.push({ type: ContentBlockType.ToolUse, id: cb.id, name: cb.name, input: cb.input ?? {} } as ToolUseContentBlock);
+        continue;
+      }
+      // content_block_delta[input_json_delta] → TextContentBlock (merged into tool_use.input later)
+      if (b.type === 'content_block_delta' && b.delta?.type === 'input_json_delta') {
+        const partial: string = b.delta.partial_json || '';
+        if (partial) {
+          result.push({ type: ContentBlockType.Text, text: { value: partial, annotations: [] } } as TextContentBlock);
+        }
+        continue;
+      }
+      // content_block_delta[text_delta] → TextContentBlock
+      if (b.type === 'content_block_delta' && b.delta?.type === 'text_delta') {
+        const text: string = b.delta.text || '';
+        if (text) {
+          result.push({ type: ContentBlockType.Text, text: { value: text, annotations: [] } } as TextContentBlock);
+        }
+        continue;
+      }
+      // thinking_delta → discard (not part of final message)
+      if (b.type === 'content_block_delta' && b.delta?.type === 'thinking_delta') {
+        continue;
+      }
+      // content_block_stop / message_stop / message_delta → discard
+      if (b.type === 'content_block_stop' || b.type === 'message_stop' || b.type === 'message_delta') {
+        continue;
+      }
+      // Standard blocks (text, tool_use, tool_result) and other generic blocks → keep as-is
+      result.push(block);
+    }
+    return result;
+  }
+
+  /**
    * Merge accumulated content blocks into a clean final form:
    * 1. Consecutive text blocks are merged into a single text block.
    * 2. Text blocks immediately following a tool_use block (before the next
@@ -127,6 +172,7 @@ export class MessageConverter {
    */
   static mergeContentBlocks(blocks: MessageContentBlock[]): MessageContentBlock[] {
     if (blocks.length === 0) return blocks;
+    blocks = MessageConverter.normalizeContentBlocks(blocks);
 
     const merged: MessageContentBlock[] = [];
 

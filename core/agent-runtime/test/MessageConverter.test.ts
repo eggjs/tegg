@@ -345,6 +345,102 @@ describe('test/MessageConverter.test.ts', () => {
     });
   });
 
+  describe('normalizeContentBlocks', () => {
+    it('should convert content_block_start[tool_use] to ToolUseContentBlock', () => {
+      const blocks = [
+        { type: 'content_block_start', content_block: { type: 'tool_use', id: 'toolu_1', name: 'Bash', input: {} } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isToolUseBlock(result[0]));
+      assert.equal(result[0].id, 'toolu_1');
+      assert.equal(result[0].name, 'Bash');
+      assert.deepStrictEqual(result[0].input, {});
+    });
+
+    it('should convert content_block_delta[input_json_delta] to TextContentBlock', () => {
+      const blocks = [
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{"command":' } },
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '"ls -la"}' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 2);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, '{"command":');
+      assert(isTextBlock(result[1]));
+      assert.equal(result[1].text.value, '"ls -la"}');
+    });
+
+    it('should convert content_block_delta[text_delta] to TextContentBlock', () => {
+      const blocks = [
+        { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Hello' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'Hello');
+    });
+
+    it('should discard thinking_delta blocks', () => {
+      const blocks = [
+        { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me think...' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 0);
+    });
+
+    it('should discard content_block_stop, message_stop, message_delta', () => {
+      const blocks = [
+        { type: 'content_block_stop' },
+        { type: 'message_stop' },
+        { type: 'message_delta', delta: { stop_reason: 'end_turn' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 0);
+    });
+
+    it('should keep standard content blocks as-is', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'hello', annotations: [] } },
+        { type: ContentBlockType.ToolUse, id: 'toolu_1', name: 'search', input: { q: 'test' } },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'result' },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 3);
+      assert(isTextBlock(result[0]));
+      assert(isToolUseBlock(result[1]));
+      assert(isToolResultBlock(result[2]));
+    });
+
+    it('should skip empty input_json_delta and text_delta', () => {
+      const blocks = [
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '' } },
+        { type: 'content_block_delta', delta: { type: 'text_delta', text: '' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 0);
+    });
+
+    it('should handle realistic Anthropic stream: tool_use start + input deltas + stop + tool_result', () => {
+      const blocks = [
+        { type: 'content_block_start', content_block: { type: 'tool_use', id: 'toolu_1', name: 'Bash', input: {} } },
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{"command":' } },
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '"ls -la"}' } },
+        { type: 'content_block_stop' },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'file1\nfile2' },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 4);
+      assert(isToolUseBlock(result[0]));
+      assert.equal(result[0].name, 'Bash');
+      assert(isTextBlock(result[1]));
+      assert.equal(result[1].text.value, '{"command":');
+      assert(isTextBlock(result[2]));
+      assert.equal(result[2].text.value, '"ls -la"}');
+      assert(isToolResultBlock(result[3]));
+    });
+  });
+
   describe('mergeContentBlocks', () => {
     it('should return empty array for empty input', () => {
       assert.deepStrictEqual(MessageConverter.mergeContentBlocks([]), []);
@@ -443,6 +539,44 @@ describe('test/MessageConverter.test.ts', () => {
       assert.equal(result.length, 1);
       assert.equal(result[0].type, 'thinking');
       assert.equal((result[0] as any).thinking, 'let me think...');
+    });
+
+    it('should handle raw Anthropic SDK stream events end-to-end', () => {
+      const blocks = [
+        // text deltas
+        { type: 'content_block_delta', delta: { type: 'text_delta', text: 'I will ' } },
+        { type: 'content_block_delta', delta: { type: 'text_delta', text: 'help you.' } },
+        { type: 'content_block_stop' },
+        // thinking (should be discarded)
+        { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me think...' } },
+        // tool_use start + input deltas + stop
+        { type: 'content_block_start', content_block: { type: 'tool_use', id: 'fc-1', name: 'Bash', input: {} } },
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{"command":' } },
+        { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '"ls -la"}' } },
+        { type: 'content_block_stop' },
+        // tool_result (already standard block)
+        { type: ContentBlockType.ToolResult, tool_use_id: 'fc-1', content: 'file1\nfile2' },
+        // more text deltas
+        { type: 'content_block_delta', delta: { type: 'text_delta', text: 'Here are' } },
+        { type: 'content_block_delta', delta: { type: 'text_delta', text: ' the results.' } },
+        // message_stop (should be discarded)
+        { type: 'message_stop' },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 4);
+      // merged text
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'I will help you.');
+      // tool_use with parsed input
+      assert(isToolUseBlock(result[1]));
+      assert.equal(result[1].name, 'Bash');
+      assert.deepStrictEqual(result[1].input, { command: 'ls -la' });
+      // tool_result
+      assert(isToolResultBlock(result[2]));
+      assert.equal(result[2].tool_use_id, 'fc-1');
+      // merged trailing text
+      assert(isTextBlock(result[3]));
+      assert.equal(result[3].text.value, 'Here are the results.');
     });
   });
 
