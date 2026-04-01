@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.75.1](https://github.com/eggjs/tegg/compare/v3.75.0...v3.75.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* **agent-runtime:** preserve non-text content blocks in MessageConverter ([#426](https://github.com/eggjs/tegg/issues/426)) ([8c4382f](https://github.com/eggjs/tegg/commit/8c4382f33f68534218049cfbfadfd4f6800a348c))
+
+
+
+
+
 # [3.75.0](https://github.com/eggjs/tegg/compare/v3.74.0...v3.75.0) (2026-03-30)
 
 **Note:** Version bump only for package @eggjs/tegg
