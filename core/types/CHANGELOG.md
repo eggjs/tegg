@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.76.1](https://github.com/eggjs/tegg/compare/v3.76.0...v3.76.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* **agent-runtime:** merge content blocks and support accumulate control ([#428](https://github.com/eggjs/tegg/issues/428)) ([f4f904e](https://github.com/eggjs/tegg/commit/f4f904e357497fc5ad9a2c7d2ece4e9b305f5738))
+
+
+
+
+
 # [3.76.0](https://github.com/eggjs/tegg/compare/v3.75.1...v3.76.0) (2026-04-01)
 
 **Note:** Version bump only for package @eggjs/tegg-types

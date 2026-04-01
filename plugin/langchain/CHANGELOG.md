@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.76.1](https://github.com/eggjs/tegg/compare/v3.76.0...v3.76.1) (2026-04-01)
+
+**Note:** Version bump only for package @eggjs/tegg-langchain
+
+
+
+
+
 # [3.76.0](https://github.com/eggjs/tegg/compare/v3.75.1...v3.76.0) (2026-04-01)
 
 **Note:** Version bump only for package @eggjs/tegg-langchain
