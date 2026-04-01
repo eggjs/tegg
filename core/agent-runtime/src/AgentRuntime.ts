@@ -369,10 +369,7 @@ export class AgentRuntime {
           id: msgId,
           content: contentBlocks.length > 0 ? contentBlocks : undefined,
         });
-        continue;
-      }
-
-      if (msg.message) {
+      } else if (msg.message) {
         const contentBlocks = MessageConverter.toContentBlocks(msg.message);
         content.push(...contentBlocks);
 

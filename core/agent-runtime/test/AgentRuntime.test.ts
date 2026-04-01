@@ -503,6 +503,24 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(frameworkEventNames.includes(AgentSSEEvent.Done));
     });
 
+    it('should accumulate usage from custom-typed messages', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { type: 'assistant.text.delta', message: { content: 'Hi' }, usage: { promptTokens: 10, completionTokens: 5 } };
+        yield { type: 'assistant.text.delta', message: { content: ' there' }, usage: { promptTokens: 0, completionTokens: 3 } };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadRunCompleted);
+      assert.ok(completedEvent);
+      const usage = (completedEvent.data as any).usage;
+      assert.ok(usage);
+      assert.equal(usage.promptTokens, 10);
+      assert.equal(usage.completionTokens, 8);
+      assert.equal(usage.totalTokens, 18);
+    });
+
     it('should fallback to thread.message.delta when no type is set', async () => {
       // Default behavior: no type field → original thread.message.delta
       const writer = new MockSSEWriter();
