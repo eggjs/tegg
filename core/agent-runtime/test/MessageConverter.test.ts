@@ -381,9 +381,19 @@ describe('test/MessageConverter.test.ts', () => {
       assert.equal(result[0].text.value, 'Hello');
     });
 
-    it('should discard thinking_delta blocks', () => {
+    it('should discard content_block_start for non-tool_use types (thinking, text)', () => {
+      const blocks = [
+        { type: 'content_block_start', index: 0, content_block: { type: 'thinking', thinking: '' } },
+        { type: 'content_block_start', index: 1, content_block: { type: 'text', text: '' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 0);
+    });
+
+    it('should discard thinking_delta and signature_delta blocks', () => {
       const blocks = [
         { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me think...' } },
+        { type: 'content_block_delta', delta: { type: 'signature_delta', signature: 'sig-theta' } },
       ] as any;
       const result = MessageConverter.normalizeContentBlocks(blocks);
       assert.equal(result.length, 0);

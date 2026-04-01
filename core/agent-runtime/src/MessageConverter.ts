@@ -127,10 +127,12 @@ export class MessageConverter {
     const result: MessageContentBlock[] = [];
     for (const block of blocks) {
       const b = block as Record<string, any>;
-      // content_block_start[tool_use] → ToolUseContentBlock
-      if (b.type === 'content_block_start' && b.content_block?.type === ContentBlockType.ToolUse) {
-        const cb = b.content_block;
-        result.push({ type: ContentBlockType.ToolUse, id: cb.id, name: cb.name, input: cb.input ?? {} } as ToolUseContentBlock);
+      // content_block_start[tool_use] → ToolUseContentBlock; others (thinking, text, etc.) → discard
+      if (b.type === 'content_block_start') {
+        if (b.content_block?.type === ContentBlockType.ToolUse) {
+          const cb = b.content_block;
+          result.push({ type: ContentBlockType.ToolUse, id: cb.id, name: cb.name, input: cb.input ?? {} } as ToolUseContentBlock);
+        }
         continue;
       }
       // content_block_delta[input_json_delta] → TextContentBlock (merged into tool_use.input later)
@@ -149,8 +151,8 @@ export class MessageConverter {
         }
         continue;
       }
-      // thinking_delta → discard (not part of final message)
-      if (b.type === 'content_block_delta' && b.delta?.type === 'thinking_delta') {
+      // Other content_block_delta (thinking_delta, signature_delta, etc.) → discard
+      if (b.type === 'content_block_delta') {
         continue;
       }
       // content_block_stop / message_stop / message_delta → discard
