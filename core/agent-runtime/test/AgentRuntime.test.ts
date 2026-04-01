@@ -11,7 +11,7 @@ import {
   AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 
 import { isTextBlock } from '../src/MessageConverter';
-import type { RunRecord, RunObject, CreateRunInput, AgentStreamMessage } from '@eggjs/tegg-types/agent-runtime';
+import type { RunRecord, RunObject, CreateRunInput, AgentStreamMessage, MessageObject } from '@eggjs/tegg-types/agent-runtime';
 
 import { AgentRuntime } from '../src/AgentRuntime';
 import type { AgentExecutor, AgentRuntimeOptions } from '../src/AgentRuntime';
@@ -311,6 +311,33 @@ describe('test/AgentRuntime.test.ts', () => {
         },
       );
     });
+
+    it('should consolidate multiple streaming chunks into a single message', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { message: { content: 'Hello ' } };
+        yield { message: { content: 'world' } };
+        yield { message: { content: '!' } };
+        yield { usage: { promptTokens: 10, completionTokens: 5 } };
+      };
+
+      const result = await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      assert.equal(result.status, RunStatus.Completed);
+      assert.equal(result.output!.length, 1);
+      assert.equal(result.output![0].content.length, 1);
+      assert(isTextBlock(result.output![0].content[0]));
+      assert.equal(result.output![0].content[0].text.value, 'Hello world!');
+
+      // Thread history should also have consolidated content
+      const thread = await runtime.getThread(result.threadId);
+      const assistantMsg = thread.messages.find(m => m.role === MessageRole.Assistant);
+      assert.ok(assistantMsg);
+      assert.equal(assistantMsg!.content.length, 1);
+      assert(isTextBlock(assistantMsg!.content[0]));
+      assert.equal(assistantMsg!.content[0].text.value, 'Hello world!');
+    });
   });
 
   describe('asyncRun', () => {
@@ -365,6 +392,35 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const run = await store.getRun(result.id);
       assert.deepStrictEqual(run.metadata, meta);
+    });
+
+    it('should consolidate multiple streaming chunks into a single message', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { message: { content: 'Hello ' } };
+        yield { message: { content: 'world' } };
+        yield { message: { content: '!' } };
+        yield { usage: { promptTokens: 10, completionTokens: 5 } };
+      };
+
+      const result = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      await runtime.waitForPendingTasks();
+
+      const run = await store.getRun(result.id);
+      assert.equal(run.status, RunStatus.Completed);
+      assert.equal(run.output!.length, 1);
+      assert.equal(run.output![0].content.length, 1);
+      assert(isTextBlock(run.output![0].content[0]));
+      assert.equal(run.output![0].content[0].text.value, 'Hello world!');
+
+      const thread = await store.getThread(result.threadId);
+      const assistantMsg = thread.messages.find(m => m.role === MessageRole.Assistant);
+      assert.ok(assistantMsg);
+      assert.equal(assistantMsg!.content.length, 1);
+      assert(isTextBlock(assistantMsg!.content[0]));
+      assert.equal(assistantMsg!.content[0].text.value, 'Hello world!');
     });
   });
 
@@ -460,6 +516,40 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(eventNames.includes(AgentSSEEvent.ThreadRunFailed));
       assert(eventNames.includes(AgentSSEEvent.Done));
       assert(writer.closed);
+    });
+
+    it('should consolidate streaming chunks into single content block in stored message', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { message: { content: 'Hello ' } };
+        yield { message: { content: 'world' } };
+        yield { message: { content: '!' } };
+        yield { usage: { promptTokens: 10, completionTokens: 5 } };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      // SSE deltas should still be granular (3 separate delta events)
+      const deltaEvents = writer.events.filter(e => e.event === AgentSSEEvent.ThreadMessageDelta);
+      assert.equal(deltaEvents.length, 3);
+
+      // But the completed message should have consolidated content
+      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
+      assert.ok(completedEvent);
+      const completedMsg = completedEvent.data as MessageObject;
+      assert.equal(completedMsg.content.length, 1);
+      assert(isTextBlock(completedMsg.content[0]));
+      assert.equal(completedMsg.content[0].text.value, 'Hello world!');
+
+      // Thread history should also have consolidated content
+      const runCreatedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadRunCreated);
+      const threadId = (runCreatedEvent!.data as RunObject).threadId;
+      const thread = await runtime.getThread(threadId);
+      const assistantMsg = thread.messages.find(m => m.role === MessageRole.Assistant);
+      assert.ok(assistantMsg);
+      assert.equal(assistantMsg!.content.length, 1);
+      assert(isTextBlock(assistantMsg!.content[0]));
+      assert.equal(assistantMsg!.content[0].text.value, 'Hello world!');
     });
   });
 
