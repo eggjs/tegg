@@ -23,6 +23,15 @@ export function isToolResultBlock(block: MessageContentBlock): block is ToolResu
   return block.type === ContentBlockType.ToolResult;
 }
 
+interface ThinkingBlock {
+  type: 'thinking';
+  thinking: string;
+}
+
+export function isThinkingBlock(block: MessageContentBlock): block is ThinkingBlock & MessageContentBlock {
+  return block.type === 'thinking';
+}
+
 import { nowUnix, newMsgId } from './AgentStoreUtils';
 import type { RunUsage } from './RunBuilder';
 
@@ -235,6 +244,16 @@ export class MessageConverter {
           type: ContentBlockType.Text,
           text: { value: parts.join(''), annotations: [] },
         });
+      } else if (isThinkingBlock(block)) {
+        // Merge consecutive thinking blocks
+        const parts: string[] = [ (block as unknown as ThinkingBlock).thinking ];
+        let next = blocks[i + 1];
+        while (next && isThinkingBlock(next)) {
+          i++;
+          parts.push((next as unknown as ThinkingBlock).thinking);
+          next = blocks[i + 1];
+        }
+        merged.push({ type: 'thinking', thinking: parts.join('') } as unknown as MessageContentBlock);
       } else {
         merged.push(block);
       }

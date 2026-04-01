@@ -13,7 +13,7 @@ import {
   ContentBlockType,
 } from '@eggjs/tegg-types/agent-runtime';
 
-import { MessageConverter, isTextBlock, isToolUseBlock, isToolResultBlock } from '../src/MessageConverter';
+import { MessageConverter, isTextBlock, isToolUseBlock, isToolResultBlock, isThinkingBlock } from '../src/MessageConverter';
 
 describe('test/MessageConverter.test.ts', () => {
   describe('toContentBlocks', () => {
@@ -560,14 +560,31 @@ describe('test/MessageConverter.test.ts', () => {
       assert.equal(result[3].text.value, 'Here are the results.');
     });
 
-    it('should pass through generic blocks unchanged', () => {
+    it('should merge consecutive thinking blocks into one', () => {
       const blocks = [
-        { type: 'thinking', thinking: 'let me think...' },
+        { type: 'thinking', thinking: 'let ' },
+        { type: 'thinking', thinking: 'me ' },
+        { type: 'thinking', thinking: 'think...' },
       ] as any;
       const result = MessageConverter.mergeContentBlocks(blocks);
       assert.equal(result.length, 1);
       assert.equal(result[0].type, 'thinking');
       assert.equal((result[0] as any).thinking, 'let me think...');
+    });
+
+    it('should not merge thinking blocks separated by other blocks', () => {
+      const blocks = [
+        { type: 'thinking', thinking: 'first thought' },
+        { type: ContentBlockType.Text, text: { value: 'hello', annotations: [] } },
+        { type: 'thinking', thinking: 'second thought' },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 3);
+      assert.equal(result[0].type, 'thinking');
+      assert.equal((result[0] as any).thinking, 'first thought');
+      assert(isTextBlock(result[1]));
+      assert.equal(result[2].type, 'thinking');
+      assert.equal((result[2] as any).thinking, 'second thought');
     });
 
     it('should handle raw Anthropic SDK stream events end-to-end', () => {
@@ -576,8 +593,9 @@ describe('test/MessageConverter.test.ts', () => {
         { type: 'content_block_delta', delta: { type: 'text_delta', text: 'I will ' } },
         { type: 'content_block_delta', delta: { type: 'text_delta', text: 'help you.' } },
         { type: 'content_block_stop' },
-        // thinking (should be kept)
-        { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me think...' } },
+        // thinking deltas (should be merged into one thinking block)
+        { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me ' } },
+        { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'think...' } },
         // signature (should be discarded)
         { type: 'content_block_delta', delta: { type: 'signature_delta', signature: 'sig-theta' } },
         // tool_use start + input deltas + stop
@@ -631,6 +649,12 @@ describe('test/MessageConverter.test.ts', () => {
       const block = { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'result' };
       assert(isToolResultBlock(block));
       assert.equal(block.tool_use_id, 'toolu_1');
+    });
+
+    it('isThinkingBlock should identify thinking blocks', () => {
+      const block = { type: 'thinking', thinking: 'hmm...' };
+      assert(isThinkingBlock(block as any));
+      assert(!isThinkingBlock({ type: ContentBlockType.Text, text: { value: 'hi', annotations: [] } } as any));
     });
 
     it('type guards should return false for non-matching blocks', () => {
