@@ -129,10 +129,10 @@ export class MessageConverter {
 
   /** Content block types allowed in the final assembled message. */
   private static readonly ALLOWED_BLOCK_TYPES = new Set([
-    ContentBlockType.Text,     // text
-    ContentBlockType.ToolUse,  // tool_use
-    ContentBlockType.ToolResult, // tool_result
-    'thinking',                // extended thinking
+    ContentBlockType.Text,
+    ContentBlockType.ToolUse,
+    ContentBlockType.ToolResult,
+    'thinking',
   ]);
 
   /**
