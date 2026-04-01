@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.77.1](https://github.com/eggjs/tegg/compare/v3.77.0...v3.77.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* **agent-runtime:** handle all content_block_start and delta subtypes in normalizeContentBlocks ([#430](https://github.com/eggjs/tegg/issues/430)) ([119ba38](https://github.com/eggjs/tegg/commit/119ba3889a52b3577bf0aa23b6123c4d2fd4a23c))
+
+
+
+
+
 # [3.77.0](https://github.com/eggjs/tegg/compare/v3.76.1...v3.77.0) (2026-04-01)
 
 
