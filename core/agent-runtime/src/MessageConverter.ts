@@ -77,14 +77,14 @@ export class MessageConverter {
       output: MessageObject[];
       usage?: RunUsage;
     } {
-    const output: MessageObject[] = [];
+    const contentBlocks: MessageContentBlock[] = [];
     let promptTokens = 0;
     let completionTokens = 0;
     let hasUsage = false;
 
     for (const msg of messages) {
-      if (msg.message) {
-        output.push(MessageConverter.toMessageObject(msg.message, runId));
+      if (msg.message && msg.accumulate !== false) {
+        contentBlocks.push(...MessageConverter.toContentBlocks(msg.message));
       }
       if (msg.usage) {
         hasUsage = true;
@@ -92,6 +92,19 @@ export class MessageConverter {
         completionTokens += msg.usage.completionTokens ?? 0;
       }
     }
+
+    const mergedContent = MessageConverter.mergeContentBlocks(contentBlocks);
+    const output: MessageObject[] = mergedContent.length > 0
+      ? [{
+        id: newMsgId(),
+        object: AgentObjectType.ThreadMessage,
+        createdAt: nowUnix(),
+        runId,
+        role: MessageRole.Assistant,
+        status: MessageStatus.Completed,
+        content: mergedContent,
+      }]
+      : [];
 
     let usage: RunUsage | undefined;
     if (hasUsage) {
@@ -103,6 +116,63 @@ export class MessageConverter {
     }
 
     return { output, usage };
+  }
+
+  /**
+   * Merge accumulated content blocks into a clean final form:
+   * 1. Consecutive text blocks are merged into a single text block.
+   * 2. Text blocks immediately following a tool_use block (before the next
+   *    tool_result) are treated as input_json_delta fragments — they are
+   *    concatenated, JSON-parsed, and written into the tool_use block's input.
+   */
+  static mergeContentBlocks(blocks: MessageContentBlock[]): MessageContentBlock[] {
+    if (blocks.length === 0) return blocks;
+
+    const merged: MessageContentBlock[] = [];
+
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+
+      if (isToolUseBlock(block)) {
+        // Collect subsequent text blocks as input_json_delta fragments
+        const inputFragments: string[] = [];
+        let next = blocks[i + 1];
+        while (next && isTextBlock(next)) {
+          i++;
+          inputFragments.push(next.text.value);
+          next = blocks[i + 1];
+        }
+        if (inputFragments.length > 0) {
+          const raw = inputFragments.join('');
+          let parsedInput: Record<string, unknown>;
+          try {
+            parsedInput = JSON.parse(raw);
+          } catch {
+            parsedInput = {};
+          }
+          merged.push({ ...block, input: { ...block.input, ...parsedInput } });
+        } else {
+          merged.push(block);
+        }
+      } else if (isTextBlock(block)) {
+        // Merge consecutive text blocks
+        const parts: string[] = [ block.text.value ];
+        let next = blocks[i + 1];
+        while (next && isTextBlock(next)) {
+          i++;
+          parts.push(next.text.value);
+          next = blocks[i + 1];
+        }
+        merged.push({
+          type: ContentBlockType.Text,
+          text: { value: parts.join(''), annotations: [] },
+        });
+      } else {
+        merged.push(block);
+      }
+    }
+
+    return merged;
   }
 
   /**

@@ -186,18 +186,18 @@ describe('test/MessageConverter.test.ts', () => {
   });
 
   describe('extractFromStreamMessages', () => {
-    it('should extract messages and accumulate usage', () => {
+    it('should merge chunks into single MessageObject and accumulate usage', () => {
       const messages: AgentStreamMessage[] = [
         { message: { content: 'chunk1' }, usage: { promptTokens: 10, completionTokens: 5 } },
         { message: { content: 'chunk2' }, usage: { promptTokens: 0, completionTokens: 8 } },
       ];
       const { output, usage } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
 
-      assert.equal(output.length, 2);
+      assert.equal(output.length, 1);
+      assert.equal(output[0].content.length, 1);
       assert(isTextBlock(output[0].content[0]));
-      assert.equal(output[0].content[0].text.value, 'chunk1');
-      assert(isTextBlock(output[1].content[0]));
-      assert.equal(output[1].content[0].text.value, 'chunk2');
+      assert.equal(output[0].content[0].text.value, 'chunk1chunk2');
+      assert.equal(output[0].runId, 'run_1');
       assert.ok(usage);
       assert.equal(usage.promptTokens, 10);
       assert.equal(usage.completionTokens, 13);
@@ -220,6 +220,19 @@ describe('test/MessageConverter.test.ts', () => {
       assert.equal(output[0].content.length, 2);
       assert(isTextBlock(output[0].content[0]));
       assert(isToolUseBlock(output[0].content[1]));
+    });
+
+    it('should skip messages with accumulate=false', () => {
+      const messages: AgentStreamMessage[] = [
+        { message: { content: 'thinking...' }, accumulate: false },
+        { message: { content: 'visible text' }, accumulate: true },
+        { message: { content: 'tool delta' }, accumulate: false },
+      ];
+      const { output } = MessageConverter.extractFromStreamMessages(messages, 'run_1');
+      assert.equal(output.length, 1);
+      assert.equal(output[0].content.length, 1);
+      assert(isTextBlock(output[0].content[0]));
+      assert.equal(output[0].content[0].text.value, 'visible text');
     });
 
     it('should return undefined usage when no usage info', () => {
@@ -329,6 +342,107 @@ describe('test/MessageConverter.test.ts', () => {
       const messages = [{ role: MessageRole.User as MessageRole, content: 'hi' }];
       const result = MessageConverter.toInputMessageObjects(messages);
       assert.equal(result[0].threadId, undefined);
+    });
+  });
+
+  describe('mergeContentBlocks', () => {
+    it('should return empty array for empty input', () => {
+      assert.deepStrictEqual(MessageConverter.mergeContentBlocks([]), []);
+    });
+
+    it('should merge consecutive text blocks into one', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'Hello', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: ' ', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: 'world', annotations: [] } },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'Hello world');
+    });
+
+    it('should not merge text blocks separated by non-text blocks', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'before', annotations: [] } },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'result' },
+        { type: ContentBlockType.Text, text: { value: 'after', annotations: [] } },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 3);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'before');
+      assert(isToolResultBlock(result[1]));
+      assert(isTextBlock(result[2]));
+      assert.equal(result[2].text.value, 'after');
+    });
+
+    it('should backfill tool_use input from subsequent text blocks', () => {
+      const blocks = [
+        { type: ContentBlockType.ToolUse, id: 'toolu_1', name: 'search', input: {} },
+        { type: ContentBlockType.Text, text: { value: '{"command":', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: ' "curl -s"}', annotations: [] } },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'ok' },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 2);
+      assert(isToolUseBlock(result[0]));
+      assert.deepStrictEqual(result[0].input, { command: 'curl -s' });
+      assert(isToolResultBlock(result[1]));
+    });
+
+    it('should keep tool_use as-is when no text blocks follow', () => {
+      const blocks = [
+        { type: ContentBlockType.ToolUse, id: 'toolu_1', name: 'search', input: { q: 'test' } },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'result' },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 2);
+      assert(isToolUseBlock(result[0]));
+      assert.deepStrictEqual(result[0].input, { q: 'test' });
+    });
+
+    it('should fallback to empty object when JSON parse fails', () => {
+      const blocks = [
+        { type: ContentBlockType.ToolUse, id: 'toolu_1', name: 'search', input: {} },
+        { type: ContentBlockType.Text, text: { value: 'not valid json', annotations: [] } },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'toolu_1', content: 'result' },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 2);
+      assert(isToolUseBlock(result[0]));
+      assert.deepStrictEqual(result[0].input, {});
+    });
+
+    it('should handle realistic stream scenario: text + tool_use + input deltas + tool_result + text', () => {
+      const blocks = [
+        { type: ContentBlockType.Text, text: { value: 'I will ', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: 'help you.', annotations: [] } },
+        { type: ContentBlockType.ToolUse, id: 'fc-1', name: 'Bash', input: {} },
+        { type: ContentBlockType.Text, text: { value: '{"command":"ls -la"}', annotations: [] } },
+        { type: ContentBlockType.ToolResult, tool_use_id: 'fc-1', content: 'file1\nfile2' },
+        { type: ContentBlockType.Text, text: { value: 'Here are', annotations: [] } },
+        { type: ContentBlockType.Text, text: { value: ' the results.', annotations: [] } },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 4);
+      assert(isTextBlock(result[0]));
+      assert.equal(result[0].text.value, 'I will help you.');
+      assert(isToolUseBlock(result[1]));
+      assert.deepStrictEqual(result[1].input, { command: 'ls -la' });
+      assert(isToolResultBlock(result[2]));
+      assert(isTextBlock(result[3]));
+      assert.equal(result[3].text.value, 'Here are the results.');
+    });
+
+    it('should pass through generic blocks unchanged', () => {
+      const blocks = [
+        { type: 'thinking', thinking: 'let me think...' },
+      ] as any;
+      const result = MessageConverter.mergeContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].type, 'thinking');
+      assert.equal((result[0] as any).thinking, 'let me think...');
     });
   });
 
