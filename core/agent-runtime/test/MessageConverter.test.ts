@@ -381,9 +381,38 @@ describe('test/MessageConverter.test.ts', () => {
       assert.equal(result[0].text.value, 'Hello');
     });
 
-    it('should discard thinking_delta blocks', () => {
+    it('should discard content_block_start for non-tool_use types (thinking, text)', () => {
+      const blocks = [
+        { type: 'content_block_start', index: 0, content_block: { type: 'thinking', thinking: '' } },
+        { type: 'content_block_start', index: 1, content_block: { type: 'text', text: '' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 0);
+    });
+
+    it('should extract thinking_delta as thinking block', () => {
       const blocks = [
         { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me think...' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 1);
+      assert.equal(result[0].type, 'thinking');
+      assert.equal((result[0] as any).thinking, 'let me think...');
+    });
+
+    it('should discard signature_delta and other unknown delta subtypes', () => {
+      const blocks = [
+        { type: 'content_block_delta', delta: { type: 'signature_delta', signature: 'sig-theta' } },
+        { type: 'content_block_delta', delta: { type: 'some_future_delta', data: 'xxx' } },
+      ] as any;
+      const result = MessageConverter.normalizeContentBlocks(blocks);
+      assert.equal(result.length, 0);
+    });
+
+    it('should discard unknown block types via whitelist', () => {
+      const blocks = [
+        { type: 'ping' },
+        { type: 'some_unknown_event', data: 'xxx' },
       ] as any;
       const result = MessageConverter.normalizeContentBlocks(blocks);
       assert.equal(result.length, 0);
@@ -547,8 +576,10 @@ describe('test/MessageConverter.test.ts', () => {
         { type: 'content_block_delta', delta: { type: 'text_delta', text: 'I will ' } },
         { type: 'content_block_delta', delta: { type: 'text_delta', text: 'help you.' } },
         { type: 'content_block_stop' },
-        // thinking (should be discarded)
+        // thinking (should be kept)
         { type: 'content_block_delta', delta: { type: 'thinking_delta', thinking: 'let me think...' } },
+        // signature (should be discarded)
+        { type: 'content_block_delta', delta: { type: 'signature_delta', signature: 'sig-theta' } },
         // tool_use start + input deltas + stop
         { type: 'content_block_start', content_block: { type: 'tool_use', id: 'fc-1', name: 'Bash', input: {} } },
         { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{"command":' } },
@@ -563,20 +594,23 @@ describe('test/MessageConverter.test.ts', () => {
         { type: 'message_stop' },
       ] as any;
       const result = MessageConverter.mergeContentBlocks(blocks);
-      assert.equal(result.length, 4);
+      assert.equal(result.length, 5);
       // merged text
       assert(isTextBlock(result[0]));
       assert.equal(result[0].text.value, 'I will help you.');
+      // thinking block
+      assert.equal(result[1].type, 'thinking');
+      assert.equal((result[1] as any).thinking, 'let me think...');
       // tool_use with parsed input
-      assert(isToolUseBlock(result[1]));
-      assert.equal(result[1].name, 'Bash');
-      assert.deepStrictEqual(result[1].input, { command: 'ls -la' });
+      assert(isToolUseBlock(result[2]));
+      assert.equal(result[2].name, 'Bash');
+      assert.deepStrictEqual(result[2].input, { command: 'ls -la' });
       // tool_result
-      assert(isToolResultBlock(result[2]));
-      assert.equal(result[2].tool_use_id, 'fc-1');
+      assert(isToolResultBlock(result[3]));
+      assert.equal(result[3].tool_use_id, 'fc-1');
       // merged trailing text
-      assert(isTextBlock(result[3]));
-      assert.equal(result[3].text.value, 'Here are the results.');
+      assert(isTextBlock(result[4]));
+      assert.equal(result[4].text.value, 'Here are the results.');
     });
   });
 
