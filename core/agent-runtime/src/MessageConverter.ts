@@ -2,17 +2,35 @@ import type {
   CreateRunInput,
   MessageObject,
   MessageContentBlock,
+  TextContentBlock,
+  ToolUseContentBlock,
+  ToolResultContentBlock,
   AgentStreamMessage,
   AgentStreamMessagePayload,
+  TextInputContentPart,
 } from '@eggjs/tegg-types/agent-runtime';
 import { AgentObjectType, MessageRole, MessageStatus, ContentBlockType } from '@eggjs/tegg-types/agent-runtime';
+
+export function isTextBlock(block: MessageContentBlock): block is TextContentBlock {
+  return block.type === ContentBlockType.Text;
+}
+
+export function isToolUseBlock(block: MessageContentBlock): block is ToolUseContentBlock {
+  return block.type === ContentBlockType.ToolUse;
+}
+
+export function isToolResultBlock(block: MessageContentBlock): block is ToolResultContentBlock {
+  return block.type === ContentBlockType.ToolResult;
+}
 
 import { nowUnix, newMsgId } from './AgentStoreUtils';
 import type { RunUsage } from './RunBuilder';
 
 export class MessageConverter {
   /**
-   * Convert an AgentStreamMessage's message payload into OpenAI MessageContentBlock[].
+   * Convert an AgentStreamMessage's message payload into MessageContentBlock[].
+   * Text blocks are wrapped in { value, annotations } format.
+   * Non-text blocks (tool_use, tool_result, etc.) are passed through as-is.
    */
   static toContentBlocks(msg: AgentStreamMessagePayload): MessageContentBlock[] {
     if (!msg) return [];
@@ -21,9 +39,15 @@ export class MessageConverter {
       return [{ type: ContentBlockType.Text, text: { value: content, annotations: [] } }];
     }
     if (Array.isArray(content)) {
-      return content
-        .filter(part => part.type === ContentBlockType.Text)
-        .map(part => ({ type: ContentBlockType.Text, text: { value: part.text, annotations: [] } }));
+      return content.map(part => {
+        if (part.type === ContentBlockType.Text) {
+          return {
+            type: ContentBlockType.Text,
+            text: { value: (part as TextInputContentPart).text, annotations: [] },
+          } as MessageContentBlock;
+        }
+        return part as MessageContentBlock;
+      });
     }
     return [];
   }
@@ -123,7 +147,15 @@ export class MessageConverter {
         content:
           typeof m.content === 'string'
             ? [{ type: ContentBlockType.Text, text: { value: m.content, annotations: [] } }]
-            : m.content.map(p => ({ type: ContentBlockType.Text, text: { value: p.text, annotations: [] } })),
+            : m.content.map(p => {
+              if (p.type === ContentBlockType.Text) {
+                return {
+                  type: ContentBlockType.Text,
+                  text: { value: (p as TextInputContentPart).text, annotations: [] },
+                } as MessageContentBlock;
+              }
+              return p as MessageContentBlock;
+            }),
       }));
   }
 }
