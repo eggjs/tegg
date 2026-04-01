@@ -4,7 +4,7 @@ export function mergeHeaders(...headersInits: Array<HeadersInit | undefined>): H
   const res = {};
   for (const headersInit of headersInits) {
     if (!headersInit) continue;
-    const headers = new Headers(headersInit);
+    const headers = new Headers(headersInit as Record<string, string>);
     for (const key of headers.keys()) {
       res[key] = headers.get(key);
     }
