@@ -448,6 +448,70 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
     });
 
+    it('should forward custom event types from AgentStreamMessage.type', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { type: 'run.initialized', message: { content: [{ type: 'text', text: 'session-123' }] } };
+        yield { type: 'assistant.turn.started' };
+        yield { type: 'assistant.text.delta', message: { content: 'Hello' } };
+        yield { type: 'tool.started', message: { content: [{ type: 'tool_use', id: 'tool-1', name: 'search', input: { q: 'test' } }] } };
+        yield { type: 'tool.delta', message: { content: '{"partial":true}' } };
+        yield { type: 'tool.completed', message: { content: [{ type: 'tool_result', tool_use_id: 'tool-1', content: 'result' }] } };
+        yield { type: 'assistant.text.delta', message: { content: ' world' } };
+        yield { type: 'assistant.message.completed' };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const customEvents = writer.events.filter(e =>
+        !e.event.startsWith('thread.') && e.event !== 'done',
+      );
+      const customEventNames = customEvents.map(e => e.event);
+
+      // All custom event types are forwarded
+      assert.deepStrictEqual(customEventNames, [
+        'run.initialized',
+        'assistant.turn.started',
+        'assistant.text.delta',
+        'tool.started',
+        'tool.delta',
+        'tool.completed',
+        'assistant.text.delta',
+        'assistant.message.completed',
+      ]);
+
+      // Custom events carry content when present
+      const initEvent = customEvents.find(e => e.event === 'run.initialized');
+      assert.ok(initEvent);
+      assert.ok((initEvent.data as any).content);
+
+      const turnStarted = customEvents.find(e => e.event === 'assistant.turn.started');
+      assert.ok(turnStarted);
+      assert.equal((turnStarted.data as any).content, undefined);
+
+      // Text content from custom events is still accumulated for storage
+      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
+      assert.ok(completedEvent);
+      const storedContent = (completedEvent.data as any).content;
+      assert.ok(storedContent.length > 0);
+
+      // Framework lifecycle events are still emitted
+      const frameworkEvents = writer.events.filter(e => e.event.startsWith('thread.') || e.event === 'done');
+      const frameworkEventNames = frameworkEvents.map(e => e.event);
+      assert(frameworkEventNames.includes(AgentSSEEvent.ThreadRunCreated));
+      assert(frameworkEventNames.includes(AgentSSEEvent.ThreadRunCompleted));
+      assert(frameworkEventNames.includes(AgentSSEEvent.Done));
+    });
+
+    it('should fallback to thread.message.delta when no type is set', async () => {
+      // Default behavior: no type field → original thread.message.delta
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const deltaEvents = writer.events.filter(e => e.event === AgentSSEEvent.ThreadMessageDelta);
+      assert(deltaEvents.length > 0);
+    });
+
     it('should emit failed event when execRun throws', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
         throw new Error('model unavailable');

@@ -355,6 +355,23 @@ export class AgentRuntime {
       if (signal.aborted) {
         return { content, usage: undefined, aborted: true as const };
       }
+
+      // Custom event type: forward as-is with the custom event name
+      if (msg.type) {
+        const contentBlocks = msg.message
+          ? MessageConverter.toContentBlocks(msg.message)
+          : [];
+        // Only accumulate content blocks for text/tool content (for storage)
+        if (contentBlocks.length > 0) {
+          content.push(...contentBlocks);
+        }
+        writer.writeEvent(msg.type, {
+          id: msgId,
+          content: contentBlocks.length > 0 ? contentBlocks : undefined,
+        });
+        continue;
+      }
+
       if (msg.message) {
         const contentBlocks = MessageConverter.toContentBlocks(msg.message);
         content.push(...contentBlocks);
