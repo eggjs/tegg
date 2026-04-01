@@ -18,10 +18,19 @@ export type {
   MessageObject,
   InputMessage,
   InputContentPart,
+  TextInputContentPart,
+  ToolUseInputContentPart,
+  ToolResultInputContentPart,
+  GenericInputContentPart,
   MessageContentBlock,
   TextContentBlock,
+  ToolUseContentBlock,
+  ToolResultContentBlock,
+  GenericContentBlock,
   MessageDeltaObject,
   AgentRunConfig,
   AgentRunUsage,
   RunStatus,
 } from '@eggjs/agent-runtime';
+
+export { isTextBlock, isToolUseBlock, isToolResultBlock } from '@eggjs/agent-runtime';

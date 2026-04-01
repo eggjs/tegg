@@ -9,6 +9,8 @@ import {
   MessageStatus,
   ContentBlockType,
   AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
+
+import { isTextBlock } from '../src/MessageConverter';
 import type { RunRecord, RunObject, CreateRunInput, AgentStreamMessage } from '@eggjs/tegg-types/agent-runtime';
 
 import { AgentRuntime } from '../src/AgentRuntime';
@@ -180,6 +182,7 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(result.output![0].status, MessageStatus.Completed);
       const content = result.output![0].content;
       assert.equal(content[0].type, ContentBlockType.Text);
+      assert(isTextBlock(content[0]));
       assert.equal(content[0].text.value, 'Hello 1 messages');
       assert(Array.isArray(content[0].text.annotations));
       assert.equal(result.usage!.promptTokens, 10);
@@ -332,6 +335,7 @@ describe('test/AgentRuntime.test.ts', () => {
       const run = await store.getRun(result.id);
       assert.equal(run.status, RunStatus.Completed);
       const outputContent = run.output![0].content;
+      assert(isTextBlock(outputContent[0]));
       assert.equal(outputContent[0].text.value, 'Hello 1 messages');
     });
 
