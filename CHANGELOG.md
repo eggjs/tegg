@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.77.0](https://github.com/eggjs/tegg/compare/v3.76.1...v3.77.0) (2026-04-01)
+
+
+### Features
+
+* **agent-runtime:** add normalizeContentBlocks for Anthropic SDK stream events ([#429](https://github.com/eggjs/tegg/issues/429)) ([d780fdb](https://github.com/eggjs/tegg/commit/d780fdba3cc243db4811af6733fda737f8c1dc4a))
+
+
+
+
+
 ## [3.76.1](https://github.com/eggjs/tegg/compare/v3.76.0...v3.76.1) (2026-04-01)
 
 
