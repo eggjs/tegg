@@ -361,8 +361,8 @@ export class AgentRuntime {
         const contentBlocks = msg.message
           ? MessageConverter.toContentBlocks(msg.message)
           : [];
-        // Only accumulate content blocks for text/tool content (for storage)
-        if (contentBlocks.length > 0) {
+        // Only accumulate when accumulate !== false (defaults to true)
+        if (contentBlocks.length > 0 && msg.accumulate !== false) {
           content.push(...contentBlocks);
         }
         writer.writeEvent(msg.type, {
@@ -389,7 +389,7 @@ export class AgentRuntime {
     }
 
     return {
-      content,
+      content: MessageConverter.mergeContentBlocks(content),
       usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
       aborted: false as const,
     };

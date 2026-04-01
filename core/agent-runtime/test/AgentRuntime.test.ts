@@ -530,6 +530,68 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(deltaEvents.length > 0);
     });
 
+    it('should respect accumulate=false to exclude content from completed message', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { type: 'assistant.thinking.delta', message: { content: 'thinking...' }, accumulate: false };
+        yield { type: 'assistant.text.delta', message: { content: 'Hello' }, accumulate: true };
+        yield { type: 'tool.delta', message: { content: '{"partial":true}' }, accumulate: false };
+        yield { type: 'assistant.text.delta', message: { content: ' world' }, accumulate: true };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      // All custom events are still forwarded
+      const customEvents = writer.events.filter(e =>
+        !e.event.startsWith('thread.') && e.event !== 'done',
+      );
+      assert.equal(customEvents.length, 4);
+
+      // But completed message only has accumulated content (merged text)
+      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
+      assert.ok(completedEvent);
+      const content = (completedEvent.data as any).content;
+      assert.equal(content.length, 1);
+      assert(isTextBlock(content[0]));
+      assert.equal(content[0].text.value, 'Hello world');
+    });
+
+    it('should merge text fragments and backfill tool_use input in completed message', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { type: 'assistant.text.delta', message: { content: 'I will ' }, accumulate: true };
+        yield { type: 'assistant.text.delta', message: { content: 'help you.' }, accumulate: true };
+        yield {
+          type: 'tool.started',
+          message: { content: [{ type: 'tool_use', id: 'fc-1', name: 'Bash', input: {} }] as any },
+          accumulate: true,
+        };
+        yield { type: 'tool.delta', message: { content: '{"command":"ls"}' }, accumulate: true };
+        yield {
+          type: 'tool.completed',
+          message: { content: [{ type: 'tool_result', tool_use_id: 'fc-1', content: 'file1' }] as any },
+          accumulate: true,
+        };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
+      assert.ok(completedEvent);
+      const content = (completedEvent.data as any).content;
+
+      // Text fragments merged into one
+      assert(isTextBlock(content[0]));
+      assert.equal(content[0].text.value, 'I will help you.');
+
+      // tool_use input backfilled from text delta
+      assert.equal(content[1].type, 'tool_use');
+      assert.deepStrictEqual(content[1].input, { command: 'ls' });
+
+      // tool_result preserved
+      assert.equal(content[2].type, 'tool_result');
+    });
+
     it('should emit failed event when execRun throws', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
         throw new Error('model unavailable');
