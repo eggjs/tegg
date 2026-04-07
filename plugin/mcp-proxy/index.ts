@@ -4,7 +4,7 @@ import { MCPProxyDataClient } from './lib/MCPProxyDataClient';
 import { Application, Context, EggLogger, Messenger } from 'egg';
 import getRawBody from 'raw-body';
 import contentType from 'content-type';
-import { fetch } from 'undici';
+import { fetch, Agent } from 'undici';
 import http from 'http';
 import { EventSourceParserStream } from 'eventsource-parser/stream';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -354,11 +354,10 @@ export class MCPProxyApiClient extends APIClientBase {
           ctx.req.headers['mcp-proxy-type'] = action;
           ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
           const response = await fetch(`http://localhost:${detail.port}`, {
-            // dispatcher: new Agent({
-            //   connect: {
-            //     socketPath,
-            //   },
-            // }),
+            dispatcher: new Agent({
+              bodyTimeout: 0,
+              headersTimeout: 0,
+            }),
             headers: ctx.req.headers as unknown as Record<string, string>,
             method: ctx.req.method,
             ...(ctx.req.method !== 'GET' ? {
@@ -376,7 +375,14 @@ export class MCPProxyApiClient extends APIClientBase {
           }
           ctx.set(headers);
           ctx.res.statusCode = response.status;
-          Readable.fromWeb(response.body!).pipe(ctx.res);
+          const readable = Readable.fromWeb(response.body!);
+          readable.on('error', err => {
+            this.logger.error('[mcp-proxy] stream proxy error: %s', err.message);
+            if (!ctx.res.writableEnded) {
+              ctx.res.end();
+            }
+          });
+          readable.pipe(ctx.res);
           break;
         }
       }
@@ -425,9 +431,11 @@ export class MCPProxyApiClient extends APIClientBase {
         }
         ctx.res.write('event: terminate');
       } catch (error) {
-        ctx.res.statusCode = 500;
-        ctx.res.write(`see stream error ${error}`);
-        ctx.res.end();
+        this.logger.error('[mcp-proxy] sse stream error: %s', error);
+        if (!ctx.res.writableEnded) {
+          ctx.res.statusCode = 500;
+          ctx.res.end();
+        }
       }
     };
     processStream();
