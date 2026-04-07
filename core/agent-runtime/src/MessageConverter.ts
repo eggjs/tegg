@@ -23,6 +23,15 @@ export function isToolResultBlock(block: MessageContentBlock): block is ToolResu
   return block.type === ContentBlockType.ToolResult;
 }
 
+interface ThinkingBlock {
+  type: 'thinking';
+  thinking: string;
+}
+
+export function isThinkingBlock(block: MessageContentBlock): block is ThinkingBlock & MessageContentBlock {
+  return block.type === 'thinking';
+}
+
 import { nowUnix, newMsgId } from './AgentStoreUtils';
 import type { RunUsage } from './RunBuilder';
 
@@ -77,14 +86,14 @@ export class MessageConverter {
       output: MessageObject[];
       usage?: RunUsage;
     } {
-    const output: MessageObject[] = [];
+    const contentBlocks: MessageContentBlock[] = [];
     let promptTokens = 0;
     let completionTokens = 0;
     let hasUsage = false;
 
     for (const msg of messages) {
-      if (msg.message) {
-        output.push(MessageConverter.toMessageObject(msg.message, runId));
+      if (msg.message && msg.accumulate !== false) {
+        contentBlocks.push(...MessageConverter.toContentBlocks(msg.message));
       }
       if (msg.usage) {
         hasUsage = true;
@@ -92,6 +101,19 @@ export class MessageConverter {
         completionTokens += msg.usage.completionTokens ?? 0;
       }
     }
+
+    const mergedContent = MessageConverter.mergeContentBlocks(contentBlocks);
+    const output: MessageObject[] = mergedContent.length > 0
+      ? [{
+        id: newMsgId(),
+        object: AgentObjectType.ThreadMessage,
+        createdAt: nowUnix(),
+        runId,
+        role: MessageRole.Assistant,
+        status: MessageStatus.Completed,
+        content: mergedContent,
+      }]
+      : [];
 
     let usage: RunUsage | undefined;
     if (hasUsage) {
@@ -103,6 +125,141 @@ export class MessageConverter {
     }
 
     return { output, usage };
+  }
+
+  /** Content block types allowed in the final assembled message. */
+  private static readonly ALLOWED_BLOCK_TYPES = new Set([
+    ContentBlockType.Text,
+    ContentBlockType.ToolUse,
+    ContentBlockType.ToolResult,
+    'thinking',
+  ]);
+
+  /**
+   * Normalize raw SDK streaming event blocks (e.g. Anthropic content_block_start/delta/stop)
+   * into standard content blocks that mergeContentBlocks can process.
+   *
+   * Two-phase approach:
+   * 1. Unwrap streaming protocol events to extract actual content
+   * 2. Whitelist filter — only keep known content block types
+   */
+  static normalizeContentBlocks(blocks: MessageContentBlock[]): MessageContentBlock[] {
+    const unwrapped: MessageContentBlock[] = [];
+    for (const block of blocks) {
+      const b = block as Record<string, any>;
+
+      // --- Phase 1: Unwrap streaming protocol events ---
+
+      // content_block_start → extract tool_use; discard others (text/thinking start are just markers)
+      if (b.type === 'content_block_start') {
+        if (b.content_block?.type === ContentBlockType.ToolUse) {
+          const cb = b.content_block;
+          unwrapped.push({ type: ContentBlockType.ToolUse, id: cb.id, name: cb.name, input: cb.input ?? {} } as ToolUseContentBlock);
+        }
+        continue;
+      }
+
+      // content_block_delta → extract content from known delta subtypes
+      if (b.type === 'content_block_delta') {
+        if (b.delta?.type === 'text_delta') {
+          const text: string = b.delta.text || '';
+          if (text) {
+            unwrapped.push({ type: ContentBlockType.Text, text: { value: text, annotations: [] } } as TextContentBlock);
+          }
+        } else if (b.delta?.type === 'input_json_delta') {
+          const partial: string = b.delta.partial_json || '';
+          if (partial) {
+            unwrapped.push({ type: ContentBlockType.Text, text: { value: partial, annotations: [] } } as TextContentBlock);
+          }
+        } else if (b.delta?.type === 'thinking_delta') {
+          const thinking: string = b.delta.thinking || '';
+          if (thinking) {
+            unwrapped.push({ type: 'thinking', thinking } as unknown as MessageContentBlock);
+          }
+        }
+        // Other deltas (signature_delta, etc.) → discard
+        continue;
+      }
+
+      // Streaming control signals → discard
+      if (b.type === 'content_block_stop' || b.type === 'message_stop' || b.type === 'message_delta') {
+        continue;
+      }
+
+      // Non-streaming blocks (already standard or generic) → pass to phase 2
+      unwrapped.push(block);
+    }
+
+    // --- Phase 2: Whitelist filter ---
+    return unwrapped.filter(b => MessageConverter.ALLOWED_BLOCK_TYPES.has(b.type));
+  }
+
+  /**
+   * Merge accumulated content blocks into a clean final form:
+   * 1. Consecutive text blocks are merged into a single text block.
+   * 2. Text blocks immediately following a tool_use block (before the next
+   *    tool_result) are treated as input_json_delta fragments — they are
+   *    concatenated, JSON-parsed, and written into the tool_use block's input.
+   */
+  static mergeContentBlocks(blocks: MessageContentBlock[]): MessageContentBlock[] {
+    if (blocks.length === 0) return blocks;
+    blocks = MessageConverter.normalizeContentBlocks(blocks);
+
+    const merged: MessageContentBlock[] = [];
+
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+
+      if (isToolUseBlock(block)) {
+        // Collect subsequent text blocks as input_json_delta fragments
+        const inputFragments: string[] = [];
+        let next = blocks[i + 1];
+        while (next && isTextBlock(next)) {
+          i++;
+          inputFragments.push(next.text.value);
+          next = blocks[i + 1];
+        }
+        if (inputFragments.length > 0) {
+          const raw = inputFragments.join('');
+          let parsedInput: Record<string, unknown>;
+          try {
+            parsedInput = JSON.parse(raw);
+          } catch {
+            parsedInput = {};
+          }
+          merged.push({ ...block, input: { ...block.input, ...parsedInput } });
+        } else {
+          merged.push(block);
+        }
+      } else if (isTextBlock(block)) {
+        // Merge consecutive text blocks
+        const parts: string[] = [ block.text.value ];
+        let next = blocks[i + 1];
+        while (next && isTextBlock(next)) {
+          i++;
+          parts.push(next.text.value);
+          next = blocks[i + 1];
+        }
+        merged.push({
+          type: ContentBlockType.Text,
+          text: { value: parts.join(''), annotations: [] },
+        });
+      } else if (isThinkingBlock(block)) {
+        // Merge consecutive thinking blocks
+        const parts: string[] = [ (block as unknown as ThinkingBlock).thinking ];
+        let next = blocks[i + 1];
+        while (next && isThinkingBlock(next)) {
+          i++;
+          parts.push((next as unknown as ThinkingBlock).thinking);
+          next = blocks[i + 1];
+        }
+        merged.push({ type: 'thinking', thinking: parts.join('') } as unknown as MessageContentBlock);
+      } else {
+        merged.push(block);
+      }
+    }
+
+    return merged;
   }
 
   /**

@@ -116,4 +116,6 @@ export interface AgentStreamMessage {
   type?: string;
   message?: AgentStreamMessagePayload;
   usage?: AgentRunUsage;
+  /** Whether to accumulate message content into the final completed message. Defaults to true. */
+  accumulate?: boolean;
 }

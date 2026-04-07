@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.77.1](https://github.com/eggjs/tegg/compare/v3.77.0...v3.77.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* **agent-runtime:** handle all content_block_start and delta subtypes in normalizeContentBlocks ([#430](https://github.com/eggjs/tegg/issues/430)) ([119ba38](https://github.com/eggjs/tegg/commit/119ba3889a52b3577bf0aa23b6123c4d2fd4a23c))
+
+
+
+
+
+# [3.77.0](https://github.com/eggjs/tegg/compare/v3.76.1...v3.77.0) (2026-04-01)
+
+
+### Features
+
+* **agent-runtime:** add normalizeContentBlocks for Anthropic SDK stream events ([#429](https://github.com/eggjs/tegg/issues/429)) ([d780fdb](https://github.com/eggjs/tegg/commit/d780fdba3cc243db4811af6733fda737f8c1dc4a))
+
+
+
+
+
+## [3.76.1](https://github.com/eggjs/tegg/compare/v3.76.0...v3.76.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* **agent-runtime:** merge content blocks and support accumulate control ([#428](https://github.com/eggjs/tegg/issues/428)) ([f4f904e](https://github.com/eggjs/tegg/commit/f4f904e357497fc5ad9a2c7d2ece4e9b305f5738))
+
+
+
+
+
+# [3.76.0](https://github.com/eggjs/tegg/compare/v3.75.1...v3.76.0) (2026-04-01)
+
+
+### Features
+
+* **agent-runtime:** support custom SSE event types in streamRun ([#427](https://github.com/eggjs/tegg/issues/427)) ([2efe539](https://github.com/eggjs/tegg/commit/2efe539cd2673e27dc91cb4597751e6e0a9d4b67))
+
+
+
+
+
 ## [3.75.1](https://github.com/eggjs/tegg/compare/v3.75.0...v3.75.1) (2026-04-01)
 
 

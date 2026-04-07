@@ -355,7 +355,21 @@ export class AgentRuntime {
       if (signal.aborted) {
         return { content, usage: undefined, aborted: true as const };
       }
-      if (msg.message) {
+
+      // Custom event type: forward as-is with the custom event name
+      if (msg.type) {
+        const contentBlocks = msg.message
+          ? MessageConverter.toContentBlocks(msg.message)
+          : [];
+        // Only accumulate when accumulate !== false (defaults to true)
+        if (contentBlocks.length > 0 && msg.accumulate !== false) {
+          content.push(...contentBlocks);
+        }
+        writer.writeEvent(msg.type, {
+          id: msgId,
+          content: contentBlocks.length > 0 ? contentBlocks : undefined,
+        });
+      } else if (msg.message) {
         const contentBlocks = MessageConverter.toContentBlocks(msg.message);
         content.push(...contentBlocks);
 
@@ -375,7 +389,7 @@ export class AgentRuntime {
     }
 
     return {
-      content,
+      content: MessageConverter.mergeContentBlocks(content),
       usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
       aborted: false as const,
     };
