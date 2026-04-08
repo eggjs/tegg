@@ -1,4 +1,9 @@
 import { EventEmitter } from 'node:events';
+import { appendFileSync, createReadStream, mkdirSync, existsSync } from 'node:fs';
+import { rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createInterface } from 'node:readline';
 
 import type {
   CreateRunInput,
@@ -18,9 +23,10 @@ import type { SSEWriter } from './SSEWriter';
 
 const HEARTBEAT_INTERVAL_MS = 10_000;
 const BUFFER_TTL_MS = 5 * 60 * 1000;
+const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
 
 interface RunEventBuffer {
-  events: StreamEvent[];
+  filePath: string;
   lastSeq: number;
   done: boolean;
   emitter: EventEmitter;
@@ -244,7 +250,7 @@ export class AgentRuntime {
   /**
    * Start a streaming run with background execution.
    * The task continues running even if the SSE client disconnects.
-   * Events are buffered in memory for reconnection support.
+   * Events are persisted to a JSONL file for reconnection support.
    */
   async streamRun(input: CreateRunInput, writer: SSEWriter): Promise<void> {
     const { threadId, input: resolvedInput } = await this.ensureThread(input);
@@ -253,9 +259,12 @@ export class AgentRuntime {
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
 
-    // Create event buffer for this run
+    // Create event buffer for this run (events persisted to JSONL file)
+    if (!existsSync(EVENT_DIR)) {
+      mkdirSync(EVENT_DIR, { recursive: true });
+    }
     const buffer: RunEventBuffer = {
-      events: [],
+      filePath: join(EVENT_DIR, `${run.id}.jsonl`),
       lastSeq: 0,
       done: false,
       emitter: new EventEmitter(),
@@ -277,9 +286,10 @@ export class AgentRuntime {
       .finally(() => {
         resolveTask();
         this.runningTasks.delete(run.id);
-        // Schedule buffer cleanup after TTL
+        // Schedule buffer + file cleanup after TTL
         buffer.cleanupTimer = setTimeout(() => {
           this.runBuffers.delete(run.id);
+          rm(buffer.filePath, { force: true }).catch(() => { /* ignore cleanup errors */ });
         }, BUFFER_TTL_MS);
       });
 
@@ -300,7 +310,7 @@ export class AgentRuntime {
   }
 
   /**
-   * Push a new event into the run buffer and notify subscribers.
+   * Push a new event: persist to JSONL file and notify subscribers via EventEmitter.
    */
   private pushEvent(buffer: RunEventBuffer, type: string, data: unknown): void {
     const event: StreamEvent = {
@@ -309,12 +319,12 @@ export class AgentRuntime {
       data,
       ts: Date.now(),
     };
-    buffer.events.push(event);
-    buffer.emitter.emit('event');
+    appendFileSync(buffer.filePath, JSON.stringify(event) + '\n');
+    buffer.emitter.emit('event', event);
   }
 
   /**
-   * Execute the run in the background, buffering events as StreamEvent objects.
+   * Execute the run in the background, persisting events to JSONL file.
    * Store operations (createRun, updateRun, appendMessages) are preserved.
    */
   private async executeStreamBackground(
@@ -390,9 +400,28 @@ export class AgentRuntime {
   }
 
   /**
-   * Stream buffered events to an SSE writer with replay and real-time phases.
-   * Phase 1: Replay — send all events with seq > lastEventId
-   * Phase 2: Real-time — listen for new events until the run completes or client disconnects
+   * Read events from JSONL file, yielding those with seq > afterSeq.
+   */
+  private async* readEventsFromFile(filePath: string, afterSeq: number): AsyncGenerator<StreamEvent> {
+    if (!existsSync(filePath)) return;
+    const rl = createInterface({ input: createReadStream(filePath) });
+    for await (const line of rl) {
+      if (!line.trim()) continue;
+      try {
+        const event = JSON.parse(line) as StreamEvent;
+        if (event.seq > afterSeq) {
+          yield event;
+        }
+      } catch {
+        // skip malformed lines
+      }
+    }
+  }
+
+  /**
+   * Stream events to an SSE writer with replay and real-time phases.
+   * Phase 1: Replay — read JSONL file, send events with seq > lastEventId
+   * Phase 2: Real-time — listen to EventEmitter until the run completes or client disconnects
    * Heartbeat comments (`: keepalive`) are sent every 10 seconds during the real-time phase.
    */
   private async streamEventsToWriter(
@@ -400,11 +429,12 @@ export class AgentRuntime {
     writer: SSEWriter,
     lastEventId: number,
   ): Promise<void> {
-    // Phase 1: Replay buffered events
-    for (const event of buffer.events) {
-      if (event.seq <= lastEventId) continue;
+    // Phase 1: Replay from JSONL file
+    let lastWrittenSeq = lastEventId;
+    for await (const event of this.readEventsFromFile(buffer.filePath, lastEventId)) {
       if (writer.closed) return;
       writer.writeEvent(event.type, event);
+      lastWrittenSeq = event.seq;
     }
 
     // If already done, end the stream
@@ -413,59 +443,59 @@ export class AgentRuntime {
       return;
     }
 
-    // Phase 2: Real-time events + heartbeat
-    let lastWrittenSeq = buffer.events.length > 0
-      ? buffer.events[buffer.events.length - 1].seq
-      : lastEventId;
+    // Phase 2: Real-time events via EventEmitter + heartbeat
+    // Events emitted between file read and listener registration are caught
+    // by re-reading the file for any gap (catch-up), then listening real-time.
+    const queue: StreamEvent[] = [];
+    let waitResolve: (() => void) | null = null;
 
-    await new Promise<void>(resolve => {
-      let heartbeatTimer: ReturnType<typeof setTimeout>;
-      let resolved = false;
+    function onEvent(event?: StreamEvent): void {
+      if (event) queue.push(event);
+      waitResolve?.();
+    }
 
-      const writeNewEvents = (): void => {
-        for (const event of buffer.events) {
-          if (event.seq <= lastWrittenSeq) continue;
-          if (writer.closed) break;
+    buffer.emitter.on('event', onEvent);
+
+    try {
+      // Catch-up: drain any events that arrived during Phase 1 file read
+      for await (const event of this.readEventsFromFile(buffer.filePath, lastWrittenSeq)) {
+        if (writer.closed) return;
+        if (event.seq > lastWrittenSeq) {
           writer.writeEvent(event.type, event);
           lastWrittenSeq = event.seq;
         }
-      };
-
-      const finish = (): void => {
-        if (resolved) return;
-        resolved = true;
-        clearTimeout(heartbeatTimer);
-        buffer.emitter.off('event', onEvent); // eslint-disable-line @typescript-eslint/no-use-before-define
-        resolve();
-      };
-
-      const scheduleHeartbeat = (): void => {
-        clearTimeout(heartbeatTimer);
-        heartbeatTimer = setTimeout(() => {
-          if (writer.closed) {
-            finish();
-            return;
-          }
-          writer.writeComment('keepalive');
-          scheduleHeartbeat();
-        }, HEARTBEAT_INTERVAL_MS);
-      };
-
-      function onEvent(): void {
-        writeNewEvents();
-        scheduleHeartbeat();
-        if (buffer.done) {
-          finish();
-        }
       }
 
-      writer.onClose(() => {
-        finish();
+      // Real-time loop
+      const waitForEvent = () => new Promise<'event' | 'heartbeat'>(resolve => {
+        waitResolve = () => resolve('event');
+        setTimeout(() => resolve('heartbeat'), HEARTBEAT_INTERVAL_MS);
       });
 
-      buffer.emitter.on('event', onEvent);
-      scheduleHeartbeat();
-    });
+      while (!buffer.done || queue.length > 0) {
+        // Drain queue
+        while (queue.length > 0) {
+          const event = queue.shift()!;
+          if (event.seq > lastWrittenSeq) {
+            if (writer.closed) return;
+            writer.writeEvent(event.type, event);
+            lastWrittenSeq = event.seq;
+          }
+        }
+
+        if (buffer.done) break;
+        if (writer.closed) return;
+
+        const reason = await waitForEvent();
+        waitResolve = null;
+        if (reason === 'heartbeat' && queue.length === 0 && !buffer.done) {
+          if (writer.closed) return;
+          writer.writeComment('keepalive');
+        }
+      }
+    } finally {
+      buffer.emitter.off('event', onEvent);
+    }
 
     if (!writer.closed) writer.end();
   }
@@ -533,10 +563,11 @@ export class AgentRuntime {
     }
     await this.waitForPendingTasks();
 
-    // Clean up all run buffers and their timers
+    // Clean up all run buffers, timers, and event files
     for (const buffer of this.runBuffers.values()) {
       if (buffer.cleanupTimer) clearTimeout(buffer.cleanupTimer);
       buffer.emitter.removeAllListeners();
+      rm(buffer.filePath, { force: true }).catch(() => { /* ignore cleanup errors */ });
     }
     this.runBuffers.clear();
 
