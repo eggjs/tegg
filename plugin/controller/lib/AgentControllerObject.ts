@@ -244,6 +244,18 @@ export class AgentControllerObject implements EggObject {
         return runtime.streamRun(input, writer);
       };
     }
+
+    // reconnectStream: always delegate to runtime (no user override needed)
+    instance.reconnectStream = async (runId: string, lastEventId?: number): Promise<void> => {
+      const runtimeCtx = ContextHandler.getContext();
+      if (!runtimeCtx) {
+        throw new Error('reconnectStream must be called within a request context');
+      }
+      const eggCtx = runtimeCtx.get(EGG_CONTEXT);
+      eggCtx.respond = false;
+      const writer = new HttpSSEWriter(eggCtx.res);
+      return runtime.reconnectStream(runId, writer, lastEventId);
+    };
   }
 
   static async createObject(

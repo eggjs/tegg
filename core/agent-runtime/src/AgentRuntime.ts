@@ -1,22 +1,31 @@
+import { EventEmitter } from 'node:events';
+
 import type {
   CreateRunInput,
   ThreadObject,
   ThreadObjectWithMessages,
   RunObject,
-  MessageObject,
-  MessageDeltaObject,
-  MessageContentBlock,
   AgentStreamMessage,
   AgentStore,
+  StreamEvent,
 } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentSSEEvent, AgentObjectType, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentObjectType, AgentConflictError, AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
 import type { EggLogger } from 'egg-logger';
 
-import { newMsgId } from './AgentStoreUtils';
 import { MessageConverter } from './MessageConverter';
 import { RunBuilder } from './RunBuilder';
-import type { RunUsage } from './RunBuilder';
 import type { SSEWriter } from './SSEWriter';
+
+const HEARTBEAT_INTERVAL_MS = 10_000;
+const BUFFER_TTL_MS = 5 * 60 * 1000;
+
+interface RunEventBuffer {
+  events: StreamEvent[];
+  lastSeq: number;
+  done: boolean;
+  emitter: EventEmitter;
+  cleanupTimer?: ReturnType<typeof setTimeout>;
+}
 
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
 
@@ -44,6 +53,7 @@ export class AgentRuntime {
 
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
+  private runBuffers: Map<string, RunEventBuffer>;
   private executor: AgentExecutor;
   private logger: EggLogger;
 
@@ -55,6 +65,7 @@ export class AgentRuntime {
     }
     this.logger = options.logger;
     this.runningTasks = new Map();
+    this.runBuffers = new Map();
   }
 
   async createThread(): Promise<ThreadObject> {
@@ -230,169 +241,234 @@ export class AgentRuntime {
     return queuedSnapshot;
   }
 
+  /**
+   * Start a streaming run with background execution.
+   * The task continues running even if the SSE client disconnects.
+   * Events are buffered in memory for reconnection support.
+   */
   async streamRun(input: CreateRunInput, writer: SSEWriter): Promise<void> {
-    // Abort execRun generator when client disconnects
-    const abortController = new AbortController();
-    writer.onClose(() => abortController.abort());
-
     const { threadId, input: resolvedInput } = await this.ensureThread(input);
     input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
 
-    // Register in runningTasks so cancelRun/destroy can manage streaming runs.
+    // Create event buffer for this run
+    const buffer: RunEventBuffer = {
+      events: [],
+      lastSeq: 0,
+      done: false,
+      emitter: new EventEmitter(),
+    };
+    this.runBuffers.set(run.id, buffer);
+
+    // Emit initial lifecycle event
+    this.pushEvent(buffer, 'run_created', { runId: run.id, threadId });
+
+    // Start background execution (not tied to SSE connection)
+    const abortController = new AbortController();
     let resolveTask!: () => void;
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
 
-    // event: thread.run.created
-    writer.writeEvent(AgentSSEEvent.ThreadRunCreated, rb.snapshot());
+    this.executeStreamBackground(input, run.id, threadId, rb, buffer, abortController)
+      .finally(() => {
+        resolveTask();
+        this.runningTasks.delete(run.id);
+        // Schedule buffer cleanup after TTL
+        buffer.cleanupTimer = setTimeout(() => {
+          this.runBuffers.delete(run.id);
+        }, BUFFER_TTL_MS);
+      });
 
-    // event: thread.run.in_progress
-    await this.store.updateRun(run.id, rb.start());
-    writer.writeEvent(AgentSSEEvent.ThreadRunInProgress, rb.snapshot());
+    // Stream events to the current client
+    await this.streamEventsToWriter(buffer, writer, 0);
+  }
 
-    const msgId = newMsgId();
+  /**
+   * Reconnect to a running or completed run's event stream.
+   * Replays events after lastEventId, then continues real-time if still running.
+   */
+  async reconnectStream(runId: string, writer: SSEWriter, lastEventId: number = 0): Promise<void> {
+    const buffer = this.runBuffers.get(runId);
+    if (!buffer) {
+      throw new AgentNotFoundError(`Run event buffer not found: ${runId}`);
+    }
+    await this.streamEventsToWriter(buffer, writer, lastEventId);
+  }
 
-    // event: thread.message.created
-    const msgObj = MessageConverter.createStreamMessage(msgId, run.id);
-    writer.writeEvent(AgentSSEEvent.ThreadMessageCreated, msgObj);
+  /**
+   * Push a new event into the run buffer and notify subscribers.
+   */
+  private pushEvent(buffer: RunEventBuffer, type: string, data: unknown): void {
+    const event: StreamEvent = {
+      seq: ++buffer.lastSeq,
+      type,
+      data,
+      ts: Date.now(),
+    };
+    buffer.events.push(event);
+    buffer.emitter.emit('event');
+  }
 
+  /**
+   * Execute the run in the background, buffering events as StreamEvent objects.
+   * Store operations (createRun, updateRun, appendMessages) are preserved.
+   */
+  private async executeStreamBackground(
+    input: CreateRunInput,
+    runId: string,
+    threadId: string,
+    rb: RunBuilder,
+    buffer: RunEventBuffer,
+    abortController: AbortController,
+  ): Promise<void> {
     try {
-      const { content, usage, aborted } = await this.consumeStreamMessages(
-        input,
-        abortController.signal,
-        writer,
-        msgId,
-      );
+      await this.store.updateRun(runId, rb.start());
 
-      if (aborted) {
-        // Skip intermediate cancelling store write — no external observer between the
-        // two states since the SSE client has already disconnected.
-        rb.cancelling();
-        try {
-          await this.store.updateRun(run.id, rb.cancel());
-        } catch (storeErr) {
-          this.logger.error('[AgentRuntime] failed to write cancelled status during stream abort:', storeErr);
+      const streamMessages: AgentStreamMessage[] = [];
+
+      for await (const msg of this.executor.execRun(input, abortController.signal)) {
+        if (abortController.signal.aborted) {
+          rb.cancelling();
+          try {
+            await this.store.updateRun(runId, rb.cancel());
+          } catch (storeErr) {
+            this.logger.error('[AgentRuntime] failed to write cancelled status during stream abort:', storeErr);
+          }
+          this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+          return;
         }
-        if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
-        }
-        return;
+
+        streamMessages.push(msg);
+
+        // Skip keepalive — heartbeat is handled by streamEventsToWriter
+        const eventType = msg.type || 'message';
+        if (eventType === 'keepalive') continue;
+
+        // Use raw data if provided, otherwise construct from message fields
+        const eventData = msg.raw ?? {
+          ...(msg.type ? { type: msg.type } : {}),
+          ...(msg.message ? { message: msg.message } : {}),
+          ...(msg.usage ? { usage: msg.usage } : {}),
+        };
+        this.pushEvent(buffer, eventType, eventData);
       }
 
-      // event: thread.message.completed
-      const completedMsg = MessageConverter.completeMessage(msgObj, content);
-      writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, completedMsg);
-
-      // Persist and emit completion — append messages before marking run as completed
-      // so a failure leaves the run in_progress (retryable) instead of completed-but-incomplete.
-      // TODO(atomicity): add aggregate store method for full transactional guarantee.
-      const output: MessageObject[] = content.length > 0 ? [ completedMsg ] : [];
+      // Persist to store (same as syncRun/asyncRun)
+      const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, runId);
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
         ...output,
       ]);
-      await this.store.updateRun(run.id, rb.complete(output, usage));
+      await this.store.updateRun(runId, rb.complete(output, usage));
 
-      // event: thread.run.completed
-      writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
+      this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
-        // Client disconnected or cancelRun fired — mark as cancelled, not failed
         rb.cancelling();
         try {
-          await this.store.updateRun(run.id, rb.cancel());
+          await this.store.updateRun(runId, rb.cancel());
         } catch (storeErr) {
           this.logger.error('[AgentRuntime] failed to write cancelled status during stream error:', storeErr);
         }
-        if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
-        }
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
       } else {
         try {
-          await this.store.updateRun(run.id, rb.fail(err as Error));
+          await this.store.updateRun(runId, rb.fail(err as Error));
         } catch (storeErr) {
           this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
         }
-
-        // event: thread.run.failed
-        if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunFailed, rb.snapshot());
-        }
+        this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       }
     } finally {
-      resolveTask();
-      this.runningTasks.delete(run.id);
-
-      // event: done
-      if (!writer.closed) {
-        writer.writeEvent(AgentSSEEvent.Done, '[DONE]');
-        writer.end();
-      }
+      buffer.done = true;
+      buffer.emitter.emit('event');
     }
   }
 
   /**
-   * Consume the execRun async generator, emitting SSE message.delta events
-   * for each chunk and accumulating content blocks and token usage.
+   * Stream buffered events to an SSE writer with replay and real-time phases.
+   * Phase 1: Replay — send all events with seq > lastEventId
+   * Phase 2: Real-time — listen for new events until the run completes or client disconnects
+   * Heartbeat comments (`: keepalive`) are sent every 10 seconds during the real-time phase.
    */
-  private async consumeStreamMessages(
-    input: CreateRunInput,
-    signal: AbortSignal,
+  private async streamEventsToWriter(
+    buffer: RunEventBuffer,
     writer: SSEWriter,
-    msgId: string,
-  ): Promise<{ content: MessageContentBlock[]; usage?: RunUsage; aborted: boolean }> {
-    const content: MessageContentBlock[] = [];
-    let promptTokens = 0;
-    let completionTokens = 0;
-    let hasUsage = false;
-
-    for await (const msg of this.executor.execRun(input, signal)) {
-      if (signal.aborted) {
-        return { content, usage: undefined, aborted: true as const };
-      }
-
-      // Custom event type: forward as-is with the custom event name
-      if (msg.type) {
-        const contentBlocks = msg.message
-          ? MessageConverter.toContentBlocks(msg.message)
-          : [];
-        // Only accumulate when accumulate !== false (defaults to true)
-        if (contentBlocks.length > 0 && msg.accumulate !== false) {
-          content.push(...contentBlocks);
-        }
-        writer.writeEvent(msg.type, {
-          id: msgId,
-          content: contentBlocks.length > 0 ? contentBlocks : undefined,
-        });
-      } else if (msg.message) {
-        const contentBlocks = MessageConverter.toContentBlocks(msg.message);
-        content.push(...contentBlocks);
-
-        // event: thread.message.delta
-        const delta: MessageDeltaObject = {
-          id: msgId,
-          object: AgentObjectType.ThreadMessageDelta,
-          delta: { content: contentBlocks },
-        };
-        writer.writeEvent(AgentSSEEvent.ThreadMessageDelta, delta);
-      }
-      if (msg.usage) {
-        hasUsage = true;
-        promptTokens += msg.usage.promptTokens ?? 0;
-        completionTokens += msg.usage.completionTokens ?? 0;
-      }
+    lastEventId: number,
+  ): Promise<void> {
+    // Phase 1: Replay buffered events
+    for (const event of buffer.events) {
+      if (event.seq <= lastEventId) continue;
+      if (writer.closed) return;
+      writer.writeEvent(event.type, event);
     }
 
-    return {
-      content: MessageConverter.mergeContentBlocks(content),
-      usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
-      aborted: false as const,
-    };
+    // If already done, end the stream
+    if (buffer.done) {
+      if (!writer.closed) writer.end();
+      return;
+    }
+
+    // Phase 2: Real-time events + heartbeat
+    let lastWrittenSeq = buffer.events.length > 0
+      ? buffer.events[buffer.events.length - 1].seq
+      : lastEventId;
+
+    await new Promise<void>(resolve => {
+      let heartbeatTimer: ReturnType<typeof setTimeout>;
+
+      const writeNewEvents = (): void => {
+        for (const event of buffer.events) {
+          if (event.seq <= lastWrittenSeq) continue;
+          if (writer.closed) break;
+          writer.writeEvent(event.type, event);
+          lastWrittenSeq = event.seq;
+        }
+      };
+
+      const onEvent = (): void => {
+        writeNewEvents();
+        resetHeartbeat();
+        if (buffer.done) {
+          cleanup();
+          resolve();
+        }
+      };
+
+      const resetHeartbeat = (): void => {
+        clearTimeout(heartbeatTimer);
+        heartbeatTimer = setTimeout(onHeartbeat, HEARTBEAT_INTERVAL_MS);
+      };
+
+      const onHeartbeat = (): void => {
+        if (writer.closed) {
+          cleanup();
+          resolve();
+          return;
+        }
+        writer.writeComment('keepalive');
+        resetHeartbeat();
+      };
+
+      const cleanup = (): void => {
+        clearTimeout(heartbeatTimer);
+        buffer.emitter.off('event', onEvent);
+      };
+
+      writer.onClose(() => {
+        cleanup();
+        resolve();
+      });
+
+      buffer.emitter.on('event', onEvent);
+      resetHeartbeat();
+    });
+
+    if (!writer.closed) writer.end();
   }
 
   async getRun(runId: string): Promise<RunObject> {
@@ -457,6 +533,13 @@ export class AgentRuntime {
       task.abortController.abort();
     }
     await this.waitForPendingTasks();
+
+    // Clean up all run buffers and their timers
+    for (const buffer of this.runBuffers.values()) {
+      if (buffer.cleanupTimer) clearTimeout(buffer.cleanupTimer);
+      buffer.emitter.removeAllListeners();
+    }
+    this.runBuffers.clear();
 
     // Destroy store
     if (this.store.destroy) {
