@@ -291,7 +291,7 @@ export class AgentRuntime {
    * Reconnect to a running or completed run's event stream.
    * Replays events after lastEventId, then continues real-time if still running.
    */
-  async reconnectStream(runId: string, writer: SSEWriter, lastEventId: number = 0): Promise<void> {
+  async reconnectStream(runId: string, writer: SSEWriter, lastEventId = 0): Promise<void> {
     const buffer = this.runBuffers.get(runId);
     if (!buffer) {
       throw new AgentNotFoundError(`Run event buffer not found: ${runId}`);
@@ -420,6 +420,7 @@ export class AgentRuntime {
 
     await new Promise<void>(resolve => {
       let heartbeatTimer: ReturnType<typeof setTimeout>;
+      let resolved = false;
 
       const writeNewEvents = (): void => {
         for (const event of buffer.events) {
@@ -430,42 +431,40 @@ export class AgentRuntime {
         }
       };
 
-      const onEvent = (): void => {
+      const finish = (): void => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(heartbeatTimer);
+        buffer.emitter.off('event', onEvent); // eslint-disable-line @typescript-eslint/no-use-before-define
+        resolve();
+      };
+
+      const scheduleHeartbeat = (): void => {
+        clearTimeout(heartbeatTimer);
+        heartbeatTimer = setTimeout(() => {
+          if (writer.closed) {
+            finish();
+            return;
+          }
+          writer.writeComment('keepalive');
+          scheduleHeartbeat();
+        }, HEARTBEAT_INTERVAL_MS);
+      };
+
+      function onEvent(): void {
         writeNewEvents();
-        resetHeartbeat();
+        scheduleHeartbeat();
         if (buffer.done) {
-          cleanup();
-          resolve();
+          finish();
         }
-      };
-
-      const resetHeartbeat = (): void => {
-        clearTimeout(heartbeatTimer);
-        heartbeatTimer = setTimeout(onHeartbeat, HEARTBEAT_INTERVAL_MS);
-      };
-
-      const onHeartbeat = (): void => {
-        if (writer.closed) {
-          cleanup();
-          resolve();
-          return;
-        }
-        writer.writeComment('keepalive');
-        resetHeartbeat();
-      };
-
-      const cleanup = (): void => {
-        clearTimeout(heartbeatTimer);
-        buffer.emitter.off('event', onEvent);
-      };
+      }
 
       writer.onClose(() => {
-        cleanup();
-        resolve();
+        finish();
       });
 
       buffer.emitter.on('event', onEvent);
-      resetHeartbeat();
+      scheduleHeartbeat();
     });
 
     if (!writer.closed) writer.end();
