@@ -68,6 +68,7 @@ export interface StreamEvent {
 // ===== Get thread options =====
 
 export interface GetThreadOptions {
-  /** When true, include system messages. Defaults to false. */
-  includeSystemMessages?: boolean;
+  /** When true, return all message types (system, result, stream_event, etc.).
+   *  Defaults to false — only user and assistant messages are returned. */
+  includeAllMessages?: boolean;
 }

@@ -99,12 +99,13 @@ describe('test/OSSAgentStore.test.ts', () => {
       );
     });
 
-    it('should filter out system messages by default', async () => {
+    it('should only return user and assistant messages by default', async () => {
       const thread = await store.createThread();
       await store.appendMessages(thread.id, [
         { type: 'system', subtype: 'init', session_id: 'sess-1' },
         { type: 'user', message: { role: 'user', content: 'Hello' } },
         { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'Hi!' }] } },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } },
       ]);
       const fetched = await store.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
@@ -112,16 +113,18 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.messages[1].type, 'assistant');
     });
 
-    it('should include system messages when includeSystemMessages is true', async () => {
+    it('should return all message types when includeAllMessages is true', async () => {
       const thread = await store.createThread();
       await store.appendMessages(thread.id, [
         { type: 'system', subtype: 'init', session_id: 'sess-1' },
         { type: 'user', message: { role: 'user', content: 'Hello' } },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } },
       ]);
-      const fetched = await store.getThread(thread.id, { includeSystemMessages: true });
-      assert.equal(fetched.messages.length, 2);
+      const fetched = await store.getThread(thread.id, { includeAllMessages: true });
+      assert.equal(fetched.messages.length, 3);
       assert.equal(fetched.messages[0].type, 'system');
       assert.equal(fetched.messages[1].type, 'user');
+      assert.equal(fetched.messages[2].type, 'result');
     });
   });
 

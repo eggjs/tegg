@@ -223,7 +223,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const updated = await runtime.getThread(thread.id);
       // Should have: user input message + assistant message + result message
-      assert(updated.messages.length >= 2, `expected at least 2 messages, got ${updated.messages.length}`);
+      assert.equal(updated.messages.length, 2);
       assert.equal(updated.messages[0].type, 'user');
       assert.equal(updated.messages[1].type, 'assistant');
     });
@@ -236,7 +236,7 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(result.threadId.startsWith('thread_'));
 
       const thread = await runtime.getThread(result.threadId);
-      assert(thread.messages.length >= 2);
+      assert.equal(thread.messages.length, 2);
       assert.equal(thread.messages[0].type, 'user');
       assert.equal(thread.messages[1].type, 'assistant');
     });
@@ -347,7 +347,7 @@ describe('test/AgentRuntime.test.ts', () => {
       await runtime.waitForPendingTasks();
 
       const thread = await store.getThread(result.threadId);
-      assert(thread.messages.length >= 2);
+      assert.equal(thread.messages.length, 2);
       assert.equal(thread.messages[0].type, 'user');
       assert.equal(thread.messages[1].type, 'assistant');
     });
@@ -406,7 +406,7 @@ describe('test/AgentRuntime.test.ts', () => {
       // Verify messages persisted to thread
       const threadId = (runCreatedEvent.data as any).threadId;
       const thread = await runtime.getThread(threadId);
-      assert(thread.messages.length >= 2);
+      assert.equal(thread.messages.length, 2);
       assert.equal(thread.messages[0].type, 'user');
       assert.equal(thread.messages[1].type, 'assistant');
     });

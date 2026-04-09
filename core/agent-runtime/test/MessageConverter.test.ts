@@ -144,13 +144,13 @@ describe('test/MessageConverter.test.ts', () => {
       assert.deepStrictEqual(result, []);
     });
 
-    it('should preserve assistant role messages', () => {
+    it('should preserve assistant role messages with correct type', () => {
       const messages: InputMessage[] = [
         { role: 'assistant', content: 'I said something' },
       ];
       const result = MessageConverter.toAgentMessages(messages);
       assert.equal(result.length, 1);
-      assert.equal(result[0].type, 'user');
+      assert.equal(result[0].type, 'assistant');
       assert.deepStrictEqual((result[0] as any).message.role, 'assistant');
     });
   });

@@ -44,7 +44,7 @@ export class MessageConverter {
     return messages
       .filter(m => m.role !== 'system')
       .map(m => ({
-        type: 'user' as const,
+        type: m.role as 'user' | 'assistant',
         message: { role: m.role, content: m.content },
       }));
   }

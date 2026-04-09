@@ -93,9 +93,12 @@ export class OSSAgentStore implements AgentStore {
         .map(line => JSON.parse(line) as AgentMessage)
       : [];
 
-    // Filter out system messages by default (aligned with SDK's getSessionMessages behavior)
-    if (!options?.includeSystemMessages) {
-      messages = messages.filter(m => m.type !== 'system');
+    // By default only return conversation messages (user + assistant),
+    // aligned with SDK's getSessionMessages behavior.
+    // The JSONL file stores all message types as a complete event log;
+    // this filter provides the application-level conversation view.
+    if (!options?.includeAllMessages) {
+      messages = messages.filter(m => m.type === 'user' || m.type === 'assistant');
     }
 
     return { ...meta, messages };

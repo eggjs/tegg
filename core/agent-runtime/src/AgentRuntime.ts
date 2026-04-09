@@ -6,6 +6,7 @@ import { createInterface } from 'node:readline';
 
 import type {
   CreateRunInput,
+  GetThreadOptions,
   ThreadObject,
   ThreadObjectWithMessages,
   RunObject,
@@ -81,8 +82,8 @@ export class AgentRuntime {
     };
   }
 
-  async getThread(threadId: string): Promise<ThreadObjectWithMessages> {
-    const thread = await this.store.getThread(threadId);
+  async getThread(threadId: string, options?: GetThreadOptions): Promise<ThreadObjectWithMessages> {
+    const thread = await this.store.getThread(threadId, options);
     return {
       id: thread.id,
       object: AgentObjectType.Thread,
