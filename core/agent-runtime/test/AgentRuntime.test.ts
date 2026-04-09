@@ -3,7 +3,6 @@ import { setTimeout } from 'node:timers/promises';
 
 import {
   RunStatus,
-  AgentSSEEvent,
   AgentObjectType,
   MessageRole,
   MessageStatus,
@@ -11,7 +10,7 @@ import {
   AgentNotFoundError, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
 
 import { isTextBlock } from '../src/MessageConverter';
-import type { RunRecord, RunObject, CreateRunInput, AgentStreamMessage } from '@eggjs/tegg-types/agent-runtime';
+import type { RunRecord, CreateRunInput, AgentStreamMessage, StreamEvent } from '@eggjs/tegg-types/agent-runtime';
 
 import { AgentRuntime } from '../src/AgentRuntime';
 import type { AgentExecutor, AgentRuntimeOptions } from '../src/AgentRuntime';
@@ -21,11 +20,16 @@ import { MapStorageClient } from './helpers';
 
 class MockSSEWriter implements SSEWriter {
   events: Array<{ event: string; data: unknown }> = [];
+  comments: string[] = [];
   closed = false;
   private closeCallbacks: Array<() => void> = [];
 
   writeEvent(event: string, data: unknown): void {
     this.events.push({ event, data });
+  }
+
+  writeComment(text: string): void {
+    this.comments.push(text);
   }
 
   end(): void {
@@ -369,45 +373,51 @@ describe('test/AgentRuntime.test.ts', () => {
   });
 
   describe('streamRun', () => {
-    it('should emit correct SSE event sequence for normal flow', async () => {
+    it('should emit StreamEvent sequence: run_created, message events, done', async () => {
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const eventNames = writer.events.map(e => e.event);
-      assert(eventNames.includes(AgentSSEEvent.ThreadRunCreated));
-      assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
-      assert(eventNames.includes(AgentSSEEvent.ThreadMessageCreated));
-      assert(eventNames.includes(AgentSSEEvent.ThreadMessageDelta));
-      assert(eventNames.includes(AgentSSEEvent.ThreadMessageCompleted));
-      assert(eventNames.includes(AgentSSEEvent.ThreadRunCompleted));
-      assert(eventNames.includes(AgentSSEEvent.Done));
-      assert(writer.closed);
+      const eventTypes = writer.events.map(e => e.event);
+      assert(eventTypes.includes('run_created'), 'should have run_created event');
+      assert(eventTypes.includes('message'), 'should have message event');
+      assert(eventTypes.includes('done'), 'should have done event');
+      assert(writer.closed, 'writer should be closed');
 
-      // Verify order: created < in_progress < message.created < delta < message.completed < run.completed < done
-      const createdIdx = eventNames.indexOf(AgentSSEEvent.ThreadRunCreated);
-      const progressIdx = eventNames.indexOf(AgentSSEEvent.ThreadRunInProgress);
-      const msgCreatedIdx = eventNames.indexOf(AgentSSEEvent.ThreadMessageCreated);
-      const deltaIdx = eventNames.indexOf(AgentSSEEvent.ThreadMessageDelta);
-      const msgCompletedIdx = eventNames.indexOf(AgentSSEEvent.ThreadMessageCompleted);
-      const runCompletedIdx = eventNames.indexOf(AgentSSEEvent.ThreadRunCompleted);
-      const doneIdx = eventNames.indexOf(AgentSSEEvent.Done);
-      assert(createdIdx < progressIdx);
-      assert(progressIdx < msgCreatedIdx);
-      assert(msgCreatedIdx < deltaIdx);
-      assert(deltaIdx < msgCompletedIdx);
-      assert(msgCompletedIdx < runCompletedIdx);
-      assert(runCompletedIdx < doneIdx);
+      // Verify order: run_created comes first, done comes last
+      const createdIdx = eventTypes.indexOf('run_created');
+      const doneIdx = eventTypes.indexOf('done');
+      assert(createdIdx === 0, 'run_created should be first');
+      assert(doneIdx === eventTypes.length - 1, 'done should be last');
 
-      // Verify messages persisted to thread (consistent with syncRun/asyncRun tests)
-      const runCreatedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadRunCreated);
-      const threadId = (runCreatedEvent!.data as RunObject).threadId;
+      // Verify StreamEvent format: { seq, type, data, ts }
+      for (const ev of writer.events) {
+        const streamEvent = ev.data as StreamEvent;
+        assert(typeof streamEvent.seq === 'number', 'seq should be a number');
+        assert(typeof streamEvent.type === 'string', 'type should be a string');
+        assert(typeof streamEvent.ts === 'number', 'ts should be a number');
+        assert('data' in streamEvent, 'should have data field');
+      }
+
+      // Verify sequential seq numbers
+      const seqs = writer.events.map(e => (e.data as StreamEvent).seq);
+      for (let i = 1; i < seqs.length; i++) {
+        assert(seqs[i] === seqs[i - 1] + 1, `seq should be sequential: ${seqs[i]} after ${seqs[i - 1]}`);
+      }
+
+      // Verify run_created data has runId and threadId
+      const runCreatedEvent = writer.events[0].data as StreamEvent;
+      assert((runCreatedEvent.data as any).runId, 'run_created should have runId');
+      assert((runCreatedEvent.data as any).threadId, 'run_created should have threadId');
+
+      // Verify messages persisted to thread
+      const threadId = (runCreatedEvent.data as any).threadId;
       const thread = await runtime.getThread(threadId);
       assert.equal(thread.messages.length, 2);
       assert.equal(thread.messages[0].role, MessageRole.User);
       assert.equal(thread.messages[1].role, MessageRole.Assistant);
     });
 
-    it('should emit cancelled event on client disconnect', async () => {
+    it('should continue background execution on client disconnect', async () => {
       let resolveYielded!: () => void;
       const yieldedPromise = new Promise<void>(r => {
         resolveYielded = r;
@@ -419,180 +429,106 @@ describe('test/AgentRuntime.test.ts', () => {
       ): AsyncGenerator<AgentStreamMessage> {
         yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'start' }] } };
         resolveYielded();
-        await new Promise<void>(resolve => {
-          const timer = globalThis.setTimeout(resolve, 5000);
-          if (signal) {
-            signal.addEventListener(
-              'abort',
-              () => {
-                clearTimeout(timer);
-                resolve();
-              },
-              { once: true },
-            );
-          }
-        });
+        // Simulate more work after client disconnects
+        await setTimeout(50);
+        if (!signal?.aborted) {
+          yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: ' end' }] } };
+        }
       };
 
       const writer = new MockSSEWriter();
+      const streamPromise = runtime.streamRun(
+        { input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        writer,
+      );
 
-      const streamPromise = runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
-
+      // Wait for first chunk to be yielded, then give the writer time to receive it
       await yieldedPromise;
+      await setTimeout(50);
       writer.simulateClose();
-
       await streamPromise;
 
-      const eventNames = writer.events.map(e => e.event);
-      assert(eventNames.includes(AgentSSEEvent.ThreadRunCreated));
-      assert(eventNames.includes(AgentSSEEvent.ThreadRunInProgress));
+      // Writer should have received at least run_created before disconnect
+      assert(writer.events.length >= 1, 'should have at least run_created event');
+
+      // Background task should complete — wait for it
+      await runtime.waitForPendingTasks();
+
+      // Verify the run completed in the store (not cancelled)
+      const runCreatedEvent = writer.events[0].data as StreamEvent;
+      const runId = (runCreatedEvent.data as any).runId;
+      const run = await runtime.getRun(runId);
+      assert.equal(run.status, RunStatus.Completed, 'run should complete despite client disconnect');
     });
 
     it('should forward custom event types from AgentStreamMessage.type', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
-        yield { type: 'run.initialized', message: { content: [{ type: 'text', text: 'session-123' }] } };
-        yield { type: 'assistant.turn.started' };
-        yield { type: 'assistant.text.delta', message: { content: 'Hello' } };
-        yield { type: 'tool.started', message: { content: [{ type: 'tool_use', id: 'tool-1', name: 'search', input: { q: 'test' } }] } };
-        yield { type: 'tool.delta', message: { content: '{"partial":true}' } };
-        yield { type: 'tool.completed', message: { content: [{ type: 'tool_result', tool_use_id: 'tool-1', content: 'result' }] } };
-        yield { type: 'assistant.text.delta', message: { content: ' world' } };
-        yield { type: 'assistant.message.completed' };
+        yield { type: 'system', raw: { type: 'system', subtype: 'init', session_id: 'sess-1' } };
+        yield { type: 'stream_event', raw: { type: 'stream_event', event: { type: 'content_block_delta' } } };
+        yield { message: { role: MessageRole.Assistant, content: [{ type: 'text', text: 'Hello' }] } };
       };
 
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const customEvents = writer.events.filter(e =>
-        !e.event.startsWith('thread.') && e.event !== 'done',
-      );
-      const customEventNames = customEvents.map(e => e.event);
-
-      // All custom event types are forwarded
-      assert.deepStrictEqual(customEventNames, [
-        'run.initialized',
-        'assistant.turn.started',
-        'assistant.text.delta',
-        'tool.started',
-        'tool.delta',
-        'tool.completed',
-        'assistant.text.delta',
-        'assistant.message.completed',
-      ]);
-
-      // Custom events carry content when present
-      const initEvent = customEvents.find(e => e.event === 'run.initialized');
-      assert.ok(initEvent);
-      assert.ok((initEvent.data as any).content);
-
-      const turnStarted = customEvents.find(e => e.event === 'assistant.turn.started');
-      assert.ok(turnStarted);
-      assert.equal((turnStarted.data as any).content, undefined);
-
-      // Text content from custom events is still accumulated for storage
-      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
-      assert.ok(completedEvent);
-      const storedContent = (completedEvent.data as any).content;
-      assert.ok(storedContent.length > 0);
-
-      // Framework lifecycle events are still emitted
-      const frameworkEvents = writer.events.filter(e => e.event.startsWith('thread.') || e.event === 'done');
-      const frameworkEventNames = frameworkEvents.map(e => e.event);
-      assert(frameworkEventNames.includes(AgentSSEEvent.ThreadRunCreated));
-      assert(frameworkEventNames.includes(AgentSSEEvent.ThreadRunCompleted));
-      assert(frameworkEventNames.includes(AgentSSEEvent.Done));
+      const eventTypes = writer.events.map(e => e.event);
+      assert(eventTypes.includes('system'), 'should forward system event');
+      assert(eventTypes.includes('stream_event'), 'should forward stream_event');
+      assert(eventTypes.includes('message'), 'should forward message event (no type → "message")');
     });
 
-    it('should accumulate usage from custom-typed messages', async () => {
+    it('should use raw field as event data when provided', async () => {
+      const rawMsg = { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'raw hello' }] } };
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
-        yield { type: 'assistant.text.delta', message: { content: 'Hi' }, usage: { promptTokens: 10, completionTokens: 5 } };
-        yield { type: 'assistant.text.delta', message: { content: ' there' }, usage: { promptTokens: 0, completionTokens: 3 } };
+        yield { type: 'assistant', raw: rawMsg, message: { content: 'Hello' } };
       };
 
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadRunCompleted);
-      assert.ok(completedEvent);
-      const usage = (completedEvent.data as any).usage;
-      assert.ok(usage);
-      assert.equal(usage.promptTokens, 10);
-      assert.equal(usage.completionTokens, 8);
-      assert.equal(usage.totalTokens, 18);
+      const assistantEvent = writer.events.find(e => e.event === 'assistant');
+      assert.ok(assistantEvent);
+      const streamEvent = assistantEvent.data as StreamEvent;
+      assert.deepStrictEqual(streamEvent.data, rawMsg, 'should use raw field as data');
     });
 
-    it('should fallback to thread.message.delta when no type is set', async () => {
-      // Default behavior: no type field → original thread.message.delta
-      const writer = new MockSSEWriter();
-      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
-
-      const deltaEvents = writer.events.filter(e => e.event === AgentSSEEvent.ThreadMessageDelta);
-      assert(deltaEvents.length > 0);
-    });
-
-    it('should respect accumulate=false to exclude content from completed message', async () => {
+    it('should construct event data from message fields when raw is not provided', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
-        yield { type: 'assistant.thinking.delta', message: { content: 'thinking...' }, accumulate: false };
-        yield { type: 'assistant.text.delta', message: { content: 'Hello' }, accumulate: true };
-        yield { type: 'tool.delta', message: { content: '{"partial":true}' }, accumulate: false };
-        yield { type: 'assistant.text.delta', message: { content: ' world' }, accumulate: true };
-      };
-
-      const writer = new MockSSEWriter();
-      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
-
-      // All custom events are still forwarded
-      const customEvents = writer.events.filter(e =>
-        !e.event.startsWith('thread.') && e.event !== 'done',
-      );
-      assert.equal(customEvents.length, 4);
-
-      // But completed message only has accumulated content (merged text)
-      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
-      assert.ok(completedEvent);
-      const content = (completedEvent.data as any).content;
-      assert.equal(content.length, 1);
-      assert(isTextBlock(content[0]));
-      assert.equal(content[0].text.value, 'Hello world');
-    });
-
-    it('should merge text fragments and backfill tool_use input in completed message', async () => {
-      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
-        yield { type: 'assistant.text.delta', message: { content: 'I will ' }, accumulate: true };
-        yield { type: 'assistant.text.delta', message: { content: 'help you.' }, accumulate: true };
         yield {
-          type: 'tool.started',
-          message: { content: [{ type: 'tool_use', id: 'fc-1', name: 'Bash', input: {} }] as any },
-          accumulate: true,
-        };
-        yield { type: 'tool.delta', message: { content: '{"command":"ls"}' }, accumulate: true };
-        yield {
-          type: 'tool.completed',
-          message: { content: [{ type: 'tool_result', tool_use_id: 'fc-1', content: 'file1' }] as any },
-          accumulate: true,
+          type: 'custom_event',
+          message: { content: 'hello' },
+          usage: { promptTokens: 10, completionTokens: 5 },
         };
       };
 
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const completedEvent = writer.events.find(e => e.event === AgentSSEEvent.ThreadMessageCompleted);
-      assert.ok(completedEvent);
-      const content = (completedEvent.data as any).content;
-
-      // Text fragments merged into one
-      assert(isTextBlock(content[0]));
-      assert.equal(content[0].text.value, 'I will help you.');
-
-      // tool_use input backfilled from text delta
-      assert.equal(content[1].type, 'tool_use');
-      assert.deepStrictEqual(content[1].input, { command: 'ls' });
-
-      // tool_result preserved
-      assert.equal(content[2].type, 'tool_result');
+      const customEvent = writer.events.find(e => e.event === 'custom_event');
+      assert.ok(customEvent);
+      const streamEvent = customEvent.data as StreamEvent;
+      const data = streamEvent.data as any;
+      assert.equal(data.type, 'custom_event');
+      assert.deepStrictEqual(data.message, { content: 'hello' });
+      assert.deepStrictEqual(data.usage, { promptTokens: 10, completionTokens: 5 });
     });
 
-    it('should emit failed event when execRun throws', async () => {
+    it('should skip keepalive messages from event buffer', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { type: 'keepalive' };
+        yield { message: { content: 'Hello' } };
+        yield { type: 'keepalive' };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const eventTypes = writer.events.map(e => e.event);
+      assert(!eventTypes.includes('keepalive'), 'keepalive should not be in buffered events');
+      assert(eventTypes.includes('message'), 'message should be present');
+    });
+
+    it('should emit error event when execRun throws', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
         throw new Error('model unavailable');
       };
@@ -600,10 +536,140 @@ describe('test/AgentRuntime.test.ts', () => {
       const writer = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
 
-      const eventNames = writer.events.map(e => e.event);
-      assert(eventNames.includes(AgentSSEEvent.ThreadRunFailed));
-      assert(eventNames.includes(AgentSSEEvent.Done));
+      const errorEvent = writer.events.find(e => e.event === 'error');
+      assert.ok(errorEvent, 'should have error event');
+      const streamEvent = errorEvent.data as StreamEvent;
+      assert.equal((streamEvent.data as any).message, 'model unavailable');
       assert(writer.closed);
+
+      // Verify run is marked as failed in store
+      const runCreatedEvent = writer.events[0].data as StreamEvent;
+      const runId = (runCreatedEvent.data as any).runId;
+      const run = await runtime.getRun(runId);
+      assert.equal(run.status, RunStatus.Failed);
+    });
+
+    it('should persist usage to store on completion', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentStreamMessage> {
+        yield { message: { content: 'Hi' }, usage: { promptTokens: 10, completionTokens: 5 } };
+        yield { usage: { promptTokens: 0, completionTokens: 3 } };
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const runCreatedEvent = writer.events[0].data as StreamEvent;
+      const runId = (runCreatedEvent.data as any).runId;
+      const run = await runtime.getRun(runId);
+      assert.equal(run.status, RunStatus.Completed);
+      assert.equal(run.usage!.promptTokens, 10);
+      assert.equal(run.usage!.completionTokens, 8);
+      assert.equal(run.usage!.totalTokens, 18);
+    });
+  });
+
+  describe('getRunStream', () => {
+    it('should replay all events on reconnect with lastSeq=0', async () => {
+      const writer1 = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer1);
+
+      // Get runId from the first event
+      const runCreatedEvent = writer1.events[0].data as StreamEvent;
+      const runId = (runCreatedEvent.data as any).runId;
+
+      // Reconnect and get all events
+      const writer2 = new MockSSEWriter();
+      await runtime.getRunStream(runId, writer2, 0);
+
+      // Should get the same events
+      assert.equal(writer2.events.length, writer1.events.length);
+      for (let i = 0; i < writer1.events.length; i++) {
+        const se1 = writer1.events[i].data as StreamEvent;
+        const se2 = writer2.events[i].data as StreamEvent;
+        assert.equal(se1.seq, se2.seq);
+        assert.equal(se1.type, se2.type);
+      }
+    });
+
+    it('should replay only events after lastSeq', async () => {
+      const writer1 = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer1);
+
+      const runCreatedEvent = writer1.events[0].data as StreamEvent;
+      const runId = (runCreatedEvent.data as any).runId;
+      const totalEvents = writer1.events.length;
+
+      // Reconnect from seq 2 (skip first 2 events)
+      const writer2 = new MockSSEWriter();
+      await runtime.getRunStream(runId, writer2, 2);
+
+      assert.equal(writer2.events.length, totalEvents - 2);
+      const firstReplayedSeq = (writer2.events[0].data as StreamEvent).seq;
+      assert.equal(firstReplayedSeq, 3);
+    });
+
+    it('should throw AgentNotFoundError for unknown runId', async () => {
+      const writer = new MockSSEWriter();
+      await assert.rejects(
+        () => runtime.getRunStream('run_nonexistent', writer),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          return true;
+        },
+      );
+    });
+
+    it('should stream real-time events during reconnect to running task', async () => {
+      let resolveExec!: () => void;
+      const execPromise = new Promise<void>(r => {
+        resolveExec = r;
+      });
+
+      executor.execRun = async function* (
+        _input: CreateRunInput,
+        signal?: AbortSignal,
+      ): AsyncGenerator<AgentStreamMessage> {
+        yield { message: { content: 'chunk1' } };
+        // Wait for reconnect to happen
+        await execPromise;
+        if (!signal?.aborted) {
+          yield { message: { content: 'chunk2' } };
+        }
+      };
+
+      // Start streaming and disconnect immediately after first events
+      const writer1 = new MockSSEWriter();
+      const streamPromise = runtime.streamRun(
+        { input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        writer1,
+      );
+
+      // Wait a bit for the first chunk to be buffered
+      await setTimeout(50);
+      writer1.simulateClose();
+      await streamPromise;
+
+      const runId = ((writer1.events[0].data as StreamEvent).data as any).runId;
+
+      // Reconnect — should get replayed events then real-time
+      const writer2 = new MockSSEWriter();
+      const reconnectPromise = runtime.getRunStream(runId, writer2, 0);
+
+      // Let the background task continue
+      await setTimeout(20);
+      resolveExec();
+
+      await runtime.waitForPendingTasks();
+      // Give streamEventsToWriter time to process the final events
+      await setTimeout(20);
+
+      // Close writer2 to end reconnect
+      writer2.simulateClose();
+      await reconnectPromise;
+
+      // writer2 should have received all events including chunk2 and done
+      const eventTypes = writer2.events.map(e => e.event);
+      assert(eventTypes.includes('done'), 'reconnected stream should receive done event');
     });
   });
 

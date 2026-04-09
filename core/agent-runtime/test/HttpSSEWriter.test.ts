@@ -126,4 +126,32 @@ describe('test/HttpSSEWriter.test.ts', () => {
     const writer = new HttpSSEWriter(res as any);
     assert.equal(writer.closed, false);
   });
+
+  it('should format SSE comments correctly', () => {
+    const writer = new HttpSSEWriter(res as any);
+    writer.writeComment('keepalive');
+
+    assert.equal(res.chunks.length, 1);
+    assert.equal(res.chunks[0], ': keepalive\n\n');
+  });
+
+  it('should not write comment after connection closes', () => {
+    const writer = new HttpSSEWriter(res as any);
+    res.emit('close');
+
+    writer.writeComment('keepalive');
+
+    assert.equal(res.chunks.length, 0);
+  });
+
+  it('should send headers on first writeComment', () => {
+    const writer = new HttpSSEWriter(res as any);
+
+    assert.equal(res.writtenHead, null);
+    writer.writeComment('ping');
+
+    assert.ok(res.writtenHead);
+    assert.equal(res.writtenHead.statusCode, 200);
+    assert.equal(res.writtenHead.headers['content-type'], 'text/event-stream');
+  });
 });

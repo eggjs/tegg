@@ -1,22 +1,34 @@
+import { EventEmitter } from 'node:events';
+import { appendFileSync, createReadStream, mkdirSync, existsSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createInterface } from 'node:readline';
+
 import type {
   CreateRunInput,
   ThreadObject,
   ThreadObjectWithMessages,
   RunObject,
-  MessageObject,
-  MessageDeltaObject,
-  MessageContentBlock,
   AgentStreamMessage,
   AgentStore,
+  StreamEvent,
 } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentSSEEvent, AgentObjectType, AgentConflictError } from '@eggjs/tegg-types/agent-runtime';
+import { RunStatus, AgentObjectType, AgentConflictError, AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
 import type { EggLogger } from 'egg-logger';
 
-import { newMsgId } from './AgentStoreUtils';
 import { MessageConverter } from './MessageConverter';
 import { RunBuilder } from './RunBuilder';
-import type { RunUsage } from './RunBuilder';
 import type { SSEWriter } from './SSEWriter';
+
+const HEARTBEAT_INTERVAL_MS = 10_000;
+const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
+
+interface RunEventBuffer {
+  filePath: string;
+  lastSeq: number;
+  done: boolean;
+  emitter: EventEmitter;
+}
 
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
 
@@ -44,6 +56,7 @@ export class AgentRuntime {
 
   private store: AgentStore;
   private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
+  private runBuffers: Map<string, RunEventBuffer>;
   private executor: AgentExecutor;
   private logger: EggLogger;
 
@@ -55,6 +68,7 @@ export class AgentRuntime {
     }
     this.logger = options.logger;
     this.runningTasks = new Map();
+    this.runBuffers = new Map();
   }
 
   async createThread(): Promise<ThreadObject> {
@@ -230,169 +244,266 @@ export class AgentRuntime {
     return queuedSnapshot;
   }
 
+  /**
+   * Start a streaming run with background execution.
+   * The task continues running even if the SSE client disconnects.
+   * Events are persisted to a JSONL file for reconnection support.
+   */
   async streamRun(input: CreateRunInput, writer: SSEWriter): Promise<void> {
-    // Abort execRun generator when client disconnects
-    const abortController = new AbortController();
-    writer.onClose(() => abortController.abort());
-
     const { threadId, input: resolvedInput } = await this.ensureThread(input);
     input = resolvedInput;
 
     const run = await this.store.createRun(input.input.messages, threadId, input.config, input.metadata);
     const rb = RunBuilder.create(run, threadId);
 
-    // Register in runningTasks so cancelRun/destroy can manage streaming runs.
+    // Create event buffer for this run (events persisted to JSONL file)
+    if (!existsSync(EVENT_DIR)) {
+      mkdirSync(EVENT_DIR, { recursive: true });
+    }
+    const buffer: RunEventBuffer = {
+      filePath: join(EVENT_DIR, `${run.id}.jsonl`),
+      lastSeq: 0,
+      done: false,
+      emitter: new EventEmitter(),
+    };
+    this.runBuffers.set(run.id, buffer);
+
+    // Emit initial lifecycle event
+    this.pushEvent(buffer, 'run_created', { runId: run.id, threadId });
+
+    // Start background execution (not tied to SSE connection)
+    const abortController = new AbortController();
     let resolveTask!: () => void;
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
 
-    // event: thread.run.created
-    writer.writeEvent(AgentSSEEvent.ThreadRunCreated, rb.snapshot());
+    this.executeStreamBackground(input, run.id, threadId, rb, buffer, abortController)
+      .finally(() => {
+        resolveTask();
+        this.runningTasks.delete(run.id);
+        this.runBuffers.delete(run.id);
+        buffer.emitter.removeAllListeners();
+      });
 
-    // event: thread.run.in_progress
-    await this.store.updateRun(run.id, rb.start());
-    writer.writeEvent(AgentSSEEvent.ThreadRunInProgress, rb.snapshot());
+    // Stream events to the current client
+    await this.streamEventsToWriter(buffer, writer, 0);
+  }
 
-    const msgId = newMsgId();
+  /**
+   * Reconnect to a running or completed run's event stream.
+   * Replays events after lastSeq, then continues real-time if still running.
+   */
+  async getRunStream(runId: string, writer: SSEWriter, lastSeq = 0): Promise<void> {
+    const buffer = this.runBuffers.get(runId);
+    if (buffer) {
+      // Task still running — use live buffer (emitter + file)
+      await this.streamEventsToWriter(buffer, writer, lastSeq);
+      return;
+    }
 
-    // event: thread.message.created
-    const msgObj = MessageConverter.createStreamMessage(msgId, run.id);
-    writer.writeEvent(AgentSSEEvent.ThreadMessageCreated, msgObj);
+    // Task already finished — replay from JSONL file directly
+    const filePath = join(EVENT_DIR, `${runId}.jsonl`);
+    if (!existsSync(filePath)) {
+      throw new AgentNotFoundError(`Run event stream not found: ${runId}`);
+    }
+    for await (const event of this.readEventsFromFile(filePath, lastSeq)) {
+      if (writer.closed) return;
+      writer.writeEvent(event.type, event);
+    }
+    if (!writer.closed) writer.end();
+  }
 
+  /**
+   * Push a new event: persist to JSONL file and notify subscribers via EventEmitter.
+   */
+  private pushEvent(buffer: RunEventBuffer, type: string, data: unknown): void {
+    const event: StreamEvent = {
+      seq: ++buffer.lastSeq,
+      type,
+      data,
+      ts: Date.now(),
+    };
+    appendFileSync(buffer.filePath, JSON.stringify(event) + '\n');
+    buffer.emitter.emit('event', event);
+  }
+
+  /**
+   * Execute the run in the background, persisting events to JSONL file.
+   * Store operations (createRun, updateRun, appendMessages) are preserved.
+   */
+  private async executeStreamBackground(
+    input: CreateRunInput,
+    runId: string,
+    threadId: string,
+    rb: RunBuilder,
+    buffer: RunEventBuffer,
+    abortController: AbortController,
+  ): Promise<void> {
     try {
-      const { content, usage, aborted } = await this.consumeStreamMessages(
-        input,
-        abortController.signal,
-        writer,
-        msgId,
-      );
+      await this.store.updateRun(runId, rb.start());
 
-      if (aborted) {
-        // Skip intermediate cancelling store write — no external observer between the
-        // two states since the SSE client has already disconnected.
-        rb.cancelling();
-        try {
-          await this.store.updateRun(run.id, rb.cancel());
-        } catch (storeErr) {
-          this.logger.error('[AgentRuntime] failed to write cancelled status during stream abort:', storeErr);
+      const streamMessages: AgentStreamMessage[] = [];
+
+      for await (const msg of this.executor.execRun(input, abortController.signal)) {
+        if (abortController.signal.aborted) {
+          this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+          return;
         }
-        if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
-        }
+
+        streamMessages.push(msg);
+
+        // Skip keepalive — heartbeat is handled by streamEventsToWriter
+        const eventType = msg.type || 'message';
+        if (eventType === 'keepalive') continue;
+
+        // Use raw data if provided, otherwise construct from message fields
+        const eventData = msg.raw ?? {
+          ...(msg.type ? { type: msg.type } : {}),
+          ...(msg.message ? { message: msg.message } : {}),
+          ...(msg.usage ? { usage: msg.usage } : {}),
+        };
+        this.pushEvent(buffer, eventType, eventData);
+      }
+
+      // Check if another worker has cancelled this run before writing final state
+      const currentRun = await this.store.getRun(runId);
+      if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
         return;
       }
 
-      // event: thread.message.completed
-      const completedMsg = MessageConverter.completeMessage(msgObj, content);
-      writer.writeEvent(AgentSSEEvent.ThreadMessageCompleted, completedMsg);
-
-      // Persist and emit completion — append messages before marking run as completed
-      // so a failure leaves the run in_progress (retryable) instead of completed-but-incomplete.
-      // TODO(atomicity): add aggregate store method for full transactional guarantee.
-      const output: MessageObject[] = content.length > 0 ? [ completedMsg ] : [];
+      // Persist to store (same as syncRun/asyncRun)
+      const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, runId);
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
         ...output,
       ]);
-      await this.store.updateRun(run.id, rb.complete(output, usage));
+      await this.store.updateRun(runId, rb.complete(output, usage));
 
-      // event: thread.run.completed
-      writer.writeEvent(AgentSSEEvent.ThreadRunCompleted, rb.snapshot());
+      this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {
-      if (abortController.signal.aborted) {
-        // Client disconnected or cancelRun fired — mark as cancelled, not failed
-        rb.cancelling();
+      if (!abortController.signal.aborted) {
+        // Check store before writing failed state — another worker may have cancelled
         try {
-          await this.store.updateRun(run.id, rb.cancel());
-        } catch (storeErr) {
-          this.logger.error('[AgentRuntime] failed to write cancelled status during stream error:', storeErr);
-        }
-        if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunCancelled, rb.snapshot());
-        }
-      } else {
-        try {
-          await this.store.updateRun(run.id, rb.fail(err as Error));
+          const currentRun = await this.store.getRun(runId);
+          if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
+            await this.store.updateRun(runId, rb.fail(err as Error));
+          }
         } catch (storeErr) {
           this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
         }
-
-        // event: thread.run.failed
-        if (!writer.closed) {
-          writer.writeEvent(AgentSSEEvent.ThreadRunFailed, rb.snapshot());
-        }
+        this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
+      } else {
+        this.logger.error('[AgentRuntime] execRun error during abort:', err);
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
       }
     } finally {
-      resolveTask();
-      this.runningTasks.delete(run.id);
+      buffer.done = true;
+      buffer.emitter.emit('event');
+    }
+  }
 
-      // event: done
-      if (!writer.closed) {
-        writer.writeEvent(AgentSSEEvent.Done, '[DONE]');
-        writer.end();
+  /**
+   * Read events from JSONL file, yielding those with seq > afterSeq.
+   */
+  private async* readEventsFromFile(filePath: string, afterSeq: number): AsyncGenerator<StreamEvent> {
+    if (!existsSync(filePath)) return;
+    const rl = createInterface({ input: createReadStream(filePath) });
+    for await (const line of rl) {
+      if (!line.trim()) continue;
+      try {
+        const event = JSON.parse(line) as StreamEvent;
+        if (event.seq > afterSeq) {
+          yield event;
+        }
+      } catch {
+        // skip malformed lines
       }
     }
   }
 
   /**
-   * Consume the execRun async generator, emitting SSE message.delta events
-   * for each chunk and accumulating content blocks and token usage.
+   * Stream events to an SSE writer with replay and real-time phases.
+   * Phase 1: Replay — read JSONL file, send events with seq > lastSeq
+   * Phase 2: Real-time — listen to EventEmitter until the run completes or client disconnects
+   * Heartbeat comments (`: keepalive`) are sent every 10 seconds during the real-time phase.
    */
-  private async consumeStreamMessages(
-    input: CreateRunInput,
-    signal: AbortSignal,
+  private async streamEventsToWriter(
+    buffer: RunEventBuffer,
     writer: SSEWriter,
-    msgId: string,
-  ): Promise<{ content: MessageContentBlock[]; usage?: RunUsage; aborted: boolean }> {
-    const content: MessageContentBlock[] = [];
-    let promptTokens = 0;
-    let completionTokens = 0;
-    let hasUsage = false;
-
-    for await (const msg of this.executor.execRun(input, signal)) {
-      if (signal.aborted) {
-        return { content, usage: undefined, aborted: true as const };
-      }
-
-      // Custom event type: forward as-is with the custom event name
-      if (msg.type) {
-        const contentBlocks = msg.message
-          ? MessageConverter.toContentBlocks(msg.message)
-          : [];
-        // Only accumulate when accumulate !== false (defaults to true)
-        if (contentBlocks.length > 0 && msg.accumulate !== false) {
-          content.push(...contentBlocks);
-        }
-        writer.writeEvent(msg.type, {
-          id: msgId,
-          content: contentBlocks.length > 0 ? contentBlocks : undefined,
-        });
-      } else if (msg.message) {
-        const contentBlocks = MessageConverter.toContentBlocks(msg.message);
-        content.push(...contentBlocks);
-
-        // event: thread.message.delta
-        const delta: MessageDeltaObject = {
-          id: msgId,
-          object: AgentObjectType.ThreadMessageDelta,
-          delta: { content: contentBlocks },
-        };
-        writer.writeEvent(AgentSSEEvent.ThreadMessageDelta, delta);
-      }
-      if (msg.usage) {
-        hasUsage = true;
-        promptTokens += msg.usage.promptTokens ?? 0;
-        completionTokens += msg.usage.completionTokens ?? 0;
-      }
+    lastSeq: number,
+  ): Promise<void> {
+    // Phase 1: Replay from JSONL file
+    let lastWrittenSeq = lastSeq;
+    for await (const event of this.readEventsFromFile(buffer.filePath, lastSeq)) {
+      if (writer.closed) return;
+      writer.writeEvent(event.type, event);
+      lastWrittenSeq = event.seq;
     }
 
-    return {
-      content: MessageConverter.mergeContentBlocks(content),
-      usage: hasUsage ? { promptTokens, completionTokens, totalTokens: promptTokens + completionTokens } : undefined,
-      aborted: false as const,
-    };
+    // If already done, end the stream
+    if (buffer.done) {
+      if (!writer.closed) writer.end();
+      return;
+    }
+
+    // Phase 2: Real-time events via EventEmitter + heartbeat
+    // Events emitted between file read and listener registration are caught
+    // by re-reading the file for any gap (catch-up), then listening real-time.
+    const queue: StreamEvent[] = [];
+    let waitResolve: (() => void) | null = null;
+
+    function onEvent(event?: StreamEvent): void {
+      if (event) queue.push(event);
+      waitResolve?.();
+    }
+
+    buffer.emitter.on('event', onEvent);
+
+    try {
+      // Catch-up: drain any events that arrived during Phase 1 file read
+      for await (const event of this.readEventsFromFile(buffer.filePath, lastWrittenSeq)) {
+        if (writer.closed) return;
+        if (event.seq > lastWrittenSeq) {
+          writer.writeEvent(event.type, event);
+          lastWrittenSeq = event.seq;
+        }
+      }
+
+      // Real-time loop
+      const waitForEvent = () => new Promise<'event' | 'heartbeat'>(resolve => {
+        waitResolve = () => resolve('event');
+        setTimeout(() => resolve('heartbeat'), HEARTBEAT_INTERVAL_MS);
+      });
+
+      while (!buffer.done || queue.length > 0) {
+        // Drain queue
+        while (queue.length > 0) {
+          const event = queue.shift()!;
+          if (event.seq > lastWrittenSeq) {
+            if (writer.closed) return;
+            writer.writeEvent(event.type, event);
+            lastWrittenSeq = event.seq;
+          }
+        }
+
+        if (buffer.done) break;
+        if (writer.closed) return;
+
+        const reason = await waitForEvent();
+        waitResolve = null;
+        if (reason === 'heartbeat' && queue.length === 0 && !buffer.done) {
+          if (writer.closed) return;
+          writer.writeComment('keepalive');
+        }
+      }
+    } finally {
+      buffer.emitter.off('event', onEvent);
+    }
+
+    if (!writer.closed) writer.end();
   }
 
   async getRun(runId: string): Promise<RunObject> {
@@ -457,6 +568,12 @@ export class AgentRuntime {
       task.abortController.abort();
     }
     await this.waitForPendingTasks();
+
+    // Clean up all run buffers (JSONL files are preserved for reconnection)
+    for (const buffer of this.runBuffers.values()) {
+      buffer.emitter.removeAllListeners();
+    }
+    this.runBuffers.clear();
 
     // Destroy store
     if (this.store.destroy) {

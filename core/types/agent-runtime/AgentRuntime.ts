@@ -118,4 +118,15 @@ export interface AgentStreamMessage {
   usage?: AgentRunUsage;
   /** Whether to accumulate message content into the final completed message. Defaults to true. */
   accumulate?: boolean;
+  /** Raw data to pass through as StreamEvent.data. When set, this is used directly instead of constructing from message/usage. */
+  raw?: unknown;
+}
+
+// ===== Stream event (TaskEvent-style wrapper) =====
+
+export interface StreamEvent {
+  seq: number;
+  type: string;
+  data: unknown;
+  ts: number;
 }
