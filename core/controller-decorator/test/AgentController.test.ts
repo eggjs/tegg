@@ -7,6 +7,7 @@ import {
   ControllerMetaBuilderFactory,
   BodyParamMeta,
   PathParamMeta,
+  QueryParamMeta,
   ControllerInfoUtil,
   MethodInfoUtil,
 } from '../index';
@@ -127,11 +128,11 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
   });
 
   describe('default implementations', () => {
-    it('should inject default stubs for all 7 route methods', () => {
+    it('should inject default stubs for all 8 route methods', () => {
       // AgentFooController only implements execRun (smart defaults pattern)
-      // All 7 route methods should have stub defaults that throw
+      // All 8 route methods should have stub defaults that throw
       const proto = AgentFooController.prototype as any;
-      const routeMethods = [ 'createThread', 'getThread', 'asyncRun', 'streamRun', 'syncRun', 'getRun', 'cancelRun' ];
+      const routeMethods = [ 'createThread', 'getThread', 'asyncRun', 'streamRun', 'reconnectStream', 'syncRun', 'getRun', 'cancelRun' ];
       for (const methodName of routeMethods) {
         assert(typeof proto[methodName] === 'function', `${methodName} should be a function`);
         assert.strictEqual(
@@ -147,6 +148,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       { name: 'getThread', args: [ 'thread_1' ] },
       { name: 'asyncRun', args: [{ input: { messages: [] } }] },
       { name: 'streamRun', args: [{ input: { messages: [] } }] },
+      { name: 'reconnectStream', args: [ 'run_1', '0' ] },
       { name: 'syncRun', args: [{ input: { messages: [] } }] },
       { name: 'getRun', args: [ 'run_1' ] },
       { name: 'cancelRun', args: [ 'run_1' ] },
@@ -161,10 +163,10 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
   });
 
   describe('HTTPControllerMetaBuilder integration', () => {
-    it('should build metadata with 7 HTTPMethodMeta entries', () => {
+    it('should build metadata with 8 HTTPMethodMeta entries', () => {
       const meta = ControllerMetaBuilderFactory.build(AgentFooController, ControllerType.HTTP) as HTTPControllerMeta;
       assert(meta);
-      assert.strictEqual(meta.methods.length, 7);
+      assert.strictEqual(meta.methods.length, 8);
       assert.strictEqual(meta.path, '/api/v1');
     });
 
@@ -190,6 +192,14 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       assert.strictEqual(streamRun.path, '/runs/stream');
       assert.strictEqual(streamRun.method, HTTPMethodEnum.POST);
       assert.deepStrictEqual(streamRun.paramMap, new Map([[ 0, new BodyParamMeta() ]]));
+
+      const reconnectStream = meta.methods.find(m => m.name === 'reconnectStream')!;
+      assert.strictEqual(reconnectStream.path, '/runs/:id/stream');
+      assert.strictEqual(reconnectStream.method, HTTPMethodEnum.GET);
+      assert.deepStrictEqual(reconnectStream.paramMap, new Map([
+        [ 0, new PathParamMeta('id') ],
+        [ 1, new QueryParamMeta('lastEventId') ],
+      ]));
 
       const syncRun = meta.methods.find(m => m.name === 'syncRun')!;
       assert.strictEqual(syncRun.path, '/runs/wait');
