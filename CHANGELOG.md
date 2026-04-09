@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.78.0](https://github.com/eggjs/tegg/compare/v3.77.2...v3.78.0) (2026-04-09)
+
+
+### Features
+
+* **agent-runtime:** rewrite streamRun with StreamEvent format and reconnection ([#432](https://github.com/eggjs/tegg/issues/432)) ([d03dac2](https://github.com/eggjs/tegg/commit/d03dac2ddd78641acb47e19275488ad9fbfcda2a))
+
+
+
+
+
 ## [3.77.2](https://github.com/eggjs/tegg/compare/v3.77.1...v3.77.2) (2026-04-07)
 
 
