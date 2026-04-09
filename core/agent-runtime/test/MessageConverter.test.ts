@@ -100,6 +100,39 @@ describe('test/MessageConverter.test.ts', () => {
     });
   });
 
+  describe('filterForStorage', () => {
+    it('should filter out stream_event messages', () => {
+      const messages: AgentMessage[] = [
+        { type: 'system', subtype: 'init', session_id: 'sess-1' },
+        { type: 'user', message: { role: 'user', content: 'hello' } },
+        { type: 'stream_event', event: { type: 'content_block_delta' }, session_id: 'sess-1' },
+        { type: 'stream_event', event: { type: 'content_block_delta' }, session_id: 'sess-1' },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } } as SDKResultMessage,
+      ];
+      const result = MessageConverter.filterForStorage(messages);
+      assert.equal(result.length, 4);
+      assert.equal(result[0].type, 'system');
+      assert.equal(result[1].type, 'user');
+      assert.equal(result[2].type, 'assistant');
+      assert.equal(result[3].type, 'result');
+    });
+
+    it('should return all messages when no stream_event present', () => {
+      const messages: AgentMessage[] = [
+        { type: 'user', message: { role: 'user', content: 'hello' } },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+      ];
+      const result = MessageConverter.filterForStorage(messages);
+      assert.equal(result.length, 2);
+    });
+
+    it('should handle empty array', () => {
+      const result = MessageConverter.filterForStorage([]);
+      assert.deepStrictEqual(result, []);
+    });
+  });
+
   describe('toAgentMessages', () => {
     it('should convert user messages to AgentMessage format', () => {
       const messages: InputMessage[] = [

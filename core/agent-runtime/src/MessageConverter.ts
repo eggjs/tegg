@@ -36,6 +36,16 @@ export class MessageConverter {
   }
 
   /**
+   * Filter out stream_event messages before persisting to thread storage.
+   * Stream events are incremental deltas (one per token) only useful during
+   * real-time streaming; the final assistant message already contains the
+   * complete response.
+   */
+  static filterForStorage(messages: AgentMessage[]): AgentMessage[] {
+    return messages.filter(m => m.type !== 'stream_event');
+  }
+
+  /**
    * Convert input messages to AgentMessage format for thread history.
    * System messages are filtered out — they are transient instructions,
    * not conversation history.

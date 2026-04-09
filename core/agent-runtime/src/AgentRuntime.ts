@@ -141,10 +141,10 @@ export class AgentRuntime {
 
       const usage = MessageConverter.extractUsage(streamMessages);
 
-      // Append input messages + all stream messages to thread
+      // Append input messages + stream messages to thread (excluding stream_event deltas)
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toAgentMessages(input.input.messages),
-        ...streamMessages,
+        ...MessageConverter.filterForStorage(streamMessages),
       ]);
 
       await this.store.updateRun(run.id, rb.complete(usage));
