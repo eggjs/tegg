@@ -3,14 +3,14 @@ import type {
   ThreadObjectWithMessages,
   CreateRunInput,
   RunObject,
-  AgentStreamMessage,
+  AgentMessage,
 } from '@eggjs/tegg-types/agent-runtime';
 
 // Interface for AgentController classes. The `execRun` method is required —
 // the framework uses it to auto-wire thread/run management, store persistence,
 // SSE streaming, async execution, and cancellation via smart defaults.
 export interface AgentHandler {
-  execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentStreamMessage>;
+  execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage>;
   /** Create the AgentStore used to persist threads and runs. */
   createStore(): Promise<unknown>;
   createThread?(): Promise<ThreadObject>;

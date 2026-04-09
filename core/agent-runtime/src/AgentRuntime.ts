@@ -9,7 +9,7 @@ import type {
   ThreadObject,
   ThreadObjectWithMessages,
   RunObject,
-  AgentStreamMessage,
+  AgentMessage,
   AgentStore,
   StreamEvent,
 } from '@eggjs/tegg-types/agent-runtime';
@@ -37,7 +37,7 @@ export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
  * execution back through the controller's prototype chain (AOP/mock friendly).
  */
 export interface AgentExecutor {
-  execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentStreamMessage>;
+  execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage>;
 }
 
 export interface AgentRuntimeOptions {
@@ -120,8 +120,6 @@ export class AgentRuntime {
     }
 
     // Register in runningTasks so cancelRun can find and await this run.
-    // Use a real pending promise (not Promise.resolve()) so cancelRun's
-    // `await task.promise` blocks until syncRun's try/finally completes.
     let resolveTask!: () => void;
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
@@ -131,33 +129,28 @@ export class AgentRuntime {
     try {
       await this.store.updateRun(run.id, rb.start());
 
-      const streamMessages: AgentStreamMessage[] = [];
+      const streamMessages: AgentMessage[] = [];
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          // Run was cancelled externally — re-read store for the latest state
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
         streamMessages.push(msg);
       }
 
-      const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
+      const usage = MessageConverter.extractUsage(streamMessages);
 
-      // Append messages first so that if updateRun fails the run stays in_progress
-      // and can be retried, rather than showing completed with missing thread history.
-      // TODO(atomicity): for full consistency, add an aggregate store method
-      // (e.g. completeRunWithMessages) that wraps both writes in a single transaction.
+      // Append input messages + all stream messages to thread
       await this.store.appendMessages(threadId, [
-        ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
-        ...output,
+        ...MessageConverter.toAgentMessages(input.input.messages),
+        ...streamMessages,
       ]);
 
-      await this.store.updateRun(run.id, rb.complete(output, usage));
+      await this.store.updateRun(run.id, rb.complete(usage));
 
       return rb.snapshot();
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
-        // Cancelled — re-read store for the latest state
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
       }
@@ -186,7 +179,6 @@ export class AgentRuntime {
     const queuedSnapshot = rb.snapshot();
 
     // Register in runningTasks before the IIFE starts executing to avoid a race
-    // where the IIFE's finally block deletes the entry before it is set.
     let resolveTask!: () => void;
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
@@ -197,7 +189,7 @@ export class AgentRuntime {
       try {
         await this.store.updateRun(run.id, rb.start());
 
-        const streamMessages: AgentStreamMessage[] = [];
+        const streamMessages: AgentMessage[] = [];
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) return;
           streamMessages.push(msg);
@@ -209,27 +201,23 @@ export class AgentRuntime {
           return;
         }
 
-        const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, run.id);
+        const usage = MessageConverter.extractUsage(streamMessages);
 
-        // Append messages before marking run as completed — see syncRun comment.
-        // TODO(atomicity): add aggregate store method for full transactional guarantee.
+        // Append input messages + all stream messages to thread
         await this.store.appendMessages(threadId, [
-          ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
-          ...output,
+          ...MessageConverter.toAgentMessages(input.input.messages),
+          ...streamMessages,
         ]);
 
-        await this.store.updateRun(run.id, rb.complete(output, usage));
+        await this.store.updateRun(run.id, rb.complete(usage));
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
-          // Check store before writing failed state — another worker may have cancelled
           try {
             const currentRun = await this.store.getRun(run.id);
             if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
               await this.store.updateRun(run.id, rb.fail(err as Error));
             }
           } catch (storeErr) {
-            // TODO: need a background expiry mechanism to clean up runs stuck in non-terminal states
-            // (e.g. in_progress or cancelling) when store writes fail persistently.
             this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
@@ -298,7 +286,6 @@ export class AgentRuntime {
   async getRunStream(runId: string, writer: SSEWriter, lastSeq = 0): Promise<void> {
     const buffer = this.runBuffers.get(runId);
     if (buffer) {
-      // Task still running — use live buffer (emitter + file)
       await this.streamEventsToWriter(buffer, writer, lastSeq);
       return;
     }
@@ -315,9 +302,6 @@ export class AgentRuntime {
     if (!writer.closed) writer.end();
   }
 
-  /**
-   * Push a new event: persist to JSONL file and notify subscribers via EventEmitter.
-   */
   private pushEvent(buffer: RunEventBuffer, type: string, data: unknown): void {
     const event: StreamEvent = {
       seq: ++buffer.lastSeq,
@@ -331,7 +315,7 @@ export class AgentRuntime {
 
   /**
    * Execute the run in the background, persisting events to JSONL file.
-   * Store operations (createRun, updateRun, appendMessages) are preserved.
+   * AgentMessage objects are passed through directly as event data.
    */
   private async executeStreamBackground(
     input: CreateRunInput,
@@ -344,7 +328,7 @@ export class AgentRuntime {
     try {
       await this.store.updateRun(runId, rb.start());
 
-      const streamMessages: AgentStreamMessage[] = [];
+      const streamMessages: AgentMessage[] = [];
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
@@ -354,17 +338,9 @@ export class AgentRuntime {
 
         streamMessages.push(msg);
 
-        // Skip keepalive — heartbeat is handled by streamEventsToWriter
+        // Pass through SDK message directly as event data
         const eventType = msg.type || 'message';
-        if (eventType === 'keepalive') continue;
-
-        // Use raw data if provided, otherwise construct from message fields
-        const eventData = msg.raw ?? {
-          ...(msg.type ? { type: msg.type } : {}),
-          ...(msg.message ? { message: msg.message } : {}),
-          ...(msg.usage ? { usage: msg.usage } : {}),
-        };
-        this.pushEvent(buffer, eventType, eventData);
+        this.pushEvent(buffer, eventType, msg);
       }
 
       // Check if another worker has cancelled this run before writing final state
@@ -374,18 +350,17 @@ export class AgentRuntime {
         return;
       }
 
-      // Persist to store (same as syncRun/asyncRun)
-      const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, runId);
+      // Persist to store
+      const usage = MessageConverter.extractUsage(streamMessages);
       await this.store.appendMessages(threadId, [
-        ...MessageConverter.toInputMessageObjects(input.input.messages, threadId),
-        ...output,
+        ...MessageConverter.toAgentMessages(input.input.messages),
+        ...streamMessages,
       ]);
-      await this.store.updateRun(runId, rb.complete(output, usage));
+      await this.store.updateRun(runId, rb.complete(usage));
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {
       if (!abortController.signal.aborted) {
-        // Check store before writing failed state — another worker may have cancelled
         try {
           const currentRun = await this.store.getRun(runId);
           if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -405,9 +380,6 @@ export class AgentRuntime {
     }
   }
 
-  /**
-   * Read events from JSONL file, yielding those with seq > afterSeq.
-   */
   private async* readEventsFromFile(filePath: string, afterSeq: number): AsyncGenerator<StreamEvent> {
     if (!existsSync(filePath)) return;
     const rl = createInterface({ input: createReadStream(filePath) });
@@ -424,12 +396,6 @@ export class AgentRuntime {
     }
   }
 
-  /**
-   * Stream events to an SSE writer with replay and real-time phases.
-   * Phase 1: Replay — read JSONL file, send events with seq > lastSeq
-   * Phase 2: Real-time — listen to EventEmitter until the run completes or client disconnects
-   * Heartbeat comments (`: keepalive`) are sent every 10 seconds during the real-time phase.
-   */
   private async streamEventsToWriter(
     buffer: RunEventBuffer,
     writer: SSEWriter,
@@ -443,15 +409,12 @@ export class AgentRuntime {
       lastWrittenSeq = event.seq;
     }
 
-    // If already done, end the stream
     if (buffer.done) {
       if (!writer.closed) writer.end();
       return;
     }
 
     // Phase 2: Real-time events via EventEmitter + heartbeat
-    // Events emitted between file read and listener registration are caught
-    // by re-reading the file for any gap (catch-up), then listening real-time.
     const queue: StreamEvent[] = [];
     let waitResolve: (() => void) | null = null;
 
@@ -472,14 +435,12 @@ export class AgentRuntime {
         }
       }
 
-      // Real-time loop
       const waitForEvent = () => new Promise<'event' | 'heartbeat'>(resolve => {
         waitResolve = () => resolve('event');
         setTimeout(() => resolve('heartbeat'), HEARTBEAT_INTERVAL_MS);
       });
 
       while (!buffer.done || queue.length > 0) {
-        // Drain queue
         while (queue.length > 0) {
           const event = queue.shift()!;
           if (event.seq > lastWrittenSeq) {
@@ -512,18 +473,14 @@ export class AgentRuntime {
   }
 
   async cancelRun(runId: string): Promise<RunObject> {
-    // 1. Check current status — reject if already terminal
     const run = await this.store.getRun(runId);
     if (AgentRuntime.TERMINAL_RUN_STATUSES.has(run.status)) {
       throw new AgentConflictError(`Cannot cancel run with status '${run.status}'`);
     }
 
     const rb = RunBuilder.fromRecord(run);
-
-    // 2. Write "cancelling" to store first — visible to all workers
     await this.store.updateRun(runId, rb.cancelling());
 
-    // 3. If the task is running locally, abort it for immediate effect
     const task = this.runningTasks.get(runId);
     if (task) {
       task.abortController.abort();
@@ -532,21 +489,15 @@ export class AgentRuntime {
       });
     }
 
-    // 4. Re-read store to mitigate TOCTOU: if the run completed/failed between
-    //    steps 2 and 4, do not overwrite the terminal state.
-    // TODO: For full atomicity, use CAS / ETag-based conditional writes.
     const freshRun = await this.store.getRun(runId);
     if (AgentRuntime.TERMINAL_RUN_STATUSES.has(freshRun.status)) {
-      // Run reached a terminal state while we were cancelling — return as-is
       return RunBuilder.fromRecord(freshRun).snapshot();
     }
 
-    // 5. Transition to final "cancelled" state
     try {
       await this.store.updateRun(runId, rb.cancel());
     } catch (err) {
       this.logger.error('[AgentRuntime] failed to write cancelled state after cancelling:', err);
-      // Return best-effort snapshot from store
       const fallback = await this.store.getRun(runId);
       return RunBuilder.fromRecord(fallback).snapshot();
     }
@@ -554,7 +505,6 @@ export class AgentRuntime {
     return rb.snapshot();
   }
 
-  /** Wait for all in-flight background tasks to complete naturally (without aborting). */
   async waitForPendingTasks(): Promise<void> {
     if (this.runningTasks.size) {
       const pending = Array.from(this.runningTasks.values()).map(t => t.promise);
@@ -563,25 +513,21 @@ export class AgentRuntime {
   }
 
   async destroy(): Promise<void> {
-    // Abort all in-flight background tasks, then wait for them to settle
     for (const task of this.runningTasks.values()) {
       task.abortController.abort();
     }
     await this.waitForPendingTasks();
 
-    // Clean up all run buffers (JSONL files are preserved for reconnection)
     for (const buffer of this.runBuffers.values()) {
       buffer.emitter.removeAllListeners();
     }
     this.runBuffers.clear();
 
-    // Destroy store
     if (this.store.destroy) {
       await this.store.destroy();
     }
   }
 
-  /** Factory method — avoids the spread-arg type issue with dynamic delegation. */
   static create(options: AgentRuntimeOptions): AgentRuntime {
     return new AgentRuntime(options);
   }

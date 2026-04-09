@@ -1,28 +1,19 @@
-// ===== Content block types =====
-
-export const ContentBlockType = {
-  Text: 'text',
-  ToolUse: 'tool_use',
-  ToolResult: 'tool_result',
-} as const;
-export type ContentBlockType = (typeof ContentBlockType)[keyof typeof ContentBlockType];
-
-// ===== Input content types (SDK → tegg) =====
+// ===== Input content types (for CreateRunInput) =====
 
 export interface TextInputContentPart {
-  type: typeof ContentBlockType.Text;
+  type: 'text';
   text: string;
 }
 
 export interface ToolUseInputContentPart {
-  type: typeof ContentBlockType.ToolUse;
+  type: 'tool_use';
   id: string;
   name: string;
   input: Record<string, unknown>;
 }
 
 export interface ToolResultInputContentPart {
-  type: typeof ContentBlockType.ToolResult;
+  type: 'tool_result';
   tool_use_id: string;
   content?: string | { type: string; text?: string; [key: string]: unknown }[];
   is_error?: boolean;
@@ -39,39 +30,7 @@ export type InputContentPart =
   | ToolResultInputContentPart
   | GenericInputContentPart;
 
-// ===== Output content types (tegg → storage/SSE) =====
-
-export interface TextContentBlock {
-  type: typeof ContentBlockType.Text;
-  text: { value: string; annotations: unknown[] };
-}
-
-export interface ToolUseContentBlock {
-  type: typeof ContentBlockType.ToolUse;
-  id: string;
-  name: string;
-  input: Record<string, unknown>;
-}
-
-export interface ToolResultContentBlock {
-  type: typeof ContentBlockType.ToolResult;
-  tool_use_id: string;
-  content?: string | { type: string; text?: string; [key: string]: unknown }[];
-  is_error?: boolean;
-}
-
-export interface GenericContentBlock {
-  type: string;
-  [key: string]: unknown;
-}
-
-export type MessageContentBlock =
-  | TextContentBlock
-  | ToolUseContentBlock
-  | ToolResultContentBlock
-  | GenericContentBlock;
-
-// ===== Input / Output message types =====
+// ===== Input message (for CreateRunInput) =====
 
 export interface InputMessage {
   role: string;
@@ -79,13 +38,59 @@ export interface InputMessage {
   metadata?: Record<string, unknown>;
 }
 
-export interface MessageObject {
-  id: string;
-  object: string;
-  createdAt: number;
-  role: string;
-  status: string;
-  content: MessageContentBlock[];
-  runId?: string;
-  threadId?: string;
+// ===== AgentMessage — aligned with Claude Agent SDK SDKMessage =====
+// Lightweight subset of SDK message types. The framework only needs to
+// discriminate on `type` for a handful of core message kinds; everything
+// else passes through as SDKGenericMessage.
+
+export interface SDKSystemMessage {
+  type: 'system';
+  subtype: string;
+  session_id?: string;
+  [key: string]: unknown;
 }
+
+export interface SDKStreamEvent {
+  type: 'stream_event';
+  event: unknown;
+  session_id?: string;
+  [key: string]: unknown;
+}
+
+export interface SDKUserMessage {
+  type: 'user';
+  message: unknown;
+  [key: string]: unknown;
+}
+
+export interface SDKAssistantMessage {
+  type: 'assistant';
+  message: unknown;
+  [key: string]: unknown;
+}
+
+export interface SDKResultMessage {
+  type: 'result';
+  subtype: string;
+  usage?: {
+    input_tokens?: number;
+    output_tokens?: number;
+    cache_creation_input_tokens?: number;
+    cache_read_input_tokens?: number;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
+
+export interface SDKGenericMessage {
+  type: string;
+  [key: string]: unknown;
+}
+
+export type AgentMessage =
+  | SDKSystemMessage
+  | SDKStreamEvent
+  | SDKUserMessage
+  | SDKAssistantMessage
+  | SDKResultMessage
+  | SDKGenericMessage;

@@ -1,4 +1,4 @@
-import type { MessageObject, RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
+import type { RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowUnix } from './AgentStoreUtils';
@@ -28,7 +28,6 @@ export class RunBuilder {
   private failedAt?: number;
   private lastError?: { code: string; message: string } | null;
   private usage?: RunUsage;
-  private output?: MessageObject[];
 
   private constructor(
     id: string,
@@ -59,7 +58,6 @@ export class RunBuilder {
     rb.cancelledAt = run.cancelledAt ?? undefined;
     rb.failedAt = run.failedAt ?? undefined;
     rb.lastError = run.lastError ?? undefined;
-    rb.output = run.output;
     if (run.usage) {
       rb.usage = { ...run.usage };
     }
@@ -77,17 +75,15 @@ export class RunBuilder {
   }
 
   /** in_progress -> completed. Returns store update. */
-  complete(output: MessageObject[], usage?: RunUsage): Partial<RunRecord> {
+  complete(usage?: RunUsage): Partial<RunRecord> {
     if (this.status !== RunStatus.InProgress) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Completed);
     }
     this.status = RunStatus.Completed;
     this.completedAt = nowUnix();
-    this.output = output;
     this.usage = usage;
     return {
       status: this.status,
-      output,
       usage,
       completedAt: this.completedAt,
     };
@@ -148,7 +144,6 @@ export class RunBuilder {
       failedAt: this.failedAt ?? null,
       usage: this.usage ?? null,
       metadata: this.metadata,
-      output: this.output,
       config: this.config,
     };
   }
