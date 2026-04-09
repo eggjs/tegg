@@ -1,12 +1,11 @@
-import type { InputMessage, MessageObject } from './AgentMessage';
+import type { AgentMessage, InputMessage } from './AgentMessage';
+import type { GetThreadOptions } from './AgentRuntime';
 
 // ===== Object types =====
 
 export const AgentObjectType = {
   Thread: 'thread',
   ThreadRun: 'thread.run',
-  ThreadMessage: 'thread.message',
-  ThreadMessageDelta: 'thread.message.delta',
 } as const;
 export type AgentObjectType = (typeof AgentObjectType)[keyof typeof AgentObjectType];
 
@@ -36,11 +35,12 @@ export interface ThreadRecord {
   id: string;
   object: typeof AgentObjectType.Thread;
   /**
-   * Logically belongs to the thread. In OSSAgentStore the messages are stored
-   * separately as a JSONL file and assembled on read — callers should treat
-   * this as a unified view regardless of the underlying storage layout.
+   * All messages in the thread, stored as SDK-format AgentMessage objects.
+   * In OSSAgentStore the messages are stored separately as a JSONL file
+   * and assembled on read — callers should treat this as a unified view
+   * regardless of the underlying storage layout.
    */
-  messages: MessageObject[];
+  messages: AgentMessage[];
   metadata: Record<string, unknown>;
   createdAt: number; // Unix seconds
 }
@@ -51,7 +51,6 @@ export interface RunRecord {
   threadId?: string;
   status: RunStatus;
   input: InputMessage[];
-  output?: MessageObject[];
   lastError?: { code: string; message: string } | null;
   usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   config?: AgentRunConfig;
@@ -69,8 +68,8 @@ export interface AgentStore {
   init?(): Promise<void>;
   destroy?(): Promise<void>;
   createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord>;
-  getThread(threadId: string): Promise<ThreadRecord>;
-  appendMessages(threadId: string, messages: MessageObject[]): Promise<void>;
+  getThread(threadId: string, options?: GetThreadOptions): Promise<ThreadRecord>;
+  appendMessages(threadId: string, messages: AgentMessage[]): Promise<void>;
   createRun(
     input: InputMessage[],
     threadId?: string,

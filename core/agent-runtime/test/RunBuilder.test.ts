@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import type { RunRecord, MessageObject } from '@eggjs/tegg-types/agent-runtime';
+import type { RunRecord } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentObjectType, AgentErrorCode, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { RunBuilder } from '../src/RunBuilder';
@@ -43,16 +43,6 @@ describe('test/RunBuilder.test.ts', () => {
         status: RunStatus.Completed,
         startedAt: 1001,
         completedAt: 1002,
-        output: [
-          {
-            id: 'msg_1',
-            object: 'thread.message',
-            createdAt: 1001,
-            role: 'assistant',
-            status: 'completed',
-            content: [],
-          },
-        ],
         usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
         metadata: { key: 'value' },
         config: { maxIterations: 10 },
@@ -62,7 +52,6 @@ describe('test/RunBuilder.test.ts', () => {
       assert.equal(snap.status, RunStatus.Completed);
       assert.equal(snap.startedAt, 1001);
       assert.equal(snap.completedAt, 1002);
-      assert.equal(snap.output?.length, 1);
       assert.deepStrictEqual(snap.usage, { promptTokens: 10, completionTokens: 5, totalTokens: 15 });
       assert.deepStrictEqual(snap.metadata, { key: 'value' });
       assert.deepStrictEqual(snap.config, { maxIterations: 10 });
@@ -100,15 +89,12 @@ describe('test/RunBuilder.test.ts', () => {
   });
 
   describe('complete', () => {
-    it('should transition in_progress → completed with output and usage', () => {
+    it('should transition in_progress → completed with usage', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
       rb.start();
 
-      const output: MessageObject[] = [
-        { id: 'msg_1', object: 'thread.message', createdAt: 1001, role: 'assistant', status: 'completed', content: [] },
-      ];
       const usage: RunUsage = { promptTokens: 10, completionTokens: 5, totalTokens: 15 };
-      const update = rb.complete(output, usage);
+      const update = rb.complete(usage);
 
       assert.equal(update.status, RunStatus.Completed);
       assert.equal(typeof update.completedAt, 'number');
@@ -117,7 +103,6 @@ describe('test/RunBuilder.test.ts', () => {
         completionTokens: 5,
         totalTokens: 15,
       });
-      assert.equal(update.output, output);
 
       const snap = rb.snapshot();
       assert.equal(snap.status, RunStatus.Completed);
@@ -132,7 +117,7 @@ describe('test/RunBuilder.test.ts', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
       rb.start();
 
-      const update = rb.complete([]);
+      const update = rb.complete();
       assert.equal(update.status, RunStatus.Completed);
       assert.equal(update.usage, undefined);
 
@@ -142,7 +127,7 @@ describe('test/RunBuilder.test.ts', () => {
 
     it('should throw for non-in_progress status', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
-      assert.throws(() => rb.complete([]), InvalidRunStateTransitionError);
+      assert.throws(() => rb.complete(), InvalidRunStateTransitionError);
     });
   });
 
@@ -235,7 +220,7 @@ describe('test/RunBuilder.test.ts', () => {
       rb.start();
       assert.equal(rb.snapshot().status, RunStatus.InProgress);
 
-      rb.complete([], { promptTokens: 1, completionTokens: 2, totalTokens: 3 });
+      rb.complete({ promptTokens: 1, completionTokens: 2, totalTokens: 3 });
       const snap = rb.snapshot();
       assert.equal(snap.status, RunStatus.Completed);
       assert.ok(snap.startedAt);

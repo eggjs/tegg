@@ -1,38 +1,5 @@
-import type { InputContentPart, InputMessage, MessageContentBlock, MessageObject } from './AgentMessage';
+import type { AgentMessage } from './AgentMessage';
 import type { AgentRunConfig, RunStatus } from './AgentStore';
-
-// ===== Message roles =====
-
-export const MessageRole = {
-  User: 'user',
-  Assistant: 'assistant',
-  System: 'system',
-} as const;
-export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole];
-
-// ===== Message statuses =====
-
-export const MessageStatus = {
-  InProgress: 'in_progress',
-  Incomplete: 'incomplete',
-  Completed: 'completed',
-} as const;
-export type MessageStatus = (typeof MessageStatus)[keyof typeof MessageStatus];
-
-// ===== SSE events =====
-
-export const AgentSSEEvent = {
-  ThreadRunCreated: 'thread.run.created',
-  ThreadRunInProgress: 'thread.run.in_progress',
-  ThreadRunCompleted: 'thread.run.completed',
-  ThreadRunFailed: 'thread.run.failed',
-  ThreadRunCancelled: 'thread.run.cancelled',
-  ThreadMessageCreated: 'thread.message.created',
-  ThreadMessageDelta: 'thread.message.delta',
-  ThreadMessageCompleted: 'thread.message.completed',
-  Done: 'done',
-} as const;
-export type AgentSSEEvent = (typeof AgentSSEEvent)[keyof typeof AgentSSEEvent];
 
 // ===== Error codes =====
 
@@ -51,7 +18,7 @@ export interface ThreadObject {
 }
 
 export interface ThreadObjectWithMessages extends ThreadObject {
-  messages: MessageObject[];
+  messages: AgentMessage[];
 }
 
 // ===== Run objects =====
@@ -69,7 +36,6 @@ export interface RunObject {
   failedAt?: number | null;
   usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   metadata?: Record<string, unknown>;
-  output?: MessageObject[];
   config?: AgentRunConfig;
 }
 
@@ -84,42 +50,10 @@ export interface CreateRunInput {
    */
   isResume?: boolean;
   input: {
-    messages: InputMessage[];
+    messages: import('./AgentMessage').InputMessage[];
   };
   config?: AgentRunConfig;
   metadata?: Record<string, unknown>;
-}
-
-// ===== Message delta =====
-
-export interface MessageDeltaObject {
-  id: string;
-  object: 'thread.message.delta';
-  delta: {
-    content: MessageContentBlock[];
-  };
-}
-
-// ===== Stream message types =====
-
-export interface AgentStreamMessagePayload {
-  role?: string;
-  content: string | InputContentPart[];
-}
-
-export interface AgentRunUsage {
-  promptTokens?: number;
-  completionTokens?: number;
-}
-
-export interface AgentStreamMessage {
-  type?: string;
-  message?: AgentStreamMessagePayload;
-  usage?: AgentRunUsage;
-  /** Whether to accumulate message content into the final completed message. Defaults to true. */
-  accumulate?: boolean;
-  /** Raw data to pass through as StreamEvent.data. When set, this is used directly instead of constructing from message/usage. */
-  raw?: unknown;
 }
 
 // ===== Stream event (TaskEvent-style wrapper) =====
@@ -129,4 +63,12 @@ export interface StreamEvent {
   type: string;
   data: unknown;
   ts: number;
+}
+
+// ===== Get thread options =====
+
+export interface GetThreadOptions {
+  /** When true, return all message types (system, result, stream_event, etc.).
+   *  Defaults to false — only user and assistant messages are returned. */
+  includeAllMessages?: boolean;
 }

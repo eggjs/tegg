@@ -1,5 +1,7 @@
 import assert from 'node:assert';
 
+import type { AgentMessage } from '@eggjs/tegg-types/agent-runtime';
+
 import { AgentNotFoundError, OSSAgentStore } from '../index';
 import { MapStorageClient, MapStorageClientWithoutAppend } from './helpers';
 
@@ -59,76 +61,70 @@ describe('test/OSSAgentStore.test.ts', () => {
 
     it('should append messages to a thread', async () => {
       const thread = await store.createThread();
-      await store.appendMessages(thread.id, [
-        {
-          id: 'msg_1',
-          object: 'thread.message',
-          createdAt: Math.floor(Date.now() / 1000),
-          role: 'user',
-          status: 'completed',
-          content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
-        },
-        {
-          id: 'msg_2',
-          object: 'thread.message',
-          createdAt: Math.floor(Date.now() / 1000),
-          role: 'assistant',
-          status: 'completed',
-          content: [{ type: 'text', text: { value: 'Hi!', annotations: [] } }],
-        },
-      ]);
+      const messages: AgentMessage[] = [
+        { type: 'user', message: { role: 'user', content: 'Hello' } },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'Hi!' }] } },
+      ];
+      await store.appendMessages(thread.id, messages);
       const fetched = await store.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal(fetched.messages[0].id, 'msg_1');
-      assert.equal(fetched.messages[1].id, 'msg_2');
+      assert.equal(fetched.messages[0].type, 'user');
+      assert.equal(fetched.messages[1].type, 'assistant');
     });
 
     it('should append messages incrementally', async () => {
       const thread = await store.createThread();
       await store.appendMessages(thread.id, [
-        {
-          id: 'msg_1',
-          object: 'thread.message',
-          createdAt: Math.floor(Date.now() / 1000),
-          role: 'user',
-          status: 'completed',
-          content: [{ type: 'text', text: { value: 'First', annotations: [] } }],
-        },
+        { type: 'user', message: { role: 'user', content: 'First' } },
       ]);
       await store.appendMessages(thread.id, [
-        {
-          id: 'msg_2',
-          object: 'thread.message',
-          createdAt: Math.floor(Date.now() / 1000),
-          role: 'assistant',
-          status: 'completed',
-          content: [{ type: 'text', text: { value: 'Second', annotations: [] } }],
-        },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'Second' }] } },
       ]);
       const fetched = await store.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal(fetched.messages[0].id, 'msg_1');
-      assert.equal(fetched.messages[1].id, 'msg_2');
+      assert.equal(fetched.messages[0].type, 'user');
+      assert.equal(fetched.messages[1].type, 'assistant');
     });
 
     it('should throw AgentNotFoundError when appending to non-existent thread', async () => {
       await assert.rejects(
         () =>
           store.appendMessages('thread_non_existent', [
-            {
-              id: 'msg_1',
-              object: 'thread.message',
-              createdAt: Math.floor(Date.now() / 1000),
-              role: 'user',
-              status: 'completed',
-              content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
-            },
+            { type: 'user', message: { role: 'user', content: 'Hello' } },
           ]),
         (err: unknown) => {
           assert(err instanceof AgentNotFoundError);
           return true;
         },
       );
+    });
+
+    it('should only return user and assistant messages by default', async () => {
+      const thread = await store.createThread();
+      await store.appendMessages(thread.id, [
+        { type: 'system', subtype: 'init', session_id: 'sess-1' },
+        { type: 'user', message: { role: 'user', content: 'Hello' } },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'Hi!' }] } },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } },
+      ]);
+      const fetched = await store.getThread(thread.id);
+      assert.equal(fetched.messages.length, 2);
+      assert.equal(fetched.messages[0].type, 'user');
+      assert.equal(fetched.messages[1].type, 'assistant');
+    });
+
+    it('should return all message types when includeAllMessages is true', async () => {
+      const thread = await store.createThread();
+      await store.appendMessages(thread.id, [
+        { type: 'system', subtype: 'init', session_id: 'sess-1' },
+        { type: 'user', message: { role: 'user', content: 'Hello' } },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } },
+      ]);
+      const fetched = await store.getThread(thread.id, { includeAllMessages: true });
+      assert.equal(fetched.messages.length, 3);
+      assert.equal(fetched.messages[0].type, 'system');
+      assert.equal(fetched.messages[1].type, 'user');
+      assert.equal(fetched.messages[2].type, 'result');
     });
   });
 
@@ -137,29 +133,15 @@ describe('test/OSSAgentStore.test.ts', () => {
       const fallbackStore = new OSSAgentStore({ client: new MapStorageClientWithoutAppend() });
       const thread = await fallbackStore.createThread();
       await fallbackStore.appendMessages(thread.id, [
-        {
-          id: 'msg_1',
-          object: 'thread.message',
-          createdAt: Math.floor(Date.now() / 1000),
-          role: 'user',
-          status: 'completed',
-          content: [{ type: 'text', text: { value: 'Hello', annotations: [] } }],
-        },
+        { type: 'user', message: { role: 'user', content: 'Hello' } },
       ]);
       await fallbackStore.appendMessages(thread.id, [
-        {
-          id: 'msg_2',
-          object: 'thread.message',
-          createdAt: Math.floor(Date.now() / 1000),
-          role: 'assistant',
-          status: 'completed',
-          content: [{ type: 'text', text: { value: 'Hi!', annotations: [] } }],
-        },
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'Hi!' }] } },
       ]);
       const fetched = await fallbackStore.getThread(thread.id);
       assert.equal(fetched.messages.length, 2);
-      assert.equal(fetched.messages[0].id, 'msg_1');
-      assert.equal(fetched.messages[1].id, 'msg_2');
+      assert.equal(fetched.messages[0].type, 'user');
+      assert.equal(fetched.messages[1].type, 'assistant');
     });
   });
 
@@ -221,23 +203,13 @@ describe('test/OSSAgentStore.test.ts', () => {
       const run = await store.createRun([{ role: 'user', content: 'Hello' }]);
       await store.updateRun(run.id, {
         status: 'completed',
-        output: [
-          {
-            id: 'msg_1',
-            object: 'thread.message',
-            createdAt: Math.floor(Date.now() / 1000),
-            role: 'assistant',
-            status: 'completed',
-            content: [{ type: 'text', text: { value: 'World', annotations: [] } }],
-          },
-        ],
         completedAt: Math.floor(Date.now() / 1000),
+        usage: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
       });
       const fetched = await store.getRun(run.id);
       assert.equal(fetched.status, 'completed');
-      assert(fetched.output);
-      assert.equal(fetched.output.length, 1);
       assert(typeof fetched.completedAt === 'number');
+      assert.deepStrictEqual(fetched.usage, { promptTokens: 10, completionTokens: 5, totalTokens: 15 });
     });
 
     it('should not allow overwriting id or object via updateRun', async () => {
