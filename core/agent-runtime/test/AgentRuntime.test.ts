@@ -569,7 +569,7 @@ describe('test/AgentRuntime.test.ts', () => {
   });
 
   describe('getRunStream', () => {
-    it('should replay all events on reconnect with lastEventId=0', async () => {
+    it('should replay all events on reconnect with lastSeq=0', async () => {
       const writer1 = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer1);
 
@@ -591,7 +591,7 @@ describe('test/AgentRuntime.test.ts', () => {
       }
     });
 
-    it('should replay only events after lastEventId', async () => {
+    it('should replay only events after lastSeq', async () => {
       const writer1 = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer1);
 

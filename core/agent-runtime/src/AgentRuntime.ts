@@ -1,6 +1,5 @@
 import { EventEmitter } from 'node:events';
 import { appendFileSync, createReadStream, mkdirSync, existsSync } from 'node:fs';
-import { rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
@@ -22,7 +21,6 @@ import { RunBuilder } from './RunBuilder';
 import type { SSEWriter } from './SSEWriter';
 
 const HEARTBEAT_INTERVAL_MS = 10_000;
-const BUFFER_TTL_MS = 5 * 60 * 1000;
 const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
 
 interface RunEventBuffer {
@@ -30,7 +28,6 @@ interface RunEventBuffer {
   lastSeq: number;
   done: boolean;
   emitter: EventEmitter;
-  cleanupTimer?: ReturnType<typeof setTimeout>;
 }
 
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
@@ -286,11 +283,8 @@ export class AgentRuntime {
       .finally(() => {
         resolveTask();
         this.runningTasks.delete(run.id);
-        // Schedule buffer + file cleanup after TTL
-        buffer.cleanupTimer = setTimeout(() => {
-          this.runBuffers.delete(run.id);
-          rm(buffer.filePath, { force: true }).catch(() => { /* ignore cleanup errors */ });
-        }, BUFFER_TTL_MS);
+        this.runBuffers.delete(run.id);
+        buffer.emitter.removeAllListeners();
       });
 
     // Stream events to the current client
@@ -299,14 +293,26 @@ export class AgentRuntime {
 
   /**
    * Reconnect to a running or completed run's event stream.
-   * Replays events after lastEventId, then continues real-time if still running.
+   * Replays events after lastSeq, then continues real-time if still running.
    */
-  async getRunStream(runId: string, writer: SSEWriter, lastEventId = 0): Promise<void> {
+  async getRunStream(runId: string, writer: SSEWriter, lastSeq = 0): Promise<void> {
     const buffer = this.runBuffers.get(runId);
-    if (!buffer) {
-      throw new AgentNotFoundError(`Run event buffer not found: ${runId}`);
+    if (buffer) {
+      // Task still running — use live buffer (emitter + file)
+      await this.streamEventsToWriter(buffer, writer, lastSeq);
+      return;
     }
-    await this.streamEventsToWriter(buffer, writer, lastEventId);
+
+    // Task already finished — replay from JSONL file directly
+    const filePath = join(EVENT_DIR, `${runId}.jsonl`);
+    if (!existsSync(filePath)) {
+      throw new AgentNotFoundError(`Run event stream not found: ${runId}`);
+    }
+    for await (const event of this.readEventsFromFile(filePath, lastSeq)) {
+      if (writer.closed) return;
+      writer.writeEvent(event.type, event);
+    }
+    if (!writer.closed) writer.end();
   }
 
   /**
@@ -342,12 +348,6 @@ export class AgentRuntime {
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          rb.cancelling();
-          try {
-            await this.store.updateRun(runId, rb.cancel());
-          } catch (storeErr) {
-            this.logger.error('[AgentRuntime] failed to write cancelled status during stream abort:', storeErr);
-          }
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
           return;
         }
@@ -367,6 +367,13 @@ export class AgentRuntime {
         this.pushEvent(buffer, eventType, eventData);
       }
 
+      // Check if another worker has cancelled this run before writing final state
+      const currentRun = await this.store.getRun(runId);
+      if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+        return;
+      }
+
       // Persist to store (same as syncRun/asyncRun)
       const { output, usage } = MessageConverter.extractFromStreamMessages(streamMessages, runId);
       await this.store.appendMessages(threadId, [
@@ -377,21 +384,20 @@ export class AgentRuntime {
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {
-      if (abortController.signal.aborted) {
-        rb.cancelling();
+      if (!abortController.signal.aborted) {
+        // Check store before writing failed state — another worker may have cancelled
         try {
-          await this.store.updateRun(runId, rb.cancel());
-        } catch (storeErr) {
-          this.logger.error('[AgentRuntime] failed to write cancelled status during stream error:', storeErr);
-        }
-        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
-      } else {
-        try {
-          await this.store.updateRun(runId, rb.fail(err as Error));
+          const currentRun = await this.store.getRun(runId);
+          if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
+            await this.store.updateRun(runId, rb.fail(err as Error));
+          }
         } catch (storeErr) {
           this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
         }
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
+      } else {
+        this.logger.error('[AgentRuntime] execRun error during abort:', err);
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
       }
     } finally {
       buffer.done = true;
@@ -420,18 +426,18 @@ export class AgentRuntime {
 
   /**
    * Stream events to an SSE writer with replay and real-time phases.
-   * Phase 1: Replay — read JSONL file, send events with seq > lastEventId
+   * Phase 1: Replay — read JSONL file, send events with seq > lastSeq
    * Phase 2: Real-time — listen to EventEmitter until the run completes or client disconnects
    * Heartbeat comments (`: keepalive`) are sent every 10 seconds during the real-time phase.
    */
   private async streamEventsToWriter(
     buffer: RunEventBuffer,
     writer: SSEWriter,
-    lastEventId: number,
+    lastSeq: number,
   ): Promise<void> {
     // Phase 1: Replay from JSONL file
-    let lastWrittenSeq = lastEventId;
-    for await (const event of this.readEventsFromFile(buffer.filePath, lastEventId)) {
+    let lastWrittenSeq = lastSeq;
+    for await (const event of this.readEventsFromFile(buffer.filePath, lastSeq)) {
       if (writer.closed) return;
       writer.writeEvent(event.type, event);
       lastWrittenSeq = event.seq;
@@ -563,11 +569,9 @@ export class AgentRuntime {
     }
     await this.waitForPendingTasks();
 
-    // Clean up all run buffers, timers, and event files
+    // Clean up all run buffers (JSONL files are preserved for reconnection)
     for (const buffer of this.runBuffers.values()) {
-      if (buffer.cleanupTimer) clearTimeout(buffer.cleanupTimer);
       buffer.emitter.removeAllListeners();
-      rm(buffer.filePath, { force: true }).catch(() => { /* ignore cleanup errors */ });
     }
     this.runBuffers.clear();
 

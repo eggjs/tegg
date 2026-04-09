@@ -246,8 +246,8 @@ export class AgentControllerObject implements EggObject {
     }
 
     // getRunStream: always delegate to runtime (no user override needed)
-    // lastEventId comes from query string as a string, needs parseInt
-    instance.getRunStream = async (runId: string, lastEventId?: string): Promise<void> => {
+    // lastSeq comes from query string as a string, needs parseInt
+    instance.getRunStream = async (runId: string, lastSeq?: string): Promise<void> => {
       const runtimeCtx = ContextHandler.getContext();
       if (!runtimeCtx) {
         throw new Error('getRunStream must be called within a request context');
@@ -255,7 +255,7 @@ export class AgentControllerObject implements EggObject {
       const eggCtx = runtimeCtx.get(EGG_CONTEXT);
       eggCtx.respond = false;
       const writer = new HttpSSEWriter(eggCtx.res);
-      const seq = parseInt(lastEventId as string, 10) || 0;
+      const seq = parseInt(lastSeq as string, 10) || 0;
       return runtime.getRunStream(runId, writer, seq);
     };
   }

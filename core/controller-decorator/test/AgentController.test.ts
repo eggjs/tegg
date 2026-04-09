@@ -198,7 +198,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       assert.strictEqual(getRunStream.method, HTTPMethodEnum.GET);
       assert.deepStrictEqual(getRunStream.paramMap, new Map([
         [ 0, new PathParamMeta('id') ],
-        [ 1, new QueryParamMeta('lastEventId') ],
+        [ 1, new QueryParamMeta('lastSeq') ],
       ]));
 
       const syncRun = meta.methods.find(m => m.name === 'syncRun')!;

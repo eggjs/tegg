@@ -83,7 +83,7 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
     path: '/runs/:id/stream',
     params: [
       { index: 0, type: 'pathParam', name: 'id' },
-      { index: 1, type: 'query', name: 'lastEventId' },
+      { index: 1, type: 'query', name: 'lastSeq' },
     ],
   },
   {
