@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.2](https://github.com/eggjs/tegg/compare/v3.78.1...v3.78.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* **agent-runtime:** filter stream_event in all appendMessages calls ([#434](https://github.com/eggjs/tegg/issues/434)) ([c3b81bd](https://github.com/eggjs/tegg/commit/c3b81bdb108d07528a40fbf14162fcbeb3338c60)), closes [#433](https://github.com/eggjs/tegg/issues/433)
+
+
+
+
+
 ## [3.78.1](https://github.com/eggjs/tegg/compare/v3.78.0...v3.78.1) (2026-04-09)
 
 **Note:** Version bump only for package tegg
