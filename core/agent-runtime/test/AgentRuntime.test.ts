@@ -568,7 +568,7 @@ describe('test/AgentRuntime.test.ts', () => {
     });
   });
 
-  describe('reconnectStream', () => {
+  describe('getRunStream', () => {
     it('should replay all events on reconnect with lastEventId=0', async () => {
       const writer1 = new MockSSEWriter();
       await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer1);
@@ -579,7 +579,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       // Reconnect and get all events
       const writer2 = new MockSSEWriter();
-      await runtime.reconnectStream(runId, writer2, 0);
+      await runtime.getRunStream(runId, writer2, 0);
 
       // Should get the same events
       assert.equal(writer2.events.length, writer1.events.length);
@@ -601,7 +601,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       // Reconnect from seq 2 (skip first 2 events)
       const writer2 = new MockSSEWriter();
-      await runtime.reconnectStream(runId, writer2, 2);
+      await runtime.getRunStream(runId, writer2, 2);
 
       assert.equal(writer2.events.length, totalEvents - 2);
       const firstReplayedSeq = (writer2.events[0].data as StreamEvent).seq;
@@ -611,7 +611,7 @@ describe('test/AgentRuntime.test.ts', () => {
     it('should throw AgentNotFoundError for unknown runId', async () => {
       const writer = new MockSSEWriter();
       await assert.rejects(
-        () => runtime.reconnectStream('run_nonexistent', writer),
+        () => runtime.getRunStream('run_nonexistent', writer),
         (err: unknown) => {
           assert(err instanceof AgentNotFoundError);
           return true;
@@ -653,7 +653,7 @@ describe('test/AgentRuntime.test.ts', () => {
 
       // Reconnect — should get replayed events then real-time
       const writer2 = new MockSSEWriter();
-      const reconnectPromise = runtime.reconnectStream(runId, writer2, 0);
+      const reconnectPromise = runtime.getRunStream(runId, writer2, 0);
 
       // Let the background task continue
       await setTimeout(20);

@@ -132,7 +132,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       // AgentFooController only implements execRun (smart defaults pattern)
       // All 8 route methods should have stub defaults that throw
       const proto = AgentFooController.prototype as any;
-      const routeMethods = [ 'createThread', 'getThread', 'asyncRun', 'streamRun', 'reconnectStream', 'syncRun', 'getRun', 'cancelRun' ];
+      const routeMethods = [ 'createThread', 'getThread', 'asyncRun', 'streamRun', 'getRunStream', 'syncRun', 'getRun', 'cancelRun' ];
       for (const methodName of routeMethods) {
         assert(typeof proto[methodName] === 'function', `${methodName} should be a function`);
         assert.strictEqual(
@@ -148,7 +148,7 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       { name: 'getThread', args: [ 'thread_1' ] },
       { name: 'asyncRun', args: [{ input: { messages: [] } }] },
       { name: 'streamRun', args: [{ input: { messages: [] } }] },
-      { name: 'reconnectStream', args: [ 'run_1', '0' ] },
+      { name: 'getRunStream', args: [ 'run_1', '0' ] },
       { name: 'syncRun', args: [{ input: { messages: [] } }] },
       { name: 'getRun', args: [ 'run_1' ] },
       { name: 'cancelRun', args: [ 'run_1' ] },
@@ -193,10 +193,10 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
       assert.strictEqual(streamRun.method, HTTPMethodEnum.POST);
       assert.deepStrictEqual(streamRun.paramMap, new Map([[ 0, new BodyParamMeta() ]]));
 
-      const reconnectStream = meta.methods.find(m => m.name === 'reconnectStream')!;
-      assert.strictEqual(reconnectStream.path, '/runs/:id/stream');
-      assert.strictEqual(reconnectStream.method, HTTPMethodEnum.GET);
-      assert.deepStrictEqual(reconnectStream.paramMap, new Map([
+      const getRunStream = meta.methods.find(m => m.name === 'getRunStream')!;
+      assert.strictEqual(getRunStream.path, '/runs/:id/stream');
+      assert.strictEqual(getRunStream.method, HTTPMethodEnum.GET);
+      assert.deepStrictEqual(getRunStream.paramMap, new Map([
         [ 0, new PathParamMeta('id') ],
         [ 1, new QueryParamMeta('lastEventId') ],
       ]));

@@ -301,7 +301,7 @@ export class AgentRuntime {
    * Reconnect to a running or completed run's event stream.
    * Replays events after lastEventId, then continues real-time if still running.
    */
-  async reconnectStream(runId: string, writer: SSEWriter, lastEventId = 0): Promise<void> {
+  async getRunStream(runId: string, writer: SSEWriter, lastEventId = 0): Promise<void> {
     const buffer = this.runBuffers.get(runId);
     if (!buffer) {
       throw new AgentNotFoundError(`Run event buffer not found: ${runId}`);

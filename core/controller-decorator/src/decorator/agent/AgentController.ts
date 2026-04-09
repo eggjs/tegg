@@ -78,7 +78,7 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
     params: [{ index: 0, type: 'body' }],
   },
   {
-    methodName: 'reconnectStream',
+    methodName: 'getRunStream',
     httpMethod: HTTPMethodEnum.GET,
     path: '/runs/:id/stream',
     params: [
