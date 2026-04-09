@@ -204,10 +204,10 @@ export class AgentRuntime {
 
         const usage = MessageConverter.extractUsage(streamMessages);
 
-        // Append input messages + all stream messages to thread
+        // Append input messages + stream messages to thread (excluding stream_event deltas)
         await this.store.appendMessages(threadId, [
           ...MessageConverter.toAgentMessages(input.input.messages),
-          ...streamMessages,
+          ...MessageConverter.filterForStorage(streamMessages),
         ]);
 
         await this.store.updateRun(run.id, rb.complete(usage));
@@ -351,11 +351,11 @@ export class AgentRuntime {
         return;
       }
 
-      // Persist to store
+      // Persist to store (excluding stream_event deltas)
       const usage = MessageConverter.extractUsage(streamMessages);
       await this.store.appendMessages(threadId, [
         ...MessageConverter.toAgentMessages(input.input.messages),
-        ...streamMessages,
+        ...MessageConverter.filterForStorage(streamMessages),
       ]);
       await this.store.updateRun(runId, rb.complete(usage));
 
