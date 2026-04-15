@@ -353,36 +353,64 @@ export class MCPProxyApiClient extends APIClientBase {
           ctx.respond = false;
           ctx.req.headers['mcp-proxy-type'] = action;
           ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
-          const response = await fetch(`http://localhost:${detail.port}`, {
-            dispatcher: new Agent({
-              bodyTimeout: 0,
-              headersTimeout: 0,
-            }),
-            headers: ctx.req.headers as unknown as Record<string, string>,
-            method: ctx.req.method,
-            ...(ctx.req.method !== 'GET' ? {
-              body: body as string,
-            } : {}),
+          const dispatcher = new Agent({
+            bodyTimeout: 10 * 60 * 1000,
+            headersTimeout: 30 * 1000,
+            keepAliveTimeout: 10 * 1000,
+            keepAliveMaxTimeout: 30 * 1000,
           });
-          const headers: Record<string, string> = {
-            'mcp-proxy-arg': encodeURIComponent((body as Buffer).toString()),
-          };
-          for (const [ key, value ] of response.headers.entries()) {
-            if (IGNORE_HEADERS.includes(key)) {
-              continue;
+          try {
+            const response = await fetch(`http://localhost:${detail.port}`, {
+              dispatcher,
+              headers: ctx.req.headers as unknown as Record<string, string>,
+              method: ctx.req.method,
+              ...(ctx.req.method !== 'GET' ? {
+                body: body as string,
+              } : {}),
+            });
+            const headers: Record<string, string> = {
+              'mcp-proxy-arg': encodeURIComponent((body as Buffer).toString()),
+            };
+            for (const [ key, value ] of response.headers.entries()) {
+              if (IGNORE_HEADERS.includes(key)) {
+                continue;
+              }
+              headers[key] = value;
             }
-            headers[key] = value;
-          }
-          ctx.set(headers);
-          ctx.res.statusCode = response.status;
-          const readable = Readable.fromWeb(response.body!);
-          readable.on('error', err => {
-            this.logger.error('[mcp-proxy] stream proxy error: %s', err.message);
+            ctx.set(headers);
+            ctx.res.statusCode = response.status;
+            const readable = Readable.fromWeb(response.body!);
+            readable.on('error', err => {
+              this.logger.error('[mcp-proxy] stream proxy error: %s', err.message);
+              if (!ctx.res.writableEnded) {
+                ctx.res.end();
+              }
+              dispatcher.close();
+            });
+            readable.on('end', () => {
+              dispatcher.close();
+            });
+            ctx.res.on('close', () => {
+              dispatcher.close();
+            });
+            readable.pipe(ctx.res);
+          } catch (err) {
+            dispatcher.close();
+            this.logger.error('[mcp-proxy] stream proxy fetch error: %s', err.message);
+            if (!ctx.res.headersSent) {
+              ctx.res.writeHead(502, { 'content-type': 'application/json' });
+            }
             if (!ctx.res.writableEnded) {
-              ctx.res.end();
+              ctx.res.end(JSON.stringify({
+                jsonrpc: '2.0',
+                error: {
+                  code: -32603,
+                  message: `Proxy error: ${err.message}`,
+                },
+                id: null,
+              }));
             }
-          });
-          readable.pipe(ctx.res);
+          }
           break;
         }
       }
