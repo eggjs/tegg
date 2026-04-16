@@ -1,8 +1,10 @@
+import assert from 'node:assert';
 import { Server } from 'node:http';
 import httpRequest from 'supertest';
 import { ServiceWorkerApp } from '../../src/ServiceWorkerApp';
 import { StandaloneTestUtil } from '@eggjs/module-test-util/StandaloneTestUtil';
 import { TestUtils } from '../Utils';
+import { httpAdviceExecutionLog } from '../fixtures/http/HttpTestAdvice';
 
 describe('standalone/service-worker/test/http/router.test.ts', () => {
   let app: ServiceWorkerApp;
@@ -40,5 +42,17 @@ describe('standalone/service-worker/test/http/router.test.ts', () => {
     await httpRequest(server)
       .get('/invalid-path')
       .expect(404);
+  });
+
+  it('should execute AOP middleware for HTTP controller', async () => {
+    httpAdviceExecutionLog.length = 0;
+
+    await httpRequest(server)
+      .get('/middleware/aop')
+      .expect(200, { msg: 'hello' });
+
+    assert(httpAdviceExecutionLog.length > 0, 'middleware should have been executed');
+    assert(httpAdviceExecutionLog.includes('before'), 'middleware before should have been called');
+    assert(httpAdviceExecutionLog.includes('after'), 'middleware after should have been called');
   });
 });

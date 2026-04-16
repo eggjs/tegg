@@ -12,7 +12,10 @@ import {
   QueriesParamMeta,
   QueryParamMeta,
 } from '@eggjs/tegg';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import { CONTROLLER_AOP_MIDDLEWARES, METHOD_AOP_MIDDLEWARES } from '@eggjs/tegg-types/controller-decorator';
 import { EggContainerFactory, EggPrototype } from '@eggjs/tegg/helper';
+import type { AbstractControllerAdvice } from '../mcp/AbstractControllerAdvice';
 import { RootProtoManager } from '../controller/RootProtoManager';
 import { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext';
 import { RequestUtils } from '../utils/RequestUtils';
@@ -147,16 +150,33 @@ export class HTTPMethodRegister {
     }
   }
 
+  private getAopMiddlewares(): Array<(ctx: ServiceWorkerFetchContext, next: Next) => Promise<void>> {
+    // Controller-level AOP middlewares
+    const controllerAopClasses = (this.proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ?? []) as EggProtoImplClass<AbstractControllerAdvice>[];
+    // Method-level AOP middlewares
+    const methodAopMap = this.proto.getMetaData(METHOD_AOP_MIDDLEWARES) as Map<string, EggProtoImplClass<AbstractControllerAdvice>[]> | undefined;
+    const methodAopClasses = methodAopMap?.get(this.methodMeta.name) ?? [];
+
+    const allAopClasses = [ ...controllerAopClasses, ...methodAopClasses ];
+    return allAopClasses.map(clazz => {
+      return async (ctx: ServiceWorkerFetchContext, next: Next) => {
+        const eggObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
+        await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
+      };
+    });
+  }
+
   register(rootProtoManager: RootProtoManager) {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     const routerFunc = this.router[this.methodMeta.method.toLowerCase()];
     const methodMiddlewares = this.controllerMeta.getMethodMiddlewares(this.methodMeta);
+    const aopMiddlewares = this.getAopMiddlewares();
 
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [ undefined ];
     hosts.forEach(h => {
       const handler = this.createHandler(this.methodMeta, h);
-      Reflect.apply(routerFunc, this.router, [ methodName, methodRealPath, ...methodMiddlewares, handler ]);
+      Reflect.apply(routerFunc, this.router, [ methodName, methodRealPath, ...aopMiddlewares, ...methodMiddlewares, handler ]);
       // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
       const regExp = pathToRegexp(methodRealPath, { sensitive: true });
       rootProtoManager.registerRootProto(this.methodMeta.method, (ctx: EggContext) => {
