@@ -5,6 +5,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 import { ServiceWorkerApp } from '../../src/ServiceWorkerApp';
 import { StandaloneTestUtil } from '@eggjs/module-test-util/StandaloneTestUtil';
 import { TestUtils } from '../Utils';
+import { adviceExecutionLog } from '../fixtures/mcp/McpTestAdvice';
 
 describe('standalone/service-worker/test/mcp/mcp.test.ts', () => {
   let app: ServiceWorkerApp;
@@ -87,5 +88,28 @@ describe('standalone/service-worker/test/mcp/mcp.test.ts', () => {
     assert.deepStrictEqual(result, {
       content: [{ type: 'text', text: '8' }],
     });
+  });
+
+  it('should execute AOP middleware', async () => {
+    adviceExecutionLog.length = 0;
+
+    client = new Client({
+      name: 'test-mcp-client',
+      version: '1.0.0',
+    });
+    const transport = new StreamableHTTPClientTransport(
+      new URL(`${baseUrl}/mcp/test-server/stream`),
+    );
+    await client.connect(transport);
+
+    await client.callTool({
+      name: 'echo',
+      arguments: { message: 'middleware test' },
+    });
+
+    // The middleware should have been executed for both the connect and callTool requests
+    assert(adviceExecutionLog.length > 0, 'middleware should have been executed');
+    assert(adviceExecutionLog.includes('before'), 'middleware before should have been called');
+    assert(adviceExecutionLog.includes('after'), 'middleware after should have been called');
   });
 });

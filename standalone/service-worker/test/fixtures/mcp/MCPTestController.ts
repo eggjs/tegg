@@ -1,5 +1,6 @@
-import { MCPController, MCPTool, MCPToolResponse, ToolArgsSchema, ToolArgs } from '@eggjs/tegg';
+import { MCPController, MCPTool, MCPToolResponse, ToolArgsSchema, ToolArgs, Middleware } from '@eggjs/tegg';
 import * as z from 'zod/v4';
+import { McpTestAdvice } from './McpTestAdvice';
 
 const EchoArgs = {
   message: z.string().describe('The message to echo'),
@@ -10,6 +11,7 @@ const AddArgs = {
   b: z.number().describe('Second number'),
 };
 
+@Middleware(McpTestAdvice)
 @MCPController({ name: 'test-server', version: '1.0.0' })
 export class MCPTestController {
   @MCPTool({ description: 'Echo the input message' })

@@ -12,8 +12,10 @@ import {
   MCPResourceMeta,
   MCPToolMeta,
 } from '@eggjs/tegg';
-import type { EggObject, EggObjectName, EggPrototype } from '@eggjs/tegg-types';
+import type { EggObject, EggObjectName, EggProtoImplClass, EggPrototype } from '@eggjs/tegg-types';
+import { CONTROLLER_AOP_MIDDLEWARES } from '@eggjs/tegg-types/controller-decorator';
 import { EggContainerFactory } from '@eggjs/tegg/helper';
+import type { AbstractControllerAdvice } from './AbstractControllerAdvice';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { ControllerRegister } from '../controller/ControllerRegister';
 import { RootProtoManager } from '../controller/RootProtoManager';
@@ -109,6 +111,7 @@ export class MCPControllerRegister implements ControllerRegister {
   private registeredControllerProtos: EggPrototype[] = [];
   private controllerMeta: MCPControllerMeta;
   mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
+  middlewaresMap: Record<string, Array<(ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>>> = {};
   registerMap: Record<string, {
     tools: ServerRegisterRecord<MCPToolMeta>[];
     prompts: ServerRegisterRecord<MCPPromptMeta>[];
@@ -135,6 +138,7 @@ export class MCPControllerRegister implements ControllerRegister {
       this.instance.registeredControllerProtos = [];
       this.instance.registerMap = {};
       this.instance.mcpServerHelperMap = {};
+      this.instance.middlewaresMap = {};
     }
     this.instance = undefined;
   }
@@ -206,9 +210,11 @@ export class MCPControllerRegister implements ControllerRegister {
     };
 
     const streamPath = `/mcp${name ? `/${name}` : ''}/stream`;
+    const middlewares = this.middlewaresMap[name ?? 'default'] ?? [];
     Reflect.apply(postRouterFunc, this.router, [
       'mcpStatelessStreamInit',
       streamPath,
+      ...middlewares,
       initHandler,
     ]);
 
@@ -293,6 +299,28 @@ export class MCPControllerRegister implements ControllerRegister {
           meta: prompt,
         });
       }
+
+      // Collect middlewares for this server name
+      const serverName = metadata.name ?? 'default';
+      if (!this.middlewaresMap[serverName]) {
+        this.middlewaresMap[serverName] = [];
+      }
+
+      // Function-type middlewares from MCPControllerMeta
+      const classMiddlewares = metadata.middlewares ?? [];
+      for (const mw of classMiddlewares) {
+        this.middlewaresMap[serverName].push(mw as unknown as (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>);
+      }
+
+      // AOP-type middlewares from class metadata
+      const aopMiddlewareClasses = (proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ?? []) as EggProtoImplClass<AbstractControllerAdvice>[];
+      for (const clazz of aopMiddlewareClasses) {
+        this.middlewaresMap[serverName].push(async (ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => {
+          const eggObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
+          await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
+        });
+      }
+
       this.registeredControllerProtos.push(proto);
     }
   }
