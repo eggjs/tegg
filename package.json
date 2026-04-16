@@ -17,15 +17,15 @@
   "scripts": {
     "lint:fix": "eslint . --ext .ts --fix",
     "lint": "eslint . --ext .ts",
-    "test": "ut test --workspaces",
+    "test": "ut run test --workspaces",
     "bump": "lerna version --conventional-commits --sign-git-commit --sign-git-tag --force-publish",
     "pub": "lerna publish from-git",
     "pub-canary": "lerna publish --canary",
     "clean": "ut run clean --workspaces",
-    "prepare-test": "ut prepare-test --workspaces",
-    "tsc": "ut tsc --workspaces",
-    "tsc:pub": "ut tsc:pub --workspaces",
-    "ci": "ut prepare-test && ut lint && ut test"
+    "prepare-test": "ut run prepare-test --workspaces",
+    "tsc": "ut run tsc --workspaces",
+    "tsc:pub": "ut run tsc:pub --workspaces",
+    "ci": "ut run prepare-test && ut run lint && ut run test"
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
