@@ -15,6 +15,7 @@ import { ContextProtoLoadUnitHook } from './hook/ContextProtoLoadUnitHook';
 import { ControllerPrototypeHook } from './hook/ControllerPrototypeHook';
 import { ControllerLoadUnitHook } from './hook/ControllerLoadUnitHook';
 import { HTTPControllerRegister } from './http/HTTPControllerRegister';
+import { MCPControllerRegister } from './mcp/MCPControllerRegister';
 
 export interface ServiceWorkerAppOptions {
   innerObjectHandlers?: RunnerOptions['innerObjectHandlers'];
@@ -91,8 +92,9 @@ export class ServiceWorkerApp {
   }
 
   async destroy() {
-    // Clean up static singleton
+    // Clean up static singletons
     HTTPControllerRegister.clean();
+    MCPControllerRegister.clean();
 
     // Unregister lifecycle hooks
     LoadUnitLifecycleUtil.deleteLifecycle(this.contextProtoLoadUnitHook);

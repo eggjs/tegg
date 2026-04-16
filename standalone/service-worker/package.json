@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@eggjs/router": "^3.0.6",
+    "@modelcontextprotocol/sdk": "^1.28.0",
     "@eggjs/tegg-ajv-plugin": "^3.78.3",
     "@eggjs/tegg-aop-runtime": "^3.78.3",
     "@eggjs/tegg-dal-plugin": "^3.78.3",

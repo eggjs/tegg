@@ -9,6 +9,7 @@ import { FetchRouter } from './FetchRouter';
 import { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext';
 import { RootProtoManager } from '../controller/RootProtoManager';
 import { HTTPControllerRegister } from './HTTPControllerRegister';
+import { MCPControllerRegister } from '../mcp/MCPControllerRegister';
 
 @EventHandlerProto('fetch', { accessLevel: AccessLevel.PUBLIC })
 export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response> {
@@ -24,6 +25,7 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   private initRoutes() {
     if (!this.#initialized) {
       HTTPControllerRegister.instance?.doRegister(this.rootProtoManager);
+      MCPControllerRegister.instance?.doRegister();
       this.#routes = this.fetchRouter.middleware();
       this.#initialized = true;
     }

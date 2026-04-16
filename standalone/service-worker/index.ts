@@ -17,3 +17,5 @@ export * from './src/http/HTTPMethodRegister';
 export * from './src/http/ServiceWorkerFetchContext';
 export * from './src/utils/RequestUtils';
 export * from './src/utils/ResponseUtils';
+export * from './src/mcp/MCPControllerRegister';
+export * from './src/mcp/MCPServerHelper';

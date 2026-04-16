@@ -6,6 +6,7 @@ import { RootProtoManager } from '../controller/RootProtoManager';
 import { ControllerMetadataManager } from '../controller/ControllerMetadataManager';
 import { FetchRouter } from '../http/FetchRouter';
 import { HTTPControllerRegister } from '../http/HTTPControllerRegister';
+import { MCPControllerRegister } from '../mcp/MCPControllerRegister';
 
 export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
@@ -27,6 +28,11 @@ export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCo
     // Register the HTTP controller register creator
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, (proto: EggPrototype, controllerMeta: ControllerMetadata) => {
       return HTTPControllerRegister.create(proto, controllerMeta, this.fetchRouter);
+    });
+
+    // Register the MCP controller register creator
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto: EggPrototype, controllerMeta: ControllerMetadata) => {
+      return MCPControllerRegister.create(proto, controllerMeta, this.fetchRouter);
     });
   }
 
