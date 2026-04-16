@@ -4,6 +4,8 @@ import {
   LoadUnitLifecycleUtil,
 } from '@eggjs/tegg-metadata';
 import { Runner, RunnerOptions, StandaloneContext } from '@eggjs/tegg-standalone';
+import type { Logger } from '@eggjs/tegg-types';
+import { getDefaultHttpClient } from 'urllib';
 import { ContextProtoProperty } from './constants';
 import { FetchRouter } from './http/FetchRouter';
 import { RootProtoManager } from './controller/RootProtoManager';
@@ -16,6 +18,7 @@ import { HTTPControllerRegister } from './http/HTTPControllerRegister';
 
 export interface ServiceWorkerAppOptions {
   innerObjectHandlers?: RunnerOptions['innerObjectHandlers'];
+  logger?: Logger;
 }
 
 export class ServiceWorkerApp {
@@ -55,11 +58,19 @@ export class ServiceWorkerApp {
     const deps = [ ...(options?.dependencies || []), frameworkDep ];
 
     // Register FetchRouter and RootProtoManager as inner objects so they can be @Inject()-ed
-    const innerObjectHandlers = {
+    const innerObjectHandlers: RunnerOptions['innerObjectHandlers'] = {
       ...options?.innerObjectHandlers,
       fetchRouter: [{ obj: this.fetchRouter }],
       rootProtoManager: [{ obj: this.rootProtoManager }],
     };
+
+    // Provide default logger (fallback to console) and httpclient (urllib singleton)
+    if (!innerObjectHandlers.logger) {
+      innerObjectHandlers.logger = [{ obj: options?.logger || console }];
+    }
+    if (!innerObjectHandlers.httpclient) {
+      innerObjectHandlers.httpclient = [{ obj: getDefaultHttpClient() }];
+    }
 
     this.runner = new Runner(cwd, {
       ...options,

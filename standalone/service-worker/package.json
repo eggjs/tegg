@@ -53,6 +53,7 @@
     "@eggjs/tegg-standalone": "^3.78.3",
     "@eggjs/tegg-types": "^3.78.3",
     "egg-errors": "^2.3.0",
+    "urllib": "^4.0.0",
     "path-to-regexp": "^1.8.0",
     "type-is": "^1.6.18"
   },
