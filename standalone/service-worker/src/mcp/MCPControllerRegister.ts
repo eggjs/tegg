@@ -18,7 +18,6 @@ import { EggContainerFactory } from '@eggjs/tegg/helper';
 import type { AbstractControllerAdvice } from './AbstractControllerAdvice';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { ControllerRegister } from '../controller/ControllerRegister';
-import { RootProtoManager } from '../controller/RootProtoManager';
 import { ServiceWorkerFetchContext } from '../http/ServiceWorkerFetchContext';
 import { MCPServerHelper } from './MCPServerHelper';
 
