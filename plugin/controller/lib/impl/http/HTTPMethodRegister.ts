@@ -148,7 +148,7 @@ export class HTTPMethodRegister {
       if (h) {
         hostRouter = this.checkRouters.get(h);
         if (!hostRouter) {
-          hostRouter = new EggRouter({ sensitive: true }, {});
+          hostRouter = new EggRouter({ sensitive: true }, {} as any);
           this.checkRouters.set(h, hostRouter!);
         }
       }
