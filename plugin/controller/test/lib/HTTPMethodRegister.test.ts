@@ -54,7 +54,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       const controllerMeta = proto.getMetaData<HTTPControllerMeta>(CONTROLLER_META_DATA)!;
       await assert.rejects(async () => {
         for (const methodMeta of controllerMeta.methods) {
-          const register = new HTTPMethodRegister(proto, controllerMeta, methodMeta, router, new Map(), EggContainerFactory);
+          const register = new HTTPMethodRegister(proto, controllerMeta, methodMeta, router as any, new Map(), EggContainerFactory);
           await register.checkDuplicate();
         }
       }, /RouterConflictError: register http controller GET AppController.get failed, GET \/apps\/:id is conflict with exists rule \/apps\/:id/);
@@ -68,7 +68,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
           name: 'test',
           method: 'GET',
           path: '/123',
-        } as any, router, new Map(), EggContainerFactory);
+        } as any, router as any, new Map(), EggContainerFactory);
 
         await register.checkDuplicate();
       }, /RouterConflictError: register http controller GET AppController.test failed, GET \/apps\/123 is conflict with exists rule \/apps\/:id/);
@@ -82,11 +82,11 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       await assert.rejects(async () => {
         const routerMap = new Map();
         for (const methodMeta of controllerMeta1.methods) {
-          const register = new HTTPMethodRegister(proto1, controllerMeta1, methodMeta, router, routerMap, EggContainerFactory);
+          const register = new HTTPMethodRegister(proto1, controllerMeta1, methodMeta, router as any, routerMap, EggContainerFactory);
           await register.checkDuplicate();
         }
         for (const methodMeta of controllerMeta2.methods) {
-          const register = new HTTPMethodRegister(proto2, controllerMeta2, methodMeta, router, routerMap, EggContainerFactory);
+          const register = new HTTPMethodRegister(proto2, controllerMeta2, methodMeta, router as any, routerMap, EggContainerFactory);
           await register.checkDuplicate();
         }
       }, /RouterConflictError: register http controller GET AppController2\.get failed, GET \/foo\/:id is conflict with exists rule \/foo\/:id/);
