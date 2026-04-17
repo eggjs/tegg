@@ -9,4 +9,3 @@ export interface PrototypeParams {
 }
 
 export const DEFAULT_PROTO_IMPL_TYPE = 'DEFAULT';
-export const EGG_INNER_OBJECT_PROTO_IMPL_TYPE = 'EGG_INNER_OBJECT_PROTOTYPE';

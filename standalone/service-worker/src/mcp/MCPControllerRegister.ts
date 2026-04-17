@@ -251,7 +251,7 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
-  async register(_rootProtoManager: RootProtoManager) {
+  async register() {
     for (const proto of this.controllerProtos) {
       if (this.registeredControllerProtos.includes(proto)) {
         continue;

@@ -1,5 +1,4 @@
 import {
-  EggLifecycleInfo,
   EggMultiInstanceCallbackPrototypeInfo,
   EggMultiInstancePrototypeInfo,
   EggProtoImplClass,
@@ -19,9 +18,6 @@ import { MetadataUtil } from './MetadataUtil';
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE = Symbol.for('EggPrototype#isEggPrototype');
   static readonly IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE = Symbol.for('EggPrototype#isEggMultiInstancePrototype');
-  static readonly IS_EGG_LIFECYCLE_PROTOTYPE = Symbol.for('EggPrototype#isEggLifecyclePrototype');
-  static readonly EGG_LIFECYCLE_PROTOTYPE_METADATA = Symbol.for('EggPrototype#eggLifecyclePrototype#metadata');
-  static readonly IS_EGG_INNER_OBJECT = Symbol.for('EggPrototype#isEggInnerObject');
   static readonly FILE_PATH = Symbol.for('EggPrototype.filePath');
   static readonly PROTOTYPE_PROPERTY = Symbol.for('EggPrototype.Property');
   static readonly MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY = Symbol.for('EggPrototype.MultiInstanceStaticProperty');
@@ -78,50 +74,6 @@ export class PrototypeUtil {
       return MultiInstanceType.STATIC;
     }
     return MultiInstanceType.DYNAMIC;
-  }
-
-  /**
-   * Mark class is egg lifecycle prototype
-   * @param clazz -
-   */
-  static setIsEggLifecyclePrototype(clazz: EggProtoImplClass) {
-    MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_LIFECYCLE_PROTOTYPE, true, clazz);
-  }
-
-  /**
-   * If class is egg lifecycle prototype, return true
-   * @param clazz -
-   */
-  static isEggLifecyclePrototype(clazz: EggProtoImplClass): boolean {
-    return MetadataUtil.getOwnBooleanMetaData(PrototypeUtil.IS_EGG_LIFECYCLE_PROTOTYPE, clazz);
-  }
-
-  /**
-   * Set egg lifecycle prototype metadata, like the lifecycle type
-   * @param clazz -
-   * @param metadata -
-   */
-  static setEggLifecyclePrototypeMetadata(clazz: EggProtoImplClass, metadata: EggLifecycleInfo) {
-    MetadataUtil.defineMetaData(PrototypeUtil.EGG_LIFECYCLE_PROTOTYPE_METADATA, metadata, clazz);
-  }
-
-  /**
-   * Get egg lifecycle prototype metadata
-   * @param clazz -
-   */
-  static getEggLifecyclePrototypeMetadata(clazz: EggProtoImplClass): EggLifecycleInfo | undefined {
-    if (!PrototypeUtil.isEggLifecyclePrototype(clazz)) {
-      return undefined;
-    }
-    return MetadataUtil.getOwnMetaData<EggLifecycleInfo>(PrototypeUtil.EGG_LIFECYCLE_PROTOTYPE_METADATA, clazz);
-  }
-
-  /**
-   * Mark class is egg inner object prototype
-   * @param clazz -
-   */
-  static setIsEggInnerObject(clazz: EggProtoImplClass) {
-    MetadataUtil.defineMetaData(PrototypeUtil.IS_EGG_INNER_OBJECT, true, clazz);
   }
 
   /**
