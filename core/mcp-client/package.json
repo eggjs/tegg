@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mcp-client",
-  "version": "3.78.10",
+  "version": "3.78.11",
   "description": "tegg mcp client",
   "main": "dist/index.js",
   "files": [
