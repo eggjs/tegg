@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.12](https://github.com/eggjs/tegg/compare/v3.78.11...v3.78.12) (2026-04-18)
+
+
+### Bug Fixes
+
+* del debug log ([a7d8e06](https://github.com/eggjs/tegg/commit/a7d8e0608d709a733ea463c75ca955184ae4c552))
+
+
+
+
+
 ## [3.78.11](https://github.com/eggjs/tegg/compare/v3.78.10...v3.78.11) (2026-04-18)
 
 
