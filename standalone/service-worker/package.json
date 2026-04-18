@@ -1,0 +1,77 @@
+{
+  "name": "@eggjs/tegg-service-worker",
+  "description": "tegg service worker",
+  "eggModule": {
+    "name": "serviceWorker"
+  },
+  "version": "3.78.3",
+  "keywords": [
+    "egg",
+    "typescript",
+    "tegg",
+    "standalone",
+    "service worker"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "node --eval \"process.exit(parseInt(process.versions.node) < 18 ? 0 : 1)\" || cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "clean": "tsc -b --clean",
+    "tsc": "npm run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "npm run tsc:pub"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "standalone/service-worker"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eggjs/router": "^3.0.6",
+    "@modelcontextprotocol/sdk": "^1.28.0",
+    "@eggjs/tegg-ajv-plugin": "^3.78.3",
+    "@eggjs/tegg-aop-runtime": "^3.78.3",
+    "@eggjs/tegg-dal-plugin": "^3.78.3",
+    "@eggjs/tegg-dynamic-inject-runtime": "^3.78.3",
+    "@eggjs/tegg-lifecycle": "^3.78.3",
+    "@eggjs/tegg-metadata": "^3.78.3",
+    "@eggjs/tegg-standalone": "^3.78.3",
+    "@eggjs/tegg-types": "^3.78.3",
+    "egg-errors": "^2.3.0",
+    "urllib": "^4.0.0",
+    "path-to-regexp": "^1.8.0",
+    "type-is": "^1.6.18"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg": "^3"
+  },
+  "devDependencies": {
+    "@eggjs/tegg": "^3.78.3",
+    "@eggjs/module-test-util": "^3.78.3",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "@types/type-is": "^1.6.6",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "supertest": "^7.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4",
+    "undici": "^5.26.5"
+  }
+}

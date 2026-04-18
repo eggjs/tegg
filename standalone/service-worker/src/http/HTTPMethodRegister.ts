@@ -1,53 +1,46 @@
-import assert from 'assert';
 import pathToRegexp from 'path-to-regexp';
-import { EggRouter } from '@eggjs/router';
-import { Context, Router } from 'egg';
 import { FrameworkErrorFormater } from 'egg-errors';
+import { Router as KoaRouter } from '@eggjs/router';
 import {
   EggContext,
   HTTPControllerMeta,
   HTTPMethodMeta,
   HTTPParamType,
+  IncomingHttpHeaders,
   Next,
   PathParamMeta,
   QueriesParamMeta,
   QueryParamMeta,
-  HTTPCookies,
 } from '@eggjs/tegg';
-import { TimerUtil } from '@eggjs/tegg-common-util';
-import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { EggPrototype } from '@eggjs/tegg-metadata';
-import { RootProtoManager } from '../../RootProtoManager';
-import { aclMiddlewareFactory } from './Acl';
-import { HTTPRequest } from './Req';
-import { RouterConflictError } from '../../errors';
+import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import { CONTROLLER_AOP_MIDDLEWARES, METHOD_AOP_MIDDLEWARES } from '@eggjs/tegg-types/controller-decorator';
+import { EggContainerFactory, EggPrototype } from '@eggjs/tegg/helper';
+import type { AbstractControllerAdvice } from '../mcp/AbstractControllerAdvice';
+import { RootProtoManager } from '../controller/RootProtoManager';
+import { ServiceWorkerFetchContext } from './ServiceWorkerFetchContext';
+import { RequestUtils } from '../utils/RequestUtils';
 
-const noop = () => {
-  // ...
-};
+const noop = () => { /* noop */ };
 
 export class HTTPMethodRegister {
-  private readonly router: Router;
-  private readonly checkRouters: Map<string, Router>;
+  private readonly router: KoaRouter;
+  private readonly checkRouters: Map<string, KoaRouter>;
   private readonly controllerMeta: HTTPControllerMeta;
   private readonly methodMeta: HTTPMethodMeta;
   private readonly proto: EggPrototype;
-  private readonly eggContainerFactory: typeof EggContainerFactory;
 
   constructor(
     proto: EggPrototype,
     controllerMeta: HTTPControllerMeta,
     methodMeta: HTTPMethodMeta,
-    router: Router,
-    checkRouters: Map<string, Router>,
-    eggContainerFactory: typeof EggContainerFactory,
+    router: KoaRouter,
+    checkRouters: Map<string, KoaRouter>,
   ) {
     this.proto = proto;
     this.controllerMeta = controllerMeta;
     this.router = router;
     this.methodMeta = methodMeta;
     this.checkRouters = checkRouters;
-    this.eggContainerFactory = eggContainerFactory;
   }
 
   private createHandler(methodMeta: HTTPMethodMeta, host: string | undefined) {
@@ -55,16 +48,15 @@ export class HTTPMethodRegister {
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
     const methodArgsLength = argsLength + (hasContext ? 1 : 0);
-    const timeout = this.controllerMeta.getMethodTimeout(methodMeta);
     const self = this;
-    return async function(ctx: Context, next: Next) {
+    return async function(ctx: ServiceWorkerFetchContext, next: Next) {
       // if hosts is not empty and host is not matched, not execute
       if (host && host !== ctx.host) {
         return await next();
       }
       // HTTP decorator core implement
       // use controller metadata map http request to function arguments
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(self.proto, self.proto.name);
+      const eggObj = await EggContainerFactory.getOrCreateEggObject(self.proto, self.proto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[methodMeta.name];
       const args: Array<object | string | string[]> = new Array(methodArgsLength);
@@ -74,7 +66,8 @@ export class HTTPMethodRegister {
       for (const [ index, param ] of methodMeta.paramMap) {
         switch (param.type) {
           case HTTPParamType.BODY: {
-            args[index] = ctx.request.body;
+            const request = ctx.event.request;
+            args[index] = await RequestUtils.getRequestBody(request);
             break;
           }
           case HTTPParamType.PARAM: {
@@ -84,55 +77,35 @@ export class HTTPMethodRegister {
           }
           case HTTPParamType.QUERY: {
             const queryParam: QueryParamMeta = param as QueryParamMeta;
-            args[index] = ctx.query[queryParam.name];
+            args[index] = ctx.url.searchParams.get(queryParam.name) as string;
             break;
           }
           case HTTPParamType.QUERIES: {
             const queryParam: QueriesParamMeta = param as QueriesParamMeta;
-            args[index] = ctx.queries[queryParam.name];
+            args[index] = ctx.url.searchParams.getAll(queryParam.name);
             break;
           }
           case HTTPParamType.HEADERS: {
-            args[index] = ctx.request.headers;
+            const headers: IncomingHttpHeaders = {};
+            for (const [ k, v ] of ctx.event.request.headers.entries()) {
+              headers[k] = v;
+            }
+            args[index] = headers;
             break;
           }
           case HTTPParamType.REQUEST: {
-            args[index] = new HTTPRequest(ctx);
-            break;
-          }
-          case HTTPParamType.COOKIES: {
-            args[index] = new HTTPCookies(ctx, []);
+            args[index] = ctx.event.request;
             break;
           }
           default:
-            assert.fail('never arrive');
+            throw new Error(`unknown param type ${param.type} in method ${self.controllerMeta.controllerName}.${methodMeta.name}`);
         }
       }
-
-      let body: unknown;
-      try {
-        body = await TimerUtil.timeout<unknown>(() => Reflect.apply(realMethod, realObj, args), timeout);
-      } catch (e: any) {
-        if (e instanceof TimerUtil.TimeoutError) {
-          ctx.logger.error(`timeout after ${timeout}ms`);
-          ctx.throw(500, 'timeout');
-        }
-        throw e;
-      }
-
-      // https://github.com/koajs/koa/blob/master/lib/response.js#L88
-      // ctx.status is set
-      const explicitStatus = (ctx.response as any)._explicitStatus;
-
-      if (
-        // has body
-        body != null ||
-        // status is not set and has no body
-        // code should by 204
-        // https://github.com/koajs/koa/blob/master/lib/response.js#L140
-        !explicitStatus
-      ) {
-        ctx.body = body;
+      const res = await Reflect.apply(realMethod, realObj, args);
+      if (res instanceof Response) {
+        ctx.response = res;
+      } else {
+        ctx.body = res;
       }
     };
   }
@@ -148,8 +121,8 @@ export class HTTPMethodRegister {
       if (h) {
         hostRouter = this.checkRouters.get(h);
         if (!hostRouter) {
-          hostRouter = new EggRouter({ sensitive: true }, {} as any);
-          this.checkRouters.set(h, hostRouter!);
+          hostRouter = new KoaRouter({ sensitive: true });
+          this.checkRouters.set(h, hostRouter);
         }
       }
       if (hostRouter) {
@@ -159,22 +132,38 @@ export class HTTPMethodRegister {
     });
   }
 
-  private registerToRouter(router: Router) {
+  private registerToRouter(router: KoaRouter) {
     const routerFunc = router[this.methodMeta.method.toLowerCase()];
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     Reflect.apply(routerFunc, router, [ methodName, methodRealPath, noop ]);
   }
 
-  private checkDuplicateInRouter(router: Router) {
+  private checkDuplicateInRouter(router: KoaRouter) {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const matched = router.match(methodRealPath, this.methodMeta.method);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     if (matched.route) {
       const [ layer ] = matched.path;
-      const err = new RouterConflictError(`register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} is conflict with exists rule ${layer.path}`);
+      const err = new Error(`register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} is conflict with exists rule ${layer.path}`);
       throw FrameworkErrorFormater.format(err);
     }
+  }
+
+  private getAopMiddlewares(): Array<(ctx: ServiceWorkerFetchContext, next: Next) => Promise<void>> {
+    // Controller-level AOP middlewares
+    const controllerAopClasses = (this.proto.getMetaData(CONTROLLER_AOP_MIDDLEWARES) ?? []) as EggProtoImplClass<AbstractControllerAdvice>[];
+    // Method-level AOP middlewares
+    const methodAopMap = this.proto.getMetaData(METHOD_AOP_MIDDLEWARES) as Map<string, EggProtoImplClass<AbstractControllerAdvice>[]> | undefined;
+    const methodAopClasses = methodAopMap?.get(this.methodMeta.name) ?? [];
+
+    const allAopClasses = [ ...controllerAopClasses, ...methodAopClasses ];
+    return allAopClasses.map(clazz => {
+      return async (ctx: ServiceWorkerFetchContext, next: Next) => {
+        const eggObj = await EggContainerFactory.getOrCreateEggObjectFromClazz(clazz);
+        await (eggObj.obj as AbstractControllerAdvice).middleware(ctx, next);
+      };
+    });
   }
 
   register(rootProtoManager: RootProtoManager) {
@@ -182,19 +171,14 @@ export class HTTPMethodRegister {
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     const routerFunc = this.router[this.methodMeta.method.toLowerCase()];
     const methodMiddlewares = this.controllerMeta.getMethodMiddlewares(this.methodMeta);
-    const aclMiddleware = aclMiddlewareFactory(this.controllerMeta, this.methodMeta);
-    if (aclMiddleware) {
-      methodMiddlewares.push(aclMiddleware);
-    }
+    const aopMiddlewares = this.getAopMiddlewares();
+
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [ undefined ];
     hosts.forEach(h => {
       const handler = this.createHandler(this.methodMeta, h);
-      Reflect.apply(routerFunc, this.router,
-        [ methodName, methodRealPath, ...methodMiddlewares, handler ]);
+      Reflect.apply(routerFunc, this.router, [ methodName, methodRealPath, ...aopMiddlewares, ...methodMiddlewares, handler ]);
       // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
-      const regExp = pathToRegexp(methodRealPath, {
-        sensitive: true,
-      });
+      const regExp = pathToRegexp(methodRealPath, { sensitive: true });
       rootProtoManager.registerRootProto(this.methodMeta.method, (ctx: EggContext) => {
         if (regExp.test(ctx.path)) {
           return this.proto;
