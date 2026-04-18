@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.10](https://github.com/eggjs/tegg/compare/v3.78.9...v3.78.10) (2026-04-18)
+
+
+### Bug Fixes
+
+* import ([c7ed1b7](https://github.com/eggjs/tegg/commit/c7ed1b78f9c0ee308c85029e79d5187fd7fd1bd4))
+
+
+
+
+
 ## [3.78.9](https://github.com/eggjs/tegg/compare/v3.78.8...v3.78.9) (2026-04-18)
 
 **Note:** Version bump only for package @eggjs/tegg-service-worker
