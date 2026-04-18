@@ -450,10 +450,10 @@ export class MCPProxyApiClient extends APIClientBase {
 
           let eventData = 'event: message\n';
 
-          if (event!.id) {
-            eventData += `id: ${event!.id}\n`;
+          if ((event as any)!.id) {
+            eventData += `id: ${(event as any)!.id}\n`;
           }
-          eventData += `data: ${JSON.stringify(event!.data)}\n\n`;
+          eventData += `data: ${JSON.stringify((event as any)!.data)}\n\n`;
 
           ctx.res.write(eventData);
         }
