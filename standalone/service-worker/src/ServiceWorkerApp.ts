@@ -16,6 +16,8 @@ import { ControllerPrototypeHook } from './hook/ControllerPrototypeHook';
 import { ControllerLoadUnitHook } from './hook/ControllerLoadUnitHook';
 import { HTTPControllerRegister } from './http/HTTPControllerRegister';
 import { MCPControllerRegister } from './mcp/MCPControllerRegister';
+import { LoadUnitInnerClassHook } from './hook/LoadUnitInnerClassHook';
+import { ServiceWorkerRunner } from './ServiceWorkerRunner';
 
 export interface ServiceWorkerAppOptions {
   innerObjectHandlers?: RunnerOptions['innerObjectHandlers'];
@@ -53,6 +55,7 @@ export class ServiceWorkerApp {
     LoadUnitLifecycleUtil.registerLifecycle(this.contextProtoLoadUnitHook);
     LoadUnitLifecycleUtil.registerLifecycle(this.controllerLoadUnitHook);
     EggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
+    LoadUnitLifecycleUtil.registerLifecycle(new LoadUnitInnerClassHook([ ServiceWorkerRunner ]));
 
     // Build dependencies list - include this package as a framework dependency
     const frameworkDep = { baseDir: path.join(__dirname, '..'), extraFilePattern: [ '!**/test' ] };
