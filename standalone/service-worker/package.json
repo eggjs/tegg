@@ -16,7 +16,7 @@
   ],
   "typings": "dist/index.d.ts",
   "scripts": {
-    "test": "node --eval \"process.exit(parseInt(process.versions.node) < 18 ? 0 : 1)\" || cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "test": "node --eval \"process.exit(parseInt(process.versions.node) < 18 ? 0 : 1)\" || mocha",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
@@ -49,7 +49,7 @@
     "@eggjs/tegg-metadata": "^3.78.10",
     "@eggjs/tegg-standalone": "^3.78.10",
     "@eggjs/tegg-types": "^3.78.10",
-    "@modelcontextprotocol/sdk": "^1.28.0",
+    "@modelcontextprotocol/sdk": "1.25.3",
     "egg-errors": "^2.3.0",
     "path-to-regexp": "^1.8.0",
     "type-is": "^1.6.18",

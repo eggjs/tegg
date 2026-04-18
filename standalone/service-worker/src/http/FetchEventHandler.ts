@@ -22,17 +22,17 @@ export class FetchEventHandler extends AbstractEventHandler<FetchEvent, Response
   #routes: MiddlewareFuncWithRouter<FetchRouter>;
   #initialized = false;
 
-  private initRoutes() {
+  private async initRoutes() {
     if (!this.#initialized) {
       HTTPControllerRegister.instance?.doRegister(this.rootProtoManager);
-      MCPControllerRegister.instance?.doRegister();
+      await MCPControllerRegister.instance?.doRegister();
       this.#routes = this.fetchRouter.middleware();
       this.#initialized = true;
     }
   }
 
   async handleEvent(event: FetchEvent): Promise<Response> {
-    this.initRoutes();
+    await this.initRoutes();
     const ctx = new ServiceWorkerFetchContext({ event });
     try {
       await this.#routes(ctx, async () => { /**/ });

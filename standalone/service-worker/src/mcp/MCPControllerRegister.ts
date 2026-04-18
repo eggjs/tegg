@@ -45,6 +45,7 @@ class ServiceWorkerMCPServerResponse extends ServerResponse {
     encoding?: BufferEncoding | ((error: Error | null | undefined) => void),
     callback?: (error: Error | null | undefined) => void,
   ): boolean {
+    console.trace(`ServiceWorkerMCPServerResponse write`);
     super.write(chunk, encoding as any, callback);
     return this.#stream.write(chunk, encoding as any, callback);
   }
@@ -67,6 +68,7 @@ class ServiceWorkerMCPServerResponse extends ServerResponse {
     reason?: string | (OutgoingHttpHeaders | OutgoingHttpHeader[]),
     obj?: OutgoingHttpHeaders | OutgoingHttpHeader[],
   ): this {
+    console.trace(`status: ${statusCode}`);
     if (typeof reason === 'string') {
       super.writeHead(statusCode, reason, obj);
       this.callback({
@@ -96,6 +98,7 @@ class ServiceWorkerMCPServerResponse extends ServerResponse {
   end(chunk: any, cb?: () => void): this;
   end(chunk: any, encoding: BufferEncoding, cb?: () => void): this;
   end(...args: any[]): this {
+    console.trace(`ServiceWorkerMCPServerResponse end`);
     this.#stream.end(...args);
     super.end(...args);
     return this;
@@ -110,6 +113,7 @@ export class MCPControllerRegister implements ControllerRegister {
   private registeredControllerProtos: EggPrototype[] = [];
   private controllerMeta: MCPControllerMeta;
   mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
+  streamTransports: Record<string, StreamableHTTPServerTransport> = {};
   middlewaresMap: Record<string, Array<(ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>>> = {};
   registerMap: Record<string, {
     tools: ServerRegisterRecord<MCPToolMeta>[];
@@ -142,40 +146,69 @@ export class MCPControllerRegister implements ControllerRegister {
     this.instance = undefined;
   }
 
-  private mcpStatelessStreamServerInit(name?: string) {
-    const self = this;
-    const postRouterFunc = this.router.post;
-    const initHandler = async (ctx: ServiceWorkerFetchContext) => {
-      // Create fresh transport and server per request (stateless mode)
-      const transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: undefined,
-      });
-      const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
-      const registerEntry = self.registerMap[name ?? 'default'];
-      if (registerEntry) {
-        for (const tool of registerEntry.tools) {
-          await mcpServerHelper.mcpToolRegister(
-            tool.getOrCreateEggObject,
-            tool.proto,
-            tool.meta,
-          );
-        }
-        for (const resource of registerEntry.resources) {
-          await mcpServerHelper.mcpResourceRegister(
-            resource.getOrCreateEggObject,
-            resource.proto,
-            resource.meta,
-          );
-        }
-        for (const prompt of registerEntry.prompts) {
-          await mcpServerHelper.mcpPromptRegister(
-            prompt.getOrCreateEggObject,
-            prompt.proto,
-            prompt.meta,
-          );
-        }
+  /**
+   * Connect the long-lived stateless stream transport and prime it with an
+   * initialize call, matching the chair service-worker pattern. Must be
+   * called after register() so all tools are already on the helper.
+   */
+  async connectStatelessStreamTransport(name?: string) {
+    const inst = MCPControllerRegister.instance;
+    if (!inst) return;
+    const transport = inst.streamTransports[name ?? 'default'];
+    const mcpServerHelper = this.mcpServerHelperMap[name ?? 'default']();
+    const registerEntry = this.registerMap[name ?? 'default'];
+    if (registerEntry) {
+      for (const tool of registerEntry.tools) {
+        await mcpServerHelper.mcpToolRegister(
+          tool.getOrCreateEggObject,
+          tool.proto,
+          tool.meta,
+        );
       }
-      await mcpServerHelper.server.connect(transport);
+      for (const resource of registerEntry.resources) {
+        await mcpServerHelper.mcpResourceRegister(
+          resource.getOrCreateEggObject,
+          resource.proto,
+          resource.meta,
+        );
+      }
+      for (const prompt of registerEntry.prompts) {
+        await mcpServerHelper.mcpPromptRegister(
+          prompt.getOrCreateEggObject,
+          prompt.proto,
+          prompt.meta,
+        );
+      }
+    }
+    await mcpServerHelper.server.connect(transport);
+    const socket = new Socket();
+    const req = new IncomingMessage(socket);
+    const res = new ServerResponse(req);
+    req.method = 'POST';
+    req.url = '/mcp/stream';
+    req.headers = {
+      accept: 'application/json, text/event-stream',
+      'content-type': 'application/json',
+    };
+    const initBody = {
+      jsonrpc: '2.0', id: 0, method: 'initialize',
+      params: {
+        protocolVersion: '2024-11-05', capabilities: {},
+        clientInfo: { name: 'init-client', version: '1.0.0' },
+      },
+    };
+    await inst.streamTransports[name ?? 'default'].handleRequest(req, res, initBody);
+  }
+
+  private async mcpStatelessStreamServerInit(name?: string) {
+    const postRouterFunc = this.router.post;
+    // Create fresh transport and server per request (stateless mode)
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined,
+    });
+    MCPControllerRegister.instance!.streamTransports[name ?? 'default'] = transport;
+    const initHandler = async (ctx: ServiceWorkerFetchContext) => {
+      const transport = MCPControllerRegister.instance!.streamTransports[name ?? 'default'];
 
       // Bridge Fetch Request → Node.js IncomingMessage
       const socket = new Socket();
@@ -199,7 +232,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
       // Parse body from Fetch Request
       const body = await ctx.event.request.json();
-
+      console.log('body log', body);
       // Handle the request (don't await - handleRequest writes to response stream)
       transport.handleRequest(req, response, body);
 
@@ -324,11 +357,12 @@ export class MCPControllerRegister implements ControllerRegister {
     }
   }
 
-  doRegister() {
+  async doRegister() {
     // Initialize MCP routes for each server name
     const names = Object.keys(this.registerMap);
     for (const name of names) {
-      this.mcpStatelessStreamServerInit(name === 'default' ? undefined : name);
+      await this.mcpStatelessStreamServerInit(name === 'default' ? undefined : name);
+      await this.connectStatelessStreamTransport(name);
     }
   }
 }
