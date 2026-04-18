@@ -18,3 +18,10 @@ export const EventHandlerProto = (type: EventType[keyof EventType], params?: Sin
     SingletonProto(params)(clazz);
   };
 };
+
+export interface FetchEventLike {
+  type: string;
+  request: Request;
+  respondWith(response: Response | Promise<Response>): void;
+  waitUntil?(promise: Promise<unknown>): void;
+}

@@ -1,10 +1,7 @@
 {
   "name": "@eggjs/tegg-service-worker",
   "description": "tegg service worker",
-  "eggModule": {
-    "name": "serviceWorker"
-  },
-  "version": "3.78.7",
+  "version": "3.78.3",
   "keywords": [
     "egg",
     "typescript",
