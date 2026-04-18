@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/agent-tracing",
-  "version": "3.78.4",
+  "version": "3.78.6",
   "description": "Tracing support for AI agents (LangGraph, Claude Agent SDK)",
   "keywords": [
     "agent",
@@ -65,9 +65,9 @@
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
   "dependencies": {
-    "@eggjs/core-decorator": "^3.78.4",
-    "@eggjs/tegg-background-task": "^3.78.4",
-    "@eggjs/tegg-types": "^3.78.4",
+    "@eggjs/core-decorator": "^3.78.6",
+    "@eggjs/tegg-background-task": "^3.78.6",
+    "@eggjs/tegg-types": "^3.78.6",
     "onelogger": "^1.0.1"
   },
   "peerDependencies": {
@@ -85,7 +85,7 @@
   "devDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.52",
     "@anthropic-ai/sdk": "^0.78.0",
-    "@eggjs/tegg-common-util": "^3.78.4",
+    "@eggjs/tegg-common-util": "^3.78.6",
     "@langchain/core": "^1.1.29",
     "@langchain/langgraph": "^0.2.74",
     "@types/mocha": "^10.0.1",
