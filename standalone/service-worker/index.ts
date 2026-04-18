@@ -1,7 +1,6 @@
 export * from './src/constants';
 export * from './src/types';
 export * from './src/ServiceWorkerApp';
-export * from './src/ServiceWorkerRunner';
 export * from './src/hook/ContextProtoLoadUnitHook';
 export * from './src/hook/ControllerPrototypeHook';
 export * from './src/hook/ControllerLoadUnitHook';

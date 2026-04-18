@@ -16,6 +16,10 @@ import { ControllerPrototypeHook } from './hook/ControllerPrototypeHook';
 import { ControllerLoadUnitHook } from './hook/ControllerLoadUnitHook';
 import { HTTPControllerRegister } from './http/HTTPControllerRegister';
 import { MCPControllerRegister } from './mcp/MCPControllerRegister';
+import { LoadUnitInnerClassHook } from './hook/LoadUnitInnerClassHook';
+import { ServiceWorkerRunner } from './ServiceWorkerRunner';
+import { StandaloneEggObjectFactory } from './StandaloneEggObjectFactory';
+import { FetchEventHandler } from './http/FetchEventHandler';
 
 export interface ServiceWorkerAppOptions {
   innerObjectHandlers?: RunnerOptions['innerObjectHandlers'];
@@ -31,6 +35,7 @@ export class ServiceWorkerApp {
   private readonly rootProtoManager: RootProtoManager;
   private readonly controllerMetadataManager: ControllerMetadataManager;
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
+  private readonly loadUnitInnerClassHook: LoadUnitInnerClassHook;
 
   constructor(cwd: string, options?: ServiceWorkerAppOptions & RunnerOptions) {
     // Create shared objects
@@ -73,6 +78,10 @@ export class ServiceWorkerApp {
       innerObjectHandlers.httpclient = [{ obj: getDefaultHttpClient() }];
     }
 
+    this.loadUnitInnerClassHook = new LoadUnitInnerClassHook([ StandaloneEggObjectFactory, ServiceWorkerRunner, FetchEventHandler ]);
+
+    LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitInnerClassHook);
+
     this.runner = new Runner(cwd, {
       ...options,
       dependencies: deps,
@@ -99,6 +108,7 @@ export class ServiceWorkerApp {
     // Unregister lifecycle hooks
     LoadUnitLifecycleUtil.deleteLifecycle(this.contextProtoLoadUnitHook);
     LoadUnitLifecycleUtil.deleteLifecycle(this.controllerLoadUnitHook);
+    LoadUnitLifecycleUtil.deleteLifecycle(this.loadUnitInnerClassHook);
     EggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
 
     await this.runner.destroy();
