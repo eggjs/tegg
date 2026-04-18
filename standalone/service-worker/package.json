@@ -4,7 +4,7 @@
   "eggModule": {
     "name": "serviceWorker"
   },
-  "version": "3.78.6",
+  "version": "3.78.7",
   "keywords": [
     "egg",
     "typescript",
@@ -44,14 +44,14 @@
   },
   "dependencies": {
     "@eggjs/router": "^3.0.6",
-    "@eggjs/tegg-ajv-plugin": "^3.78.6",
-    "@eggjs/tegg-aop-runtime": "^3.78.6",
-    "@eggjs/tegg-dal-plugin": "^3.78.6",
-    "@eggjs/tegg-dynamic-inject-runtime": "^3.78.6",
-    "@eggjs/tegg-lifecycle": "^3.78.6",
-    "@eggjs/tegg-metadata": "^3.78.6",
-    "@eggjs/tegg-standalone": "^3.78.6",
-    "@eggjs/tegg-types": "^3.78.6",
+    "@eggjs/tegg-ajv-plugin": "^3.78.7",
+    "@eggjs/tegg-aop-runtime": "^3.78.7",
+    "@eggjs/tegg-dal-plugin": "^3.78.7",
+    "@eggjs/tegg-dynamic-inject-runtime": "^3.78.7",
+    "@eggjs/tegg-lifecycle": "^3.78.7",
+    "@eggjs/tegg-metadata": "^3.78.7",
+    "@eggjs/tegg-standalone": "^3.78.7",
+    "@eggjs/tegg-types": "^3.78.7",
     "@modelcontextprotocol/sdk": "^1.28.0",
     "egg-errors": "^2.3.0",
     "path-to-regexp": "^1.8.0",
@@ -62,8 +62,8 @@
     "@eggjs/tegg": "^3"
   },
   "devDependencies": {
-    "@eggjs/module-test-util": "^3.78.6",
-    "@eggjs/tegg": "^3.78.6",
+    "@eggjs/module-test-util": "^3.78.7",
+    "@eggjs/tegg": "^3.78.7",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "@types/type-is": "^1.6.6",

@@ -1,6 +1,6 @@
 {
   "useWorkspaces": true,
-  "version": "3.78.6",
+  "version": "3.78.7",
   "npmClientArgs": [
     "--package-lock=false"
   ],
