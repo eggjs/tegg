@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.8](https://github.com/eggjs/tegg/compare/v3.78.7...v3.78.8) (2026-04-18)
+
+
+### Bug Fixes
+
+* remove egg module ([#438](https://github.com/eggjs/tegg/issues/438)) ([c82c26e](https://github.com/eggjs/tegg/commit/c82c26ebfa8272e32477f9b5be51da85e70904a6))
+
+
+
+
+
 ## [3.78.7](https://github.com/eggjs/tegg/compare/v3.78.6...v3.78.7) (2026-04-18)
 
 
