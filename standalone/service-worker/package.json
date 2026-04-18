@@ -49,7 +49,7 @@
     "@eggjs/tegg-metadata": "^3.78.11",
     "@eggjs/tegg-standalone": "^3.78.11",
     "@eggjs/tegg-types": "^3.78.11",
-    "@modelcontextprotocol/sdk": "1.25.3",
+    "@modelcontextprotocol/sdk": "1.24.3",
     "egg-errors": "^2.3.0",
     "path-to-regexp": "^1.8.0",
     "type-is": "^1.6.18",

@@ -45,7 +45,6 @@ class ServiceWorkerMCPServerResponse extends ServerResponse {
     encoding?: BufferEncoding | ((error: Error | null | undefined) => void),
     callback?: (error: Error | null | undefined) => void,
   ): boolean {
-    console.trace(`ServiceWorkerMCPServerResponse write`);
     super.write(chunk, encoding as any, callback);
     return this.#stream.write(chunk, encoding as any, callback);
   }
@@ -68,7 +67,6 @@ class ServiceWorkerMCPServerResponse extends ServerResponse {
     reason?: string | (OutgoingHttpHeaders | OutgoingHttpHeader[]),
     obj?: OutgoingHttpHeaders | OutgoingHttpHeader[],
   ): this {
-    console.trace(`status: ${statusCode}`);
     if (typeof reason === 'string') {
       super.writeHead(statusCode, reason, obj);
       this.callback({
@@ -98,7 +96,6 @@ class ServiceWorkerMCPServerResponse extends ServerResponse {
   end(chunk: any, cb?: () => void): this;
   end(chunk: any, encoding: BufferEncoding, cb?: () => void): this;
   end(...args: any[]): this {
-    console.trace(`ServiceWorkerMCPServerResponse end`);
     this.#stream.end(...args);
     super.end(...args);
     return this;
@@ -232,7 +229,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
       // Parse body from Fetch Request
       const body = await ctx.event.request.json();
-      console.log('body log', body);
+
       // Handle the request (don't await - handleRequest writes to response stream)
       transport.handleRequest(req, response, body);
 
