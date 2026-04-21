@@ -90,6 +90,30 @@ describe('standalone/service-worker/test/mcp/mcp.test.ts', () => {
     });
   });
 
+  it('should connect via /mcp/${name} path', async () => {
+    client = new Client({
+      name: 'test-mcp-client',
+      version: '1.0.0',
+    });
+    const transport = new StreamableHTTPClientTransport(
+      new URL(`${baseUrl}/mcp/test-server`),
+    );
+    await client.connect(transport);
+
+    const result = await client.listTools();
+    const toolNames = result.tools.map(t => t.name);
+    assert(toolNames.includes('echo'), 'should have echo tool');
+    assert(toolNames.includes('add'), 'should have add tool');
+
+    const echoResult = await client.callTool({
+      name: 'echo',
+      arguments: { message: 'hello from base path' },
+    });
+    assert.deepStrictEqual(echoResult, {
+      content: [{ type: 'text', text: 'hello from base path' }],
+    });
+  });
+
   it('should execute AOP middleware', async () => {
     adviceExecutionLog.length = 0;
 

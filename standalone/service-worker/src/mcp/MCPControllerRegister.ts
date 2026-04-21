@@ -239,13 +239,17 @@ export class MCPControllerRegister implements ControllerRegister {
     };
 
     const streamPath = `/mcp${name ? `/${name}` : ''}/stream`;
+    const basePath = `/mcp${name ? `/${name}` : ''}`;
     const middlewares = this.middlewaresMap[name ?? 'default'] ?? [];
-    Reflect.apply(postRouterFunc, this.router, [
-      'mcpStatelessStreamInit',
-      streamPath,
-      ...middlewares,
-      initHandler,
-    ]);
+    const paths = [ streamPath, basePath ];
+    for (const path of paths) {
+      Reflect.apply(postRouterFunc, this.router, [
+        'mcpStatelessStreamInit',
+        path,
+        ...middlewares,
+        initHandler,
+      ]);
+    }
 
     // Only POST is allowed for stateless streamable HTTP
     const notAllowedHandler = async (ctx: ServiceWorkerFetchContext) => {
@@ -268,16 +272,18 @@ export class MCPControllerRegister implements ControllerRegister {
     };
     const getRouterFunc = this.router.get;
     const delRouterFunc = this.router.del;
-    Reflect.apply(getRouterFunc, this.router, [
-      'mcpStatelessStreamNotAllowed',
-      streamPath,
-      notAllowedHandler,
-    ]);
-    Reflect.apply(delRouterFunc, this.router, [
-      'mcpStatelessStreamNotAllowed',
-      streamPath,
-      notAllowedHandler,
-    ]);
+    for (const path of paths) {
+      Reflect.apply(getRouterFunc, this.router, [
+        'mcpStatelessStreamNotAllowed',
+        path,
+        notAllowedHandler,
+      ]);
+      Reflect.apply(delRouterFunc, this.router, [
+        'mcpStatelessStreamNotAllowed',
+        path,
+        notAllowedHandler,
+      ]);
+    }
   }
 
   async register() {
