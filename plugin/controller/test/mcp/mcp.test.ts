@@ -5,6 +5,7 @@ import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
+import { MCPControllerRegister } from '../../lib/impl/mcp/MCPControllerRegister';
 
 async function listTools(client: Client) {
   const toolsRequest: ListToolsRequest = {
@@ -1314,6 +1315,71 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
       assert.ok(middlewareStartTracelog.includes(' /mcp/test/stateless/stream] mcp middleware start'));
       assert.ok(middlewareEndTracelog.includes(' /mcp/test/stateless/stream] mcp middleware end'));
+    });
+
+    it('sse session should be cleaned up after close', async () => {
+      const sseClient = new Client({
+        name: 'sse-cleanup-client',
+        version: '1.0.0',
+      });
+      const baseUrl = await app.httpRequest()
+        .get('/mcp/sse').url;
+      const sseTransport = new SSEClientTransport(
+        new URL(baseUrl),
+        {
+          authProvider: {
+            get redirectUrl() { return 'http://localhost/callback'; },
+            get clientMetadata() { return { redirect_uris: [ 'http://localhost/callback' ] }; },
+            clientInformation: () => ({ client_id: 'test-client-id', client_secret: 'test-client-secret' }),
+            tokens: () => {
+              return {
+                access_token: Buffer.from('akita').toString('base64'),
+                token_type: 'Bearer',
+              };
+            },
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveTokens: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            redirectToAuthorization: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveCodeVerifier: () => {},
+            codeVerifier: () => '',
+          },
+        },
+      );
+      await sseClient.connect(sseTransport);
+
+      // Call a tool to ensure session is active
+      const toolRes = await sseClient.callTool({
+        name: 'bar',
+        arguments: { name: 'aaa' },
+      });
+      assert.deepEqual(toolRes, {
+        content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      });
+
+      // Verify session exists in MCPControllerRegister.instance before close
+      const register = MCPControllerRegister.instance!;
+      assert(register, 'MCPControllerRegister.instance should exist');
+      const sessionIds = Object.keys(register.transports);
+      assert(sessionIds.length > 0, 'should have at least one active SSE transport');
+
+      // Record the session id for this connection
+      const activeSessionId = sessionIds[sessionIds.length - 1];
+      assert(register.transports[activeSessionId], 'transport should exist for session');
+      assert(register.sseConnections.has(activeSessionId), 'sseConnections should have the session');
+      assert(register.mcpServerMap[activeSessionId], 'mcpServerMap should have the session');
+
+      // Close the SSE transport
+      await sseTransport.close();
+
+      // Wait for cleanup to propagate
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Verify session is cleaned up
+      assert(!register.transports[activeSessionId], 'transport should be cleaned up after close');
+      assert(!register.sseConnections.has(activeSessionId), 'sseConnections should be cleaned up after close');
+      assert(!register.mcpServerMap[activeSessionId], 'mcpServerMap should be cleaned up after close');
     });
   }
 });

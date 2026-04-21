@@ -433,6 +433,7 @@ export class MCPControllerRegister implements ControllerRegister {
         ctx.res,
       );
       const id = transport.sessionId;
+      self.app.logger.warn('sse init, sessionId: %s, removeIp: %s', id, `${ctx.request.socket.remoteAddress}:${ctx.request.socket.remotePort}`);
       if (MCPControllerRegister.hooks.length > 0) {
         for (const hook of MCPControllerRegister.hooks) {
           await hook.preSSEInitHandle?.(
@@ -494,6 +495,21 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
+  async clearSseMcpServer(transport: SSEServerTransport) {
+    delete this.transports[transport.sessionId];
+    delete this.mcpServerMap[transport.sessionId];
+    if (transport.sessionId && this.pingIntervals[transport.sessionId]) {
+      clearInterval(this.pingIntervals[transport.sessionId]);
+      delete this.pingIntervals[transport.sessionId];
+    }
+    this.sseTransportsRequestMap.delete(transport);
+    const connection = this.sseConnections.get(transport.sessionId);
+    if (connection) {
+      clearInterval(connection.intervalId);
+      this.sseConnections.delete(transport.sessionId);
+    }
+  }
+
   sseCtxStorageRun(ctx: Context, transport: SSEServerTransport, name?: string) {
     const self = this;
     let mw = this.app.middleware.teggCtxLifecycleMiddleware();
@@ -503,18 +519,7 @@ export class MCPControllerRegister implements ControllerRegister {
     const closeFunc = transport.onclose;
     transport.onclose = (...args) => {
       closeFunc?.(...args);
-      delete self.transports[transport.sessionId];
-      delete self.mcpServerMap[transport.sessionId];
-      if (transport.sessionId && self.pingIntervals[transport.sessionId]) {
-        clearInterval(self.pingIntervals[transport.sessionId]);
-        delete self.pingIntervals[transport.sessionId];
-      }
-      self.sseTransportsRequestMap.delete(transport);
-      const connection = self.sseConnections.get(transport.sessionId);
-      if (connection) {
-        clearInterval(connection.intervalId);
-        self.sseConnections.delete(transport.sessionId);
-      }
+      this.clearSseMcpServer(transport);
     };
     transport.onerror = error => {
       self.app.logger.error('session %s error %o', transport.sessionId, error);
@@ -650,17 +655,21 @@ export class MCPControllerRegister implements ControllerRegister {
 
     const startTime = Date.now();
 
+    let errCount = 0;
+
     const timerId = setInterval(async () => {
       const elapsed = Date.now() - startTime;
       try {
         await server.ping();
       } catch (e) {
-        this.app.logger.warn('mcp server ping failed: ', e);
+        errCount++;
+        this.app.logger.warn('mcp server ping failed: %s, errCount: %s', e, errCount);
       } finally {
-        if (elapsed >= duration) {
-          if (this.pingIntervals[sessionId]) {
-            clearInterval(this.pingIntervals[sessionId]);
-            delete this.pingIntervals[sessionId];
+        if ((duration && elapsed >= duration) || errCount > 10) {
+          if (this.sseConnections[sessionId]) {
+            this.clearSseMcpServer(this.sseConnections[sessionId]);
+          } else {
+            this.app.logger.warn('mcp server ping clear fail, sessionId: ', sessionId);
           }
         }
       }

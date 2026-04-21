@@ -27,7 +27,7 @@ export class MCPConfig {
   private _eventStore: EventStore;
   private _sseHeartTime: number;
 
-  private _pingElapsed: number;
+  private _pingElapsed: number | undefined;
   private _pingInterval: number;
   private _ssePingEnabled: boolean;
   private _streamPingEnabled: boolean;
@@ -43,7 +43,7 @@ export class MCPConfig {
     this._statelessStreamPath = options.statelessStreamPath;
     this._eventStore = options.eventStore ?? new InMemoryEventStore();
     this._sseHeartTime = options.sseHeartTime ?? 25000;
-    this._pingElapsed = options.pingElapsed ?? 10 * 60 * 1000;
+    this._pingElapsed = options.pingElapsed;
     this._pingInterval = options.pingInterval ?? 5 * 1000;
     this._ssePingEnabled = options.ssePingEnabled ?? false;
     this._streamPingEnabled = options.streamPingEnabled ?? false;
@@ -138,7 +138,6 @@ export class MCPConfig {
       if (config?.pingElapsed !== undefined) {
         return config.pingElapsed;
       }
-      return 10 * 60 * 1000;
     }
     return this._pingElapsed;
   }
