@@ -798,4 +798,187 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(cancelResult.status, RunStatus.Completed);
     });
   });
+
+  describe('abort message persistence', () => {
+    // Rationale: when an executor supports resuming from a session file
+    // (e.g. Claude CLI session), aborts leave partial state in that session.
+    // If the thread is NOT updated with the same partial state, any
+    // subsequent resume request diverges from the executor's view of history
+    // and can fail at executor startup. These tests pin down that abort
+    // writes the same messages to the thread that the executor has already
+    // observed.
+
+    async function waitUntil(cond: () => boolean, timeoutMs = 2000): Promise<void> {
+      const start = Date.now();
+      while (!cond()) {
+        if (Date.now() - start > timeoutMs) throw new Error('waitUntil timeout');
+        await setTimeout(10);
+      }
+    }
+
+    it('syncRun: should persist user + partial assistant messages when aborted via signal', async () => {
+      let yielded = false;
+      executor.execRun = createSlowExecRun(
+        [{ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } }],
+        () => { yielded = true; },
+      );
+
+      const thread = await runtime.createThread();
+      const ac = new AbortController();
+      const syncPromise = runtime.syncRun(
+        { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        ac.signal,
+      );
+
+      await waitUntil(() => yielded);
+      ac.abort();
+      const result = await syncPromise;
+      assert.equal(result.threadId, thread.id);
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 2);
+      assert.equal(updated.messages[0].type, 'user');
+      assert.equal(updated.messages[1].type, 'assistant');
+      assert.deepStrictEqual(
+        (updated.messages[1].message as { content: unknown }).content,
+        [{ type: 'text', text: 'partial' }],
+      );
+    });
+
+    it('syncRun: should persist only the user message when aborted before any chunk', async () => {
+      const resolveRef: { resolve?: () => void } = {};
+      executor.execRun = createBlockingExecRun(resolveRef, [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'never' }] } },
+      ]);
+
+      const thread = await runtime.createThread();
+      const ac = new AbortController();
+      const syncPromise = runtime.syncRun(
+        { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        ac.signal,
+      );
+
+      // Give syncRun time to enter the await on the executor
+      await setTimeout(20);
+      ac.abort();
+      await syncPromise;
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 1);
+      assert.equal(updated.messages[0].type, 'user');
+    });
+
+    it('asyncRun: should persist user + partial assistant messages when aborted via cancelRun', async () => {
+      let yielded = false;
+      executor.execRun = createSlowExecRun(
+        [{ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } }],
+        () => { yielded = true; },
+      );
+
+      const thread = await runtime.createThread();
+      const result = await runtime.asyncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      await waitUntil(() => yielded);
+      await runtime.cancelRun(result.id);
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 2);
+      assert.equal(updated.messages[0].type, 'user');
+      assert.equal(updated.messages[1].type, 'assistant');
+    });
+
+    it('streamRun: should persist user + partial assistant messages when aborted via cancelRun', async () => {
+      let yielded = false;
+      executor.execRun = createSlowExecRun(
+        [{ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } }],
+        () => { yielded = true; },
+      );
+
+      const thread = await runtime.createThread();
+      const writer = new MockSSEWriter();
+      const streamPromise = runtime.streamRun(
+        { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        writer,
+      );
+
+      await waitUntil(() => yielded);
+      // Wait for run_created event to land so we can read the runId
+      await waitUntil(() => writer.events.some(e => e.event === 'run_created'));
+      const runCreated = writer.events.find(e => e.event === 'run_created')!;
+      const runId = ((runCreated.data as StreamEvent).data as { runId: string }).runId;
+
+      await runtime.cancelRun(runId);
+      writer.simulateClose();
+      await streamPromise;
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 2);
+      assert.equal(updated.messages[0].type, 'user');
+      assert.equal(updated.messages[1].type, 'assistant');
+    });
+
+    it('should set isResume=true on the next run after an abort (regression: abort+continue)', async () => {
+      // Reproduces the bug: user aborts turn N, then sends turn N+1. Before the fix, turn N's
+      // messages were never persisted, so the second call's isResume depended only on earlier
+      // completed turns — and any divergence from the executor's session caused subsequent
+      // resume attempts to fail.
+      let yielded = false;
+      executor.execRun = createSlowExecRun(
+        [{ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } }],
+        () => { yielded = true; },
+      );
+
+      const thread = await runtime.createThread();
+      const ac = new AbortController();
+      const firstPromise = runtime.syncRun(
+        { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        ac.signal,
+      );
+      await waitUntil(() => yielded);
+      ac.abort();
+      await firstPromise;
+
+      let capturedInput: CreateRunInput | undefined;
+      executor.execRun = async function* (input: CreateRunInput): AsyncGenerator<AgentMessage> {
+        capturedInput = input;
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'ok' }] } };
+      };
+      await runtime.syncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'continue' }] },
+      });
+      assert.equal(capturedInput!.isResume, true);
+    });
+
+    it('should swallow store.appendMessages errors during abort cleanup', async () => {
+      let yielded = false;
+      executor.execRun = createSlowExecRun(
+        [{ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } }],
+        () => { yielded = true; },
+      );
+
+      const thread = await runtime.createThread();
+      const origAppend = store.appendMessages.bind(store);
+      store.appendMessages = async () => {
+        throw new Error('store down');
+      };
+
+      const ac = new AbortController();
+      const syncPromise = runtime.syncRun(
+        { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        ac.signal,
+      );
+      await waitUntil(() => yielded);
+      ac.abort();
+      // Should resolve with a snapshot instead of rejecting
+      const result = await syncPromise;
+      assert(result.id.startsWith('run_'));
+
+      // Thread append failed — state is empty, but the abort path completed cleanly
+      store.appendMessages = origAppend;
+    });
+  });
 });

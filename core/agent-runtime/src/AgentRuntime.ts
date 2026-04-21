@@ -127,12 +127,13 @@ export class AgentRuntime {
     });
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
 
+    const streamMessages: AgentMessage[] = [];
     try {
       await this.store.updateRun(run.id, rb.start());
 
-      const streamMessages: AgentMessage[] = [];
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
@@ -152,6 +153,7 @@ export class AgentRuntime {
       return rb.snapshot();
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
+        await this.persistMessagesOnAbort(threadId, input, streamMessages);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
       }
@@ -187,12 +189,15 @@ export class AgentRuntime {
     this.runningTasks.set(run.id, { promise: taskPromise, abortController });
 
     (async () => {
+      const streamMessages: AgentMessage[] = [];
       try {
         await this.store.updateRun(run.id, rb.start());
 
-        const streamMessages: AgentMessage[] = [];
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
-          if (abortController.signal.aborted) return;
+          if (abortController.signal.aborted) {
+            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            return;
+          }
           streamMessages.push(msg);
         }
 
@@ -222,6 +227,7 @@ export class AgentRuntime {
             this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
       } finally {
@@ -326,13 +332,13 @@ export class AgentRuntime {
     buffer: RunEventBuffer,
     abortController: AbortController,
   ): Promise<void> {
+    const streamMessages: AgentMessage[] = [];
     try {
       await this.store.updateRun(runId, rb.start());
 
-      const streamMessages: AgentMessage[] = [];
-
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
           return;
         }
@@ -347,6 +353,7 @@ export class AgentRuntime {
       // Check if another worker has cancelled this run before writing final state
       const currentRun = await this.store.getRun(runId);
       if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+        await this.persistMessagesOnAbort(threadId, input, streamMessages);
         this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
         return;
       }
@@ -372,12 +379,38 @@ export class AgentRuntime {
         }
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       } else {
+        await this.persistMessagesOnAbort(threadId, input, streamMessages);
         this.logger.error('[AgentRuntime] execRun error during abort:', err);
         this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
       }
     } finally {
       buffer.done = true;
       buffer.emitter.emit('event');
+    }
+  }
+
+  /**
+   * Persist input + collected stream messages to the thread when a run is
+   * aborted. Keeping the thread in sync with any partial state that the
+   * executor has already written (e.g. Claude CLI session file) is what
+   * allows subsequent resume requests to continue from a consistent history
+   * instead of diverging and failing at executor startup.
+   *
+   * Errors are swallowed here so a store failure cannot mask the abort or
+   * prevent cancelRun from finalising the run status.
+   */
+  private async persistMessagesOnAbort(
+    threadId: string,
+    input: CreateRunInput,
+    streamMessages: AgentMessage[],
+  ): Promise<void> {
+    try {
+      await this.store.appendMessages(threadId, [
+        ...MessageConverter.toAgentMessages(input.input.messages),
+        ...MessageConverter.filterForStorage(streamMessages),
+      ]);
+    } catch (err) {
+      this.logger.error('[AgentRuntime] failed to persist messages on abort:', err);
     }
   }
 
