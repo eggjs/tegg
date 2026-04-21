@@ -946,11 +946,83 @@ describe('test/AgentRuntime.test.ts', () => {
         capturedInput = input;
         yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'ok' }] } };
       };
-      await runtime.syncRun({
+      const secondResult = await runtime.syncRun({
         threadId: thread.id,
         input: { messages: [{ role: 'user', content: 'continue' }] },
       });
       assert.equal(capturedInput!.isResume, true);
+      assert.equal(capturedInput!.input.messages[0].content, 'continue');
+      assert.equal(secondResult.status, RunStatus.Completed);
+    });
+
+    it('syncRun: should finalise run status to Cancelled when aborted via external signal (no cancelRun)', async () => {
+      let yielded = false;
+      executor.execRun = createSlowExecRun(
+        [{ type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } }],
+        () => { yielded = true; },
+      );
+
+      const thread = await runtime.createThread();
+      const ac = new AbortController();
+      const syncPromise = runtime.syncRun(
+        { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+        ac.signal,
+      );
+      await waitUntil(() => yielded);
+      ac.abort();
+      const snapshot = await syncPromise;
+
+      // Snapshot reflects the live store state after finalisation
+      assert.equal(snapshot.status, RunStatus.Cancelled);
+      const persisted = await store.getRun(snapshot.id);
+      assert.equal(persisted.status, RunStatus.Cancelled);
+      assert(persisted.cancelledAt);
+    });
+
+    it('asyncRun: should finalise run status to Cancelled when destroy() aborts in-flight runs', async () => {
+      const resolveRef: { resolve?: () => void } = {};
+      executor.execRun = createBlockingExecRun(resolveRef, [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'never' }] } },
+      ]);
+
+      const result = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+
+      await runtime.destroy();
+
+      const persisted = await store.getRun(result.id);
+      assert.equal(persisted.status, RunStatus.Cancelled);
+    });
+
+    it('should preserve cancelling → cancelled ordering when cancelRun drives the abort', async () => {
+      // Regression guard for the finaliseAbortedRun addition: our in-branch
+      // finaliser must NOT write when cancelRun has already set `cancelling`,
+      // otherwise cancelRun's own `cancel()` transition would throw.
+      executor.execRun = createSlowExecRun([
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } },
+      ]);
+
+      const statusHistory: string[] = [];
+      const origUpdateRun = store.updateRun.bind(store);
+      store.updateRun = async (runId: string, updates: Partial<RunRecord>) => {
+        if (updates.status) statusHistory.push(updates.status);
+        return origUpdateRun(runId, updates);
+      };
+
+      const asyncResult = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, asyncResult.id, RunStatus.InProgress);
+      statusHistory.length = 0;
+
+      await runtime.cancelRun(asyncResult.id);
+
+      const cancellingWrites = statusHistory.filter(s => s === RunStatus.Cancelling).length;
+      const cancelledWrites = statusHistory.filter(s => s === RunStatus.Cancelled).length;
+      assert.equal(cancellingWrites, 1, 'cancelling should be written exactly once (by cancelRun)');
+      assert.equal(cancelledWrites, 1, 'cancelled should be written exactly once (by cancelRun)');
     });
 
     it('should swallow store.appendMessages errors during abort cleanup', async () => {

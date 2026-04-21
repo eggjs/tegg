@@ -134,6 +134,7 @@ export class AgentRuntime {
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.finaliseAbortedRun(run.id);
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
@@ -154,6 +155,7 @@ export class AgentRuntime {
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
         await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
       }
@@ -196,6 +198,7 @@ export class AgentRuntime {
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) {
             await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            await this.finaliseAbortedRun(run.id);
             return;
           }
           streamMessages.push(msg);
@@ -228,6 +231,7 @@ export class AgentRuntime {
           }
         } else {
           await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.finaliseAbortedRun(run.id);
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
       } finally {
@@ -339,6 +343,7 @@ export class AgentRuntime {
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.finaliseAbortedRun(runId);
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
           return;
         }
@@ -380,6 +385,7 @@ export class AgentRuntime {
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       } else {
         await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        await this.finaliseAbortedRun(runId);
         this.logger.error('[AgentRuntime] execRun error during abort:', err);
         this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
       }
@@ -411,6 +417,34 @@ export class AgentRuntime {
       ]);
     } catch (err) {
       this.logger.error('[AgentRuntime] failed to persist messages on abort:', err);
+    }
+  }
+
+  /**
+   * Push an aborted run to a terminal `cancelled` state when nobody else
+   * will. Abort can be driven either by `cancelRun` — which already owns
+   * the `in_progress → cancelling → cancelled` transition — or by an
+   * external `AbortSignal` / `destroy()`, where the run would otherwise
+   * stay stuck in `in_progress` forever.
+   *
+   * Behaviour:
+   * - terminal status (completed/failed/cancelled/expired): no-op.
+   * - `cancelling`: no-op, let `cancelRun` finish the transition.
+   * - `in_progress` / `queued`: write `cancelling` then `cancelled`.
+   *
+   * Errors are swallowed so a store failure cannot mask the abort.
+   */
+  private async finaliseAbortedRun(runId: string): Promise<void> {
+    try {
+      const current = await this.store.getRun(runId);
+      if (AgentRuntime.TERMINAL_RUN_STATUSES.has(current.status)) return;
+      if (current.status === RunStatus.Cancelling) return;
+
+      const rb = RunBuilder.fromRecord(current);
+      await this.store.updateRun(runId, rb.cancelling());
+      await this.store.updateRun(runId, rb.cancel());
+    } catch (err) {
+      this.logger.error('[AgentRuntime] failed to finalise aborted run:', err);
     }
   }
 
