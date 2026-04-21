@@ -667,7 +667,7 @@ export class MCPControllerRegister implements ControllerRegister {
       } finally {
         if ((duration && elapsed >= duration) || errCount > 10) {
           if (this.sseConnections[sessionId]) {
-            this.clearSseMcpServer(this.sseConnections[sessionId])
+            this.clearSseMcpServer(this.sseConnections[sessionId]);
           } else {
             this.app.logger.warn('mcp server ping clear fail, sessionId: ', sessionId);
           }
