@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.14](https://github.com/eggjs/tegg/compare/v3.78.13...v3.78.14) (2026-04-21)
+
+
+### Bug Fixes
+
+* mcp sse connect clear ([#440](https://github.com/eggjs/tegg/issues/440)) ([4c59d6a](https://github.com/eggjs/tegg/commit/4c59d6a13cf066dec70173494bd09c30a5052712))
+
+
+
+
+
 ## [3.78.13](https://github.com/eggjs/tegg/compare/v3.78.12...v3.78.13) (2026-04-21)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
