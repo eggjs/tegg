@@ -86,6 +86,19 @@ export class AgentRuntime {
     RunStatus.Expired,
   ]);
 
+  // Statuses that must short-circuit the "write Completed" path in the
+  // execution loops. Covers a TOCTOU window where another actor (most
+  // notably cancelRun's commit-timeout watchdog, which writes Failed) sets
+  // a terminal state while this worker has just exited the for-await loop
+  // but hasn't yet written rb.complete(usage). Completed is intentionally
+  // excluded so the normal success path is not routed through here.
+  private static readonly POST_LOOP_TERMINAL_STATUSES = new Set<RunStatus>([
+    RunStatus.Cancelling,
+    RunStatus.Cancelled,
+    RunStatus.Failed,
+    RunStatus.Expired,
+  ]);
+
   private store: AgentStore;
   private runningTasks: Map<string, RunTaskState>;
   private runBuffers: Map<string, RunEventBuffer>;
@@ -183,6 +196,20 @@ export class AgentRuntime {
         await this.markCommittedIfNeeded(task, msg, streamMessages);
       }
 
+      // TOCTOU: another worker (e.g. cancelRun, or its commit-timeout
+      // watchdog which writes Failed) may have terminated this run while
+      // we were finishing the last iterator.next(). Respect the already-set
+      // terminal state instead of overwriting it with Completed.
+      const currentRun = await this.store.getRun(run.id);
+      if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
+        if (task.committed) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        }
+        await this.finaliseAbortedRun(run.id);
+        const latest = await this.store.getRun(run.id);
+        return RunBuilder.fromRecord(latest).snapshot();
+      }
+
       const usage = MessageConverter.extractUsage(streamMessages);
 
       // Append input messages + stream messages to thread (excluding stream_event deltas)
@@ -258,9 +285,11 @@ export class AgentRuntime {
           await this.markCommittedIfNeeded(task, msg, streamMessages);
         }
 
-        // Check if another worker has cancelled this run before writing final state
+        // TOCTOU: respect any terminal-ish status set by another worker
+        // (cancelRun, its commit-timeout watchdog which writes Failed, or
+        // an external expiration) instead of overwriting it with Completed.
         const currentRun = await this.store.getRun(run.id);
-        if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+        if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
           return;
         }
 
@@ -424,13 +453,15 @@ export class AgentRuntime {
         await this.markCommittedIfNeeded(task, msg, streamMessages);
       }
 
-      // Check if another worker has cancelled this run before writing final state
+      // TOCTOU: respect any terminal-ish status set by another worker
+      // (cancelRun, its commit-timeout watchdog which writes Failed, or
+      // an external expiration) instead of overwriting it with Completed.
       const currentRun = await this.store.getRun(runId);
-      if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+      if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
         if (task.committed) {
           await this.persistMessagesOnAbort(threadId, input, streamMessages);
         }
-        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+        this.pushEvent(buffer, 'error', { message: currentRun.status, runId });
         return;
       }
 

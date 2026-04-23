@@ -864,6 +864,66 @@ describe('test/AgentRuntime.test.ts', () => {
       resolveRef.resolve?.();
     });
 
+    it('should not overwrite watchdog-set Failed with Completed when executor finishes naturally without committing', async () => {
+      // Regression test for a TOCTOU race on the commit-timeout path:
+      //   1. cancelRun's watchdog fires at cancelCommitTimeoutMs and writes Failed.
+      //   2. The executor does not listen to the abort signal and finishes
+      //      naturally (no committing message ever yielded).
+      //   3. asyncRun's IIFE then enters its post-loop status check; without
+      //      the Failed/Expired guard it would fall through to rb.complete()
+      //      and overwrite the watchdog-set Failed with Completed.
+      await runtime.destroy();
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor = {
+        async* execRun(): AsyncGenerator<AgentMessage> {
+          yield { type: 'system', subtype: 'init' } as AgentMessage;
+          // Intentionally does NOT listen to the abort signal — simulates an
+          // executor that keeps running to natural completion after the
+          // runtime has already declared the run Failed.
+          await gate;
+        },
+      };
+      runtime = new AgentRuntime({
+        executor,
+        store,
+        logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
+        cancelCommitTimeoutMs: 50,
+      });
+
+      const thread = await runtime.createThread();
+      const result = await runtime.asyncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+
+      const cancelPromise = runtime.cancelRun(result.id);
+
+      // Wait well past the 50ms watchdog so Failed has definitely been
+      // written, then release the gate to let the executor finish naturally.
+      await setTimeout(150);
+      resolveGate();
+
+      await assert.rejects(
+        cancelPromise,
+        (err: unknown) => {
+          assert(err instanceof AgentTimeoutError, `expected AgentTimeoutError, got ${err}`);
+          return true;
+        },
+      );
+
+      const persisted = await store.getRun(result.id);
+      assert.equal(
+        persisted.status,
+        RunStatus.Failed,
+        'watchdog-set Failed must not be overwritten by post-loop rb.complete',
+      );
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 0, 'thread must stay empty when executor never committed');
+    });
+
     it('should not hold cancelRun when the executor has already committed', async () => {
       executor.execRun = createSlowExecRun([
         { type: 'system', subtype: 'init' } as AgentMessage,
