@@ -705,6 +705,11 @@ export class AgentRuntime {
     const task = this.runningTasks.get(runId);
     if (task) {
       if (!task.committed) {
+        this.logger.info(
+          '[AgentRuntime] cancelRun %s holding up to %dms for executor session to commit',
+          runId,
+          this.cancelCommitTimeoutMs,
+        );
         try {
           await this.waitForCommitted(task, this.cancelCommitTimeoutMs);
         } catch (err) {
@@ -712,6 +717,11 @@ export class AgentRuntime {
           // aborting so the execution path's finaliseAbortedRun sees a
           // terminal status and skips the cancelled transition. The thread
           // is left untouched because task.committed is still false.
+          this.logger.error(
+            '[AgentRuntime] cancelRun %s timed out after %dms waiting for executor to commit; marking run failed and leaving thread untouched',
+            runId,
+            this.cancelCommitTimeoutMs,
+          );
           try {
             await this.store.updateRun(runId, rb.fail(err as Error));
           } catch (storeErr) {

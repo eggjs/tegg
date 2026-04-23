@@ -132,6 +132,9 @@ describe('test/AgentRuntime.test.ts', () => {
       executor,
       store,
       logger: {
+        info() {
+          /* noop */
+        },
         error() {
           /* noop */
         },
@@ -832,7 +835,7 @@ describe('test/AgentRuntime.test.ts', () => {
       runtime = new AgentRuntime({
         executor,
         store,
-        logger: { error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
+        logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
         cancelCommitTimeoutMs: 50,
       });
 
