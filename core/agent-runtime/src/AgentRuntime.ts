@@ -506,27 +506,37 @@ export class AgentRuntime {
   private waitForCommitted(task: RunTaskState, timeoutMs: number): Promise<void> {
     if (task.committed) return Promise.resolve();
     return new Promise<void>((resolve, reject) => {
-      const timer = globalThis.setTimeout(() => {
+      // Handlers need to reference each other (cleanup must off() all of
+      // commit / end / timer), which would force a forward reference if the
+      // arrow functions referred to each other by name. Stash them on a
+      // shared container so cleanup can read them by property access and the
+      // source order stays linear.
+      const refs: {
+        timer?: ReturnType<typeof globalThis.setTimeout>;
+        onCommit?: () => void;
+        onEnd?: () => void;
+      } = {};
+      const cleanup = (): void => {
+        if (refs.timer) clearTimeout(refs.timer);
+        if (refs.onCommit) task.emitter.off('commit', refs.onCommit);
+        if (refs.onEnd) task.emitter.off('end', refs.onEnd);
+      };
+      refs.onCommit = () => {
+        cleanup();
+        resolve();
+      };
+      refs.onEnd = () => {
+        cleanup();
+        resolve();
+      };
+      refs.timer = globalThis.setTimeout(() => {
         cleanup();
         reject(new AgentTimeoutError(
           `Timed out waiting ${timeoutMs}ms for executor session to be committed before cancel`,
         ));
       }, timeoutMs);
-      const onCommit = (): void => {
-        cleanup();
-        resolve();
-      };
-      const onEnd = (): void => {
-        cleanup();
-        resolve();
-      };
-      const cleanup = (): void => {
-        clearTimeout(timer);
-        task.emitter.off('commit', onCommit);
-        task.emitter.off('end', onEnd);
-      };
-      task.emitter.once('commit', onCommit);
-      task.emitter.once('end', onEnd);
+      task.emitter.once('commit', refs.onCommit);
+      task.emitter.once('end', refs.onEnd);
     });
   }
 
