@@ -13,6 +13,7 @@ import {
   AgentObjectType,
   AgentNotFoundError,
   AgentConflictError,
+  AgentTimeoutError,
 } from '@eggjs/tegg-types/agent-runtime';
 
 import { AgentRuntime } from '../src/AgentRuntime';
@@ -131,6 +132,9 @@ describe('test/AgentRuntime.test.ts', () => {
       executor,
       store,
       logger: {
+        info() {
+          /* noop */
+        },
         error() {
           /* noop */
         },
@@ -767,6 +771,225 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(run.status, RunStatus.Cancelling);
     });
 
+    it('should hold until the executor commits before aborting and persisting', async () => {
+      // Simulates the Claude Code SDK startup window: the executor emits a
+      // non-committing `system/init` right away and then a committing
+      // `assistant` message later. cancelRun is called in between and must
+      // wait for the assistant chunk before it aborts, otherwise it would
+      // persist a user message against a session file that does not yet
+      // exist on disk.
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor.execRun = async function* (_input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage> {
+        yield { type: 'system', subtype: 'init' } as AgentMessage;
+        await gate;
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'now committed' }] } };
+        await new Promise<void>((_resolve, reject) => {
+          if (signal?.aborted) {
+            reject(new Error('aborted'));
+            return;
+          }
+          signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+        });
+      };
+
+      const thread = await runtime.createThread();
+      const result = await runtime.asyncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+
+      // Give the executor time to yield the first system message; the task
+      // must still be considered uncommitted because type === 'system'.
+      await setTimeout(30);
+
+      const cancelPromise = runtime.cancelRun(result.id);
+      let cancelResolved = false;
+      cancelPromise.then(() => { cancelResolved = true; }, () => { cancelResolved = true; });
+
+      // Hold for a bit — cancel should not resolve while we are blocked in
+      // the gate, because no committing message has been yielded yet.
+      await setTimeout(100);
+      assert.equal(cancelResolved, false, 'cancelRun must block until executor commits');
+
+      // Release the gate so the executor yields a non-system message.
+      resolveGate();
+      const cancelled = await cancelPromise;
+      assert.equal(cancelled.status, RunStatus.Cancelled);
+
+      // Thread should contain both the user input and the partial assistant
+      // reply — i.e. it is in sync with what the SDK jsonl would contain.
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 2);
+      assert.equal(updated.messages[0].type, 'user');
+      assert.equal(updated.messages[1].type, 'assistant');
+    });
+
+    it('should fail the run and leave the thread empty when cancel waits past the commit timeout', async () => {
+      // Rebuild the runtime with a short commit timeout so the watchdog
+      // fires before the blocking executor ever yields.
+      await runtime.destroy();
+      const resolveRef: { resolve?: () => void } = {};
+      executor.execRun = createBlockingExecRun(resolveRef, []);
+      runtime = new AgentRuntime({
+        executor,
+        store,
+        logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
+        cancelCommitTimeoutMs: 50,
+      });
+
+      const thread = await runtime.createThread();
+      const result = await runtime.asyncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+
+      await assert.rejects(
+        () => runtime.cancelRun(result.id),
+        (err: unknown) => {
+          assert(err instanceof AgentTimeoutError, `expected AgentTimeoutError, got ${err}`);
+          return true;
+        },
+      );
+
+      const persisted = await store.getRun(result.id);
+      assert.equal(persisted.status, RunStatus.Failed);
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 0, 'thread must stay empty when executor never committed');
+
+      // Unblock the executor so runtime.destroy() in afterEach completes cleanly.
+      resolveRef.resolve?.();
+    });
+
+    it('should not overwrite watchdog-set Failed with Completed when executor finishes naturally without committing', async () => {
+      // Regression test for a TOCTOU race on the commit-timeout path:
+      //   1. cancelRun's watchdog fires at cancelCommitTimeoutMs and writes Failed.
+      //   2. The executor does not listen to the abort signal and finishes
+      //      naturally (no committing message ever yielded).
+      //   3. asyncRun's IIFE then enters its post-loop status check; without
+      //      the Failed/Expired guard it would fall through to rb.complete()
+      //      and overwrite the watchdog-set Failed with Completed.
+      await runtime.destroy();
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor = {
+        async* execRun(): AsyncGenerator<AgentMessage> {
+          yield { type: 'system', subtype: 'init' } as AgentMessage;
+          // Intentionally does NOT listen to the abort signal — simulates an
+          // executor that keeps running to natural completion after the
+          // runtime has already declared the run Failed.
+          await gate;
+        },
+      };
+      runtime = new AgentRuntime({
+        executor,
+        store,
+        logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
+        cancelCommitTimeoutMs: 50,
+      });
+
+      const thread = await runtime.createThread();
+      const result = await runtime.asyncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+
+      const cancelPromise = runtime.cancelRun(result.id);
+
+      // Wait well past the 50ms watchdog so Failed has definitely been
+      // written, then release the gate to let the executor finish naturally.
+      await setTimeout(150);
+      resolveGate();
+
+      await assert.rejects(
+        cancelPromise,
+        (err: unknown) => {
+          assert(err instanceof AgentTimeoutError, `expected AgentTimeoutError, got ${err}`);
+          return true;
+        },
+      );
+
+      const persisted = await store.getRun(result.id);
+      assert.equal(
+        persisted.status,
+        RunStatus.Failed,
+        'watchdog-set Failed must not be overwritten by post-loop rb.complete',
+      );
+
+      const updated = await runtime.getThread(thread.id);
+      assert.equal(updated.messages.length, 0, 'thread must stay empty when executor never committed');
+    });
+
+    it('should not hold cancelRun when the executor has already committed', async () => {
+      executor.execRun = createSlowExecRun([
+        { type: 'system', subtype: 'init' } as AgentMessage,
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'committed' }] } },
+      ]);
+
+      const result = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+      // Wait long enough for the assistant chunk to land and mark committed.
+      await setTimeout(50);
+
+      const start = Date.now();
+      const cancelled = await runtime.cancelRun(result.id);
+      const elapsed = Date.now() - start;
+      assert.equal(cancelled.status, RunStatus.Cancelled);
+      assert(elapsed < 1000, `cancelRun should return quickly when already committed, took ${elapsed}ms`);
+    });
+
+    it('should consult a custom isSessionCommitted hook instead of the default heuristic', async () => {
+      // The executor yields three assistant messages; the hook treats only
+      // the third as committing. cancelRun must wait for the third.
+      const decisions: Array<{ text: string; committed: boolean }> = [];
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor.execRun = async function* (_input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'first' }] } };
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'second' }] } };
+        await gate;
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'committed' }] } };
+        await new Promise<void>((_resolve, reject) => {
+          if (signal?.aborted) {
+            reject(new Error('aborted'));
+            return;
+          }
+          signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+        });
+      };
+      executor.isSessionCommitted = (msg: AgentMessage) => {
+        const text = ((msg as { message?: { content?: Array<{ text?: string }> } }).message?.content?.[0]?.text) ?? '';
+        const committed = text === 'committed';
+        decisions.push({ text, committed });
+        return committed;
+      };
+
+      const result = await runtime.asyncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      await waitForRunStatus(store, result.id, RunStatus.InProgress);
+      // Let the first two non-committing chunks land before cancelling.
+      await setTimeout(30);
+
+      const cancelPromise = runtime.cancelRun(result.id);
+      let cancelResolved = false;
+      cancelPromise.then(() => { cancelResolved = true; }, () => { cancelResolved = true; });
+
+      await setTimeout(80);
+      assert.equal(cancelResolved, false, 'cancelRun must wait for the hook to accept a message as committed');
+
+      resolveGate();
+      const cancelled = await cancelPromise;
+      assert.equal(cancelled.status, RunStatus.Cancelled);
+      assert(decisions.some(d => d.committed), 'hook must have observed the committing chunk');
+    });
+
     it('should not overwrite terminal state when run completes during cancellation (TOCTOU)', async () => {
       const resolveRef: { resolve?: () => void } = {};
       executor.execRun = createBlockingExecRun(resolveRef, [
@@ -845,7 +1068,13 @@ describe('test/AgentRuntime.test.ts', () => {
       );
     });
 
-    it('syncRun: should persist only the user message when aborted before any chunk', async () => {
+    it('syncRun: should NOT persist the user message when aborted before the executor commits', async () => {
+      // When an external signal aborts before the executor has yielded any
+      // non-system message, the executor's underlying session (e.g. the
+      // Claude Code SDK jsonl file) was never created on disk. Persisting
+      // the user message to the thread in that state would cause the next
+      // run to diverge from a session that does not exist, so the thread
+      // must be left empty instead.
       const resolveRef: { resolve?: () => void } = {};
       executor.execRun = createBlockingExecRun(resolveRef, [
         { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'never' }] } },
@@ -864,8 +1093,7 @@ describe('test/AgentRuntime.test.ts', () => {
       await syncPromise;
 
       const updated = await runtime.getThread(thread.id);
-      assert.equal(updated.messages.length, 1);
-      assert.equal(updated.messages[0].type, 'user');
+      assert.equal(updated.messages.length, 0);
     });
 
     it('asyncRun: should persist user + partial assistant messages when aborted via cancelRun', async () => {

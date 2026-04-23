@@ -37,3 +37,19 @@ export class InvalidRunStateTransitionError extends Error {
     this.name = 'InvalidRunStateTransitionError';
   }
 }
+
+/**
+ * Error thrown when cancelRun waits for the executor's session to be
+ * committed to persistent storage (e.g. Claude Code SDK jsonl on disk)
+ * but the commit never arrives within the configured timeout. The run is
+ * transitioned to `failed` rather than `cancelled` to reflect that the
+ * executor never reached a resumable state.
+ */
+export class AgentTimeoutError extends Error {
+  status = 408;
+
+  constructor(message: string) {
+    super(message);
+    this.name = 'AgentTimeoutError';
+  }
+}

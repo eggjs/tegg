@@ -154,6 +154,12 @@ describe('test/RunBuilder.test.ts', () => {
       assert.equal(update.status, RunStatus.Failed);
     });
 
+    it('should allow failing from cancelling status (cancel watchdog timeout)', () => {
+      const rb = RunBuilder.create(makeRunRecord({ status: RunStatus.Cancelling }), 'thread_1');
+      const update = rb.fail(new Error('commit timeout'));
+      assert.equal(update.status, RunStatus.Failed);
+    });
+
     it('should throw for terminal status', () => {
       const rb = RunBuilder.create(makeRunRecord({ status: RunStatus.Completed }), 'thread_1');
       assert.throws(() => rb.fail(new Error('nope')), InvalidRunStateTransitionError);

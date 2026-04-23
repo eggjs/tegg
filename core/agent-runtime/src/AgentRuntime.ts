@@ -14,7 +14,13 @@ import type {
   AgentStore,
   StreamEvent,
 } from '@eggjs/tegg-types/agent-runtime';
-import { RunStatus, AgentObjectType, AgentConflictError, AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
+import {
+  RunStatus,
+  AgentObjectType,
+  AgentConflictError,
+  AgentNotFoundError,
+  AgentTimeoutError,
+} from '@eggjs/tegg-types/agent-runtime';
 import type { EggLogger } from 'egg-logger';
 
 import { MessageConverter } from './MessageConverter';
@@ -23,6 +29,7 @@ import type { SSEWriter } from './SSEWriter';
 
 const HEARTBEAT_INTERVAL_MS = 10_000;
 const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
+const DEFAULT_CANCEL_COMMIT_TIMEOUT_MS = 30_000;
 
 interface RunEventBuffer {
   filePath: string;
@@ -34,17 +41,41 @@ interface RunEventBuffer {
 export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
 
 /**
- * The executor interface — only requires execRun so the runtime can delegate
+ * The executor interface — execRun is required so the runtime can delegate
  * execution back through the controller's prototype chain (AOP/mock friendly).
+ *
+ * `isSessionCommitted` is an optional hook that lets the executor tell the
+ * runtime when its underlying session has been persisted to storage (e.g. the
+ * Claude Code SDK jsonl file). The runtime uses this to decide when a pending
+ * `cancelRun` can safely abort and persist the thread. See AgentHandler.ts
+ * for the semantics and the default heuristic used when this hook is absent.
  */
 export interface AgentExecutor {
   execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage>;
+  isSessionCommitted?(msg: AgentMessage, history: AgentMessage[]): boolean | Promise<boolean>;
 }
 
 export interface AgentRuntimeOptions {
   executor: AgentExecutor;
   store: AgentStore;
   logger: EggLogger;
+  /**
+   * How long cancelRun should wait for the executor's session to become
+   * committed before giving up and marking the run as failed. Defaults to
+   * 30 seconds.
+   */
+  cancelCommitTimeoutMs?: number;
+}
+
+interface RunTaskState {
+  promise: Promise<void>;
+  abortController: AbortController;
+  /** True once the executor has reported (or the heuristic has detected) that
+   *  its session is safely persisted and the run can be cancelled cleanly. */
+  committed: boolean;
+  /** Emits 'commit' the first time committed flips to true, and 'end' when the
+   *  task's execution finally finishes (success, failure, or abort). */
+  emitter: EventEmitter;
 }
 
 export class AgentRuntime {
@@ -55,11 +86,25 @@ export class AgentRuntime {
     RunStatus.Expired,
   ]);
 
+  // Statuses that must short-circuit the "write Completed" path in the
+  // execution loops. Covers a TOCTOU window where another actor (most
+  // notably cancelRun's commit-timeout watchdog, which writes Failed) sets
+  // a terminal state while this worker has just exited the for-await loop
+  // but hasn't yet written rb.complete(usage). Completed is intentionally
+  // excluded so the normal success path is not routed through here.
+  private static readonly POST_LOOP_TERMINAL_STATUSES = new Set<RunStatus>([
+    RunStatus.Cancelling,
+    RunStatus.Cancelled,
+    RunStatus.Failed,
+    RunStatus.Expired,
+  ]);
+
   private store: AgentStore;
-  private runningTasks: Map<string, { promise: Promise<void>; abortController: AbortController }>;
+  private runningTasks: Map<string, RunTaskState>;
   private runBuffers: Map<string, RunEventBuffer>;
   private executor: AgentExecutor;
   private logger: EggLogger;
+  private cancelCommitTimeoutMs: number;
 
   constructor(options: AgentRuntimeOptions) {
     this.executor = options.executor;
@@ -68,6 +113,7 @@ export class AgentRuntime {
       throw new Error('AgentRuntimeOptions.logger is required');
     }
     this.logger = options.logger;
+    this.cancelCommitTimeoutMs = options.cancelCommitTimeoutMs ?? DEFAULT_CANCEL_COMMIT_TIMEOUT_MS;
     this.runningTasks = new Map();
     this.runBuffers = new Map();
   }
@@ -125,7 +171,13 @@ export class AgentRuntime {
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
-    this.runningTasks.set(run.id, { promise: taskPromise, abortController });
+    const task: RunTaskState = {
+      promise: taskPromise,
+      abortController,
+      committed: false,
+      emitter: new EventEmitter(),
+    };
+    this.runningTasks.set(run.id, task);
 
     const streamMessages: AgentMessage[] = [];
     try {
@@ -133,12 +185,29 @@ export class AgentRuntime {
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          if (task.committed) {
+            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          }
           await this.finaliseAbortedRun(run.id);
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
         streamMessages.push(msg);
+        await this.markCommittedIfNeeded(task, msg, streamMessages);
+      }
+
+      // TOCTOU: another worker (e.g. cancelRun, or its commit-timeout
+      // watchdog which writes Failed) may have terminated this run while
+      // we were finishing the last iterator.next(). Respect the already-set
+      // terminal state instead of overwriting it with Completed.
+      const currentRun = await this.store.getRun(run.id);
+      if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
+        if (task.committed) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        }
+        await this.finaliseAbortedRun(run.id);
+        const latest = await this.store.getRun(run.id);
+        return RunBuilder.fromRecord(latest).snapshot();
       }
 
       const usage = MessageConverter.extractUsage(streamMessages);
@@ -154,7 +223,9 @@ export class AgentRuntime {
       return rb.snapshot();
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
-        await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        if (task.committed) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        }
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
@@ -166,6 +237,7 @@ export class AgentRuntime {
       }
       throw err;
     } finally {
+      task.emitter.emit('end');
       resolveTask();
       this.runningTasks.delete(run.id);
     }
@@ -188,7 +260,13 @@ export class AgentRuntime {
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
-    this.runningTasks.set(run.id, { promise: taskPromise, abortController });
+    const task: RunTaskState = {
+      promise: taskPromise,
+      abortController,
+      committed: false,
+      emitter: new EventEmitter(),
+    };
+    this.runningTasks.set(run.id, task);
 
     (async () => {
       const streamMessages: AgentMessage[] = [];
@@ -197,16 +275,21 @@ export class AgentRuntime {
 
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) {
-            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            if (task.committed) {
+              await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            }
             await this.finaliseAbortedRun(run.id);
             return;
           }
           streamMessages.push(msg);
+          await this.markCommittedIfNeeded(task, msg, streamMessages);
         }
 
-        // Check if another worker has cancelled this run before writing final state
+        // TOCTOU: respect any terminal-ish status set by another worker
+        // (cancelRun, its commit-timeout watchdog which writes Failed, or
+        // an external expiration) instead of overwriting it with Completed.
         const currentRun = await this.store.getRun(run.id);
-        if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
+        if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
           return;
         }
 
@@ -230,11 +313,14 @@ export class AgentRuntime {
             this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          if (task.committed) {
+            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          }
           await this.finaliseAbortedRun(run.id);
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
       } finally {
+        task.emitter.emit('end');
         resolveTask();
         this.runningTasks.delete(run.id);
       }
@@ -276,10 +362,17 @@ export class AgentRuntime {
     const taskPromise = new Promise<void>(r => {
       resolveTask = r;
     });
-    this.runningTasks.set(run.id, { promise: taskPromise, abortController });
+    const task: RunTaskState = {
+      promise: taskPromise,
+      abortController,
+      committed: false,
+      emitter: new EventEmitter(),
+    };
+    this.runningTasks.set(run.id, task);
 
-    this.executeStreamBackground(input, run.id, threadId, rb, buffer, abortController)
+    this.executeStreamBackground(input, run.id, threadId, rb, buffer, task)
       .finally(() => {
+        task.emitter.emit('end');
         resolveTask();
         this.runningTasks.delete(run.id);
         this.runBuffers.delete(run.id);
@@ -334,15 +427,18 @@ export class AgentRuntime {
     threadId: string,
     rb: RunBuilder,
     buffer: RunEventBuffer,
-    abortController: AbortController,
+    task: RunTaskState,
   ): Promise<void> {
+    const abortController = task.abortController;
     const streamMessages: AgentMessage[] = [];
     try {
       await this.store.updateRun(runId, rb.start());
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          if (task.committed) {
+            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          }
           await this.finaliseAbortedRun(runId);
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
           return;
@@ -353,13 +449,19 @@ export class AgentRuntime {
         // Pass through SDK message directly as event data
         const eventType = msg.type || 'message';
         this.pushEvent(buffer, eventType, msg);
+
+        await this.markCommittedIfNeeded(task, msg, streamMessages);
       }
 
-      // Check if another worker has cancelled this run before writing final state
+      // TOCTOU: respect any terminal-ish status set by another worker
+      // (cancelRun, its commit-timeout watchdog which writes Failed, or
+      // an external expiration) instead of overwriting it with Completed.
       const currentRun = await this.store.getRun(runId);
-      if (currentRun.status === RunStatus.Cancelling || currentRun.status === RunStatus.Cancelled) {
-        await this.persistMessagesOnAbort(threadId, input, streamMessages);
-        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+      if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
+        if (task.committed) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        }
+        this.pushEvent(buffer, 'error', { message: currentRun.status, runId });
         return;
       }
 
@@ -384,7 +486,9 @@ export class AgentRuntime {
         }
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       } else {
-        await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        if (task.committed) {
+          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+        }
         await this.finaliseAbortedRun(runId);
         this.logger.error('[AgentRuntime] execRun error during abort:', err);
         this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
@@ -396,11 +500,88 @@ export class AgentRuntime {
   }
 
   /**
+   * Flip the task's `committed` flag the first time the executor's current
+   * message indicates its session has been persisted to storage. Uses the
+   * executor's `isSessionCommitted` hook when available, otherwise a default
+   * heuristic where any message with `type !== 'system'` counts as committed
+   * (the Claude Code SDK writes the jsonl around the first non-system event).
+   */
+  private async markCommittedIfNeeded(
+    task: RunTaskState,
+    msg: AgentMessage,
+    history: AgentMessage[],
+  ): Promise<void> {
+    if (task.committed) return;
+    let committed: boolean;
+    try {
+      committed = typeof this.executor.isSessionCommitted === 'function'
+        ? await this.executor.isSessionCommitted(msg, history)
+        : msg.type !== 'system';
+    } catch (err) {
+      this.logger.error('[AgentRuntime] isSessionCommitted threw, treating as not committed:', err);
+      committed = false;
+    }
+    if (committed) {
+      task.committed = true;
+      task.emitter.emit('commit');
+    }
+  }
+
+  /**
+   * Wait until the task reports that its session is committed, or the task
+   * finishes on its own, or the timeout elapses. Rejects with
+   * AgentTimeoutError on timeout. Resolves without error when the task ends
+   * before committing — in that case the caller should re-read the run's
+   * terminal status rather than trying to cancel further.
+   */
+  private waitForCommitted(task: RunTaskState, timeoutMs: number): Promise<void> {
+    if (task.committed) return Promise.resolve();
+    return new Promise<void>((resolve, reject) => {
+      // Handlers need to reference each other (cleanup must off() all of
+      // commit / end / timer), which would force a forward reference if the
+      // arrow functions referred to each other by name. Stash them on a
+      // shared container so cleanup can read them by property access and the
+      // source order stays linear.
+      const refs: {
+        timer?: ReturnType<typeof globalThis.setTimeout>;
+        onCommit?: () => void;
+        onEnd?: () => void;
+      } = {};
+      const cleanup = (): void => {
+        if (refs.timer) clearTimeout(refs.timer);
+        if (refs.onCommit) task.emitter.off('commit', refs.onCommit);
+        if (refs.onEnd) task.emitter.off('end', refs.onEnd);
+      };
+      refs.onCommit = () => {
+        cleanup();
+        resolve();
+      };
+      refs.onEnd = () => {
+        cleanup();
+        resolve();
+      };
+      refs.timer = globalThis.setTimeout(() => {
+        cleanup();
+        reject(new AgentTimeoutError(
+          `Timed out waiting ${timeoutMs}ms for executor session to be committed before cancel`,
+        ));
+      }, timeoutMs);
+      task.emitter.once('commit', refs.onCommit);
+      task.emitter.once('end', refs.onEnd);
+    });
+  }
+
+  /**
    * Persist input + collected stream messages to the thread when a run is
    * aborted. Keeping the thread in sync with any partial state that the
    * executor has already written (e.g. Claude CLI session file) is what
    * allows subsequent resume requests to continue from a consistent history
    * instead of diverging and failing at executor startup.
+   *
+   * Callers must check `task.committed` before invoking this; if the
+   * executor never reached a committed state the thread should be left
+   * untouched so the next run starts fresh instead of trying to resume a
+   * session that was never created on disk.
    *
    * Errors are swallowed here so a store failure cannot mask the abort or
    * prevent cancelRun from finalising the run status.
@@ -540,6 +721,19 @@ export class AgentRuntime {
     return RunBuilder.fromRecord(run).snapshot();
   }
 
+  /**
+   * Cancel a running task. The call blocks until either (a) the executor
+   * reports its session is safely committed to storage, and the task has
+   * been aborted and the thread persisted, or (b) the commit watchdog times
+   * out, in which case the run is marked `failed` (not `cancelled`) and
+   * AgentTimeoutError is thrown to the caller.
+   *
+   * The hold is there to guarantee that whatever user input the thread
+   * records on abort is also present in the executor's own persistent
+   * session (e.g. Claude Code SDK jsonl), so a subsequent resume request
+   * on the same thread doesn't diverge from a session that was never
+   * actually written.
+   */
   async cancelRun(runId: string): Promise<RunObject> {
     const run = await this.store.getRun(runId);
     if (AgentRuntime.TERMINAL_RUN_STATUSES.has(run.status)) {
@@ -551,6 +745,36 @@ export class AgentRuntime {
 
     const task = this.runningTasks.get(runId);
     if (task) {
+      if (!task.committed) {
+        this.logger.info(
+          '[AgentRuntime] cancelRun %s holding up to %dms for executor session to commit',
+          runId,
+          this.cancelCommitTimeoutMs,
+        );
+        try {
+          await this.waitForCommitted(task, this.cancelCommitTimeoutMs);
+        } catch (err) {
+          // Commit watchdog timed out. Mark the run as failed *before*
+          // aborting so the execution path's finaliseAbortedRun sees a
+          // terminal status and skips the cancelled transition. The thread
+          // is left untouched because task.committed is still false.
+          this.logger.error(
+            '[AgentRuntime] cancelRun %s timed out after %dms waiting for executor to commit; marking run failed and leaving thread untouched',
+            runId,
+            this.cancelCommitTimeoutMs,
+          );
+          try {
+            await this.store.updateRun(runId, rb.fail(err as Error));
+          } catch (storeErr) {
+            this.logger.error('[AgentRuntime] failed to mark run failed after cancel timeout:', storeErr);
+          }
+          task.abortController.abort();
+          await task.promise.catch(() => {
+            /* ignore */
+          });
+          throw err;
+        }
+      }
       task.abortController.abort();
       await task.promise.catch(() => {
         /* ignore */

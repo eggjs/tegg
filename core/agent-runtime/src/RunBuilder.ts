@@ -89,9 +89,19 @@ export class RunBuilder {
     };
   }
 
-  /** queued/in_progress -> failed. Returns store update. */
+  /**
+   * queued/in_progress/cancelling -> failed. Returns store update.
+   *
+   * `cancelling -> failed` covers the case where AgentRuntime has initiated
+   * a cancel but the watchdog times out before the executor commits — the
+   * run is treated as a failed startup rather than a successful cancel.
+   */
   fail(error: Error): Partial<RunRecord> {
-    if (this.status !== RunStatus.InProgress && this.status !== RunStatus.Queued) {
+    if (
+      this.status !== RunStatus.InProgress &&
+      this.status !== RunStatus.Queued &&
+      this.status !== RunStatus.Cancelling
+    ) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Failed);
     }
     this.status = RunStatus.Failed;
