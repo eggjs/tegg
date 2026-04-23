@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.15](https://github.com/eggjs/tegg/compare/v3.78.14...v3.78.15) (2026-04-23)
+
+
+### Bug Fixes
+
+* **agent-runtime:** hold cancelRun until executor session is committed ([#441](https://github.com/eggjs/tegg/issues/441)) ([4e02a28](https://github.com/eggjs/tegg/commit/4e02a28bdfe9b924c1190482fd3d85f8cad1fcfa))
+
+
+
+
+
 ## [3.78.14](https://github.com/eggjs/tegg/compare/v3.78.13...v3.78.14) (2026-04-21)
 
 

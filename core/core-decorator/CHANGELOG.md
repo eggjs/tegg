@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.15](https://github.com/eggjs/tegg/compare/v3.78.14...v3.78.15) (2026-04-23)
+
+**Note:** Version bump only for package @eggjs/core-decorator
+
+
+
+
+
 ## [3.78.14](https://github.com/eggjs/tegg/compare/v3.78.13...v3.78.14) (2026-04-21)
 
 **Note:** Version bump only for package @eggjs/core-decorator
