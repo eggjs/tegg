@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.78.16](https://github.com/eggjs/tegg/compare/v3.78.15...v3.78.16) (2026-05-06)
+
+
+### Bug Fixes
+
+* proxy detail is null ([#442](https://github.com/eggjs/tegg/issues/442)) ([01d741d](https://github.com/eggjs/tegg/commit/01d741df18c7735940e6c944caf8c69c05f946aa))
+
+
+
+
+
 ## [3.78.15](https://github.com/eggjs/tegg/compare/v3.78.14...v3.78.15) (2026-04-23)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
