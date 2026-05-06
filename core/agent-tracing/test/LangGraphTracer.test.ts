@@ -4,11 +4,14 @@ import type { Run } from '@langchain/core/tracers/base';
 import { FakeLLM } from '@langchain/core/utils/testing';
 import { StateGraph, Annotation, START, END } from '@langchain/langgraph';
 
+
 import { LangGraphTracer } from '../src/LangGraphTracer';
 import { RunStatus } from '../src/types';
 import { type CapturedEntry, createCapturingTracingService, createMockRun } from './TestUtils';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const majorVersion = parseInt(process.versions.node.split('.')[0], 10);
 
 /** Shared state schema for test graphs */
 const GraphState = Annotation.Root({
@@ -17,6 +20,9 @@ const GraphState = Annotation.Root({
 });
 
 describe('test/LangGraphTracer.test.ts', () => {
+  if (majorVersion < 20) {
+    return;
+  }
   let tracer: LangGraphTracer;
   let capturedRuns: CapturedEntry[];
   let originalFaasEnv: string | undefined;

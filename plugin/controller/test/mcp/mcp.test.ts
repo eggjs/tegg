@@ -1381,5 +1381,44 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       assert(!register.sseConnections.has(activeSessionId), 'sseConnections should be cleaned up after close');
       assert(!register.mcpServerMap[activeSessionId], 'mcpServerMap should be cleaned up after close');
     });
+
+    it('should return 400 when checkAndRunProxy returns false for non-existent session', async () => {
+      // Register a hook that returns false for checkAndRunProxy (simulating session not found)
+      const testHook = {
+        async checkAndRunProxy() {
+          return false;
+        },
+      };
+      MCPControllerRegister.addHook(testHook);
+
+      try {
+        // Make a request to the SSE message endpoint with a non-existent sessionId
+        const response = await app.httpRequest()
+          .post('/mcp/message')
+          .query({ sessionId: 'non-existent-session-id' })
+          .set('Content-Type', 'application/json')
+          .send(JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'tools/list',
+            id: 1,
+          }));
+
+        assert.equal(response.status, 400);
+        assert.deepEqual(response.body, {
+          jsonrpc: '2.0',
+          error: {
+            code: -32602,
+            message: 'Bad Request: Session not found',
+          },
+          id: null,
+        });
+      } finally {
+        // Clean up: remove the test hook
+        const hookIndex = MCPControllerRegister.hooks.indexOf(testHook);
+        if (hookIndex > -1) {
+          MCPControllerRegister.hooks.splice(hookIndex, 1);
+        }
+      }
+    });
   }
 });
