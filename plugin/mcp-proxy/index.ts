@@ -190,9 +190,12 @@ export const MCPProxyHook: MCPControllerHook = {
   },
   async checkAndRunProxy(ctx, type, sessionId) {
     const detail = await ctx.app.mcpProxy.getClient(sessionId);
-    if (detail?.pid !== process.pid) {
+    if (!detail) {
+      return false;
+    }
+    if (detail.pid !== process.pid) {
       await ctx.app.mcpProxy.proxyMessage(ctx, {
-        detail: detail!,
+        detail,
         sessionId,
         type,
       });

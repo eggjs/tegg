@@ -622,6 +622,18 @@ export class MCPControllerRegister implements ControllerRegister {
           if (checked) {
             return;
           }
+          if (checked === false) {
+            ctx.status = 400;
+            ctx.body = {
+              jsonrpc: '2.0',
+              error: {
+                code: -32602,
+                message: 'Bad Request: Session not found',
+              },
+              id: null,
+            };
+            return;
+          }
         }
       }
     };
@@ -668,6 +680,7 @@ export class MCPControllerRegister implements ControllerRegister {
         if ((duration && elapsed >= duration) || errCount > 10) {
           if (this.sseConnections[sessionId]) {
             this.clearSseMcpServer(this.sseConnections[sessionId]);
+            await server.close();
           } else {
             this.app.logger.warn('mcp server ping clear fail, sessionId: ', sessionId);
           }
