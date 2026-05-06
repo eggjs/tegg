@@ -678,8 +678,18 @@ export class MCPControllerRegister implements ControllerRegister {
         this.app.logger.warn('mcp server ping failed: %s, errCount: %s', e, errCount);
       } finally {
         if ((duration && elapsed >= duration) || errCount > 10) {
-          if (this.sseConnections[sessionId]) {
-            this.clearSseMcpServer(this.sseConnections[sessionId]);
+          const sseTransport = this.transports[sessionId];
+          const streamTransport = this.streamTransports[sessionId];
+          if (sseTransport) {
+            this.clearSseMcpServer(sseTransport);
+            await server.close();
+          } else if (streamTransport) {
+            delete this.streamTransports[sessionId];
+            delete this.mcpServerMap[sessionId];
+            if (this.pingIntervals[sessionId]) {
+              clearInterval(this.pingIntervals[sessionId]);
+              delete this.pingIntervals[sessionId];
+            }
             await server.close();
           } else {
             this.app.logger.warn('mcp server ping clear fail, sessionId: ', sessionId);
