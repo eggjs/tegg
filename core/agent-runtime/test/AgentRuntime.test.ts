@@ -630,7 +630,8 @@ describe('test/AgentRuntime.test.ts', () => {
       // The runtime adds an arrival `timestamp`; aside from that, the original
       // SDK message fields must pass through untouched.
       assert(typeof passed.timestamp === 'string', 'runtime should tag a timestamp');
-      const { timestamp: _ts, ...rest } = passed;
+      const rest: Record<string, unknown> = { ...passed };
+      delete rest.timestamp;
       assert.deepStrictEqual(rest, sdkMsg, 'all original SDK fields must pass through');
     });
 
