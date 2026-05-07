@@ -93,7 +93,6 @@ export class MCPControllerRegister implements ControllerRegister {
   { res: ServerResponse; intervalId: NodeJS.Timeout }
   >();
   mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
-  mcpServerMap: Record<string, McpServer> = {};
   private controllerMeta: MCPControllerMeta;
   mcpConfig: MCPConfig;
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
@@ -481,7 +480,6 @@ export class MCPControllerRegister implements ControllerRegister {
         );
       }
       await mcpServerHelper.server.connect(transport);
-      self.mcpServerMap[id] = mcpServerHelper.server;
       if (self.mcpConfig.getSsePingEnabled(name)) {
         self.mcpServerPing(mcpServerHelper.server.server, transport.sessionId, name);
       }
@@ -497,7 +495,6 @@ export class MCPControllerRegister implements ControllerRegister {
 
   async clearSseMcpServer(transport: SSEServerTransport) {
     delete this.transports[transport.sessionId];
-    delete this.mcpServerMap[transport.sessionId];
     if (transport.sessionId && this.pingIntervals[transport.sessionId]) {
       clearInterval(this.pingIntervals[transport.sessionId]);
       delete this.pingIntervals[transport.sessionId];
@@ -685,7 +682,6 @@ export class MCPControllerRegister implements ControllerRegister {
             await server.close();
           } else if (streamTransport) {
             delete this.streamTransports[sessionId];
-            delete this.mcpServerMap[sessionId];
             if (this.pingIntervals[sessionId]) {
               clearInterval(this.pingIntervals[sessionId]);
               delete this.pingIntervals[sessionId];
