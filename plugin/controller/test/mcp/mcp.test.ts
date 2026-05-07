@@ -1368,7 +1368,6 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       const activeSessionId = sessionIds[sessionIds.length - 1];
       assert(register.transports[activeSessionId], 'transport should exist for session');
       assert(register.sseConnections.has(activeSessionId), 'sseConnections should have the session');
-      assert(register.mcpServerMap[activeSessionId], 'mcpServerMap should have the session');
 
       // Close the SSE transport
       await sseTransport.close();
@@ -1379,7 +1378,6 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       // Verify session is cleaned up
       assert(!register.transports[activeSessionId], 'transport should be cleaned up after close');
       assert(!register.sseConnections.has(activeSessionId), 'sseConnections should be cleaned up after close');
-      assert(!register.mcpServerMap[activeSessionId], 'mcpServerMap should be cleaned up after close');
     });
 
     it('should return 400 when checkAndRunProxy returns false for non-existent session', async () => {

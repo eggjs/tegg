@@ -115,10 +115,9 @@ export const MCPProxyHook: MCPControllerHook = {
       self.app.mcpProxy.unregisterClient(id);
     });
   },
-  async onStreamSessionInitialized(_ctx, transport, server, self) {
+  async onStreamSessionInitialized(_ctx, transport, _server, self) {
     const sessionId = transport.sessionId!;
     self.streamTransports[sessionId] = transport;
-    self.mcpServerMap[sessionId] = server;
     self.app.mcpProxy.setProxyHandler(MCPProtocols.STREAM, async (req: http.IncomingMessage, res: http.ServerResponse) => {
       let mw = self.app.middleware.teggCtxLifecycleMiddleware();
       if (self.globalMiddlewares) {
@@ -183,7 +182,6 @@ export const MCPProxyHook: MCPControllerHook = {
       const sid = transport.sessionId;
       if (sid && self.streamTransports[sid]) {
         delete self.streamTransports[sid];
-        delete self.mcpServerMap[sid];
       }
       await self.app.mcpProxy.unregisterClient(sid!);
     };
