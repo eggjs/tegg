@@ -319,6 +319,141 @@ describe('test/AgentRuntime.test.ts', () => {
     });
   });
 
+  describe('message timestamps', () => {
+    const ISO_8601_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+
+    it('should tag stored messages with ISO 8601 timestamps in syncRun', async () => {
+      const result = await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(result.status, RunStatus.Completed);
+
+      const thread = await store.getThread(result.threadId!, { includeAllMessages: true });
+      // input user message + executor's assistant + result
+      assert(thread.messages.length >= 2);
+      for (const msg of thread.messages) {
+        // Input messages are reconstructed by MessageConverter.toAgentMessages and
+        // do not flow through the SDK stream, so they intentionally have no
+        // timestamp. Stream-originated messages must have one.
+        if (msg.type === 'assistant' || msg.type === 'result') {
+          assert(typeof msg.timestamp === 'string',
+            `${msg.type} message missing timestamp: ${JSON.stringify(msg)}`);
+          assert(ISO_8601_RE.test(msg.timestamp!),
+            `timestamp not ISO 8601: ${msg.timestamp}`);
+        }
+      }
+    });
+
+    it('should preserve a timestamp the SDK already supplied (forward-compat)', async () => {
+      const supplied = '2026-01-01T00:00:00.000Z';
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield {
+          type: 'assistant',
+          // Simulate a future SDK that already includes its own timestamp
+          timestamp: supplied,
+          message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] },
+        };
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const result = await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(result.status, RunStatus.Completed);
+
+      const thread = await store.getThread(result.threadId!, { includeAllMessages: true });
+      const assistant = thread.messages.find(m => m.type === 'assistant');
+      assert(assistant);
+      assert.equal(assistant!.timestamp, supplied,
+        'SDK-supplied timestamp must not be overwritten by the runtime');
+
+      const resultMsg = thread.messages.find(m => m.type === 'result');
+      assert(resultMsg);
+      assert(typeof resultMsg!.timestamp === 'string',
+        'message without supplied timestamp must still get tagged');
+      assert(ISO_8601_RE.test(resultMsg!.timestamp!));
+    });
+
+    it('should reflect ordering of receive: tool_use → tool_result interval', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield {
+          type: 'assistant',
+          message: {
+            role: 'assistant',
+            content: [
+              { type: 'tool_use', id: 'tu_1', name: 'echo', input: {} },
+            ],
+          },
+        };
+        // Simulate a tool execution delay so the next receive is meaningfully later
+        await setTimeout(20);
+        yield {
+          type: 'user',
+          message: {
+            role: 'user',
+            content: [{ type: 'tool_result', tool_use_id: 'tu_1', content: 'ok' }],
+          },
+        };
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const result = await runtime.syncRun({
+        input: { messages: [{ role: 'user', content: 'Run echo' }] },
+      });
+      assert.equal(result.status, RunStatus.Completed);
+
+      const thread = await store.getThread(result.threadId!, { includeAllMessages: true });
+      const assistantMsg = thread.messages.find(m => m.type === 'assistant');
+      // The user(tool_result) wrapper is the second 'user' message; the first is the input.
+      const toolResultWrapper = thread.messages.filter(m => m.type === 'user').at(-1);
+      assert(assistantMsg && toolResultWrapper);
+
+      const t1 = Date.parse(assistantMsg!.timestamp!);
+      const t2 = Date.parse(toolResultWrapper!.timestamp!);
+      assert(t2 >= t1, `tool_result timestamp (${t2}) must be >= tool_use (${t1})`);
+      // ≥10ms because we slept 20ms — give some slack
+      assert(t2 - t1 >= 10,
+        `tool execution interval should reflect the >=20ms delay; got ${t2 - t1}ms`);
+    });
+
+    it('should also tag streamRun event messages', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield {
+          type: 'assistant',
+          message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] },
+        };
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const sdkLikeEvents = writer.events.filter(
+        e => e.event === 'assistant' || e.event === 'result',
+      );
+      assert(sdkLikeEvents.length >= 2);
+      for (const ev of sdkLikeEvents) {
+        const data = ev.data as StreamEvent;
+        const msg = data.data as AgentMessage;
+        assert(typeof msg.timestamp === 'string',
+          `streamed ${ev.event} event missing timestamp`);
+        assert(ISO_8601_RE.test(msg.timestamp!));
+      }
+    });
+  });
+
   describe('asyncRun', () => {
     it('should return queued status immediately with auto-created threadId', async () => {
       const result = await runtime.asyncRun({
@@ -490,7 +625,13 @@ describe('test/AgentRuntime.test.ts', () => {
       const assistantEvent = writer.events.find(e => e.event === 'assistant');
       assert.ok(assistantEvent);
       const streamEvent = assistantEvent.data as StreamEvent;
-      assert.deepStrictEqual(streamEvent.data, sdkMsg, 'should pass SDK message directly as data');
+      const passed = streamEvent.data as AgentMessage;
+
+      // The runtime adds an arrival `timestamp`; aside from that, the original
+      // SDK message fields must pass through untouched.
+      assert(typeof passed.timestamp === 'string', 'runtime should tag a timestamp');
+      const { timestamp: _ts, ...rest } = passed;
+      assert.deepStrictEqual(rest, sdkMsg, 'all original SDK fields must pass through');
     });
 
     it('should use "message" as default event type when type is not set', async () => {

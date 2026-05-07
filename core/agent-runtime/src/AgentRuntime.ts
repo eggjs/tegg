@@ -27,6 +27,23 @@ import { MessageConverter } from './MessageConverter';
 import { RunBuilder } from './RunBuilder';
 import type { SSEWriter } from './SSEWriter';
 
+/**
+ * Tag a message with the moment we received it from the SDK stream.
+ *
+ * - Idempotent: if the SDK ever supplies its own `timestamp` (see
+ *   anthropics/claude-agent-sdk-python#258), we keep that value instead
+ *   of overwriting it. This makes the change forward-compatible with a
+ *   future upstream fix.
+ * - Format: ISO 8601 UTC string with millisecond precision, matching
+ *   Claude Code's existing jsonl transcript format.
+ */
+function tagWithTimestamp(msg: AgentMessage): AgentMessage {
+  if (typeof msg.timestamp === 'string' && msg.timestamp.length > 0) {
+    return msg;
+  }
+  return { ...msg, timestamp: new Date().toISOString() };
+}
+
 const HEARTBEAT_INTERVAL_MS = 10_000;
 const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
 const DEFAULT_CANCEL_COMMIT_TIMEOUT_MS = 30_000;
@@ -183,7 +200,7 @@ export class AgentRuntime {
     try {
       await this.store.updateRun(run.id, rb.start());
 
-      for await (const msg of this.executor.execRun(input, abortController.signal)) {
+      for await (const rawMsg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           if (task.committed) {
             await this.persistMessagesOnAbort(threadId, input, streamMessages);
@@ -192,6 +209,7 @@ export class AgentRuntime {
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
+        const msg = tagWithTimestamp(rawMsg);
         streamMessages.push(msg);
         await this.markCommittedIfNeeded(task, msg, streamMessages);
       }
@@ -273,7 +291,7 @@ export class AgentRuntime {
       try {
         await this.store.updateRun(run.id, rb.start());
 
-        for await (const msg of this.executor.execRun(input, abortController.signal)) {
+        for await (const rawMsg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) {
             if (task.committed) {
               await this.persistMessagesOnAbort(threadId, input, streamMessages);
@@ -281,6 +299,7 @@ export class AgentRuntime {
             await this.finaliseAbortedRun(run.id);
             return;
           }
+          const msg = tagWithTimestamp(rawMsg);
           streamMessages.push(msg);
           await this.markCommittedIfNeeded(task, msg, streamMessages);
         }
@@ -434,7 +453,7 @@ export class AgentRuntime {
     try {
       await this.store.updateRun(runId, rb.start());
 
-      for await (const msg of this.executor.execRun(input, abortController.signal)) {
+      for await (const rawMsg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           if (task.committed) {
             await this.persistMessagesOnAbort(threadId, input, streamMessages);
@@ -444,6 +463,7 @@ export class AgentRuntime {
           return;
         }
 
+        const msg = tagWithTimestamp(rawMsg);
         streamMessages.push(msg);
 
         // Pass through SDK message directly as event data
