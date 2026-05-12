@@ -562,7 +562,27 @@ describe('test/OSSAgentStore.test.ts', () => {
       );
       assert.equal(call[1], thread.id);
       assert.match(call[2] as string, /^agent\/index\/threads-by-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_/);
-      assert.match(call[3] as string, /simulated PUT failure/);
+      // The fourth post-format argument is the underlying `Error`
+      // instance, passed verbatim by the catch handler so that the
+      // logger's `util.format`-style trailing-arg `util.inspect`
+      // rendering preserves the stack trace. `assert.match` requires
+      // a string, so we destructure the `.message` field for the
+      // text-shape assertion and `instanceof Error` for the
+      // type-shape assertion.
+      const errArg = call[3];
+      assert.ok(
+        errArg instanceof Error,
+        `expected the fourth warn-arg to be an Error instance (so the stack is preserved when the logger renders it), got ${typeof errArg}: ${String(errArg)}`,
+      );
+      assert.match((errArg as Error).message, /simulated PUT failure/);
+      // The format string itself no longer carries a trailing
+      // `err=%s` placeholder because the Error is the unformatted
+      // trailing arg consumed by `util.format`'s
+      // `util.inspect`-on-the-tail-args rule, not a `%s` slot.
+      assert.ok(
+        !(call[0] as string).includes('err=%s'),
+        'the format string should no longer carry an err=%s placeholder',
+      );
 
       // And the read path keeps working — getThread does not consult the index.
       const fetched = await localStore.getThread(thread.id);
@@ -642,6 +662,82 @@ describe('test/OSSAgentStore.test.ts', () => {
       // And the timer wasn't somehow optimised away — destroy was reached
       // after the createThread call (sanity check on the captured timestamps).
       assert.ok(clientDestroyCalledAt >= createReturnedAt);
+    });
+
+    it('destroy() drains a write that arrives during a previous drain iteration', async () => {
+      // This is the precise scenario the `while`-loop drain in
+      // `awaitPendingWrites` guards against: a `createThread` call
+      // lands while `destroy()` is already in the middle of an
+      // `await Promise.allSettled([...this.pendingIndexWrites])` for
+      // the first batch of in-flight writes. The first
+      // `Promise.allSettled`'s snapshot was taken at the moment
+      // `destroy()` started — the late-arriving createThread's
+      // background-PUT promise is added to the Set *after* that
+      // snapshot, so a one-shot drain (without the surrounding
+      // `while`-loop) would miss it and let `destroy()` return
+      // before the second PUT had settled. The loop notices the Set
+      // is still non-empty after the first iteration's `allSettled`
+      // resolves (the late entry's the only one left), takes a
+      // fresh snapshot, and waits on the late arrival too.
+      //
+      // The test engineers the timing window by holding the
+      // destroy-promise without awaiting it, then firing a second
+      // `createThread`. The microtask discipline guarantees the
+      // second createThread's body runs and adds its background-PUT
+      // promise to the Set before the first iteration's
+      // `Promise.allSettled` resolves, since the first PUT's
+      // artificial delay is large compared to the time it takes for
+      // the second createThread's synchronous-up-to-the-first-await
+      // body to enqueue its own background PUT.
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const INDEX_DELAY_MS = 80;
+      client.delayPutWhenKeyMatches(/^agent\/index\/threads-by-date\//, INDEX_DELAY_MS);
+
+      const thread1 = await localStore.createThread({ ordinal: 1 });
+      assert.equal(
+        client.keysWithPrefix('agent/index/threads-by-date/').length,
+        0,
+        'thread1\'s index PUT should still be in flight at this instant',
+      );
+
+      // Hold the destroy-promise without awaiting yet, so the test
+      // code can interleave a second createThread between the
+      // start of the drain and its first `Promise.allSettled`
+      // settling.
+      const destroyP = localStore.destroy();
+
+      // The second createThread runs its synchronous prelude (meta
+      // PUT, which the in-memory MapStorageClient resolves on the
+      // next microtask), then synchronously kicks off the second
+      // background index PUT and adds it to the in-flight Set.
+      // Because the in-memory meta PUT is microtask-fast and the
+      // first thread's index PUT is on an 80 ms setTimeout, the
+      // Set has both entries by the time the test awaits the
+      // second createThread's returned ThreadRecord.
+      const thread2 = await localStore.createThread({ ordinal: 2 });
+
+      // Now wait for destroy() to finish. The destroy's
+      // awaitPendingWrites loop sees the Set is still non-empty
+      // after the first `Promise.allSettled` resolves (thread2's
+      // PUT is on its own timer that's a few ms behind thread1's),
+      // takes a fresh snapshot, and waits on the second PUT.
+      await destroyP;
+
+      // Both index entries are present in the in-memory map.
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-date/');
+      assert.equal(
+        indexKeys.length,
+        2,
+        `the drain loop should have captured both the original and the late-arriving index write, got ${JSON.stringify(indexKeys)}`,
+      );
+      const threadIdsInLexOrder = indexKeys.map(k => {
+        const fileName = k.slice(k.lastIndexOf('/') + 1);
+        return fileName.slice(fileName.indexOf('_') + 1);
+      }).sort();
+      const expectedIds = [ thread1.id, thread2.id ].sort();
+      assert.deepStrictEqual(threadIdsInLexOrder, expectedIds);
     });
 
     it('awaitPendingWrites() is a no-op resolved promise when there are no pending writes', async () => {

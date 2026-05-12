@@ -13,9 +13,23 @@ import { dateBucket, newRunId, newThreadId, nowUnix, reverseMs } from './AgentSt
 
 /**
  * Minimal structural type for the warn-logging channel used when a
- * background thread-time-index write fails. Both `egg-logger`'s `EggLogger`
- * and the global `console` satisfy this shape, so applications can pass
- * `app.logger` directly without an explicit import.
+ * background thread-time-index write fails. Both `egg-logger`'s
+ * `EggLogger` and the global `console` satisfy this shape, so
+ * applications can pass `app.logger` directly without importing any
+ * egg-specific types here.
+ *
+ * The implementation is expected to follow Node's `util.format`
+ * conventions: leading args fill the `%s` / `%d` / `%j` / `%o` / `%O`
+ * placeholders in the format string, and any trailing args beyond the
+ * placeholder count are appended to the rendered output via
+ * `util.inspect`. For an `Error` instance in a trailing slot
+ * `util.inspect` includes the stack trace and any `Error.cause` chain,
+ * which is the property the warn-on-index-failure call site relies on
+ * for observability. Both `console.warn` and `EggLogger.warn` honor
+ * the `util.format` convention; a custom structured logger that does
+ * not implement `%s`-interpolation may render the format string and
+ * the args differently, which is a known idiomatic-difference between
+ * the printf-style and the structured-log conventions.
  */
 export interface OSSAgentStoreWarnLogger {
   warn(message: string, ...args: unknown[]): void;
@@ -25,29 +39,34 @@ export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;
   prefix?: string;
   /**
-   * Sink for warn messages emitted when the background time-index PUT fails.
-   * Defaults to a wrapper around `console.warn`. Failures never surface to
-   * the `createThread` caller — they are observed exclusively via this logger.
+   * Sink for warn messages emitted when the background time-index PUT
+   * fails. Defaults to a thin wrapper around `console.warn`. Failures
+   * of the background time-index PUT never propagate to the
+   * `createThread` caller — they are observed exclusively through
+   * this channel.
    */
   logger?: OSSAgentStoreWarnLogger;
   /**
-   * IANA timezone name (or the literal `'UTC'`) used to compute the
-   * `YYYY-MM-DD` date-bucket directory of the time index. Defaults to
-   * `'UTC'` so that workers in different physical regions agree on a single
-   * partition for a given absolute instant. Set to e.g. `'Asia/Shanghai'`
-   * when the analytics calendar follows a specific local timezone.
+   * IANA timezone name (or the case-insensitive literal `'UTC'`) used
+   * to compute the `YYYY-MM-DD` date-bucket directory of the time
+   * index. Defaults to `'UTC'` so that workers in physically different
+   * regions agree on a single partition for a given absolute instant.
+   * Set to e.g. `'Asia/Shanghai'` when the analytics calendar follows
+   * a specific local timezone.
    */
   dateTimezone?: string;
 }
 
 /**
  * Thread metadata stored as a JSON object (excludes messages).
- * Messages are stored separately in a JSONL file for append-friendly writes.
+ * Messages are stored separately in a JSONL file for append-friendly
+ * writes.
  */
 type ThreadMetadata = Omit<ThreadRecord, 'messages'>;
 
 /**
- * AgentStore implementation backed by an ObjectStorageClient (OSS, S3, etc.).
+ * `AgentStore` implementation backed by an `ObjectStorageClient` (OSS,
+ * S3, etc.).
  *
  * ## Storage layout
  *
@@ -55,26 +74,37 @@ type ThreadMetadata = Omit<ThreadRecord, 'messages'>;
  * {prefix}threads/{id}/meta.json                                  — Thread metadata (JSON, source of truth)
  * {prefix}threads/{id}/messages.jsonl                             — Messages (JSONL, one AgentMessage per line)
  * {prefix}runs/{id}.json                                          — Run record (JSON)
- * {prefix}index/threads-by-date/{YYYY-MM-DD}/{revMs13}_{threadId} — Time index sidecar, body JSON
+ * {prefix}index/threads-by-date/{YYYY-MM-DD}/{revMs13}_{threadId} — Time-index sidecar (JSON body)
  * ```
  *
- * The time-index sidecar is a write-only, analytics-facing artifact: it is
- * created best-effort inside `createThread`, never read by `getThread`, and
- * never mutated by `appendMessages` / `createRun` / `updateRun`. Its
- * filename's `revMs13` segment is the decimal complement of the
- * millisecond-precision creation timestamp (see `reverseMs` in
- * `AgentStoreUtils`), which makes the natural ASC-by-key dictionary order
- * of a date directory equivalent to time-DESC order — a workaround for the
- * fact that the OSS / S3 ListObjects API has no reverse-order option. The
- * body is a compact JSON document carrying `{ threadId, createdAt, metadata }`
- * so that consumers reading only the index never need to GET `meta.json`.
+ * The time-index sidecar is a write-only, analytics-facing artifact:
+ * it is created best-effort during `createThread`, never read by
+ * `getThread`, and never mutated by `appendMessages` / `createRun` /
+ * `updateRun`. Within a date-bucket directory the keys sort
+ * newest-first under the ASC-only `ListObjects` semantics that OSS /
+ * S3 expose, because the `revMs13` segment is the decimal complement
+ * of the creation timestamp (see `reverseMs` in
+ * `AgentStoreUtils.ts`). Across date buckets the directories sort
+ * calendar-ascending, so a consumer that wants the globally newest N
+ * threads enumerates the date prefixes in reverse-calendar order and
+ * walks each one's contents in dictionary order.
  *
- * The index PUT is fire-and-forget: it runs on a background promise tracked
- * in `pendingIndexWrites`, contributes zero latency to `createThread`'s
- * happy path, and a failure produces a single `warn` line via the injected
- * `logger` instead of propagating. Call `awaitPendingWrites()` (or
- * `destroy()`, which calls it internally) when graceful shutdown must wait
- * for in-flight index writes to settle.
+ * The body of each index object is a compact JSON document carrying
+ * `{ threadId, createdAt, metadata }`, mirroring the
+ * `threads/{id}/meta.json`'s `createdAt` field. Both timestamp values
+ * derive from a single `Date.now()` call inside `createThread`, so
+ * the seconds-precision meta value and the millisecond-precision
+ * index-key value reflect the same physical instant and cannot
+ * disagree across a date boundary.
+ *
+ * The index PUT itself is intentionally fire-and-forget. It runs on a
+ * background promise registered in the `pendingIndexWrites` Set,
+ * contributes zero latency to `createThread`'s happy path, and any
+ * rejection becomes a single warn-log line via the injected
+ * `OSSAgentStoreWarnLogger`. The Set lets `destroy()` (the standard
+ * Egg.js `beforeClose` cleanup point for this kind of resource) wait
+ * for the in-flight writes to settle via the public
+ * `awaitPendingWrites()` method.
  */
 export class OSSAgentStore implements AgentStore {
   private readonly client: ObjectStorageClient;
@@ -82,9 +112,19 @@ export class OSSAgentStore implements AgentStore {
   private readonly logger: OSSAgentStoreWarnLogger;
   private readonly dateTimezone: string;
   /**
-   * Background index writes that have not yet settled. Each promise removes
-   * itself from the set on resolution or rejection, so the set never grows
-   * unboundedly. `awaitPendingWrites()` and `destroy()` drain it.
+   * Background time-index PUT promises that are still in flight. Each
+   * promise installs a `.then(success, failure)` handler at the
+   * bottom of `createThread` that removes the promise from the Set
+   * when it settles, so the Set's membership exactly matches the
+   * in-flight set at every observation point.
+   *
+   * `awaitPendingWrites()` and `destroy()` drain the Set. The drain
+   * is a loop over fresh `[...this.pendingIndexWrites]` snapshots,
+   * not a one-shot `Promise.allSettled` against a single snapshot,
+   * so that a `createThread` invocation that lands during the
+   * shutdown sequence still gets its background write awaited — the
+   * spread-operator snapshot would otherwise have already been taken
+   * and the late-arrival would slip through.
    */
   private readonly pendingIndexWrites = new Set<Promise<void>>();
 
@@ -109,10 +149,14 @@ export class OSSAgentStore implements AgentStore {
   }
 
   /**
-   * Compose the time-index sidecar key for a thread created at `nowMs`.
-   * `dateBucket` resolves the timezone, `reverseMs` produces the complement
-   * suffix; the threadId is appended verbatim so that consumers can read it
-   * from the key without GETting the body.
+   * Compose the time-index sidecar key for a thread created at the
+   * given millisecond timestamp. `dateBucket` resolves the IANA
+   * timezone to a `YYYY-MM-DD` directory name and `reverseMs`
+   * produces the decimal-complement suffix that gives newest-first
+   * ordering under the standard dictionary-order `ListObjects`
+   * semantics. The full `threadId` is appended verbatim so a
+   * downstream consumer can read it directly from the OSS key
+   * without opening the object body.
    */
   private threadTimeIndexKey(nowMs: number, threadId: string): string {
     const date = dateBucket(nowMs, this.dateTimezone);
@@ -125,34 +169,69 @@ export class OSSAgentStore implements AgentStore {
   }
 
   async destroy(): Promise<void> {
-    // Drain pending background index writes before tearing down the
-    // underlying client. `Promise.allSettled` swallows individual failures
-    // (which are already surfaced via the logger), so destroy() itself
-    // never rejects because of an index miss.
+    // Drain the in-flight background time-index writes before
+    // tearing down the underlying client. The drain loop in
+    // `awaitPendingWrites` swallows individual failures (which the
+    // catch handler in `createThread` has already turned into
+    // warn-log lines), so `destroy` itself does not reject because
+    // of an index-write miss.
     await this.awaitPendingWrites();
     await this.client.destroy?.();
   }
 
   /**
-   * Wait for every in-flight background time-index write to settle (either
-   * resolve or reject). Used internally by `destroy()` to keep graceful
-   * shutdown from dropping writes, and exposed publicly for tests and
-   * external callers that need an explicit drain point.
+   * Wait for every in-flight background time-index write to settle
+   * (resolve or reject). Called internally by `destroy()` to keep
+   * graceful shutdown from losing writes, and exposed publicly for
+   * tests and external callers that need an explicit drain
+   * checkpoint.
    *
-   * Never rejects — individual write failures have already been turned into
-   * `warn` log entries by the catch handler installed in `createThread`.
+   * Never rejects: individual write failures have already been
+   * converted into warn-log lines by the catch handler installed in
+   * the background-write chain inside `createThread`.
+   *
+   * The drain is a `while`-loop over fresh
+   * `[...this.pendingIndexWrites]` snapshots rather than a single
+   * `Promise.allSettled` against a one-shot snapshot. This handles
+   * the edge case where a caller invokes `createThread` while a
+   * drain is in progress: the spread-operator snapshot is taken at
+   * the moment the `Promise.allSettled` call is constructed, and
+   * any background promise added to the Set after that moment is
+   * not in the snapshot and would not be waited on by that
+   * particular `allSettled`. The surrounding `while` loop notices
+   * the Set is still non-empty after the previous iteration's
+   * `allSettled` returns (the late-arrival is the only entry left,
+   * having survived because it wasn't in the snapshot the previous
+   * iteration awaited) and takes a fresh snapshot to wait on its
+   * settlement.
+   *
+   * The loop terminates as long as each individual background write
+   * eventually settles. In the standard Egg.js shutdown sequence
+   * the request handlers have already returned by the time
+   * `beforeClose` fires (and therefore by the time `destroy()` and
+   * this method are called), so there is no live caller of
+   * `createThread` during the drain and the loop almost always
+   * exits on the second iteration's `size === 0` check. The
+   * abstract pattern of "graceful shutdown waits for the in-flight
+   * background-task set to clear" matches the `BackgroundTaskHelper`
+   * in `@eggjs/tegg-runtime`, which the project root's `CLAUDE.md`
+   * "Use BackgroundTaskHelper for Async Tasks" section flags as the
+   * canonical drain idiom in the tegg ecosystem.
    */
   async awaitPendingWrites(): Promise<void> {
-    if (this.pendingIndexWrites.size === 0) return;
-    await Promise.allSettled([ ...this.pendingIndexWrites ]);
+    while (this.pendingIndexWrites.size > 0) {
+      await Promise.allSettled([ ...this.pendingIndexWrites ]);
+    }
   }
 
   async createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord> {
     const threadId = newThreadId();
-    // Take the wall-clock once so the seconds value written into `meta.createdAt`
-    // and the millisecond value encoded into the index key derive from the same
-    // physical instant. Two separate `Date.now()` reads could disagree across
-    // a millisecond boundary and, near midnight, even across the date bucket.
+    // Take the wall clock exactly once. The seconds value that goes
+    // into `meta.createdAt` and the milliseconds value encoded into
+    // the time-index key both derive from this single observation, so
+    // they cannot drift across a millisecond boundary — and, in the
+    // worst-case midnight corner, cannot land in different
+    // date-bucket directories.
     const nowMs = Date.now();
     const createdAt = Math.floor(nowMs / 1000);
     const meta: ThreadMetadata = {
@@ -161,15 +240,33 @@ export class OSSAgentStore implements AgentStore {
       metadata: metadata ?? {},
       createdAt,
     };
-    // 1) Main path. Failure surfaces to the caller exactly as before.
+    // 1) Main path: the canonical `threads/{id}/meta.json` PUT.
+    // Failure here surfaces to the caller exactly as it did before
+    // the time-index feature was introduced — the
+    // pre-time-index behavior of `createThread` is preserved.
     await this.client.put(this.threadMetaKey(threadId), JSON.stringify(meta));
 
-    // 2) Time-index sidecar. Fire-and-forget: the promise is tracked in
-    //    `pendingIndexWrites` so graceful shutdown can drain it, but
-    //    `createThread` does not await it and a rejection produces a
-    //    warn log rather than propagating. The two-arg `.then(success,
-    //    failure)` form serves both as a handler and as the standard
-    //    means of silencing the unhandled-rejection warning.
+    // 2) Time-index sidecar PUT, fire-and-forget. The promise is
+    // tracked in `pendingIndexWrites` so `awaitPendingWrites()`
+    // (called by `destroy()`) can drain it during a graceful
+    // shutdown, but `createThread` does not await its settlement
+    // and the caller sees zero added latency on the happy path.
+    //
+    // A rejection is caught by the second arm of the two-arg
+    // `.then(success, failure)` form below, which is the idiomatic
+    // way to silence the unhandled-promise-rejection warning
+    // without inserting a separate `.catch` chain. The Error object
+    // is passed verbatim as the un-interpolated trailing argument
+    // to `logger.warn` so the underlying `util.format`-style
+    // renderer (in Node's `console.warn` and in `egg-logger`'s
+    // `EggLogger.warn`) reaches for `util.inspect`, which on an
+    // `Error` instance prints the stack trace and the
+    // `Error.cause` chain — the property that the AI-reviewer
+    // feedback on the original PR's first revision asked for. An
+    // earlier draft stringified the Error to its `.message` ahead
+    // of the warn call, which produced the message-only
+    // `"Error: <text>"` form without a stack; the present shape
+    // preserves the stack.
     const indexKey = this.threadTimeIndexKey(nowMs, threadId);
     const indexBody = JSON.stringify({
       threadId,
@@ -178,16 +275,42 @@ export class OSSAgentStore implements AgentStore {
     });
     const tracked: Promise<void> = this.client.put(indexKey, indexBody).then(
       () => {
+        // Run-to-completion note: this `tracked` reference resolves
+        // to the same binding the outer-scope `const tracked = ...`
+        // line assigns, because JavaScript's synchronous body of
+        // the surrounding function (the synchronous portion of
+        // `createThread` from the `Date.now()` call through the
+        // `this.pendingIndexWrites.add(tracked)` line that follows
+        // this `.then`-arg expression) completes before any
+        // microtask handler attached by `.then` is allowed to run.
+        // So by the time this success handler executes, `tracked`
+        // is bound to the value of the right-hand side of its own
+        // declaration — the `Promise<void>` produced by the
+        // `this.client.put(...).then(...)` chain. The Set's
+        // `delete` then-removes the same Promise object that was
+        // added to it on the line after the assignment.
         this.pendingIndexWrites.delete(tracked);
       },
       (err: unknown) => {
         this.pendingIndexWrites.delete(tracked);
-        const message = err instanceof Error ? err.message : String(err);
+        // Wrap non-`Error` rejection values once so the trailing
+        // arg always has a stack. JavaScript allows `throw <any
+        // value>`, so a rejecting promise's reason can in principle
+        // be a string, a plain object, or any other non-Error
+        // thing; the wrap site's freshly-constructed Error gives at
+        // least the catch handler's own stack frame as a
+        // traceback, which is better than a bare-string log entry.
+        // For the common case where the underlying client rejected
+        // with an actual `Error` (e.g. ali-oss-client's
+        // `NoSuchKey` or `AccessDenied`), the original Error
+        // passes through unchanged and its stack reaches the log
+        // intact.
+        const errForLog: Error = err instanceof Error ? err : new Error(String(err));
         this.logger.warn(
-          '[OSSAgentStore] failed to write thread time index threadId=%s key=%s err=%s',
+          '[OSSAgentStore] failed to write thread time index threadId=%s key=%s',
           threadId,
           indexKey,
-          message,
+          errForLog,
         );
       },
     );
@@ -214,10 +337,11 @@ export class OSSAgentStore implements AgentStore {
         .map(line => JSON.parse(line) as AgentMessage)
       : [];
 
-    // By default only return conversation messages (user + assistant),
-    // aligned with SDK's getSessionMessages behavior.
-    // The JSONL file stores all message types as a complete event log;
-    // this filter provides the application-level conversation view.
+    // By default only return the conversation-shape messages (user +
+    // assistant), matching the SDK's `getSessionMessages` semantics.
+    // The JSONL file is the full event log including framework-level
+    // entries (system events, tool results, etc.); the filter
+    // narrows the visible set to the application-level conversation.
     if (!options?.includeAllMessages) {
       messages = messages.filter(m => m.type === 'user' || m.type === 'assistant');
     }
