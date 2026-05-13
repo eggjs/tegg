@@ -4,10 +4,9 @@ import { TS_MAX_MS, dateBucket, decodeReverseMs, reverseMs } from '../index';
 
 describe('test/AgentStoreUtils.test.ts', () => {
   describe('TS_MAX_MS', () => {
-    it('is 9_999_999_999_999 — the algebraic ceiling of a 13-digit ms timestamp', () => {
+    it('is the 13-digit millisecond timestamp ceiling', () => {
       assert.strictEqual(TS_MAX_MS, 9_999_999_999_999);
       assert.strictEqual(String(TS_MAX_MS).length, 13);
-      // Sanity: this corresponds to a date past the year 2286.
       const isoOfCeiling = new Date(TS_MAX_MS).toISOString();
       assert.match(isoOfCeiling, /^2286-/);
     });
@@ -15,22 +14,13 @@ describe('test/AgentStoreUtils.test.ts', () => {
 
   describe('reverseMs', () => {
     it('produces a 13-character zero-padded decimal string', () => {
-      // ms=0 → complement is the max value itself, so the string is all 9s.
       assert.strictEqual(reverseMs(0), '9999999999999');
-      // ms=TS_MAX_MS → complement is zero, padded to thirteen zeroes.
       assert.strictEqual(reverseMs(TS_MAX_MS), '0000000000000');
-      // A small positive ms still pads on the left to thirteen chars.
       assert.strictEqual(reverseMs(1), String(TS_MAX_MS - 1).padStart(13, '0'));
       assert.strictEqual(reverseMs(1).length, 13);
     });
 
     it('matches the worked example timestamp from the PR description', () => {
-      // The PR description's worked example uses the instant
-      // 2025-11-13T08:00:00.000Z, which is the Unix-millisecond value
-      // 1_763_020_800_000. The decimal complement against TS_MAX_MS is
-      // 9_999_999_999_999 - 1_763_020_800_000 = 8_236_979_199_999. This
-      // assertion pins the algebra so any drift in the encoding helper
-      // is caught immediately.
       const knownMs = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
       assert.strictEqual(knownMs, 1_763_020_800_000);
       assert.strictEqual(reverseMs(knownMs), '8236979199999');
@@ -46,10 +36,6 @@ describe('test/AgentStoreUtils.test.ts', () => {
     });
 
     it('is strictly monotonically decreasing in lex order versus the input', () => {
-      // Pairs where the first element is strictly less than the second.
-      // Lexicographic comparison on equal-length decimal strings is
-      // identical to numeric comparison, so we use the natural String
-      // `<` / `>` operators.
       const pairs: Array<[number, number]> = [
         [ 0, 1 ],
         [ 0, TS_MAX_MS ],
@@ -98,85 +84,20 @@ describe('test/AgentStoreUtils.test.ts', () => {
   });
 
   describe('dateBucket', () => {
-    it('defaults to UTC and produces YYYY-MM-DD', () => {
+    it('uses UTC and produces YYYY-MM-DD', () => {
       assert.strictEqual(dateBucket(0), '1970-01-01');
       assert.strictEqual(dateBucket(Date.UTC(2025, 10, 13, 0, 0, 0, 0)), '2025-11-13');
       assert.strictEqual(dateBucket(Date.UTC(2025, 10, 13, 12, 34, 56, 789)), '2025-11-13');
-      // Last millisecond of the UTC day stays in that day.
       assert.strictEqual(dateBucket(Date.UTC(2025, 10, 13, 23, 59, 59, 999)), '2025-11-13');
-      // Adding one ms crosses the UTC midnight boundary.
       assert.strictEqual(dateBucket(Date.UTC(2025, 10, 13, 23, 59, 59, 999) + 1), '2025-11-14');
     });
 
-    it("treats the 'UTC' string case-insensitively", () => {
-      const t = Date.UTC(2025, 5, 7, 11, 22, 33, 44);
-      assert.strictEqual(dateBucket(t, 'UTC'), dateBucket(t));
-      assert.strictEqual(dateBucket(t, 'utc'), dateBucket(t));
-      assert.strictEqual(dateBucket(t, 'Utc'), dateBucket(t));
-    });
-
-    it('honors a named IANA timezone (via dayjs\'s timezone plugin under the hood)', () => {
-      // UTC 16:00 on 2025-11-13 is 2025-11-14T00:00 in Asia/Shanghai
-      // (UTC+8, no DST in the Asia/Shanghai zone). dayjs's timezone
-      // plugin uses the host's IANA tzdata to resolve the wall-clock
-      // fields, the same data the prior `Intl.DateTimeFormat`-based
-      // implementation consulted, so the expected strings are
-      // bit-identical between the two implementations on a
-      // Node-official full-ICU runtime.
-      const utcAfternoon = Date.UTC(2025, 10, 13, 16, 0, 0, 0);
-      assert.strictEqual(dateBucket(utcAfternoon, 'UTC'), '2025-11-13');
-      assert.strictEqual(dateBucket(utcAfternoon, 'Asia/Shanghai'), '2025-11-14');
-
-      // UTC 15:59:59.999 on the same day is 23:59:59.999 in Shanghai,
-      // still the same Shanghai day.
-      const justBeforeShanghaiMidnight = Date.UTC(2025, 10, 13, 15, 59, 59, 999);
-      assert.strictEqual(dateBucket(justBeforeShanghaiMidnight, 'Asia/Shanghai'), '2025-11-13');
-
-      // A western-hemisphere zone runs the other way.
-      // UTC 2025-11-13T03:00 is 2025-11-12 19:00 in America/Los_Angeles
-      // (PST, UTC-8 in November).
-      const earlyMorningUtc = Date.UTC(2025, 10, 13, 3, 0, 0, 0);
-      assert.strictEqual(dateBucket(earlyMorningUtc, 'America/Los_Angeles'), '2025-11-12');
-    });
-
-    it('throws RangeError for an unknown IANA timezone', () => {
-      // dayjs's timezone plugin delegates the timezone resolution to
-      // `Intl.DateTimeFormat`'s constructor, which throws
-      // `RangeError: Invalid time zone specified` for an unknown IANA
-      // name. The dateBucket function also has an explicit
-      // `dayjsObj.isValid() === false` defense-in-depth check that
-      // would surface its own `RangeError` if dayjs's wrapping ever
-      // caught the Intl exception and returned an invalid-sentinel
-      // dayjs object instead. The user-visible contract — "unknown
-      // zone throws `RangeError`" — is preserved by both layers.
-      assert.throws(() => dateBucket(0, 'Not/A_Real_Zone'), RangeError);
-    });
-
     it('rejects non-finite, non-integer, or negative ms inputs with a RangeError', () => {
-      // The input contract matches the sibling `reverseMs` function in
-      // this same module: a Unix-millisecond timestamp is a finite,
-      // nonnegative integer. The pre-amend implementation would have
-      // passed `NaN` through to `new Date(NaN).toISOString()` which
-      // throws a stdlib `RangeError: Invalid time value` (generic
-      // message, doesn't name `dateBucket`), and `Infinity` through
-      // to the Intl-format path which returned the literal string
-      // `"Invalid Date"` (which then leaks to the OSS key path as a
-      // directory name segment). Both are now caught at the function
-      // boundary with a domain-aware error message that names the
-      // bad input value.
       assert.throws(() => dateBucket(Number.NaN), RangeError);
       assert.throws(() => dateBucket(Number.POSITIVE_INFINITY), RangeError);
       assert.throws(() => dateBucket(Number.NEGATIVE_INFINITY), RangeError);
       assert.throws(() => dateBucket(1.5), RangeError, 'a fractional ms is out of contract');
       assert.throws(() => dateBucket(-1), RangeError, 'a pre-epoch negative ms is out of contract');
-      // IEEE-754 signed-zero: `Object.is(-0, 0)` is `false` but
-      // `Number.isInteger(-0)` is `true` and `-0 < 0` is `false`. So
-      // negative-zero passes the `Number.isInteger(ms) && ms >= 0`
-      // guard. Both `Date(0)` and `Date(-0)` represent the Unix
-      // epoch instant, so the function returns the same `'1970-01-01'`
-      // bucket for either input. This is the JavaScript convention
-      // of "the two signed zeros refer to the same value" and we
-      // adopt it here rather than over-specifying the contract.
       assert.doesNotThrow(() => dateBucket(-0), 'signed -0 collapses to the epoch instant');
       assert.strictEqual(dateBucket(-0), dateBucket(0));
     });

@@ -301,8 +301,6 @@ describe('test/OSSAgentStore.test.ts', () => {
   });
 
   describe('thread time index', () => {
-    // Drive Date.now() to a fixed millisecond value for the duration of `fn`,
-    // then restore the real clock — used so we can predict the index key bytes.
     function withFixedNow<T>(ms: number, fn: () => Promise<T>): Promise<T> {
       const realNow = Date.now;
       Date.now = () => ms;
@@ -313,17 +311,12 @@ describe('test/OSSAgentStore.test.ts', () => {
         });
     }
 
-    // The shape every fully-prefixed (`agent/`) time-index key should match:
-    // `agent/index/threads-by-date/<YYYY-MM-DD>/<13-digit-revMs>_<thread_<uuid>>`.
     const INDEX_KEY_RE_AGENT = /^agent\/index\/threads-by-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_[0-9a-f-]+$/;
-    // Same shape but allowing any prefix segment (including the empty prefix).
     const INDEX_KEY_RE_ANY = /^(?:[^/]+(?:\/[^/]+)*\/)?index\/threads-by-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_[0-9a-f-]+$/;
 
-    // Three sample wall-clock instants we use repeatedly. All Date.UTC arguments
-    // are zero-indexed in the month slot (so 10 means November).
-    const T_EARLY = Date.UTC(2025, 10, 13, 8, 0, 0, 0); //  2025-11-13T08:00:00.000Z = 1763020800000 ms
-    const T_MID = Date.UTC(2025, 10, 13, 8, 0, 1, 234); //  2025-11-13T08:00:01.234Z = 1763020801234 ms
-    const T_LATE = Date.UTC(2025, 10, 13, 10, 0, 0, 0); //  2025-11-13T10:00:00.000Z = 1763028000000 ms
+    const T_EARLY = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+    const T_MID = Date.UTC(2025, 10, 13, 8, 0, 1, 234);
+    const T_LATE = Date.UTC(2025, 10, 13, 10, 0, 0, 0);
 
     it('writes a sidecar time index next to meta.json on createThread', async () => {
       const client = new MapStorageClient();
@@ -347,11 +340,9 @@ describe('test/OSSAgentStore.test.ts', () => {
       const expectedKey = `agent/index/threads-by-date/2025-11-13/${expectedRev}_${thread.id}`;
       assert.equal(indexKey, expectedKey);
 
-      // The suffix is a faithful encoding: decoding it recovers the original ms.
       const fileName = indexKey.slice(indexKey.lastIndexOf('/') + 1);
       const decoded = decodeReverseMs(fileName.slice(0, fileName.indexOf('_')));
       assert.equal(decoded, T_MID);
-      // TS_MAX_MS export is the operand the encoder used.
       assert.equal(parseInt(fileName.slice(0, fileName.indexOf('_')), 10), TS_MAX_MS - T_MID);
     });
 
@@ -373,13 +364,8 @@ describe('test/OSSAgentStore.test.ts', () => {
         createdAt: Math.floor(T_MID / 1000),
         metadata: { user: 'alice', channel: 'web' },
       });
-      // The body's createdAt is the same Unix-second value as the thread record's,
-      // because both derive from a single Date.now() reading.
       assert.strictEqual(body.createdAt, thread.createdAt);
 
-      // The body is a JSON snapshot taken at write time — mutating the original
-      // metadata object after the fact must not be reflected in the persisted
-      // body, since the OSSAgentStore wrote a serialized copy.
       meta.user = 'mutated';
       const reread = JSON.parse((await client.get(indexKey))!) as typeof body;
       assert.equal(reread.metadata.user, 'alice');
@@ -394,8 +380,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       const late = await withFixedNow(T_LATE, () => localStore.createThread({ tag: 'late' }));
       await localStore.awaitPendingWrites();
 
-      // keysWithPrefix returns the array already sorted ASCII-ascending, which
-      // is also how an OSS ListObjects would return the keys.
       const indexKeys = client.keysWithPrefix('agent/index/threads-by-date/2025-11-13/');
       assert.equal(indexKeys.length, 3);
 
@@ -403,7 +387,6 @@ describe('test/OSSAgentStore.test.ts', () => {
         const fileName = k.slice(k.lastIndexOf('/') + 1);
         return fileName.slice(fileName.indexOf('_') + 1);
       });
-      // Newest first because the suffix is the time complement.
       assert.deepStrictEqual(threadIdsInListOrder, [ late.id, mid.id, early.id ]);
 
       const revs = indexKeys.map(k => {
@@ -433,45 +416,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.ok(nov14[0].endsWith(`_${later.id}`));
     });
 
-    it('honors the dateTimezone option when picking the day bucket', async () => {
-      // UTC 18:00 maps to next-day 02:00 in Asia/Shanghai (UTC+8, no DST).
-      const physicalMs = Date.UTC(2025, 10, 13, 18, 0, 0, 0);
-
-      const shanghaiClient = new MapStorageClient();
-      const shanghaiStore = new OSSAgentStore({
-        client: shanghaiClient,
-        prefix: 'agent/',
-        dateTimezone: 'Asia/Shanghai',
-      });
-      await withFixedNow(physicalMs, () => shanghaiStore.createThread());
-      await shanghaiStore.awaitPendingWrites();
-
-      assert.equal(
-        shanghaiClient.keysWithPrefix('agent/index/threads-by-date/2025-11-14/').length,
-        1,
-        'Shanghai store should bucket UTC 18:00 into the +08 next-day directory',
-      );
-      assert.equal(
-        shanghaiClient.keysWithPrefix('agent/index/threads-by-date/2025-11-13/').length,
-        0,
-      );
-
-      const utcClient = new MapStorageClient();
-      const utcStore = new OSSAgentStore({ client: utcClient, prefix: 'agent/' });
-      await withFixedNow(physicalMs, () => utcStore.createThread());
-      await utcStore.awaitPendingWrites();
-
-      assert.equal(
-        utcClient.keysWithPrefix('agent/index/threads-by-date/2025-11-13/').length,
-        1,
-        'Default-UTC store should bucket the same instant into the same-day UTC directory',
-      );
-      assert.equal(
-        utcClient.keysWithPrefix('agent/index/threads-by-date/2025-11-14/').length,
-        0,
-      );
-    });
-
     it('createThread does not wait for the index PUT to complete (non-blocking)', async () => {
       const client = new MapStorageClient();
       const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
@@ -483,28 +427,19 @@ describe('test/OSSAgentStore.test.ts', () => {
       const thread = await localStore.createThread();
       const elapsedMs = Date.now() - t0;
 
-      // The meta.json PUT against an in-memory Map resolves on the next
-      // microtask, so any latency over ~10 ms here would indicate that the
-      // 120 ms artificial delay on the *index* key wormed its way onto the
-      // caller's await chain. A generous bound of (DELAY - 50) ms keeps the
-      // assertion robust against scheduling jitter on shared CI without
-      // making the assertion vacuous.
       assert.ok(
         elapsedMs < INDEX_DELAY_MS - 50,
         `createThread should return before the index PUT settles, but elapsed=${elapsedMs}ms (delay=${INDEX_DELAY_MS}ms)`,
       );
 
-      // At this exact instant the index key is not yet visible.
       assert.equal(
         client.keysWithPrefix('agent/index/').length,
         0,
         'the slow background PUT should not be visible at the moment createThread returns',
       );
 
-      // The meta.json is, however, already on disk.
       assert.ok(await client.get(`agent/threads/${thread.id}/meta.json`));
 
-      // After we explicitly drain the queue, the index does land.
       await localStore.awaitPendingWrites();
       const indexKeys = client.keysWithPrefix('agent/index/threads-by-date/');
       assert.equal(indexKeys.length, 1);
@@ -527,31 +462,24 @@ describe('test/OSSAgentStore.test.ts', () => {
         logger,
       });
 
-      // createThread itself resolves cleanly. The injected put failure for
-      // the index key is observed only as a warn line.
       const thread = await localStore.createThread({ trace: 'fail-path' });
       assert.equal(thread.object, 'thread');
       assert.match(thread.id, /^thread_[0-9a-f-]{36}$/);
 
-      // awaitPendingWrites should also not throw — `Promise.allSettled` swallows
-      // the rejection that the catch handler converted into a warn.
       await localStore.awaitPendingWrites();
 
-      // Main data is intact.
       const metaRaw = await client.get(`agent/threads/${thread.id}/meta.json`);
       assert.ok(metaRaw, 'meta.json should still be present when only the index PUT failed');
       const metaObj = JSON.parse(metaRaw) as { id: string; createdAt: number };
       assert.equal(metaObj.id, thread.id);
       assert.equal(metaObj.createdAt, thread.createdAt);
 
-      // No index objects were written.
       assert.equal(
         client.keysWithPrefix('agent/index/').length,
         0,
         'the simulated index PUT failure means no index entries exist',
       );
 
-      // Exactly one warn invocation, carrying threadId / indexKey / errMessage as the trailing args.
       assert.equal(warnCalls.length, 1, `expected one warn call, got ${warnCalls.length}: ${JSON.stringify(warnCalls)}`);
       const call = warnCalls[0];
       const formatStr = call[0];
@@ -562,29 +490,17 @@ describe('test/OSSAgentStore.test.ts', () => {
       );
       assert.equal(call[1], thread.id);
       assert.match(call[2] as string, /^agent\/index\/threads-by-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_/);
-      // The fourth post-format argument is the underlying `Error`
-      // instance, passed verbatim by the catch handler so that the
-      // logger's `util.format`-style trailing-arg `util.inspect`
-      // rendering preserves the stack trace. `assert.match` requires
-      // a string, so we destructure the `.message` field for the
-      // text-shape assertion and `instanceof Error` for the
-      // type-shape assertion.
       const errArg = call[3];
       assert.ok(
         errArg instanceof Error,
         `expected the fourth warn-arg to be an Error instance (so the stack is preserved when the logger renders it), got ${typeof errArg}: ${String(errArg)}`,
       );
       assert.match((errArg as Error).message, /simulated PUT failure/);
-      // The format string itself no longer carries a trailing
-      // `err=%s` placeholder because the Error is the unformatted
-      // trailing arg consumed by `util.format`'s
-      // `util.inspect`-on-the-tail-args rule, not a `%s` slot.
       assert.ok(
         !(call[0] as string).includes('err=%s'),
         'the format string should no longer carry an err=%s placeholder',
       );
 
-      // And the read path keeps working — getThread does not consult the index.
       const fetched = await localStore.getThread(thread.id);
       assert.equal(fetched.id, thread.id);
     });
@@ -594,7 +510,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       client.failPutWhenKeyMatches(/^agent\/index\/threads-by-date\//);
       const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
 
-      // Intercept console.warn so the suite stays quiet and we can confirm the fallback wired up.
       const realWarn = console.warn;
       const captured: unknown[][] = [];
       console.warn = ((...args: unknown[]) => {
@@ -621,9 +536,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       const INDEX_DELAY_MS = 120;
       client.delayPutWhenKeyMatches(/^agent\/index\/threads-by-date\//, INDEX_DELAY_MS);
 
-      // Capture the moment the underlying client's destroy gets called, so we
-      // can sequence "drain finishes, then client.destroy fires". The base
-      // MapStorageClient has no destroy method, so we attach one for this test.
       let clientDestroyCalledAt: number | null = null;
       let indexKeyVisibleAtDestroy = false;
       client.destroy = async () => {
@@ -633,62 +545,28 @@ describe('test/OSSAgentStore.test.ts', () => {
 
       const createReturnedAt = Date.now();
       await localStore.createThread();
-      // The slow PUT is still in flight.
       assert.equal(client.keysWithPrefix('agent/index/').length, 0);
 
       const beforeDestroy = Date.now();
       await localStore.destroy();
       const elapsedMs = Date.now() - beforeDestroy;
 
-      // destroy waited for the 120 ms PUT to settle. Allow a small (10 ms)
-      // tolerance window in case of sub-millisecond timer skew.
       assert.ok(
         elapsedMs >= INDEX_DELAY_MS - 20,
         `destroy() should wait for the in-flight index write, elapsedMs=${elapsedMs}ms delay=${INDEX_DELAY_MS}ms`,
       );
 
-      // The underlying client.destroy was called *after* the index landed.
-      // The default `assert(...)` import carries an `asserts value` type
-      // predicate (whereas the namespaced `assert.notEqual` does not), so
-      // it doubles as a type narrower for the timestamp variable.
       assert(clientDestroyCalledAt !== null, 'client.destroy should have been invoked');
       assert.ok(
         indexKeyVisibleAtDestroy,
         'the index entry should have been observable to client.destroy, meaning the drain ran first',
       );
 
-      // After destroy returns, the index is fully on disk.
       assert.equal(client.keysWithPrefix('agent/index/threads-by-date/').length, 1);
-      // And the timer wasn't somehow optimised away — destroy was reached
-      // after the createThread call (sanity check on the captured timestamps).
       assert.ok(clientDestroyCalledAt >= createReturnedAt);
     });
 
     it('destroy() drains a write that arrives during a previous drain iteration', async () => {
-      // This is the precise scenario the `while`-loop drain in
-      // `awaitPendingWrites` guards against: a `createThread` call
-      // lands while `destroy()` is already in the middle of an
-      // `await Promise.allSettled([...this.pendingIndexWrites])` for
-      // the first batch of in-flight writes. The first
-      // `Promise.allSettled`'s snapshot was taken at the moment
-      // `destroy()` started — the late-arriving createThread's
-      // background-PUT promise is added to the Set *after* that
-      // snapshot, so a one-shot drain (without the surrounding
-      // `while`-loop) would miss it and let `destroy()` return
-      // before the second PUT had settled. The loop notices the Set
-      // is still non-empty after the first iteration's `allSettled`
-      // resolves (the late entry's the only one left), takes a
-      // fresh snapshot, and waits on the late arrival too.
-      //
-      // The test engineers the timing window by holding the
-      // destroy-promise without awaiting it, then firing a second
-      // `createThread`. The microtask discipline guarantees the
-      // second createThread's body runs and adds its background-PUT
-      // promise to the Set before the first iteration's
-      // `Promise.allSettled` resolves, since the first PUT's
-      // artificial delay is large compared to the time it takes for
-      // the second createThread's synchronous-up-to-the-first-await
-      // body to enqueue its own background PUT.
       const client = new MapStorageClient();
       const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
 
@@ -702,30 +580,10 @@ describe('test/OSSAgentStore.test.ts', () => {
         'thread1\'s index PUT should still be in flight at this instant',
       );
 
-      // Hold the destroy-promise without awaiting yet, so the test
-      // code can interleave a second createThread between the
-      // start of the drain and its first `Promise.allSettled`
-      // settling.
       const destroyP = localStore.destroy();
-
-      // The second createThread runs its synchronous prelude (meta
-      // PUT, which the in-memory MapStorageClient resolves on the
-      // next microtask), then synchronously kicks off the second
-      // background index PUT and adds it to the in-flight Set.
-      // Because the in-memory meta PUT is microtask-fast and the
-      // first thread's index PUT is on an 80 ms setTimeout, the
-      // Set has both entries by the time the test awaits the
-      // second createThread's returned ThreadRecord.
       const thread2 = await localStore.createThread({ ordinal: 2 });
-
-      // Now wait for destroy() to finish. The destroy's
-      // awaitPendingWrites loop sees the Set is still non-empty
-      // after the first `Promise.allSettled` resolves (thread2's
-      // PUT is on its own timer that's a few ms behind thread1's),
-      // takes a fresh snapshot, and waits on the second PUT.
       await destroyP;
 
-      // Both index entries are present in the in-memory map.
       const indexKeys = client.keysWithPrefix('agent/index/threads-by-date/');
       assert.equal(
         indexKeys.length,
@@ -752,14 +610,11 @@ describe('test/OSSAgentStore.test.ts', () => {
         `awaitPendingWrites with an empty queue should resolve immediately, took ${elapsedMs}ms`,
       );
 
-      // Should also be safe to call repeatedly with no in-flight writes
-      // between calls.
       await localStore.awaitPendingWrites();
       await localStore.awaitPendingWrites();
     });
 
     it('uses the normalized prefix on the index path, including the empty-prefix case', async () => {
-      // Empty prefix → index path has no leading separator.
       const bareClient = new MapStorageClient();
       const bareStore = new OSSAgentStore({ client: bareClient });
       await withFixedNow(T_MID, () => bareStore.createThread());
@@ -769,8 +624,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.ok(!bareIndex[0].startsWith('/'), `expected no leading "/", got ${bareIndex[0]}`);
       assert.match(bareIndex[0], INDEX_KEY_RE_ANY);
 
-      // Multi-segment prefix without trailing slash → same as the meta-key
-      // normalization rule already exercised by the existing 'prefix' suite.
       const nestedClient = new MapStorageClient();
       const nestedStore = new OSSAgentStore({ client: nestedClient, prefix: 'a/b' });
       await withFixedNow(T_MID, () => nestedStore.createThread());
@@ -779,7 +632,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(nestedIndex.length, 1, `expected exactly one nested index entry: ${JSON.stringify(nestedClient.keys())}`);
       assert.match(nestedIndex[0], /^a\/b\/index\/threads-by-date\/2025-11-13\/\d{13}_thread_[0-9a-f-]+$/);
 
-      // The threadId tail in the key matches the meta.json's id.
       const metaKey = nestedClient.keys().find(k => k.startsWith('a/b/threads/') && k.endsWith('/meta.json'));
       assert.ok(metaKey, 'meta.json key for the nested prefix should exist');
       const expectedThreadId = metaKey.slice('a/b/threads/'.length, -('/meta.json'.length));

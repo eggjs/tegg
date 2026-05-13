@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@eggjs/tegg-types": "^3.78.17",
-    "dayjs": "^1.11.19",
     "egg-logger": "^3.0.1",
     "oss-client": "^2.5.1"
   },
