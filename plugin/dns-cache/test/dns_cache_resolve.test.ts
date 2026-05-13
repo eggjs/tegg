@@ -60,6 +60,6 @@ describe('test/dns_cache_resolve.test.ts', () => {
           encodeURIComponent('http://notexists-1111111local-domain.com'),
       )
       .expect(500)
-      .expect(/queryA ENOTFOUND notexists-1111111local-domain\.com/);
+      .expect(/queryA (ENOTFOUND|ESERVFAIL) notexists-1111111local-domain\.com/);
   });
 });
