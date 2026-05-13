@@ -2,7 +2,11 @@ import assert from 'node:assert';
 
 import type { AgentMessage } from '@eggjs/tegg-types/agent-runtime';
 
-import { AgentNotFoundError, OSSAgentStore } from '../index';
+import {
+  AgentNotFoundError,
+  OSSAgentStore,
+  reverseMs,
+} from '../index';
 import { MapStorageClient, MapStorageClientWithoutAppend } from './helpers';
 
 describe('test/OSSAgentStore.test.ts', () => {
@@ -291,6 +295,418 @@ describe('test/OSSAgentStore.test.ts', () => {
           return true;
         },
       );
+    });
+  });
+
+  describe('thread activity index', () => {
+    function withFixedNow<T>(ms: number, fn: () => Promise<T>): Promise<T> {
+      const realNow = Date.now;
+      Date.now = () => ms;
+      return Promise.resolve()
+        .then(fn)
+        .finally(() => {
+          Date.now = realNow;
+        });
+    }
+
+    const INDEX_KEY_RE_AGENT = /^agent\/index\/threads-by-updated-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_[0-9a-f-]+$/;
+    const INDEX_KEY_RE_ANY = /^(?:[^/]+(?:\/[^/]+)*\/)?index\/threads-by-updated-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_[0-9a-f-]+$/;
+
+    const T_EARLY = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+    const T_MID = Date.UTC(2025, 10, 13, 8, 0, 1, 234);
+    const T_LATE = Date.UTC(2025, 10, 13, 10, 0, 0, 0);
+
+    it('writes a sidecar activity index next to meta.json on createThread', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const thread = await withFixedNow(T_MID, () => localStore.createThread({ user: 'alice' }));
+      await localStore.awaitPendingWrites();
+
+      const keys = client.keys();
+      assert.ok(
+        keys.includes(`agent/threads/${thread.id}/meta.json`),
+        `meta.json not found amongst keys: ${JSON.stringify(keys)}`,
+      );
+
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 1, `expected exactly one index entry, got ${JSON.stringify(indexKeys)}`);
+      const indexKey = indexKeys[0];
+      assert.match(indexKey, INDEX_KEY_RE_AGENT);
+
+      const expectedRev = reverseMs(T_MID);
+      const expectedKey = `agent/index/threads-by-updated-date/2025-11-13/${expectedRev}_${thread.id}`;
+      assert.equal(indexKey, expectedKey);
+    });
+
+    it('the index body carries threadId, createdAt, updatedAt and a snapshot of metadata', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+      const meta: Record<string, unknown> = { user: 'alice', channel: 'web' };
+
+      const thread = await withFixedNow(T_MID, () => localStore.createThread(meta));
+      await localStore.awaitPendingWrites();
+
+      const indexKey = client.keysWithPrefix('agent/index/threads-by-updated-date/')[0];
+      const raw = await client.get(indexKey);
+      assert.ok(raw, 'index body should be present after drain');
+      const body = JSON.parse(raw) as {
+        threadId: string;
+        createdAt: number;
+        updatedAt: number;
+        metadata: Record<string, unknown>;
+      };
+
+      assert.deepStrictEqual(body, {
+        threadId: thread.id,
+        createdAt: Math.floor(T_MID / 1000),
+        updatedAt: Math.floor(T_MID / 1000),
+        metadata: { user: 'alice', channel: 'web' },
+      });
+      assert.strictEqual(body.createdAt, thread.createdAt);
+      assert.strictEqual(body.updatedAt, thread.createdAt);
+
+      meta.user = 'mutated';
+      const reread = JSON.parse((await client.get(indexKey))!) as typeof body;
+      assert.equal(reread.metadata.user, 'alice');
+    });
+
+    it('within a date directory, ASC dictionary order equals time-DESC activity order', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const early = await withFixedNow(T_EARLY, () => localStore.createThread({ tag: 'early' }));
+      const mid = await withFixedNow(T_MID, () => localStore.createThread({ tag: 'mid' }));
+      const late = await withFixedNow(T_LATE, () => localStore.createThread({ tag: 'late' }));
+      await localStore.awaitPendingWrites();
+
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-13/');
+      assert.equal(indexKeys.length, 3);
+
+      const threadIdsInListOrder = indexKeys.map(k => {
+        const fileName = k.slice(k.lastIndexOf('/') + 1);
+        return fileName.slice(fileName.indexOf('_') + 1);
+      });
+      assert.deepStrictEqual(threadIdsInListOrder, [ late.id, mid.id, early.id ]);
+
+      const revs = indexKeys.map(k => {
+        const fileName = k.slice(k.lastIndexOf('/') + 1);
+        return fileName.slice(0, fileName.indexOf('_'));
+      });
+      assert.deepStrictEqual(revs, [ reverseMs(T_LATE), reverseMs(T_MID), reverseMs(T_EARLY) ]);
+      assert.ok(revs[0] < revs[1] && revs[1] < revs[2], 'revs must be ASCII-ascending');
+    });
+
+    it('threads active on either side of a UTC day boundary land in different date buckets', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const lastMsOfNov13Utc = Date.UTC(2025, 10, 13, 23, 59, 59, 999);
+      const firstMsOfNov14Utc = Date.UTC(2025, 10, 14, 0, 0, 0, 0);
+
+      const earlier = await withFixedNow(lastMsOfNov13Utc, () => localStore.createThread());
+      const later = await withFixedNow(firstMsOfNov14Utc, () => localStore.createThread());
+      await localStore.awaitPendingWrites();
+
+      const nov13 = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-13/');
+      const nov14 = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-14/');
+      assert.equal(nov13.length, 1, `Nov 13 bucket: ${JSON.stringify(nov13)}`);
+      assert.equal(nov14.length, 1, `Nov 14 bucket: ${JSON.stringify(nov14)}`);
+      assert.ok(nov13[0].endsWith(`_${earlier.id}`));
+      assert.ok(nov14[0].endsWith(`_${later.id}`));
+    });
+
+    it('createThread does not wait for the index PUT to complete (non-blocking)', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const INDEX_DELAY_MS = 120;
+      client.delayPutWhenKeyMatches(/^agent\/index\/threads-by-updated-date\//, INDEX_DELAY_MS);
+
+      const t0 = Date.now();
+      const thread = await localStore.createThread();
+      const elapsedMs = Date.now() - t0;
+
+      assert.ok(
+        elapsedMs < INDEX_DELAY_MS - 50,
+        `createThread should return before the index PUT settles, but elapsed=${elapsedMs}ms (delay=${INDEX_DELAY_MS}ms)`,
+      );
+
+      assert.equal(
+        client.keysWithPrefix('agent/index/').length,
+        0,
+        'the slow background PUT should not be visible at the moment createThread returns',
+      );
+
+      assert.ok(await client.get(`agent/threads/${thread.id}/meta.json`));
+
+      await localStore.awaitPendingWrites();
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 1);
+      assert.ok(indexKeys[0].endsWith(`_${thread.id}`));
+    });
+
+    it('createThread succeeds even when the index PUT throws; the failure becomes a single warn line', async () => {
+      const client = new MapStorageClient();
+      client.failPutWhenKeyMatches(/^agent\/index\/threads-by-updated-date\//);
+
+      const warnCalls: unknown[][] = [];
+      const logger = {
+        warn(message: string, ...args: unknown[]): void {
+          warnCalls.push([ message, ...args ]);
+        },
+      };
+      const localStore = new OSSAgentStore({
+        client,
+        prefix: 'agent/',
+        logger,
+      });
+
+      const thread = await localStore.createThread({ trace: 'fail-path' });
+      assert.equal(thread.object, 'thread');
+      assert.match(thread.id, /^thread_[0-9a-f-]{36}$/);
+
+      await localStore.awaitPendingWrites();
+
+      const metaRaw = await client.get(`agent/threads/${thread.id}/meta.json`);
+      assert.ok(metaRaw, 'meta.json should still be present when only the index PUT failed');
+      const metaObj = JSON.parse(metaRaw) as { id: string; createdAt: number };
+      assert.equal(metaObj.id, thread.id);
+      assert.equal(metaObj.createdAt, thread.createdAt);
+
+      assert.equal(
+        client.keysWithPrefix('agent/index/').length,
+        0,
+        'the simulated index PUT failure means no index entries exist',
+      );
+
+      assert.equal(warnCalls.length, 1, `expected one warn call, got ${warnCalls.length}: ${JSON.stringify(warnCalls)}`);
+      const call = warnCalls[0];
+      const formatStr = call[0];
+      assert.equal(typeof formatStr, 'string');
+      assert.ok(
+        (formatStr as string).includes('failed to write thread activity index'),
+        `unexpected warn format string: ${String(formatStr)}`,
+      );
+      assert.equal(call[1], thread.id);
+      assert.match(call[2] as string, /^agent\/index\/threads-by-updated-date\/\d{4}-\d{2}-\d{2}\/\d{13}_thread_/);
+      const errArg = call[3];
+      assert.ok(
+        errArg instanceof Error,
+        `expected the fourth warn-arg to be an Error instance (so the stack is preserved when the logger renders it), got ${typeof errArg}: ${String(errArg)}`,
+      );
+      assert.match((errArg as Error).message, /simulated PUT failure/);
+      assert.ok(
+        !(call[0] as string).includes('err=%s'),
+        'the format string should no longer carry an err=%s placeholder',
+      );
+
+      const fetched = await localStore.getThread(thread.id);
+      assert.equal(fetched.id, thread.id);
+    });
+
+    it('with no logger configured, an index PUT failure falls back to console.warn without throwing', async () => {
+      const client = new MapStorageClient();
+      client.failPutWhenKeyMatches(/^agent\/index\/threads-by-updated-date\//);
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const realWarn = console.warn;
+      const captured: unknown[][] = [];
+      console.warn = ((...args: unknown[]) => {
+        captured.push(args);
+      }) as typeof console.warn;
+
+      try {
+        const thread = await localStore.createThread();
+        await localStore.awaitPendingWrites();
+        assert.equal(captured.length, 1);
+        const args = captured[0];
+        assert.equal(typeof args[0], 'string');
+        assert.ok((args[0] as string).includes('failed to write thread activity index'));
+        assert.equal(args[1], thread.id);
+      } finally {
+        console.warn = realWarn;
+      }
+    });
+
+    it('destroy() drains in-flight index writes before tearing down the underlying client', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const INDEX_DELAY_MS = 120;
+      client.delayPutWhenKeyMatches(/^agent\/index\/threads-by-updated-date\//, INDEX_DELAY_MS);
+
+      let clientDestroyCalledAt: number | null = null;
+      let indexKeyVisibleAtDestroy = false;
+      client.destroy = async () => {
+        clientDestroyCalledAt = Date.now();
+        indexKeyVisibleAtDestroy = client.keysWithPrefix('agent/index/').length > 0;
+      };
+
+      const createReturnedAt = Date.now();
+      await localStore.createThread();
+      assert.equal(client.keysWithPrefix('agent/index/').length, 0);
+
+      const beforeDestroy = Date.now();
+      await localStore.destroy();
+      const elapsedMs = Date.now() - beforeDestroy;
+
+      assert.ok(
+        elapsedMs >= INDEX_DELAY_MS - 20,
+        `destroy() should wait for the in-flight index write, elapsedMs=${elapsedMs}ms delay=${INDEX_DELAY_MS}ms`,
+      );
+
+      assert(clientDestroyCalledAt !== null, 'client.destroy should have been invoked');
+      assert.ok(
+        indexKeyVisibleAtDestroy,
+        'the index entry should have been observable to client.destroy, meaning the drain ran first',
+      );
+
+      assert.equal(client.keysWithPrefix('agent/index/threads-by-updated-date/').length, 1);
+      assert.ok(clientDestroyCalledAt >= createReturnedAt);
+    });
+
+    it('destroy() drains a write that arrives during a previous drain iteration', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const INDEX_DELAY_MS = 80;
+      client.delayPutWhenKeyMatches(/^agent\/index\/threads-by-updated-date\//, INDEX_DELAY_MS);
+
+      const thread1 = await localStore.createThread({ ordinal: 1 });
+      assert.equal(
+        client.keysWithPrefix('agent/index/threads-by-updated-date/').length,
+        0,
+        'thread1\'s index PUT should still be in flight at this instant',
+      );
+
+      const destroyP = localStore.destroy();
+      const thread2 = await localStore.createThread({ ordinal: 2 });
+      await destroyP;
+
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(
+        indexKeys.length,
+        2,
+        `the drain loop should have captured both the original and the late-arriving index write, got ${JSON.stringify(indexKeys)}`,
+      );
+      const threadIdsInLexOrder = indexKeys.map(k => {
+        const fileName = k.slice(k.lastIndexOf('/') + 1);
+        return fileName.slice(fileName.indexOf('_') + 1);
+      }).sort();
+      const expectedIds = [ thread1.id, thread2.id ].sort();
+      assert.deepStrictEqual(threadIdsInLexOrder, expectedIds);
+    });
+
+    it('awaitPendingWrites() is a no-op resolved promise when there are no pending writes', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const t0 = Date.now();
+      await localStore.awaitPendingWrites();
+      const elapsedMs = Date.now() - t0;
+      assert.ok(
+        elapsedMs < 50,
+        `awaitPendingWrites with an empty queue should resolve immediately, took ${elapsedMs}ms`,
+      );
+
+      await localStore.awaitPendingWrites();
+      await localStore.awaitPendingWrites();
+    });
+
+    it('uses the normalized prefix on the index path, including the empty-prefix case', async () => {
+      const bareClient = new MapStorageClient();
+      const bareStore = new OSSAgentStore({ client: bareClient });
+      await withFixedNow(T_MID, () => bareStore.createThread());
+      await bareStore.awaitPendingWrites();
+      const bareIndex = bareClient.keysWithPrefix('index/threads-by-updated-date/');
+      assert.equal(bareIndex.length, 1);
+      assert.ok(!bareIndex[0].startsWith('/'), `expected no leading "/", got ${bareIndex[0]}`);
+      assert.match(bareIndex[0], INDEX_KEY_RE_ANY);
+
+      const nestedClient = new MapStorageClient();
+      const nestedStore = new OSSAgentStore({ client: nestedClient, prefix: 'a/b' });
+      await withFixedNow(T_MID, () => nestedStore.createThread());
+      await nestedStore.awaitPendingWrites();
+      const nestedIndex = nestedClient.keysWithPrefix('a/b/index/threads-by-updated-date/');
+      assert.equal(nestedIndex.length, 1, `expected exactly one nested index entry: ${JSON.stringify(nestedClient.keys())}`);
+      assert.match(nestedIndex[0], /^a\/b\/index\/threads-by-updated-date\/2025-11-13\/\d{13}_thread_[0-9a-f-]+$/);
+
+      const metaKey = nestedClient.keys().find(k => k.startsWith('a/b/threads/') && k.endsWith('/meta.json'));
+      assert.ok(metaKey, 'meta.json key for the nested prefix should exist');
+      const expectedThreadId = metaKey.slice('a/b/threads/'.length, -('/meta.json'.length));
+      assert.ok(nestedIndex[0].endsWith(`_${expectedThreadId}`));
+    });
+
+    it('appendMessages writes a new activity index entry for a reused historical thread', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const createdMs = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const updatedMs = Date.UTC(2025, 10, 14, 9, 0, 0, 0);
+      const thread = await withFixedNow(createdMs, () => localStore.createThread({ origin: 'audit' }));
+      await localStore.awaitPendingWrites();
+
+      const messages: AgentMessage[] = [
+        { type: 'user', message: { role: 'user', content: 'hello' } } as unknown as AgentMessage,
+        {
+          type: 'assistant',
+          message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] },
+        } as unknown as AgentMessage,
+      ];
+      await withFixedNow(updatedMs, () => localStore.appendMessages(thread.id, messages));
+      await localStore.awaitPendingWrites();
+
+      const createdDay = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-13/');
+      const updatedDay = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-14/');
+      assert.equal(createdDay.length, 1, `created-day index: ${JSON.stringify(createdDay)}`);
+      assert.equal(updatedDay.length, 1, `updated-day index: ${JSON.stringify(updatedDay)}`);
+      assert.ok(createdDay[0].endsWith(`_${thread.id}`));
+      assert.ok(updatedDay[0].endsWith(`_${thread.id}`));
+
+      const updatedBody = JSON.parse((await client.get(updatedDay[0]))!) as {
+        threadId: string;
+        createdAt: number;
+        updatedAt: number;
+        metadata: Record<string, unknown>;
+      };
+      assert.deepStrictEqual(updatedBody, {
+        threadId: thread.id,
+        createdAt: Math.floor(createdMs / 1000),
+        updatedAt: Math.floor(updatedMs / 1000),
+        metadata: { origin: 'audit' },
+      });
+    });
+
+    it('createRun and updateRun never touch the activity index', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const thread = await localStore.createThread({ origin: 'audit' });
+      await localStore.awaitPendingWrites();
+      const indexKeysBefore = client.keysWithPrefix('agent/index/').slice();
+      const indexBodyBefore = await client.get(indexKeysBefore[0]);
+      assert.equal(indexKeysBefore.length, 1, 'baseline: exactly one index entry from createThread');
+
+      const run = await localStore.createRun(
+        [{ role: 'user', content: 'first turn' }],
+        thread.id,
+        { maxIterations: 1 },
+        { trace: 't' },
+      );
+      await localStore.updateRun(run.id, {
+        status: 'completed',
+        completedAt: Math.floor(Date.now() / 1000),
+      });
+
+      const indexKeysAfter = client.keysWithPrefix('agent/index/').slice();
+      assert.deepStrictEqual(
+        indexKeysAfter.slice().sort(),
+        indexKeysBefore.slice().sort(),
+        'no new index keys should appear from run operations',
+      );
+      const indexBodyAfter = await client.get(indexKeysAfter[0]);
+      assert.equal(indexBodyAfter, indexBodyBefore, 'the index body should be byte-identical');
     });
   });
 });
