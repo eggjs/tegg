@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.79.0](https://github.com/eggjs/tegg/compare/v3.78.17...v3.79.0) (2026-05-13)
+
+
+### Features
+
+* **agent-runtime:** per-thread creation-time index ([#445](https://github.com/eggjs/tegg/issues/445)) ([6319191](https://github.com/eggjs/tegg/commit/63191912b4b3cab8c4ec076e16e093f3e85c0ca7))
+
+
+
+
+
 ## [3.78.17](https://github.com/eggjs/tegg/compare/v3.78.16...v3.78.17) (2026-05-07)
 
 **Note:** Version bump only for package @eggjs/agent-runtime

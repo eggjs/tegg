@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-metadata",
-  "version": "3.78.17",
+  "version": "3.79.0",
   "description": "tegg metadata",
   "keywords": [
     "egg",
@@ -35,10 +35,10 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@eggjs/core-decorator": "^3.78.17",
-    "@eggjs/tegg-common-util": "^3.78.17",
-    "@eggjs/tegg-lifecycle": "^3.78.17",
-    "@eggjs/tegg-types": "^3.78.17",
+    "@eggjs/core-decorator": "^3.79.0",
+    "@eggjs/tegg-common-util": "^3.79.0",
+    "@eggjs/tegg-lifecycle": "^3.79.0",
+    "@eggjs/tegg-types": "^3.79.0",
     "egg-errors": "^2.2.3"
   },
   "devDependencies": {
