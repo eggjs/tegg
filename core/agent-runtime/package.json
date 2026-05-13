@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/agent-runtime",
-  "version": "3.79.0",
+  "version": "3.79.1",
   "description": "Agent runtime with store abstraction for Egg.js tegg",
   "keywords": [
     "agent",
@@ -33,7 +33,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@eggjs/tegg-types": "^3.79.0",
+    "@eggjs/tegg-types": "^3.79.1",
     "egg-logger": "^3.0.1",
     "oss-client": "^2.5.1"
   },

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.79.1](https://github.com/eggjs/tegg/compare/v3.79.0...v3.79.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* **agent-runtime:** support thread metadata ([#446](https://github.com/eggjs/tegg/issues/446)) ([b8606c5](https://github.com/eggjs/tegg/commit/b8606c517adbdd034911e625f19a0361df7e23e1)), closes [eggjs/egg#5949](https://github.com/eggjs/egg/issues/5949)
+
+
+
+
+
 # [3.79.0](https://github.com/eggjs/tegg/compare/v3.78.17...v3.79.0) (2026-05-13)
 
 
