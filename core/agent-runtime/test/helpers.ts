@@ -45,21 +45,8 @@ export class MapStorageClient implements ObjectStorageClient {
     this.putFailurePattern = pattern;
   }
 
-  failPutForExactKey(key: string): void {
-    this.putFailureExact.add(key);
-  }
-
-  clearPutFailures(): void {
-    this.putFailureExact.clear();
-    this.putFailurePattern = null;
-  }
-
   delayPutWhenKeyMatches(pattern: RegExp, ms: number): void {
     this.putDelays.push({ pattern, ms });
-  }
-
-  clearPutDelays(): void {
-    this.putDelays.length = 0;
   }
 
   async put(key: string, value: string): Promise<void> {
@@ -105,21 +92,8 @@ export class MapStorageClientWithoutAppend implements ObjectStorageClient {
     this.putFailurePattern = pattern;
   }
 
-  failPutForExactKey(key: string): void {
-    this.putFailureExact.add(key);
-  }
-
-  clearPutFailures(): void {
-    this.putFailureExact.clear();
-    this.putFailurePattern = null;
-  }
-
   delayPutWhenKeyMatches(pattern: RegExp, ms: number): void {
     this.putDelays.push({ pattern, ms });
-  }
-
-  clearPutDelays(): void {
-    this.putDelays.length = 0;
   }
 
   async put(key: string, value: string): Promise<void> {

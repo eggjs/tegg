@@ -35,13 +35,6 @@ export function reverseMs(ms: number): string {
 }
 
 /**
- * Decode a 13-digit `reverseMs` string back to Unix milliseconds.
- */
-export function decodeReverseMs(revMsString: string): number {
-  return TS_MAX_MS - Number.parseInt(revMsString, 10);
-}
-
-/**
  * Format a Unix-millisecond timestamp as a UTC `YYYY-MM-DD` bucket.
  */
 export function dateBucket(ms: number): string {

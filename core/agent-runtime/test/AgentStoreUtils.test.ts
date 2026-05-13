@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { TS_MAX_MS, dateBucket, decodeReverseMs, reverseMs } from '../index';
+import { TS_MAX_MS, dateBucket, reverseMs } from '../index';
 
 describe('test/AgentStoreUtils.test.ts', () => {
   describe('TS_MAX_MS', () => {
@@ -57,29 +57,6 @@ describe('test/AgentStoreUtils.test.ts', () => {
           `monotonicity broken for a=${a} b=${b}: reverseMs(a)=${ra} should be > reverseMs(b)=${rb}`,
         );
       }
-    });
-  });
-
-  describe('decodeReverseMs', () => {
-    it('inverts reverseMs for a representative range of inputs', () => {
-      const samples = [
-        0,
-        1,
-        999,
-        1_000_000_000_000,
-        Date.UTC(1970, 0, 1, 0, 0, 0, 0),
-        Date.UTC(2025, 10, 13, 8, 0, 1, 234),
-        TS_MAX_MS - 1,
-        TS_MAX_MS,
-      ];
-      for (const ms of samples) {
-        assert.strictEqual(decodeReverseMs(reverseMs(ms)), ms, `round-trip failed for ms=${ms}`);
-      }
-    });
-
-    it('parses the all-zero string as TS_MAX_MS and the all-nine string as zero', () => {
-      assert.strictEqual(decodeReverseMs('0000000000000'), TS_MAX_MS);
-      assert.strictEqual(decodeReverseMs('9999999999999'), 0);
     });
   });
 

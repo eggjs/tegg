@@ -5,8 +5,6 @@ import type { AgentMessage } from '@eggjs/tegg-types/agent-runtime';
 import {
   AgentNotFoundError,
   OSSAgentStore,
-  TS_MAX_MS,
-  decodeReverseMs,
   reverseMs,
 } from '../index';
 import { MapStorageClient, MapStorageClientWithoutAppend } from './helpers';
@@ -339,11 +337,6 @@ describe('test/OSSAgentStore.test.ts', () => {
       const expectedRev = reverseMs(T_MID);
       const expectedKey = `agent/index/threads-by-date/2025-11-13/${expectedRev}_${thread.id}`;
       assert.equal(indexKey, expectedKey);
-
-      const fileName = indexKey.slice(indexKey.lastIndexOf('/') + 1);
-      const decoded = decodeReverseMs(fileName.slice(0, fileName.indexOf('_')));
-      assert.equal(decoded, T_MID);
-      assert.equal(parseInt(fileName.slice(0, fileName.indexOf('_')), 10), TS_MAX_MS - T_MID);
     });
 
     it('the index body carries threadId, Unix-second createdAt and a snapshot of metadata', async () => {
