@@ -12,7 +12,7 @@ import { AgentObjectType, RunStatus, AgentNotFoundError } from '@eggjs/tegg-type
 import { dateBucket, newRunId, newThreadId, nowUnix, reverseMs } from './AgentStoreUtils';
 
 /**
- * Warn logger used when a background thread-time-index write fails.
+ * Warn logger used when a background thread activity-index write fails.
  * `console` and `egg-logger` both satisfy this shape.
  */
 export interface OSSAgentStoreWarnLogger {
@@ -23,8 +23,8 @@ export interface OSSAgentStoreOptions {
   client: ObjectStorageClient;
   prefix?: string;
   /**
-   * Background time-index PUT failures are logged here and never
-   * propagated to `createThread` callers.
+   * Background activity-index PUT failures are logged here and never
+   * propagated to store callers.
    */
   logger?: OSSAgentStoreWarnLogger;
 }
@@ -46,10 +46,10 @@ type ThreadMetadata = Omit<ThreadRecord, 'messages'>;
  * {prefix}threads/{id}/meta.json                                  — Thread metadata (JSON, source of truth)
  * {prefix}threads/{id}/messages.jsonl                             — Messages (JSONL, one AgentMessage per line)
  * {prefix}runs/{id}.json                                          — Run record (JSON)
- * {prefix}index/threads-by-date/{YYYY-MM-DD}/{revMs13}_{threadId} — Time-index sidecar (JSON body)
+ * {prefix}index/threads-by-updated-date/{YYYY-MM-DD}/{revMs13}_{threadId} — Activity-time index sidecar (JSON body)
  * ```
  *
- * The time-index sidecar is best-effort and write-only. It is not read
+ * The activity-time index sidecar is best-effort and write-only. It is not read
  * by `getThread`, and `destroy()` drains any in-flight index writes.
  */
 export class OSSAgentStore implements AgentStore {
@@ -77,10 +77,39 @@ export class OSSAgentStore implements AgentStore {
     return `${this.prefix}runs/${runId}.json`;
   }
 
-  private threadTimeIndexKey(nowMs: number, threadId: string): string {
+  private threadActivityIndexKey(nowMs: number, threadId: string): string {
     const date = dateBucket(nowMs);
     const rev = reverseMs(nowMs);
-    return `${this.prefix}index/threads-by-date/${date}/${rev}_${threadId}`;
+    return `${this.prefix}index/threads-by-updated-date/${date}/${rev}_${threadId}`;
+  }
+
+  private writeThreadActivityIndex(
+    threadId: string,
+    createdAt: number,
+    updatedAtMs: number,
+    metadata: Record<string, unknown>,
+  ): void {
+    const indexKey = this.threadActivityIndexKey(updatedAtMs, threadId);
+    const indexBody = JSON.stringify({
+      threadId,
+      createdAt,
+      updatedAt: Math.floor(updatedAtMs / 1000),
+      metadata,
+    });
+    const tracked: Promise<void> = this.client.put(indexKey, indexBody)
+      .catch((err: unknown) => {
+        const errForLog: Error = err instanceof Error ? err : new Error(String(err));
+        this.logger.warn(
+          '[OSSAgentStore] failed to write thread activity index threadId=%s key=%s',
+          threadId,
+          indexKey,
+          errForLog,
+        );
+      })
+      .finally(() => {
+        this.pendingIndexWrites.delete(tracked);
+      });
+    this.pendingIndexWrites.add(tracked);
   }
 
   async init(): Promise<void> {
@@ -93,9 +122,9 @@ export class OSSAgentStore implements AgentStore {
   }
 
   /**
-   * Wait for in-flight background time-index writes. Individual write
-   * failures are logged by `createThread`, so this method never rejects
-   * for index-write failures.
+   * Wait for in-flight background activity-index writes. Individual write
+   * failures are logged when scheduled, so this method never rejects
+   * for index-write failures. The set size is bounded by in-flight index PUTs.
    */
   async awaitPendingWrites(): Promise<void> {
     while (this.pendingIndexWrites.size > 0) {
@@ -115,28 +144,7 @@ export class OSSAgentStore implements AgentStore {
     };
     await this.client.put(this.threadMetaKey(threadId), JSON.stringify(meta));
 
-    const indexKey = this.threadTimeIndexKey(nowMs, threadId);
-    const indexBody = JSON.stringify({
-      threadId,
-      createdAt,
-      metadata: meta.metadata,
-    });
-    const tracked: Promise<void> = this.client.put(indexKey, indexBody).then(
-      () => {
-        this.pendingIndexWrites.delete(tracked);
-      },
-      (err: unknown) => {
-        this.pendingIndexWrites.delete(tracked);
-        const errForLog: Error = err instanceof Error ? err : new Error(String(err));
-        this.logger.warn(
-          '[OSSAgentStore] failed to write thread time index threadId=%s key=%s',
-          threadId,
-          indexKey,
-          errForLog,
-        );
-      },
-    );
-    this.pendingIndexWrites.add(tracked);
+    this.writeThreadActivityIndex(threadId, createdAt, nowMs, meta.metadata);
 
     return { ...meta, messages: [] };
   }
@@ -177,6 +185,8 @@ export class OSSAgentStore implements AgentStore {
       throw new AgentNotFoundError(`Thread ${threadId} not found`);
     }
     if (messages.length === 0) return;
+    const meta = JSON.parse(metaData) as ThreadMetadata;
+    const nowMs = Date.now();
 
     const lines = messages.map(m => JSON.stringify(m)).join('\n') + '\n';
     const messagesKey = this.threadMessagesKey(threadId);
@@ -187,6 +197,7 @@ export class OSSAgentStore implements AgentStore {
       const existing = (await this.client.get(messagesKey)) ?? '';
       await this.client.put(messagesKey, existing + lines);
     }
+    this.writeThreadActivityIndex(threadId, meta.createdAt, nowMs, meta.metadata);
   }
 
   async createRun(
