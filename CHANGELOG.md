@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.79.2](https://github.com/eggjs/tegg/compare/v3.79.1...v3.79.2) (2026-05-14)
+
+
+### Bug Fixes
+
+* service worker initialize ([#447](https://github.com/eggjs/tegg/issues/447)) ([f3fe5f4](https://github.com/eggjs/tegg/commit/f3fe5f465c78002fd37de9c4c5d5b3bdfde4f0c8))
+
+
+
+
+
 ## [3.79.1](https://github.com/eggjs/tegg/compare/v3.79.0...v3.79.1) (2026-05-13)
 
 
