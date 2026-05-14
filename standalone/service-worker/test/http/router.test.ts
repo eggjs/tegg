@@ -34,6 +34,7 @@ describe('standalone/service-worker/test/http/router.test.ts', () => {
 
     try {
       const createEvent = (): FetchEvent => ({
+        type: 'fetch',
         request: new Request('http://127.0.0.1/hello', { method: 'GET' }),
         waitUntil() { /**/ },
         respondWith() { /**/ },
