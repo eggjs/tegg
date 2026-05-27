@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs/promises';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolResultSchema, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolRequest, ListToolsRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
 
 async function listTools(client: Client) {
