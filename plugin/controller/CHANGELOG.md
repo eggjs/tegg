@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.79.3](https://github.com/eggjs/tegg/compare/v3.79.2...v3.79.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* mcp memory ([#448](https://github.com/eggjs/tegg/issues/448)) ([8e5f477](https://github.com/eggjs/tegg/commit/8e5f477d1ec6d2800fe7a8057edc689bde90372b))
+
+
+
+
+
 ## [3.79.2](https://github.com/eggjs/tegg/compare/v3.79.1...v3.79.2) (2026-05-14)
 
 **Note:** Version bump only for package @eggjs/tegg-controller-plugin
