@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs/promises';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolResultSchema, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolRequest, ListToolsRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
 import { MCPControllerRegister } from '../../lib/impl/mcp/MCPControllerRegister';
 
@@ -393,6 +394,12 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
       await streamableTransport.terminateSession();
       await streamableClient.close();
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const register = MCPControllerRegister.instance!;
+      assert.equal(register.mcpConfig.getEventStore(), undefined);
+      assert.equal(register.streamTransports['custom-session-id'], undefined);
+      assert.equal(register.pingIntervals['custom-session-id'], undefined);
 
       const logContent = await fs.readFile(path.join(__dirname, '../fixtures/apps/mcp-app/logs/mcp-app/mcp-app-web.log'));
 

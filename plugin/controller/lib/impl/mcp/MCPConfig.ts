@@ -1,7 +1,6 @@
 import type { Application, Context } from 'egg';
 import { randomUUID } from 'node:crypto';
 import { EventStore } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/inMemoryEventStore.js';
 
 export interface MCPConfigOptions {
   sseInitPath: string;
@@ -24,7 +23,7 @@ export class MCPConfig {
   private _streamPath: string;
   private _statelessStreamPath: string;
   private _sessionIdGenerator: (ctx: Context) => string;
-  private _eventStore: EventStore;
+  private _eventStore?: EventStore;
   private _sseHeartTime: number;
 
   private _pingElapsed: number | undefined;
@@ -41,7 +40,7 @@ export class MCPConfig {
     this._sseMessagePath = options.sseMessagePath;
     this._streamPath = options.streamPath;
     this._statelessStreamPath = options.statelessStreamPath;
-    this._eventStore = options.eventStore ?? new InMemoryEventStore();
+    this._eventStore = options.eventStore;
     this._sseHeartTime = options.sseHeartTime ?? 25000;
     this._pingElapsed = options.pingElapsed;
     this._pingInterval = options.pingInterval ?? 5 * 1000;
@@ -112,7 +111,7 @@ export class MCPConfig {
       if (config?.eventStore) {
         return config.eventStore;
       }
-      return new InMemoryEventStore();
+      return undefined;
     }
     return this._eventStore;
   }

@@ -39,6 +39,8 @@ export interface ClientDetail {
 
 const IGNORE_HEADERS = [
   'connection',
+  'content-length',
+  'host',
   'upgrade',
   'keep-alive',
   'proxy-connection',
@@ -46,6 +48,21 @@ const IGNORE_HEADERS = [
   'trailer',
   'transfer-encoding',
 ];
+
+function buildProxyRequestHeaders(headers: http.IncomingHttpHeaders, action: ProxyAction, sessionId: string) {
+  const proxyHeaders: Record<string, string> = {
+    'mcp-proxy-type': action,
+    'mcp-proxy-sessionid': sessionId,
+  };
+  for (const [ key, value ] of Object.entries(headers)) {
+    const lowerKey = key.toLowerCase();
+    if (IGNORE_HEADERS.includes(lowerKey) || value === undefined) {
+      continue;
+    }
+    proxyHeaders[lowerKey] = Array.isArray(value) ? value.join(', ') : String(value);
+  }
+  return proxyHeaders;
+}
 
 
 export const MCPProxyHook: MCPControllerHook = {
@@ -308,28 +325,27 @@ export class MCPProxyApiClient extends APIClientBase {
       switch (type) {
         case 'SSE': {
           action = 'MCP_SEE_PROXY';
-          ctx.req.headers['mcp-proxy-type'] = action;
-          ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
+          const requestHeaders = buildProxyRequestHeaders(ctx.req.headers, action, sessionId);
           const resp = await fetch(`http://localhost:${detail.port}/mcp/message?sessionId=${sessionId}`, {
             // dispatcher: new Agent({
             //   connect: {
             //     socketPath,
             //   },
             // }),
-            headers: ctx.req.headers as unknown as Record<string, string>,
+            headers: requestHeaders,
             body: body as string,
             method: ctx.req.method,
           });
-          const headers: Record<string, string> = {
+          const responseHeaders: Record<string, string> = {
             'mcp-proxy-arg': encodeURIComponent((body as Buffer).toString()),
           };
           for (const [ key, value ] of resp.headers.entries()) {
             if (IGNORE_HEADERS.includes(key)) {
               continue;
             }
-            headers[key] = value;
+            responseHeaders[key] = value;
           }
-          ctx.set(headers);
+          ctx.set(responseHeaders);
           ctx.res.statusCode = resp.status;
           ctx.res.statusMessage = resp.statusText;
           const resData = await resp.text();
@@ -338,8 +354,6 @@ export class MCPProxyApiClient extends APIClientBase {
         }
         case 'STDIO':
           action = 'MCP_STDIO_PROXY';
-          ctx.req.headers['mcp-proxy-type'] = action;
-          ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
           ctx.res.writeHead(400).end(JSON.stringify({
             jsonrpc: '2.0',
             error: {
@@ -352,8 +366,7 @@ export class MCPProxyApiClient extends APIClientBase {
         default: {
           action = 'MCP_STREAM_PROXY';
           ctx.respond = false;
-          ctx.req.headers['mcp-proxy-type'] = action;
-          ctx.req.headers['mcp-proxy-sessionid'] = sessionId;
+          const requestHeaders = buildProxyRequestHeaders(ctx.req.headers, action, sessionId);
           const dispatcher = new Agent({
             bodyTimeout: 10 * 60 * 1000,
             headersTimeout: 30 * 1000,
@@ -363,22 +376,22 @@ export class MCPProxyApiClient extends APIClientBase {
           try {
             const response = await fetch(`http://localhost:${detail.port}`, {
               dispatcher,
-              headers: ctx.req.headers as unknown as Record<string, string>,
+              headers: requestHeaders,
               method: ctx.req.method,
               ...(ctx.req.method !== 'GET' ? {
                 body: body as string,
               } : {}),
             });
-            const headers: Record<string, string> = {
+            const responseHeaders: Record<string, string> = {
               'mcp-proxy-arg': encodeURIComponent((body as Buffer).toString()),
             };
             for (const [ key, value ] of response.headers.entries()) {
               if (IGNORE_HEADERS.includes(key)) {
                 continue;
               }
-              headers[key] = value;
+              responseHeaders[key] = value;
             }
-            ctx.set(headers);
+            ctx.set(responseHeaders);
             ctx.res.statusCode = response.status;
             const readable = Readable.fromWeb(response.body!);
             readable.on('error', err => {

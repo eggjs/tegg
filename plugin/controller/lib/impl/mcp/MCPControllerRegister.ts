@@ -208,8 +208,13 @@ export class MCPControllerRegister implements ControllerRegister {
       });
       await ctx.app.ctxStorage.run(ctx, async () => {
         await mw(ctx, async () => {
-          await transport.handleRequest(ctx.req, ctx.res);
-          await awaitEvent(ctx.res, 'close');
+          try {
+            await transport.handleRequest(ctx.req, ctx.res);
+            await self.waitResponseClosed(ctx.res);
+          } finally {
+            await mcpServerHelper.server.close();
+            await transport.close();
+          }
         });
       });
       return;
@@ -290,7 +295,7 @@ export class MCPControllerRegister implements ControllerRegister {
 
         if (isInitializeRequest(body)) {
           ctx.respond = false;
-          const eventStore = this.mcpConfig.getEventStore();
+          const eventStore = this.mcpConfig.getEventStore(name);
           const self = this;
           const mcpServerHelper = self.mcpServerHelperMap[name ?? 'default']();
           for (const tool of self.registerMap[name ?? 'default'].tools) {
@@ -318,7 +323,11 @@ export class MCPControllerRegister implements ControllerRegister {
             sessionIdGenerator: () =>
               this.mcpConfig.getSessionIdGenerator(name)(ctx),
             eventStore,
+            onsessionclosed: async sessionId => {
+              self.clearStreamMcpServer(sessionId);
+            },
             onsessioninitialized: async sessionId => {
+              self.streamTransports[sessionId] = transport;
               if (MCPControllerRegister.hooks.length > 0) {
                 for (const hook of MCPControllerRegister.hooks) {
                   await hook.onStreamSessionInitialized?.(
@@ -342,9 +351,8 @@ export class MCPControllerRegister implements ControllerRegister {
           await mcpServerHelper.server.connect(transport);
 
           transport.onclose = async () => {
-            if (transport.sessionId && self.pingIntervals[transport.sessionId]) {
-              clearInterval(self.pingIntervals[transport.sessionId]);
-              delete self.pingIntervals[transport.sessionId];
+            if (transport.sessionId) {
+              self.clearStreamMcpServer(transport.sessionId);
             }
           };
 
@@ -360,7 +368,7 @@ export class MCPControllerRegister implements ControllerRegister {
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
               await transport.handleRequest(ctx.req, ctx.res, body);
-              await awaitEvent(ctx.res, 'close');
+              await self.waitResponseClosed(ctx.res);
             });
           });
         } else {
@@ -391,7 +399,7 @@ export class MCPControllerRegister implements ControllerRegister {
           await ctx.app.ctxStorage.run(ctx, async () => {
             await mw(ctx, async () => {
               await transport.handleRequest(ctx.req, ctx.res);
-              await awaitEvent(ctx.res, 'close');
+              await self.waitResponseClosed(ctx.res);
             });
           });
           return;
@@ -504,6 +512,24 @@ export class MCPControllerRegister implements ControllerRegister {
     if (connection) {
       clearInterval(connection.intervalId);
       this.sseConnections.delete(transport.sessionId);
+    }
+  }
+
+  async waitResponseClosed(res: ServerResponse) {
+    if (res.writableEnded || res.destroyed) {
+      return;
+    }
+    await Promise.race([
+      awaitEvent(res, 'finish'),
+      awaitEvent(res, 'close'),
+    ]);
+  }
+
+  clearStreamMcpServer(sessionId: string) {
+    delete this.streamTransports[sessionId];
+    if (this.pingIntervals[sessionId]) {
+      clearInterval(this.pingIntervals[sessionId]);
+      delete this.pingIntervals[sessionId];
     }
   }
 
@@ -681,11 +707,7 @@ export class MCPControllerRegister implements ControllerRegister {
             this.clearSseMcpServer(sseTransport);
             await server.close();
           } else if (streamTransport) {
-            delete this.streamTransports[sessionId];
-            if (this.pingIntervals[sessionId]) {
-              clearInterval(this.pingIntervals[sessionId]);
-              delete this.pingIntervals[sessionId];
-            }
+            this.clearStreamMcpServer(sessionId);
             await server.close();
           } else {
             this.app.logger.warn('mcp server ping clear fail, sessionId: ', sessionId);

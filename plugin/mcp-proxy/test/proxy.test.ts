@@ -2,7 +2,8 @@ import mm from 'egg-mock';
 import path from 'path';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { CallToolRequest, CallToolResultSchema, ListToolsRequest, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
+import { CallToolResultSchema, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolRequest, ListToolsRequest } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
 import { fetch } from 'urllib';
 
