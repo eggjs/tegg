@@ -192,7 +192,7 @@ export class AgentRuntime {
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           if (task.committed) {
-            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            await this.persistPartialMessages(threadId, input, streamMessages);
           }
           await this.finaliseAbortedRun(run.id);
           const latest = await this.store.getRun(run.id);
@@ -209,7 +209,7 @@ export class AgentRuntime {
       const currentRun = await this.store.getRun(run.id);
       if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
         if (task.committed) {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.persistPartialMessages(threadId, input, streamMessages);
         }
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
@@ -230,11 +230,17 @@ export class AgentRuntime {
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
         if (task.committed) {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.persistPartialMessages(threadId, input, streamMessages);
         }
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
+      }
+      // Non-abort failure (e.g. upstream stream terminated mid-turn). Persist
+      // the partial transcript so the thread history keeps the user turn and
+      // any committed assistant output instead of silently dropping the run.
+      if (task.committed) {
+        await this.persistPartialMessages(threadId, input, streamMessages);
       }
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
@@ -282,7 +288,7 @@ export class AgentRuntime {
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) {
             if (task.committed) {
-              await this.persistMessagesOnAbort(threadId, input, streamMessages);
+              await this.persistPartialMessages(threadId, input, streamMessages);
             }
             await this.finaliseAbortedRun(run.id);
             return;
@@ -310,6 +316,12 @@ export class AgentRuntime {
         await this.store.updateRun(run.id, rb.complete(usage));
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
+          // Non-abort failure (e.g. upstream stream terminated mid-turn).
+          // Persist the partial transcript before marking the run failed so
+          // the thread history is not silently dropped.
+          if (task.committed) {
+            await this.persistPartialMessages(threadId, input, streamMessages);
+          }
           try {
             const currentRun = await this.store.getRun(run.id);
             if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -320,7 +332,7 @@ export class AgentRuntime {
           }
         } else {
           if (task.committed) {
-            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            await this.persistPartialMessages(threadId, input, streamMessages);
           }
           await this.finaliseAbortedRun(run.id);
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
@@ -443,7 +455,7 @@ export class AgentRuntime {
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
           if (task.committed) {
-            await this.persistMessagesOnAbort(threadId, input, streamMessages);
+            await this.persistPartialMessages(threadId, input, streamMessages);
           }
           await this.finaliseAbortedRun(runId);
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
@@ -465,7 +477,7 @@ export class AgentRuntime {
       const currentRun = await this.store.getRun(runId);
       if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
         if (task.committed) {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.persistPartialMessages(threadId, input, streamMessages);
         }
         this.pushEvent(buffer, 'error', { message: currentRun.status, runId });
         return;
@@ -482,6 +494,12 @@ export class AgentRuntime {
       this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {
       if (!abortController.signal.aborted) {
+        // Non-abort failure (e.g. upstream stream terminated mid-turn).
+        // Persist the partial transcript before marking the run failed so the
+        // thread history is not silently dropped.
+        if (task.committed) {
+          await this.persistPartialMessages(threadId, input, streamMessages);
+        }
         try {
           const currentRun = await this.store.getRun(runId);
           if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -493,7 +511,7 @@ export class AgentRuntime {
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       } else {
         if (task.committed) {
-          await this.persistMessagesOnAbort(threadId, input, streamMessages);
+          await this.persistPartialMessages(threadId, input, streamMessages);
         }
         await this.finaliseAbortedRun(runId);
         this.logger.error('[AgentRuntime] execRun error during abort:', err);
@@ -578,21 +596,23 @@ export class AgentRuntime {
   }
 
   /**
-   * Persist input + collected stream messages to the thread when a run is
-   * aborted. Keeping the thread in sync with any partial state that the
-   * executor has already written (e.g. Claude CLI session file) is what
-   * allows subsequent resume requests to continue from a consistent history
-   * instead of diverging and failing at executor startup.
+   * Persist input + collected stream messages to the thread when a run ends
+   * on a non-success path — either an abort/cancel, or a mid-turn failure
+   * (e.g. the upstream stream is terminated). Keeping the thread in sync with
+   * any partial state that the executor has already written (e.g. Claude CLI
+   * session file) is what allows subsequent resume requests to continue from a
+   * consistent history instead of diverging and failing at executor startup,
+   * and prevents a failed turn from vanishing entirely from thread history.
    *
    * Callers must check `task.committed` before invoking this; if the
    * executor never reached a committed state the thread should be left
    * untouched so the next run starts fresh instead of trying to resume a
    * session that was never created on disk.
    *
-   * Errors are swallowed here so a store failure cannot mask the abort or
-   * prevent cancelRun from finalising the run status.
+   * Errors are swallowed here so a store failure cannot mask the original
+   * abort/failure or prevent the run status from being finalised.
    */
-  private async persistMessagesOnAbort(
+  private async persistPartialMessages(
     threadId: string,
     input: CreateRunInput,
     streamMessages: AgentMessage[],

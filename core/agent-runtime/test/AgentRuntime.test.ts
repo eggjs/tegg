@@ -317,6 +317,29 @@ describe('test/AgentRuntime.test.ts', () => {
         },
       );
     });
+
+    it('should persist the partial transcript and mark Failed when execRun throws after committing', async () => {
+      const thread = await runtime.createThread();
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        throw new Error('stream terminated');
+      };
+
+      await assert.rejects(
+        () => runtime.syncRun({ threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } }),
+        (err: unknown) => {
+          assert(err instanceof Error);
+          assert.equal(err.message, 'stream terminated');
+          return true;
+        },
+      );
+
+      // The failed turn must not vanish: user + committed assistant are persisted.
+      const persisted = await store.getThread(thread.id);
+      assert.equal(persisted.messages.length, 2);
+      assert.equal(persisted.messages[0].type, 'user');
+      assert.equal(persisted.messages[1].type, 'assistant');
+    });
   });
 
   describe('asyncRun', () => {
@@ -368,6 +391,24 @@ describe('test/AgentRuntime.test.ts', () => {
 
       const run = await store.getRun(result.id);
       assert.deepStrictEqual(run.metadata, meta);
+    });
+
+    it('should persist the partial transcript and mark Failed when execRun throws after committing', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        throw new Error('stream terminated');
+      };
+
+      const result = await runtime.asyncRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } });
+      await runtime.waitForPendingTasks();
+
+      const run = await store.getRun(result.id);
+      assert.equal(run.status, RunStatus.Failed);
+
+      const thread = await store.getThread(result.threadId!);
+      assert.equal(thread.messages.length, 2);
+      assert.equal(thread.messages[0].type, 'user');
+      assert.equal(thread.messages[1].type, 'assistant');
     });
   });
 
@@ -524,6 +565,29 @@ describe('test/AgentRuntime.test.ts', () => {
       const runId = (runCreatedEvent.data as any).runId;
       const run = await runtime.getRun(runId);
       assert.equal(run.status, RunStatus.Failed);
+    });
+
+    it('should persist the partial transcript when execRun throws after committing', async () => {
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        throw new Error('stream terminated');
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const runCreatedEvent = writer.events[0].data as StreamEvent;
+      const runId = (runCreatedEvent.data as any).runId;
+      const threadId = (runCreatedEvent.data as any).threadId;
+
+      const run = await runtime.getRun(runId);
+      assert.equal(run.status, RunStatus.Failed);
+
+      // The failed turn must not vanish from thread history.
+      const thread = await runtime.getThread(threadId);
+      assert.equal(thread.messages.length, 2);
+      assert.equal(thread.messages[0].type, 'user');
+      assert.equal(thread.messages[1].type, 'assistant');
     });
 
     it('should persist usage to store on completion', async () => {
