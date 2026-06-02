@@ -289,9 +289,9 @@ export default class MCPRequestUnitTest {
           token_type: 'Bearer',
         };
       },
-      saveTokens: () => {},
-      redirectToAuthorization: () => {},
-      saveCodeVerifier: () => {},
+      saveTokens: () => undefined,
+      redirectToAuthorization: () => undefined,
+      saveCodeVerifier: () => undefined,
       codeVerifier: () => '',
     };
   }
