@@ -4,6 +4,7 @@ import '@eggjs/mcp-proxy';
 import { RootProtoManager } from '../lib/RootProtoManager';
 import { ControllerRegisterFactory } from '../lib/ControllerRegisterFactory';
 import { ControllerMetaBuilderFactory } from '@eggjs/tegg';
+import type MCPRequestUnitTest from '../lib/impl/mcp/MCPRequestUnitTest';
 
 declare module 'egg' {
   export interface TEggControllerApp extends MCPProxyApp {
@@ -13,5 +14,6 @@ declare module 'egg' {
   }
 
   export interface Application extends TEggControllerApp {
+    mcpRequest(name?: string): MCPRequestUnitTest;
   }
 }
