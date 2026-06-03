@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.80.0](https://github.com/eggjs/tegg/compare/v3.79.3...v3.80.0) (2026-06-03)
+
+
+### Features
+
+* add mcp request unit test helper ([#450](https://github.com/eggjs/tegg/issues/450)) ([3345a68](https://github.com/eggjs/tegg/commit/3345a682f94c6309ca49c54d524ae230bd86121c))
+
+
+
+
+
 ## [3.79.3](https://github.com/eggjs/tegg/compare/v3.79.2...v3.79.3) (2026-05-27)
 
 
