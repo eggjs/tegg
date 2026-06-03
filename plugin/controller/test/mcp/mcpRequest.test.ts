@@ -7,7 +7,7 @@ const pluginRoot = process.cwd();
 const requireModule = createRequire(path.join(pluginRoot, 'package.json'));
 
 describe('plugin/controller/test/mcp/mcpRequest.test.ts', () => {
-  if (parseInt(process.version.slice(1, 3)) > 17) {
+  if (parseInt(process.versions.node.split('.')[0], 10) >= 18) {
     let app;
 
     before(async () => {

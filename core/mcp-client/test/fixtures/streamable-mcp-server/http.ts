@@ -86,8 +86,17 @@ export async function startStreamableServer(port = 17243){
     }
   });
   const serverToListen = httpServer;
-  return new Promise<void>(resolve => {
-    serverToListen.listen(port, resolve);
+  return new Promise<void>((resolve, reject) => {
+    function onError(err: Error) {
+      serverToListen.removeListener('listening', onListening);
+      reject(err);
+    }
+    function onListening() {
+      serverToListen.removeListener('error', onError);
+      resolve();
+    }
+    serverToListen.once('error', onError);
+    serverToListen.listen(port, onListening);
   });
 }
 

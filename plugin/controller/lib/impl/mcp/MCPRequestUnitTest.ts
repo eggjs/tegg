@@ -23,12 +23,7 @@ import { MCPControllerRegister } from './MCPControllerRegister';
 
 export type MCPTransportProtocol = 'streamable' | 'stateless' | 'sse';
 
-export interface MCPRequestMockApplication extends Application {
-  httpRequest(): {
-    get(url: string): { url: string };
-    post(url: string): { url: string };
-  };
-}
+export type MCPRequestMockApplication = Application;
 
 export interface MCPRequestUnitTestOptions {
   app: MCPRequestMockApplication;
@@ -143,7 +138,7 @@ export default class MCPRequestUnitTest {
   #sseTransportOptions?: SSEClientTransportOptions;
 
   constructor(options: MCPRequestUnitTestOptions) {
-    assert(options.app, '初始化依赖 app');
+    assert(options.app, 'options.app is required to initialize MCPRequestUnitTest');
     this.#app = options.app;
     this.#serverName = options.serverName;
   }
@@ -189,7 +184,8 @@ export default class MCPRequestUnitTest {
     return this;
   }
 
-  headers(headers: Record<string, string | number | boolean | undefined>) {
+  headers(headers?: Record<string, string | number | boolean | undefined> | null) {
+    if (!headers) return this;
     for (const [ key, value ] of Object.entries(headers)) {
       if (value !== undefined) {
         this.set(key, value);
@@ -203,6 +199,7 @@ export default class MCPRequestUnitTest {
       options?.clientInfo ?? this.#clientInfo,
       options?.clientOptions ?? this.#clientOptions,
     );
+    await this.#ensureServerListening();
     const transport = this.#createTransport(options);
     await client.connect(transport);
     return new MCPTestClient(client, transport, this.#protocol);
@@ -252,11 +249,30 @@ export default class MCPRequestUnitTest {
 
   async #withClient<T>(callback: (client: MCPTestClient) => Promise<T>): Promise<T> {
     const client = await this.connect();
+    let hasCallbackError = false;
+    let callbackError: unknown;
+    let result: T | undefined;
     try {
-      return await callback(client);
-    } finally {
-      await client.close();
+      result = await callback(client);
+    } catch (err) {
+      hasCallbackError = true;
+      callbackError = err;
     }
+
+    try {
+      await client.close();
+    } catch (closeError) {
+      if (hasCallbackError) {
+        this.#app.logger?.error('Failed to close MCP test client:', closeError);
+      } else {
+        throw closeError;
+      }
+    }
+
+    if (hasCallbackError) {
+      throw callbackError;
+    }
+    return result as T;
   }
 
   #createTransport(options?: MCPConnectOptions) {
@@ -275,6 +291,25 @@ export default class MCPRequestUnitTest {
       authProvider: this.#createAuthProvider(),
       ...transportOptions,
       requestInit: this.#mergeRequestInit(transportOptions.requestInit),
+    });
+  }
+
+  async #ensureServerListening() {
+    const server = (this.#app as any).server;
+    if (!server || server.listening) {
+      return;
+    }
+    await new Promise<void>((resolve, reject) => {
+      function onError(err: Error) {
+        server.removeListener('listening', onListening);
+        reject(err);
+      }
+      function onListening() {
+        server.removeListener('error', onError);
+        resolve();
+      }
+      server.once('error', onError);
+      server.listen(0, onListening);
     });
   }
 
@@ -319,8 +354,12 @@ export default class MCPRequestUnitTest {
 
   get #url() {
     const path = this.#path;
-    const method = this.#protocol === 'sse' ? 'get' : 'post';
-    return this.#app.httpRequest()[method](path).url;
+    const server = (this.#app as any).server;
+    const address = server?.address();
+    const port = address && typeof address !== 'string' ? address.port : null;
+    assert(port, 'app server must be listening before creating MCP request URL');
+    const host = `http://127.0.0.1:${port}`;
+    return new URL(path, host).toString();
   }
 
   get #path() {

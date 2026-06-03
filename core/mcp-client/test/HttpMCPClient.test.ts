@@ -1,19 +1,10 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import path from 'node:path';
 const majorVersion = parseInt(process.versions.node.split('.')[0], 10);
 
 function createTestRequire() {
-  const cwdPackagePath = path.join(process.cwd(), 'package.json');
-  if (fs.existsSync(cwdPackagePath)) {
-    const cwdPackage = JSON.parse(fs.readFileSync(cwdPackagePath, 'utf8'));
-    if (cwdPackage.name === '@eggjs/mcp-client') {
-      return createRequire(path.join(process.cwd(), 'test/HttpMCPClient.test.ts'));
-    }
-  }
-  return createRequire(path.join(process.cwd(), 'core/mcp-client/test/HttpMCPClient.test.ts'));
+  return createRequire(__filename);
 }
 
 describe('test/HttpMCPClient.test.ts', () => {

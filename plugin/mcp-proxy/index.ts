@@ -267,18 +267,22 @@ export class MCPProxyApiClient extends APIClientBase {
 
     const server = this.server;
     this.server = undefined;
-    if (server?.listening) {
-      await new Promise<void>((resolve, reject) => {
-        server.close(err => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          resolve();
+    try {
+      if (server?.listening) {
+        await new Promise<void>((resolve, reject) => {
+          server.close(err => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve();
+          });
+          server.closeAllConnections?.();
         });
-      });
+      }
+    } finally {
+      await super.close();
     }
-    await super.close();
   }
 
   setProxyHandler(type: MCPProtocols, handler: StreamableHTTPServerTransport['handleRequest'] | SSEServerTransport['handlePostMessage']) {
