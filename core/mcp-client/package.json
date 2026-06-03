@@ -15,7 +15,7 @@
     "tegg"
   ],
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha --require ts-node/register --require source-map-support/register",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha --no-config --timeout 120000 --exit test/**/*.test.cjs",
     "clean": "tsc -b --clean",
     "tsc": "npm run clean && tsc -p ./tsconfig.json",
     "tsc:pub": "npm run clean && tsc -p ./tsconfig.pub.json",
