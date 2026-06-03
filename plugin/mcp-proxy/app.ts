@@ -18,4 +18,10 @@ export default class AppHook {
       await (this.agent.mcpProxy as any)?.ready();
     }
   }
+
+  async beforeClose() {
+    if (this.agent.mcpProxy) {
+      await (this.agent.mcpProxy as any).close();
+    }
+  }
 }

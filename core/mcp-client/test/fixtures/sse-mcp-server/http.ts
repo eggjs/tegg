@@ -38,9 +38,9 @@ server.registerResource(
 const transports = {};
 export const headers = {};
 
-export let httpServer;
+export let httpServer: http.Server | undefined;
 export async function startSSEServer(port = 17233) {
-  const httpServer = http.createServer(async (req, res) => {
+  httpServer = http.createServer(async (req, res) => {
     const url = new URL(`http://127.0.0.1:${port}${req.url!}`);
     const headerKey = `${req.method}${url.pathname}`;
     const serverCode = req.headers['x-mcp-server-code'] as string;
@@ -65,11 +65,35 @@ export async function startSSEServer(port = 17233) {
       res.end();
     }
   });
-  return new Promise<void>(resolve => {
-    httpServer.listen(port, resolve);
+  const serverToListen = httpServer;
+  return new Promise<void>((resolve, reject) => {
+    function onError(err: Error) {
+      serverToListen.removeListener('listening', onListening);
+      reject(err);
+    }
+    function onListening() {
+      serverToListen.removeListener('error', onError);
+      resolve();
+    }
+    serverToListen.once('error', onError);
+    serverToListen.listen(port, onListening);
   });
 }
 
 export async function stopSSEServer() {
-  server.close();
+  await Promise.resolve(server.close()).catch(() => undefined);
+  if (!httpServer) {
+    return;
+  }
+  const serverToClose = httpServer;
+  httpServer = undefined;
+  await new Promise<void>((resolve, reject) => {
+    serverToClose.close(err => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve();
+    });
+  });
 }

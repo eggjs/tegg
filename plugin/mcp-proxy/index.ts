@@ -227,6 +227,8 @@ export class MCPProxyApiClient extends APIClientBase {
   private port: number;
   private app: Application;
   private isAgent: boolean;
+  private server?: http.Server;
+  private _closed: boolean;
 
   constructor(options: {
     logger: EggLogger;
@@ -239,20 +241,47 @@ export class MCPProxyApiClient extends APIClientBase {
     this.port = 0;
     this.app = options.app;
     this.isAgent = !!options.isAgent;
+    this._closed = false;
   }
 
   async _init() {
     if (!this.isAgent) {
-      const server = http.createServer(async (req, res) => {
+      this.server = http.createServer(async (req, res) => {
         const type = req.headers['mcp-proxy-type'] as ProxyAction;
         await this.proxyHandlerMap[type]?.(req, res);
       });
       this.port = this.app.config.mcp?.proxyPort + (cluster.worker?.id ?? 0);
-      await new Promise(resolve => server.listen(this.port, () => {
+      await new Promise(resolve => this.server!.listen(this.port, () => {
         // const address = server.address()! as AddressInfo;
         // this.port = address.port;
         resolve(null);
       }));
+    }
+  }
+
+  async close() {
+    if (this._closed) {
+      return;
+    }
+    this._closed = true;
+
+    const server = this.server;
+    this.server = undefined;
+    try {
+      if (server?.listening) {
+        await new Promise<void>((resolve, reject) => {
+          server.close(err => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve();
+          });
+          server.closeAllConnections?.();
+        });
+      }
+    } finally {
+      await super.close();
     }
   }
 
