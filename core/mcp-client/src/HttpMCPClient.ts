@@ -6,7 +6,14 @@ import { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { fetch } from 'urllib';
 import { mergeHeaders } from './HeaderUtil';
 import type { Logger } from '@eggjs/tegg';
-import { loadMcpTools } from '@langchain/mcp-adapters';
+
+type McpAdaptersModule = typeof import('@langchain/mcp-adapters');
+
+// eslint-disable-next-line no-new-func -- preserve native import() in CJS output
+const importMcpAdapters = new Function('specifier', 'return import(specifier)') as (
+  specifier: string
+) => Promise<McpAdaptersModule>;
+
 export interface BaseHttpClientOptions extends ClientOptions {
   logger: Logger;
   fetch?: typeof fetch;
@@ -117,6 +124,7 @@ export class HttpMCPClient extends Client {
     await this.connect(this.#transport, this.options.requestOptions);
   }
   async getLangChainTool() {
+    const { loadMcpTools } = await importMcpAdapters('@langchain/mcp-adapters');
     return await loadMcpTools(this.clientInfo.name, this as any, {
       throwOnLoadError: true,
       prefixToolNameWithServerName: false,
