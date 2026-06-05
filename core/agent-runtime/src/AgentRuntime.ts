@@ -186,14 +186,22 @@ export class AgentRuntime {
     this.runningTasks.set(run.id, task);
 
     const streamMessages: AgentMessage[] = [];
+    // Persist a turn's transcript to the thread at most once, even if a later
+    // store call (e.g. updateRun) throws after a successful append and routes
+    // us through a catch-block persist. Guarded by task.committed so we never
+    // write a thread the executor has not persisted to its own session.
+    let messagesPersisted = false;
+    const persistPartialOnce = async (): Promise<void> => {
+      if (!task.committed || messagesPersisted) return;
+      messagesPersisted = true;
+      await this.persistPartialMessages(threadId, input, streamMessages);
+    };
     try {
       await this.store.updateRun(run.id, rb.start());
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          if (task.committed) {
-            await this.persistPartialMessages(threadId, input, streamMessages);
-          }
+          await persistPartialOnce();
           await this.finaliseAbortedRun(run.id);
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
@@ -208,9 +216,7 @@ export class AgentRuntime {
       // terminal state instead of overwriting it with Completed.
       const currentRun = await this.store.getRun(run.id);
       if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
-        if (task.committed) {
-          await this.persistPartialMessages(threadId, input, streamMessages);
-        }
+        await persistPartialOnce();
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
@@ -223,15 +229,14 @@ export class AgentRuntime {
         ...MessageConverter.toAgentMessages(input.input.messages),
         ...MessageConverter.filterForStorage(streamMessages),
       ]);
+      messagesPersisted = true;
 
       await this.store.updateRun(run.id, rb.complete(usage));
 
       return rb.snapshot();
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
-        if (task.committed) {
-          await this.persistPartialMessages(threadId, input, streamMessages);
-        }
+        await persistPartialOnce();
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
@@ -239,9 +244,8 @@ export class AgentRuntime {
       // Non-abort failure (e.g. upstream stream terminated mid-turn). Persist
       // the partial transcript so the thread history keeps the user turn and
       // any committed assistant output instead of silently dropping the run.
-      if (task.committed) {
-        await this.persistPartialMessages(threadId, input, streamMessages);
-      }
+      // No-op if the success path already appended (avoids duplicate history).
+      await persistPartialOnce();
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
       } catch (storeErr) {
@@ -282,14 +286,19 @@ export class AgentRuntime {
 
     (async () => {
       const streamMessages: AgentMessage[] = [];
+      // Persist a turn's transcript to the thread at most once (see syncRun).
+      let messagesPersisted = false;
+      const persistPartialOnce = async (): Promise<void> => {
+        if (!task.committed || messagesPersisted) return;
+        messagesPersisted = true;
+        await this.persistPartialMessages(threadId, input, streamMessages);
+      };
       try {
         await this.store.updateRun(run.id, rb.start());
 
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) {
-            if (task.committed) {
-              await this.persistPartialMessages(threadId, input, streamMessages);
-            }
+            await persistPartialOnce();
             await this.finaliseAbortedRun(run.id);
             return;
           }
@@ -302,6 +311,7 @@ export class AgentRuntime {
         // an external expiration) instead of overwriting it with Completed.
         const currentRun = await this.store.getRun(run.id);
         if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
+          await persistPartialOnce();
           return;
         }
 
@@ -312,16 +322,16 @@ export class AgentRuntime {
           ...MessageConverter.toAgentMessages(input.input.messages),
           ...MessageConverter.filterForStorage(streamMessages),
         ]);
+        messagesPersisted = true;
 
         await this.store.updateRun(run.id, rb.complete(usage));
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
           // Non-abort failure (e.g. upstream stream terminated mid-turn).
           // Persist the partial transcript before marking the run failed so
-          // the thread history is not silently dropped.
-          if (task.committed) {
-            await this.persistPartialMessages(threadId, input, streamMessages);
-          }
+          // the thread history is not silently dropped. No-op if the success
+          // path already appended (avoids duplicate history).
+          await persistPartialOnce();
           try {
             const currentRun = await this.store.getRun(run.id);
             if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -331,9 +341,7 @@ export class AgentRuntime {
             this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
-          if (task.committed) {
-            await this.persistPartialMessages(threadId, input, streamMessages);
-          }
+          await persistPartialOnce();
           await this.finaliseAbortedRun(run.id);
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
@@ -449,14 +457,19 @@ export class AgentRuntime {
   ): Promise<void> {
     const abortController = task.abortController;
     const streamMessages: AgentMessage[] = [];
+    // Persist a turn's transcript to the thread at most once (see syncRun).
+    let messagesPersisted = false;
+    const persistPartialOnce = async (): Promise<void> => {
+      if (!task.committed || messagesPersisted) return;
+      messagesPersisted = true;
+      await this.persistPartialMessages(threadId, input, streamMessages);
+    };
     try {
       await this.store.updateRun(runId, rb.start());
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          if (task.committed) {
-            await this.persistPartialMessages(threadId, input, streamMessages);
-          }
+          await persistPartialOnce();
           await this.finaliseAbortedRun(runId);
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
           return;
@@ -476,9 +489,7 @@ export class AgentRuntime {
       // an external expiration) instead of overwriting it with Completed.
       const currentRun = await this.store.getRun(runId);
       if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
-        if (task.committed) {
-          await this.persistPartialMessages(threadId, input, streamMessages);
-        }
+        await persistPartialOnce();
         this.pushEvent(buffer, 'error', { message: currentRun.status, runId });
         return;
       }
@@ -489,6 +500,7 @@ export class AgentRuntime {
         ...MessageConverter.toAgentMessages(input.input.messages),
         ...MessageConverter.filterForStorage(streamMessages),
       ]);
+      messagesPersisted = true;
       await this.store.updateRun(runId, rb.complete(usage));
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
@@ -496,10 +508,9 @@ export class AgentRuntime {
       if (!abortController.signal.aborted) {
         // Non-abort failure (e.g. upstream stream terminated mid-turn).
         // Persist the partial transcript before marking the run failed so the
-        // thread history is not silently dropped.
-        if (task.committed) {
-          await this.persistPartialMessages(threadId, input, streamMessages);
-        }
+        // thread history is not silently dropped. No-op if the success path
+        // already appended (avoids duplicate history).
+        await persistPartialOnce();
         try {
           const currentRun = await this.store.getRun(runId);
           if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -510,9 +521,7 @@ export class AgentRuntime {
         }
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       } else {
-        if (task.committed) {
-          await this.persistPartialMessages(threadId, input, streamMessages);
-        }
+        await persistPartialOnce();
         await this.finaliseAbortedRun(runId);
         this.logger.error('[AgentRuntime] execRun error during abort:', err);
         this.pushEvent(buffer, 'error', { message: 'cancelled', runId });

@@ -340,6 +340,40 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(persisted.messages[0].type, 'user');
       assert.equal(persisted.messages[1].type, 'assistant');
     });
+
+    it('should not duplicate thread messages when updateRun fails after a successful append', async () => {
+      const thread = await runtime.createThread();
+      // Executor finishes normally (commits), so the success path appends, then
+      // the completing updateRun throws — routing into the catch block.
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'done' }] } };
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+      // Fail the 2nd updateRun (1=rb.start, 2=rb.complete) — i.e. right after
+      // the success-path appendMessages has already written the transcript.
+      let calls = 0;
+      const origUpdateRun = store.updateRun.bind(store);
+      store.updateRun = async (runId: string, updates: Partial<RunRecord>) => {
+        calls++;
+        if (calls === 2) throw new Error('updateRun failed');
+        return origUpdateRun(runId, updates);
+      };
+
+      await assert.rejects(
+        () => runtime.syncRun({ threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } }),
+      );
+
+      // Messages must be appended exactly once — the catch-block persist must be
+      // a no-op because the success path already persisted (no duplicate history).
+      const persisted = await store.getThread(thread.id);
+      assert.equal(persisted.messages.length, 2);
+      assert.equal(persisted.messages[0].type, 'user');
+      assert.equal(persisted.messages[1].type, 'assistant');
+    });
   });
 
   describe('asyncRun', () => {
