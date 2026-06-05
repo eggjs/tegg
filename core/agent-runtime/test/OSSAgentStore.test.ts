@@ -230,6 +230,62 @@ describe('test/OSSAgentStore.test.ts', () => {
     });
   });
 
+  describe('recent run id', () => {
+    it('should record latestRunId on the thread when createRun has a threadId', async () => {
+      const thread = await store.createThread();
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], thread.id);
+      // latestRunId is written in the background; drain before asserting.
+      await store.awaitPendingWrites();
+      assert.equal(await store.getLatestRunId(thread.id), run.id);
+    });
+
+    it('should point getLatestRunId at the most recent run', async () => {
+      const thread = await store.createThread();
+      await store.createRun([{ role: 'user', content: 'first' }], thread.id);
+      const second = await store.createRun([{ role: 'user', content: 'second' }], thread.id);
+      await store.awaitPendingWrites();
+      assert.equal(await store.getLatestRunId(thread.id), second.id);
+    });
+
+    it('should preserve existing thread metadata when recording latestRunId', async () => {
+      const thread = await store.createThread({ origin: 'audit', agentName: 'foo' });
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], thread.id);
+      await store.awaitPendingWrites();
+      const fetched = await store.getThread(thread.id);
+      assert.deepEqual(fetched.metadata, { origin: 'audit', agentName: 'foo' });
+      assert.equal(await store.getLatestRunId(thread.id), run.id);
+    });
+
+    it('should return null for a thread that exists but has no run (historical data)', async () => {
+      const thread = await store.createThread();
+      assert.equal(await store.getLatestRunId(thread.id), null);
+    });
+
+    it('should not record latestRunId when createRun has no threadId', async () => {
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }]);
+      assert(run.id.startsWith('run_'));
+      // No thread to query; the run simply has no latest-run pointer anywhere.
+    });
+
+    it('should not fail run creation when the threadId does not exist', async () => {
+      // Best-effort pointer write: a missing thread meta is swallowed.
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], 'thread_missing');
+      assert(run.id.startsWith('run_'));
+    });
+
+    it('should throw AgentNotFoundError from getLatestRunId for a non-existent thread', async () => {
+      await assert.rejects(
+        () => store.getLatestRunId('thread_non_existent'),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          assert.equal(err.status, 404);
+          assert.match(err.message, /Thread thread_non_existent not found/);
+          return true;
+        },
+      );
+    });
+  });
+
   describe('init / destroy', () => {
     it('should call client init when present', async () => {
       let initCalled = false;

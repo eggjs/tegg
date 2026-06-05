@@ -27,6 +27,7 @@ export interface AgentHandler {
   isSessionCommitted?(msg: AgentMessage, history: AgentMessage[]): boolean | Promise<boolean>;
   createThread?(): Promise<ThreadObject>;
   getThread?(threadId: string): Promise<ThreadObjectWithMessages>;
+  getLatestRunId?(threadId: string): Promise<{ threadId: string; runId: string | null }>;
   asyncRun?(input: CreateRunInput): Promise<RunObject>;
   streamRun?(input: CreateRunInput): Promise<void>;
   syncRun?(input: CreateRunInput): Promise<RunObject>;
