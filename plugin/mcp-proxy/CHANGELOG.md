@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.80.1](https://github.com/eggjs/tegg/compare/v3.80.0...v3.80.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* mcp memory leak error ([#453](https://github.com/eggjs/tegg/issues/453)) ([36c980a](https://github.com/eggjs/tegg/commit/36c980a8adf5af5d0dfca9a438d3cec1528ba58d))
+
+
+
+
+
 # [3.80.0](https://github.com/eggjs/tegg/compare/v3.79.3...v3.80.0) (2026-06-03)
 
 

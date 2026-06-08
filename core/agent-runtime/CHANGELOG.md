@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.80.1](https://github.com/eggjs/tegg/compare/v3.80.0...v3.80.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* **agent-runtime:** persist partial transcript when a run fails mid-turn ([#449](https://github.com/eggjs/tegg/issues/449)) ([f474495](https://github.com/eggjs/tegg/commit/f47449570705db6a7b6617fae58e7de95002acfa))
+
+
+
+
+
 # [3.80.0](https://github.com/eggjs/tegg/compare/v3.79.3...v3.80.0) (2026-06-03)
 
 **Note:** Version bump only for package @eggjs/agent-runtime
