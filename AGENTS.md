@@ -319,7 +319,7 @@ npm run tsc:pub
 
 When developing a new feature for tegg, create packages in this order:
 
-```
+```text
 1. core/types        → Type definitions (interfaces, enums)
 2. core/*-decorator  → Decorators and metadata utilities
 3. core/*-runtime    → Runtime logic (if needed)
@@ -333,7 +333,7 @@ When developing a new feature for tegg, create packages in this order:
 
 1. Create package in `core/` directory:
 
-```
+```text
 core/my-decorator/
 ├── package.json
 ├── tsconfig.json
@@ -387,7 +387,7 @@ export function MyDecorator(params?: MyDecoratorParams) {
 
 1. Create package in `plugin/` directory:
 
-```
+```text
 plugin/my-plugin/
 ├── package.json
 ├── tsconfig.json
@@ -554,7 +554,7 @@ export class MyClientFactory {
 
 **Summary of the pattern:**
 
-```
+```text
 third-party-sdk          →  core/my-client (MyClient extends SDK)
                          →  plugin/my-plugin (EggMyClient extends MyClient)
                          →  plugin/my-plugin (MyClientFactory creates EggMyClient)
@@ -627,7 +627,7 @@ describe('my-plugin', () => {
 
 Provides the fundamental decorators for dependency injection.
 
-```
+```text
 src/
 ├── decorator/
 │   ├── ContextProto.ts      # @ContextProto decorator
@@ -648,7 +648,7 @@ src/
 
 Builds and manages the dependency graph for all modules and prototypes.
 
-```
+```text
 src/
 ├── model/
 │   ├── graph/
@@ -678,7 +678,7 @@ The `build()` method resolves all injection edges, `sort()` produces instantiati
 
 Handles actual object instantiation and lifecycle management.
 
-```
+```text
 src/
 ├── model/
 │   ├── EggObject.ts             # EggObject interface and lifecycle utils
@@ -700,7 +700,7 @@ src/
 
 TypeScript type definitions organized by domain:
 
-```
+```text
 ├── core-decorator/          # Types for core decorators
 │   ├── enum/               # AccessLevel, ObjectInitType, EggType, etc.
 │   └── model/              # EggPrototypeInfo, InjectObjectInfo, etc.
@@ -714,7 +714,7 @@ TypeScript type definitions organized by domain:
 
 Main Egg.js plugin that integrates tegg into an Egg application.
 
-```
+```text
 ├── app.ts                   # Plugin entry: lifecycle hooks (didLoad, beforeClose)
 ├── app/
 │   ├── extend/
@@ -741,7 +741,7 @@ Main Egg.js plugin that integrates tegg into an Egg application.
 
 Provides a standalone runtime for tegg that works without Egg.js. This enables using tegg's dependency injection in CLI tools, background workers, or any Node.js application.
 
-```
+```text
 ├── src/
 │   ├── Runner.ts                   # Main orchestrator: loads modules, manages lifecycle
 │   ├── main.ts                     # Simple entry point: main() function
@@ -769,7 +769,7 @@ The standalone package replicates Egg.js plugin functionality using pure Node.js
 
 **Initialization Flow:**
 
-```
+```text
 1. new Runner(cwd, options)
    ├── Read module references from cwd
    ├── Load module configs (module.default.yml, module.{env}.yml)
@@ -879,7 +879,7 @@ export class MyApp implements MainRunner<string> {
 }
 
 // Run it
-import { main } from '@eggjs/tegg-standalone';
+import { main } from '@eggjs/tegg/standalone';
 
 const result = await main<string>(__dirname);
 console.log(result);  // 'hello'
@@ -888,7 +888,7 @@ console.log(result);  // 'hello'
 **With Dependencies and Custom Objects:**
 
 ```typescript
-import { main, Runner } from '@eggjs/tegg-standalone';
+import { main, Runner } from '@eggjs/tegg/standalone';
 
 const result = await main(__dirname, {
   // Environment name (affects config loading)
@@ -920,7 +920,7 @@ const result = await main(__dirname, {
 **Advanced: Manual Runner Control:**
 
 ```typescript
-import { Runner, StandaloneContext } from '@eggjs/tegg-standalone';
+import { Runner, StandaloneContext } from '@eggjs/tegg/standalone';
 
 const runner = new Runner(__dirname, options);
 await runner.init();
@@ -942,7 +942,7 @@ await runner.destroy();
 Use `preLoad()` to run lifecycle `preLoad` hooks before `main()`. This is useful for warming up caches or validating configuration:
 
 ```typescript
-import { preLoad, main } from '@eggjs/tegg-standalone';
+import { preLoad, main } from '@eggjs/tegg/standalone';
 
 // Run preLoad hooks (e.g., validate config, warm caches)
 await preLoad(__dirname, dependencies);
