@@ -123,13 +123,10 @@ export const MCPProxyHook: MCPControllerHook = {
       }
     });
     ctx.res.once('close', () => {
-      delete self.transports[id];
-      const connection = self.sseConnections.get(id);
-      if (connection) {
-        clearInterval(connection.intervalId);
-        self.sseConnections.delete(id);
-      }
-      self.app.mcpProxy.unregisterClient(id);
+      self.clearSseMcpServer(transport)
+        .catch(error => self.app.logger.error('[mcp-proxy] clear SSE MCP server failed: %s', error.message));
+      self.app.mcpProxy.unregisterClient(id)
+        .catch(error => self.app.logger.error('[mcp-proxy] unregister SSE client failed: %s', error.message));
     });
   },
   async onStreamSessionInitialized(_ctx, transport, _server, self) {
@@ -195,12 +192,17 @@ export const MCPProxyHook: MCPControllerHook = {
       }
     });
     await self.app.mcpProxy.registerClient(sessionId, process.pid);
+    const closeFunc = transport.onclose;
     transport.onclose = async () => {
-      const sid = transport.sessionId;
-      if (sid && self.streamTransports[sid]) {
-        delete self.streamTransports[sid];
+      const sid = transport.sessionId ?? sessionId;
+      try {
+        await closeFunc?.();
+      } finally {
+        if (sid) {
+          self.clearStreamMcpServer(sid);
+          await self.app.mcpProxy.unregisterClient(sid);
+        }
       }
-      await self.app.mcpProxy.unregisterClient(sid!);
     };
   },
   async checkAndRunProxy(ctx, type, sessionId) {

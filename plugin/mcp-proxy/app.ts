@@ -20,6 +20,7 @@ export default class AppHook {
   }
 
   async beforeClose() {
+    MCPControllerRegister.deleteHook(MCPProxyHook);
     if (this.agent.mcpProxy) {
       await (this.agent.mcpProxy as any).close();
     }
