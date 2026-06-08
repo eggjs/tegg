@@ -552,7 +552,7 @@ export class MCPControllerRegister implements ControllerRegister {
     transport.onmessage = async (message: JSONRPCMessage, extra?: MessageExtraInfo) => {
       const args = [ message, extra ];
       // 这里需要 new 一个新的 ctx，否则 ContextProto 会未被初始化
-      // 创建一个 socket 并在请求结束后清理它，防止内存泄漏
+      // 注意：不销毁 socket，因为 socket.destroy() 会触发 ctx 销毁导致 MCP 工具调用失败
       const socket = new Socket();
       const req = new IncomingMessage(socket);
       const res = new ServerResponse(req);
@@ -565,46 +565,40 @@ export class MCPControllerRegister implements ControllerRegister {
         'content-type': 'application/json',
       };
       const newCtx = self.app.createContext(req, res) as unknown as Context;
-      try {
-        await ctx.app.ctxStorage.run(newCtx, async () => {
-          await mw(newCtx, async () => {
-            if (MCPControllerRegister.hooks.length > 0) {
-              for (const hook of MCPControllerRegister.hooks) {
-                await hook.preHandle?.(newCtx);
-              }
+      await ctx.app.ctxStorage.run(newCtx, async () => {
+        await mw(newCtx, async () => {
+          if (MCPControllerRegister.hooks.length > 0) {
+            for (const hook of MCPControllerRegister.hooks) {
+              await hook.preHandle?.(newCtx);
             }
-            messageFunc!(message, extra);
-            if (isJSONRPCRequest(args[0])) {
-              const map = self.sseTransportsRequestMap.get(transport)!;
-              if (extra && 'id' in extra) {
-                const requestId = extra.id as string;
-                const wait = new Promise<null>((resolve, reject) => {
-                  // 添加超时防止 promise 永远无法 resolve 导致内存泄漏
-                  const timeout = setTimeout(() => {
-                    delete map[requestId];
-                    resolve(null); // 超时时默认 resolve 避免 hang
-                  }, 30000); // 30秒超时
-                  map[requestId] = {
-                    resolve: val => {
-                      clearTimeout(timeout);
-                      resolve(val);
-                    },
-                    reject: err => {
-                      clearTimeout(timeout);
-                      reject(err);
-                    },
-                  };
-                });
-                await wait;
-              }
+          }
+          messageFunc!(message, extra);
+          if (isJSONRPCRequest(args[0])) {
+            const map = self.sseTransportsRequestMap.get(transport)!;
+            if (extra && 'id' in extra) {
+              const requestId = extra.id as string;
+              const wait = new Promise<null>((resolve, reject) => {
+                // 添加超时防止 promise 永远无法 resolve 导致内存泄漏
+                const timeout = setTimeout(() => {
+                  delete map[requestId];
+                  resolve(null); // 超时时默认 resolve 避免 hang
+                }, 30000); // 30秒超时
+                map[requestId] = {
+                  resolve: val => {
+                    clearTimeout(timeout);
+                    resolve(val);
+                  },
+                  reject: err => {
+                    clearTimeout(timeout);
+                    reject(err);
+                  },
+                };
+              });
+              await wait;
             }
-          });
+          }
         });
-      } finally {
-        // 清理 Socket 和响应对象，防止内存泄漏
-        // 确保 socket 被销毁以释放文件描述符
-        socket.destroy();
-      }
+      });
     };
   }
 

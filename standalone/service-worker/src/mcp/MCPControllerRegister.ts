@@ -235,9 +235,6 @@ export class MCPControllerRegister implements ControllerRegister {
 
       const init = await resPromise;
 
-      // Clean up socket after request completes to prevent memory leaks
-      socket.destroy();
-
       ctx.response = new Response(Readable.toWeb(response.stream) as any, init) as any;
     };
 
