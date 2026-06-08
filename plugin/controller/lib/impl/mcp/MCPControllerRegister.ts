@@ -604,11 +604,9 @@ export class MCPControllerRegister implements ControllerRegister {
             }
 
             try {
-              const handlePromise = messageFunc(message, extra);
+              await messageFunc(message, extra);
               if (wait) {
-                await Promise.all([ handlePromise, wait ]);
-              } else {
-                await handlePromise;
+                await wait;
               }
             } finally {
               if (map && requestId !== undefined) {
