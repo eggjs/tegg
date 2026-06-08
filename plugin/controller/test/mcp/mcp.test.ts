@@ -54,6 +54,17 @@ async function startNotificationTool(client: Client, name?: string) {
   return notifications;
 }
 
+async function waitForSseSyntheticMiddlewareEnd(app: { mcpSseSyntheticMiddlewareEndCount?: number }, previousCount: number) {
+  const start = Date.now();
+  while (Date.now() - start < 2000) {
+    if ((app.mcpSseSyntheticMiddlewareEndCount ?? 0) > previousCount) {
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  assert.fail('SSE synthetic context middleware should finish after request response is sent');
+}
+
 describe('plugin/controller/test/mcp/mcp.test.ts', () => {
 
 
@@ -154,12 +165,14 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
         },
       ]);
 
+      const syntheticMiddlewareEndCount = app.mcpSseSyntheticMiddlewareEndCount ?? 0;
       const toolRes = await sseClient.callTool({
         name: 'bar',
         arguments: {
           name: 'aaa',
         },
       });
+      await waitForSseSyntheticMiddlewareEnd(app, syntheticMiddlewareEndCount);
       assert.deepEqual(toolRes, {
         content: [{ type: 'text', text: 'npm package: aaa not found' }],
       });

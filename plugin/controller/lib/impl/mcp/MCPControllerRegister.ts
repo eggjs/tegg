@@ -134,7 +134,16 @@ export class MCPControllerRegister implements ControllerRegister {
   }
 
   static addHook(hook: MCPControllerHook) {
-    MCPControllerRegister.hooks.push(hook);
+    if (!MCPControllerRegister.hooks.includes(hook)) {
+      MCPControllerRegister.hooks.push(hook);
+    }
+  }
+
+  static deleteHook(hook: MCPControllerHook) {
+    const index = MCPControllerRegister.hooks.indexOf(hook);
+    if (index >= 0) {
+      MCPControllerRegister.hooks.splice(index, 1);
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -148,6 +157,7 @@ export class MCPControllerRegister implements ControllerRegister {
       this.instance.controllerProtos = [];
     }
     this.instance = undefined;
+    this.hooks = [];
   }
 
   mcpStatelessStreamServerInit(name?: string) {
@@ -319,6 +329,7 @@ export class MCPControllerRegister implements ControllerRegister {
               prompt.meta,
             );
           }
+          let streamSessionId: string | undefined;
           const transport = new StreamableHTTPServerTransport({
             sessionIdGenerator: () =>
               this.mcpConfig.getSessionIdGenerator(name)(ctx),
@@ -327,6 +338,7 @@ export class MCPControllerRegister implements ControllerRegister {
               self.clearStreamMcpServer(sessionId);
             },
             onsessioninitialized: async sessionId => {
+              streamSessionId = sessionId;
               self.streamTransports[sessionId] = transport;
               if (MCPControllerRegister.hooks.length > 0) {
                 for (const hook of MCPControllerRegister.hooks) {
@@ -350,9 +362,15 @@ export class MCPControllerRegister implements ControllerRegister {
 
           await mcpServerHelper.server.connect(transport);
 
+          const closeFunc = transport.onclose;
           transport.onclose = async () => {
-            if (transport.sessionId) {
-              self.clearStreamMcpServer(transport.sessionId);
+            try {
+              await closeFunc?.();
+            } finally {
+              const sessionId = transport.sessionId ?? streamSessionId;
+              if (sessionId) {
+                self.clearStreamMcpServer(sessionId);
+              }
             }
           };
 
@@ -564,25 +582,48 @@ export class MCPControllerRegister implements ControllerRegister {
         'content-type': 'application/json',
       };
       const newCtx = self.app.createContext(req, res) as unknown as Context;
-      await ctx.app.ctxStorage.run(newCtx, async () => {
-        await mw(newCtx, async () => {
-          if (MCPControllerRegister.hooks.length > 0) {
-            for (const hook of MCPControllerRegister.hooks) {
-              await hook.preHandle?.(newCtx);
-            }
-          }
-          messageFunc!(message, extra);
-          if (isJSONRPCRequest(args[0])) {
-            const map = self.sseTransportsRequestMap.get(transport)!;
-            const wait = new Promise<null>((resolve, reject) => {
-              if (extra && 'id' in extra) {
-                map[extra.id as string] = { resolve, reject };
+      try {
+        await ctx.app.ctxStorage.run(newCtx, async () => {
+          await mw(newCtx, async () => {
+            if (MCPControllerRegister.hooks.length > 0) {
+              for (const hook of MCPControllerRegister.hooks) {
+                await hook.preHandle?.(newCtx);
               }
-            });
-            await wait;
-          }
+            }
+            if (!messageFunc) {
+              return;
+            }
+
+            const map = self.sseTransportsRequestMap.get(transport);
+            const requestId = isJSONRPCRequest(args[0]) ? String(args[0].id) : undefined;
+            let wait: Promise<null> | undefined;
+            if (map && requestId !== undefined) {
+              wait = new Promise<null>((resolve, reject) => {
+                map[requestId] = { resolve, reject };
+              });
+            }
+
+            try {
+              await messageFunc(message, extra);
+              if (wait) {
+                await wait;
+              }
+            } finally {
+              if (map && requestId !== undefined) {
+                delete map[requestId];
+              }
+            }
+          });
         });
-      });
+      } finally {
+        if (!res.destroyed) {
+          res.destroy();
+        }
+        if (!req.destroyed) {
+          req.destroy();
+        }
+        socket.destroy();
+      }
     };
   }
 
