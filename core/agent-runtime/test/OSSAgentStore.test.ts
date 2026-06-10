@@ -149,6 +149,54 @@ describe('test/OSSAgentStore.test.ts', () => {
     });
   });
 
+  describe('thread metadata', () => {
+    it('should shallow-merge metadata and preserve omitted keys', async () => {
+      const thread = await store.createThread({
+        bizId: 'order_123',
+        source: 'customer_service',
+        nested: { old: true },
+      });
+
+      await store.updateThreadMetadata(thread.id, {
+        source: 'operator_console',
+        nested: { replacement: true },
+        nullable: null,
+      });
+
+      assert.deepStrictEqual((await store.getThread(thread.id)).metadata, {
+        bizId: 'order_123',
+        source: 'operator_console',
+        nested: { replacement: true },
+        nullable: null,
+      });
+    });
+
+    it('should reject updating a missing thread', async () => {
+      await assert.rejects(
+        () => store.updateThreadMetadata('thread_missing', { bizId: 'order_123' }),
+        AgentNotFoundError,
+      );
+    });
+
+    it('should serialize concurrent updates in the same process', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread({ original: true });
+      client.delayPutWhenKeyMatches(/threads\/.*\/meta\.json$/, 20);
+
+      await Promise.all([
+        localStore.updateThreadMetadata(thread.id, { first: 1 }),
+        localStore.updateThreadMetadata(thread.id, { second: 2 }),
+      ]);
+
+      assert.deepStrictEqual((await localStore.getThread(thread.id)).metadata, {
+        original: true,
+        first: 1,
+        second: 2,
+      });
+    });
+  });
+
   describe('runs', () => {
     it('should create a run', async () => {
       const run = await store.createRun([{ role: 'user', content: 'Hello' }]);

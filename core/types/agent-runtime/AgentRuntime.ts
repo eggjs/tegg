@@ -54,6 +54,14 @@ export interface CreateRunInput {
   };
   config?: AgentRunConfig;
   metadata?: Record<string, unknown>;
+  /**
+   * Metadata persisted on the thread rather than the run.
+   *
+   * Auto-created threads are initialized with this object. For an existing
+   * thread, keys are shallow-merged and new values overwrite matching keys.
+   * An omitted or empty object leaves the thread metadata unchanged.
+   */
+  threadMetadata?: Record<string, unknown>;
 }
 
 // ===== Thread input =====
@@ -63,8 +71,7 @@ export interface CreateRunInput {
  *
  * `metadata` is forwarded verbatim to {@link AgentStore.createThread} so callers
  * can persist additional business semantics on the thread record (e.g. the
- * resolved agent name, owning sandbox id, trace id). It is stored once at
- * creation time and never overwritten by subsequent runs on the same thread.
+ * resolved agent name, owning sandbox id, trace id).
  */
 export interface CreateThreadOptions {
   metadata?: Record<string, unknown>;

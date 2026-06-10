@@ -13,6 +13,18 @@ export class AgentNotFoundError extends Error {
 }
 
 /**
+ * Error thrown when an agent API request contains invalid input.
+ */
+export class AgentInvalidRequestError extends Error {
+  status = 400;
+
+  constructor(message: string) {
+    super(message);
+    this.name = 'AgentInvalidRequestError';
+  }
+}
+
+/**
  * Error thrown when an operation conflicts with the current state
  * (e.g., cancelling a completed run).
  */

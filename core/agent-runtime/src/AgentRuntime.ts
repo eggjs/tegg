@@ -19,6 +19,7 @@ import {
   RunStatus,
   AgentObjectType,
   AgentConflictError,
+  AgentInvalidRequestError,
   AgentNotFoundError,
   AgentTimeoutError,
 } from '@eggjs/tegg-types/agent-runtime';
@@ -31,6 +32,14 @@ import type { SSEWriter } from './SSEWriter';
 const HEARTBEAT_INTERVAL_MS = 10_000;
 const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
 const DEFAULT_CANCEL_COMMIT_TIMEOUT_MS = 30_000;
+
+function validateThreadMetadata(value: unknown): Record<string, unknown> | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new AgentInvalidRequestError("'threadMetadata' must be an object");
+  }
+  return value as Record<string, unknown>;
+}
 
 interface RunEventBuffer {
   filePath: string;
@@ -141,17 +150,23 @@ export class AgentRuntime {
   }
 
   /**
-   * Resolve the thread for a run. If the caller provided a `threadId` we reuse
-   * it as-is. When no `threadId` is present we auto-create an empty thread.
-   * Run metadata belongs to the run record and must not be copied to the thread.
+   * Resolve the thread for a run and persist explicit thread metadata.
+   * Run metadata belongs to the run record and is never copied to the thread.
    */
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
+    const threadMetadata = validateThreadMetadata(input.threadMetadata);
     if (input.threadId) {
       const thread = await this.store.getThread(input.threadId);
+      if (threadMetadata && Object.keys(threadMetadata).length > 0) {
+        if (!this.store.updateThreadMetadata) {
+          throw new Error('AgentStore does not support updating thread metadata');
+        }
+        await this.store.updateThreadMetadata(input.threadId, threadMetadata);
+      }
       const isResume = thread.messages.length > 0;
       return { threadId: input.threadId, input: { ...input, isResume } };
     }
-    const thread = await this.store.createThread();
+    const thread = await this.store.createThread(threadMetadata);
     return { threadId: thread.id, input: { ...input, threadId: thread.id, isResume: false } };
   }
 

@@ -57,6 +57,7 @@ export class OSSAgentStore implements AgentStore {
   private readonly prefix: string;
   private readonly logger: OSSAgentStoreWarnLogger;
   private readonly pendingIndexWrites = new Set<Promise<void>>();
+  private readonly threadMetadataWriteTails = new Map<string, Promise<void>>();
 
   constructor(options: OSSAgentStoreOptions) {
     this.client = options.client;
@@ -177,6 +178,38 @@ export class OSSAgentStore implements AgentStore {
     }
 
     return { ...meta, messages };
+  }
+
+  async updateThreadMetadata(threadId: string, metadata: Record<string, unknown>): Promise<void> {
+    if (Object.keys(metadata).length === 0) return;
+
+    const previous = this.threadMetadataWriteTails.get(threadId) ?? Promise.resolve();
+    let release!: () => void;
+    const current = new Promise<void>(resolve => {
+      release = resolve;
+    });
+    const tail = previous.then(() => current);
+    this.threadMetadataWriteTails.set(threadId, tail);
+
+    await previous;
+    try {
+      const metaData = await this.client.get(this.threadMetaKey(threadId));
+      if (!metaData) {
+        throw new AgentNotFoundError(`Thread ${threadId} not found`);
+      }
+      const meta = JSON.parse(metaData) as ThreadMetadata;
+      const mergedMetadata = { ...meta.metadata, ...metadata };
+      await this.client.put(this.threadMetaKey(threadId), JSON.stringify({
+        ...meta,
+        metadata: mergedMetadata,
+      }));
+      this.writeThreadActivityIndex(threadId, meta.createdAt, Date.now(), mergedMetadata);
+    } finally {
+      release();
+      if (this.threadMetadataWriteTails.get(threadId) === tail) {
+        this.threadMetadataWriteTails.delete(threadId);
+      }
+    }
   }
 
   async appendMessages(threadId: string, messages: AgentMessage[]): Promise<void> {
