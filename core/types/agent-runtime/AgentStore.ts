@@ -43,6 +43,14 @@ export interface ThreadRecord {
   messages: AgentMessage[];
   metadata: Record<string, unknown>;
   createdAt: number; // Unix seconds
+  /**
+   * Id of the most recently created run on this thread, maintained by
+   * `createRun` as a best-effort pointer so callers can resolve a thread's
+   * latest run without an external index. Absent on threads that have no
+   * runs yet, and on threads created before this field existed — a missing
+   * value must be treated as "no recent run".
+   */
+  latestRunId?: string;
 }
 
 export interface RunRecord {
@@ -69,6 +77,11 @@ export interface AgentStore {
   destroy?(): Promise<void>;
   createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord>;
   getThread(threadId: string, options?: GetThreadOptions): Promise<ThreadRecord>;
+  /**
+   * Shallow-merge metadata into an existing thread.
+   * New values overwrite matching keys; omitted keys are preserved.
+   */
+  updateThreadMetadata?(threadId: string, metadata: Record<string, unknown>): Promise<void>;
   appendMessages(threadId: string, messages: AgentMessage[]): Promise<void>;
   createRun(
     input: InputMessage[],
@@ -77,5 +90,12 @@ export interface AgentStore {
     metadata?: Record<string, unknown>,
   ): Promise<RunRecord>;
   getRun(runId: string): Promise<RunRecord>;
+  /**
+   * Id of the most recent run created on the thread, or `null` when the
+   * thread exists but has no recorded run (including threads created before
+   * run tracking existed). Throws AgentNotFoundError when the thread itself
+   * does not exist.
+   */
+  getLatestRunId(threadId: string): Promise<string | null>;
   updateRun(runId: string, updates: Partial<RunRecord>): Promise<void>;
 }

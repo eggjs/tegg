@@ -18,11 +18,19 @@ import type { EggLogger } from 'egg';
 import { AgentControllerProto } from './AgentControllerProto';
 
 /** Method names that can be delegated to AgentRuntime. */
-type AgentMethodName = 'createThread' | 'getThread' | 'asyncRun' | 'syncRun' | 'getRun' | 'cancelRun';
+type AgentMethodName =
+  | 'createThread'
+  | 'getThread'
+  | 'getLatestRunId'
+  | 'asyncRun'
+  | 'syncRun'
+  | 'getRun'
+  | 'cancelRun';
 
 const AGENT_METHOD_NAMES: AgentMethodName[] = [
   'createThread',
   'getThread',
+  'getLatestRunId',
   'asyncRun',
   'syncRun',
   'getRun',

@@ -53,6 +53,14 @@ export interface CreateRunInput {
     messages: import('./AgentMessage').InputMessage[];
   };
   config?: AgentRunConfig;
+  /**
+   * Metadata for the run. Stored verbatim on the run record, and additionally
+   * shallow-merged into the thread metadata (`meta.json`):
+   * - For an auto-created thread, it initializes the thread metadata.
+   * - For an existing thread, the keys are shallow-merged: new values overwrite
+   *   matching keys, while keys not present are preserved.
+   * - An omitted or empty object leaves the thread metadata unchanged.
+   */
   metadata?: Record<string, unknown>;
 }
 
@@ -63,8 +71,7 @@ export interface CreateRunInput {
  *
  * `metadata` is forwarded verbatim to {@link AgentStore.createThread} so callers
  * can persist additional business semantics on the thread record (e.g. the
- * resolved agent name, owning sandbox id, trace id). It is stored once at
- * creation time and never overwritten by subsequent runs on the same thread.
+ * resolved agent name, owning sandbox id, trace id).
  */
 export interface CreateThreadOptions {
   metadata?: Record<string, unknown>;

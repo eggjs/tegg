@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.82.0](https://github.com/eggjs/tegg/compare/v3.81.0...v3.82.0) (2026-06-10)
+
+
+### Features
+
+* **agent-runtime:** support run thread metadata ([#454](https://github.com/eggjs/tegg/issues/454)) ([d4c2cdc](https://github.com/eggjs/tegg/commit/d4c2cdc579f21206efe5d457902cde45b028560f))
+
+
+
+
+
+# [3.81.0](https://github.com/eggjs/tegg/compare/v3.80.1...v3.81.0) (2026-06-10)
+
+
+### Features
+
+* **agent-runtime:** add getLatestRunId to resolve a thread's latest run ([#451](https://github.com/eggjs/tegg/issues/451)) ([14a4f2e](https://github.com/eggjs/tegg/commit/14a4f2e48cda2514261d2cf9550cf7c713f267d0))
+
+
+
+
+
 ## [3.80.1](https://github.com/eggjs/tegg/compare/v3.80.0...v3.80.1) (2026-06-08)
 
 **Note:** Version bump only for package @eggjs/tegg-types

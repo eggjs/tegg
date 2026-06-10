@@ -777,6 +777,31 @@ describe('test/AgentRuntime.test.ts', () => {
     });
   });
 
+  describe('getLatestRunId', () => {
+    it('should resolve the most recent run id for a thread', async () => {
+      const created = await runtime.createThread();
+      const run = await runtime.syncRun({
+        threadId: created.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      // latestRunId is recorded in the background; drain before asserting.
+      await store.awaitPendingWrites();
+      const result = await runtime.getLatestRunId(created.id);
+      assert.deepStrictEqual(result, { threadId: created.id, runId: run.id });
+    });
+
+    it('should return runId null for a thread with no run', async () => {
+      const created = await runtime.createThread();
+      const result = await runtime.getLatestRunId(created.id);
+      assert.deepStrictEqual(result, { threadId: created.id, runId: null });
+    });
+
+    it('should reject for a non-existent thread', async () => {
+      await assert.rejects(() => runtime.getLatestRunId('thread_non_existent'));
+    });
+  });
+
   describe('cancelRun', () => {
     it('should cancel a run', async () => {
       executor.execRun = createSlowExecRun([

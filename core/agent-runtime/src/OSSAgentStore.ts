@@ -57,6 +57,7 @@ export class OSSAgentStore implements AgentStore {
   private readonly prefix: string;
   private readonly logger: OSSAgentStoreWarnLogger;
   private readonly pendingIndexWrites = new Set<Promise<void>>();
+  private readonly threadMetaWriteTails = new Map<string, Promise<void>>();
 
   constructor(options: OSSAgentStoreOptions) {
     this.client = options.client;
@@ -179,6 +180,56 @@ export class OSSAgentStore implements AgentStore {
     return { ...meta, messages };
   }
 
+  /**
+   * Serialize read-modify-write operations on a single thread's `meta.json`
+   * within this process. Both {@link updateThreadMetadata} (business metadata
+   * merge) and {@link recordLatestRunId} (the `latestRunId` pointer) mutate the
+   * same `meta.json` with no compare-and-swap, so without a shared per-thread
+   * lock a concurrent run could clobber the other's write. Cross-process writes
+   * remain last-writer-wins.
+   *
+   * The lock is a per-thread promise chain: `current` is always resolved in the
+   * `finally` (decoupled from `fn`'s success/failure), so a rejecting `fn` never
+   * leaves the chain stuck for subsequent waiters.
+   */
+  private async runExclusiveThreadMetaWrite<T>(threadId: string, fn: () => Promise<T>): Promise<T> {
+    const previous = this.threadMetaWriteTails.get(threadId) ?? Promise.resolve();
+    let release!: () => void;
+    const current = new Promise<void>(resolve => {
+      release = resolve;
+    });
+    const tail = previous.then(() => current);
+    this.threadMetaWriteTails.set(threadId, tail);
+
+    await previous;
+    try {
+      return await fn();
+    } finally {
+      release();
+      if (this.threadMetaWriteTails.get(threadId) === tail) {
+        this.threadMetaWriteTails.delete(threadId);
+      }
+    }
+  }
+
+  async updateThreadMetadata(threadId: string, metadata: Record<string, unknown>): Promise<void> {
+    if (Object.keys(metadata).length === 0) return;
+
+    await this.runExclusiveThreadMetaWrite(threadId, async () => {
+      const metaData = await this.client.get(this.threadMetaKey(threadId));
+      if (!metaData) {
+        throw new AgentNotFoundError(`Thread ${threadId} not found`);
+      }
+      const meta = JSON.parse(metaData) as ThreadMetadata;
+      const mergedMetadata = { ...meta.metadata, ...metadata };
+      await this.client.put(this.threadMetaKey(threadId), JSON.stringify({
+        ...meta,
+        metadata: mergedMetadata,
+      }));
+      this.writeThreadActivityIndex(threadId, meta.createdAt, Date.now(), mergedMetadata);
+    });
+  }
+
   async appendMessages(threadId: string, messages: AgentMessage[]): Promise<void> {
     const metaData = await this.client.get(this.threadMetaKey(threadId));
     if (!metaData) {
@@ -218,7 +269,66 @@ export class OSSAgentStore implements AgentStore {
       createdAt: nowUnix(),
     };
     await this.client.put(this.runKey(runId), JSON.stringify(record));
+    if (threadId) {
+      // Fire-and-forget: keep the latestRunId pointer write off the run-creation
+      // hot path (it would otherwise add a GET+PUT roundtrip to every run
+      // start). Tracked in pendingIndexWrites — same as writeThreadActivityIndex
+      // — so destroy() drains it before shutdown. recordLatestRunId never rejects
+      // (it logs and swallows), so no unhandled rejection can leak here.
+      const tracked: Promise<void> = this.recordLatestRunId(threadId, runId)
+        .finally(() => {
+          this.pendingIndexWrites.delete(tracked);
+        });
+      this.pendingIndexWrites.add(tracked);
+    }
     return record;
+  }
+
+  /**
+   * Record `runId` as the thread's most recent run by merging `latestRunId`
+   * into the thread metadata (a read-modify-write on `meta.json` that
+   * preserves all existing fields).
+   *
+   * Runs in the background (scheduled fire-and-forget by `createRun` and
+   * tracked in `pendingIndexWrites`) so it never adds latency to run creation;
+   * `awaitPendingWrites()` / `destroy()` drain it.
+   *
+   * Best-effort: a missing thread meta or any storage error is logged and
+   * swallowed. When it is skipped, `getLatestRunId` simply degrades to
+   * returning the previously recorded value (or `null`).
+   *
+   * Weak consistency: because the write is asynchronous and an unconditional
+   * read-modify-write with no compare-and-swap, `getLatestRunId` is eventually
+   * consistent — a read racing a just-created run may briefly see the prior
+   * value, and concurrent runs in different processes are last-writer-wins.
+   * Within one process it shares {@link runExclusiveThreadMetaWrite} with
+   * `updateThreadMetadata`, so the two never clobber each other's `meta.json`.
+   */
+  private async recordLatestRunId(threadId: string, runId: string): Promise<void> {
+    try {
+      await this.runExclusiveThreadMetaWrite(threadId, async () => {
+        const metaData = await this.client.get(this.threadMetaKey(threadId));
+        if (!metaData) {
+          this.logger.warn(
+            '[OSSAgentStore] skip latestRunId write: thread meta not found threadId=%s runId=%s',
+            threadId,
+            runId,
+          );
+          return;
+        }
+        const meta = JSON.parse(metaData) as ThreadMetadata;
+        meta.latestRunId = runId;
+        await this.client.put(this.threadMetaKey(threadId), JSON.stringify(meta));
+      });
+    } catch (err: unknown) {
+      const errForLog: Error = err instanceof Error ? err : new Error(String(err));
+      this.logger.warn(
+        '[OSSAgentStore] failed to record latestRunId threadId=%s runId=%s',
+        threadId,
+        runId,
+        errForLog,
+      );
+    }
   }
 
   async getRun(runId: string): Promise<RunRecord> {
@@ -227,6 +337,15 @@ export class OSSAgentStore implements AgentStore {
       throw new AgentNotFoundError(`Run ${runId} not found`);
     }
     return JSON.parse(data) as RunRecord;
+  }
+
+  async getLatestRunId(threadId: string): Promise<string | null> {
+    const metaData = await this.client.get(this.threadMetaKey(threadId));
+    if (!metaData) {
+      throw new AgentNotFoundError(`Thread ${threadId} not found`);
+    }
+    const meta = JSON.parse(metaData) as ThreadMetadata;
+    return meta.latestRunId ?? null;
   }
 
   async updateRun(runId: string, updates: Partial<RunRecord>): Promise<void> {

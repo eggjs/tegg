@@ -149,6 +149,76 @@ describe('test/OSSAgentStore.test.ts', () => {
     });
   });
 
+  describe('thread metadata', () => {
+    it('should shallow-merge metadata and preserve omitted keys', async () => {
+      const thread = await store.createThread({
+        bizId: 'order_123',
+        source: 'customer_service',
+        nested: { old: true },
+      });
+
+      await store.updateThreadMetadata(thread.id, {
+        source: 'operator_console',
+        nested: { replacement: true },
+        nullable: null,
+      });
+
+      assert.deepStrictEqual((await store.getThread(thread.id)).metadata, {
+        bizId: 'order_123',
+        source: 'operator_console',
+        nested: { replacement: true },
+        nullable: null,
+      });
+    });
+
+    it('should reject updating a missing thread', async () => {
+      await assert.rejects(
+        () => store.updateThreadMetadata('thread_missing', { bizId: 'order_123' }),
+        AgentNotFoundError,
+      );
+    });
+
+    it('should serialize concurrent updates in the same process', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread({ original: true });
+      client.delayPutWhenKeyMatches(/threads\/.*\/meta\.json$/, 20);
+
+      await Promise.all([
+        localStore.updateThreadMetadata(thread.id, { first: 1 }),
+        localStore.updateThreadMetadata(thread.id, { second: 2 }),
+      ]);
+
+      assert.deepStrictEqual((await localStore.getThread(thread.id)).metadata, {
+        original: true,
+        first: 1,
+        second: 2,
+      });
+    });
+
+    it('should not clobber metadata when an updateThreadMetadata races a latestRunId write', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread({ original: true });
+      // Both writers do a read-modify-write on the same meta.json; the delay
+      // forces them to overlap so an unsynchronized pair would clobber.
+      client.delayPutWhenKeyMatches(/threads\/.*\/meta\.json$/, 20);
+
+      const [ , run ] = await Promise.all([
+        localStore.updateThreadMetadata(thread.id, { merged: 1 }),
+        // createRun fires recordLatestRunId in the background (latestRunId write).
+        localStore.createRun([{ role: 'user', content: 'Hi' }], thread.id),
+      ]);
+      await localStore.awaitPendingWrites();
+
+      const stored = await localStore.getThread(thread.id);
+      // The metadata merge survives...
+      assert.deepStrictEqual(stored.metadata, { original: true, merged: 1 });
+      // ...and so does the latestRunId pointer written by createRun.
+      assert.equal(await localStore.getLatestRunId(thread.id), run.id);
+    });
+  });
+
   describe('runs', () => {
     it('should create a run', async () => {
       const run = await store.createRun([{ role: 'user', content: 'Hello' }]);
@@ -227,6 +297,62 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.id, run.id);
       assert.equal(fetched.object, 'thread.run');
       assert.equal(fetched.status, 'completed');
+    });
+  });
+
+  describe('recent run id', () => {
+    it('should record latestRunId on the thread when createRun has a threadId', async () => {
+      const thread = await store.createThread();
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], thread.id);
+      // latestRunId is written in the background; drain before asserting.
+      await store.awaitPendingWrites();
+      assert.equal(await store.getLatestRunId(thread.id), run.id);
+    });
+
+    it('should point getLatestRunId at the most recent run', async () => {
+      const thread = await store.createThread();
+      await store.createRun([{ role: 'user', content: 'first' }], thread.id);
+      const second = await store.createRun([{ role: 'user', content: 'second' }], thread.id);
+      await store.awaitPendingWrites();
+      assert.equal(await store.getLatestRunId(thread.id), second.id);
+    });
+
+    it('should preserve existing thread metadata when recording latestRunId', async () => {
+      const thread = await store.createThread({ origin: 'audit', agentName: 'foo' });
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], thread.id);
+      await store.awaitPendingWrites();
+      const fetched = await store.getThread(thread.id);
+      assert.deepEqual(fetched.metadata, { origin: 'audit', agentName: 'foo' });
+      assert.equal(await store.getLatestRunId(thread.id), run.id);
+    });
+
+    it('should return null for a thread that exists but has no run (historical data)', async () => {
+      const thread = await store.createThread();
+      assert.equal(await store.getLatestRunId(thread.id), null);
+    });
+
+    it('should not record latestRunId when createRun has no threadId', async () => {
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }]);
+      assert(run.id.startsWith('run_'));
+      // No thread to query; the run simply has no latest-run pointer anywhere.
+    });
+
+    it('should not fail run creation when the threadId does not exist', async () => {
+      // Best-effort pointer write: a missing thread meta is swallowed.
+      const run = await store.createRun([{ role: 'user', content: 'Hello' }], 'thread_missing');
+      assert(run.id.startsWith('run_'));
+    });
+
+    it('should throw AgentNotFoundError from getLatestRunId for a non-existent thread', async () => {
+      await assert.rejects(
+        () => store.getLatestRunId('thread_non_existent'),
+        (err: unknown) => {
+          assert(err instanceof AgentNotFoundError);
+          assert.equal(err.status, 404);
+          assert.match(err.message, /Thread thread_non_existent not found/);
+          return true;
+        },
+      );
     });
   });
 
