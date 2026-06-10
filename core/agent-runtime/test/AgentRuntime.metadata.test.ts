@@ -91,8 +91,8 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
   });
 
   describe('syncRun metadata handling', () => {
-    it('should initialize an auto-created thread with threadMetadata', async () => {
-      const threadMetadata = {
+    it('should store metadata on the run and initialize an auto-created thread', async () => {
+      const metadata = {
         bizId: 'order_123',
         nested: { source: 'customer_service' },
         tags: [ 'vip', 7 ],
@@ -101,14 +101,18 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       };
       const result = await runtime.syncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
-        threadMetadata,
+        metadata,
       });
 
+      // The run record keeps the metadata verbatim...
+      assert.deepStrictEqual(result.metadata, metadata);
+      assert.equal(result.status, RunStatus.Completed);
+      // ...and the auto-created thread is initialized with the same metadata.
       const thread = await store.getThread(result.threadId);
-      assert.deepStrictEqual(thread.metadata, threadMetadata);
+      assert.deepStrictEqual(thread.metadata, metadata);
     });
 
-    it('should shallow-merge threadMetadata into an existing thread', async () => {
+    it('should shallow-merge metadata into an existing thread', async () => {
       const thread = await runtime.createThread({
         metadata: {
           bizId: 'order_123',
@@ -117,15 +121,21 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
         },
       });
 
-      await runtime.syncRun({
+      const result = await runtime.syncRun({
         threadId: thread.id,
         input: { messages: [{ role: 'user', content: 'Hi' }] },
-        threadMetadata: {
+        metadata: {
           source: 'operator_console',
           nested: { replacement: true },
         },
       });
 
+      // The run keeps exactly what was passed in...
+      assert.deepStrictEqual(result.metadata, {
+        source: 'operator_console',
+        nested: { replacement: true },
+      });
+      // ...while the thread metadata is shallow-merged (bizId preserved).
       const stored = await store.getThread(thread.id);
       assert.deepStrictEqual(stored.metadata, {
         bizId: 'order_123',
@@ -134,14 +144,14 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       });
     });
 
-    it('should leave existing thread metadata unchanged when threadMetadata is empty or omitted', async () => {
+    it('should leave existing thread metadata unchanged when metadata is empty or omitted', async () => {
       const original = { bizId: 'order_123', source: 'customer_service' };
       const thread = await runtime.createThread({ metadata: original });
 
       await runtime.syncRun({
         threadId: thread.id,
         input: { messages: [{ role: 'user', content: 'First' }] },
-        threadMetadata: {},
+        metadata: {},
       });
       await runtime.syncRun({
         threadId: thread.id,
@@ -151,16 +161,16 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       assert.deepStrictEqual((await store.getThread(thread.id)).metadata, original);
     });
 
-    it('should reject invalid threadMetadata before creating a thread', async () => {
+    it('should reject invalid metadata before creating a thread or run', async () => {
       const assertInvalid = async (invalid: unknown): Promise<void> => {
         await assert.rejects(
           () => runtime.syncRun({
             input: { messages: [{ role: 'user', content: 'Hi' }] },
-            threadMetadata: invalid,
+            metadata: invalid,
           } as unknown as CreateRunInput),
           (err: unknown) => {
             assert.equal((err as { status?: number }).status, 400);
-            assert.match((err as Error).message, /threadMetadata/);
+            assert.match((err as Error).message, /metadata/);
             return true;
           },
         );
@@ -173,81 +183,44 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       assert.deepStrictEqual(client.keysWithPrefix('runs/'), []);
     });
 
-    it('should keep input.metadata on the run and not copy it to an auto-created thread', async () => {
-      const meta = { agentName: 'bar', sandboxId: 's-42' };
-      const result = await runtime.syncRun({
-        input: { messages: [{ role: 'user', content: 'Hi' }] },
-        metadata: meta,
-      });
-
-      assert.deepStrictEqual(result.metadata, meta);
-      assert.equal(result.status, RunStatus.Completed);
-
-      const thread = await store.getThread(result.threadId);
-      assert.deepStrictEqual(thread.metadata, {});
-    });
-
-    it('should NOT overwrite metadata of an existing thread (resume path)', async () => {
-      const original = { agentName: 'orig', createdBy: 'user-1' };
-      const thread = await runtime.createThread({ metadata: original });
+    it('should not fail run creation when persisting metadata onto an existing thread fails', async () => {
+      const thread = await runtime.createThread({ metadata: { a: 1 } });
+      // Force the thread-side metadata write to fail.
+      store.updateThreadMetadata = async () => {
+        throw new Error('boom');
+      };
 
       const result = await runtime.syncRun({
         threadId: thread.id,
         input: { messages: [{ role: 'user', content: 'Hi' }] },
-        metadata: { agentName: 'OVERRIDE' },
+        metadata: { b: 2 },
       });
 
-      assert.equal(result.threadId, thread.id);
-
-      const stored = await store.getThread(thread.id);
-      assert.deepStrictEqual(stored.metadata, original);
+      // The run still completes and keeps its metadata on the run record...
+      assert.equal(result.status, RunStatus.Completed);
+      assert.deepStrictEqual(result.metadata, { b: 2 });
+      // ...while the thread metadata was left untouched by the failed write.
+      assert.deepStrictEqual((await store.getThread(thread.id)).metadata, { a: 1 });
     });
   });
 
   describe('asyncRun metadata handling', () => {
-    it('should persist threadMetadata on the thread', async () => {
+    it('should store metadata on the run and persist it on the thread', async () => {
+      const metadata = { bizId: 'async_123' };
       const result = await runtime.asyncRun({
         input: { messages: [{ role: 'user', content: 'Hi' }] },
-        threadMetadata: { bizId: 'async_123' },
+        metadata,
       });
       await runtime.waitForPendingTasks();
 
+      assert.deepStrictEqual(result.metadata, metadata);
       const thread = await store.getThread(result.threadId);
-      assert.deepStrictEqual(thread.metadata, { bizId: 'async_123' });
-    });
-
-    it('should keep input.metadata on the run and not copy it to an auto-created thread', async () => {
-      const meta = { agentName: 'baz' };
-      const result = await runtime.asyncRun({
-        input: { messages: [{ role: 'user', content: 'Hi' }] },
-        metadata: meta,
-      });
-      await runtime.waitForPendingTasks();
-
-      assert.deepStrictEqual(result.metadata, meta);
-      const thread = await store.getThread(result.threadId);
-      assert.deepStrictEqual(thread.metadata, {});
+      assert.deepStrictEqual(thread.metadata, metadata);
     });
   });
 
   describe('streamRun metadata handling', () => {
-    it('should persist threadMetadata on the thread', async () => {
-      const writer = new MockSSEWriter();
-
-      await runtime.streamRun(
-        {
-          input: { messages: [{ role: 'user', content: 'Hi' }] },
-          threadMetadata: { bizId: 'stream_123' },
-        },
-        writer,
-      );
-
-      const runCreatedEvent = writer.events.find(e => e.event === 'run_created')!.data as StreamEvent;
-      const threadId = (runCreatedEvent.data as { threadId: string }).threadId;
-      assert.deepStrictEqual((await store.getThread(threadId)).metadata, { bizId: 'stream_123' });
-    });
-
-    it('should keep input.metadata on the run and not copy it to an auto-created thread', async () => {
+    it('should store metadata on the run and persist it on the thread', async () => {
       const meta = { agentName: 'stream', source: 'sse' };
       const writer = new MockSSEWriter();
 
@@ -262,11 +235,10 @@ describe('test/AgentRuntime.metadata.test.ts', () => {
       const runCreatedEvent = writer.events.find(e => e.event === 'run_created')!.data as StreamEvent;
       const runId = (runCreatedEvent.data as { runId: string }).runId;
       const threadId = (runCreatedEvent.data as { threadId: string }).threadId;
-      const run = await store.getRun(runId);
 
+      const run = await store.getRun(runId);
       assert.deepStrictEqual(run.metadata, meta);
-      const thread = await store.getThread(threadId);
-      assert.deepStrictEqual(thread.metadata, {});
+      assert.deepStrictEqual((await store.getThread(threadId)).metadata, meta);
     });
   });
 });

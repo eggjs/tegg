@@ -195,6 +195,28 @@ describe('test/OSSAgentStore.test.ts', () => {
         second: 2,
       });
     });
+
+    it('should not clobber metadata when an updateThreadMetadata races a latestRunId write', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread({ original: true });
+      // Both writers do a read-modify-write on the same meta.json; the delay
+      // forces them to overlap so an unsynchronized pair would clobber.
+      client.delayPutWhenKeyMatches(/threads\/.*\/meta\.json$/, 20);
+
+      const [ , run ] = await Promise.all([
+        localStore.updateThreadMetadata(thread.id, { merged: 1 }),
+        // createRun fires recordLatestRunId in the background (latestRunId write).
+        localStore.createRun([{ role: 'user', content: 'Hi' }], thread.id),
+      ]);
+      await localStore.awaitPendingWrites();
+
+      const stored = await localStore.getThread(thread.id);
+      // The metadata merge survives...
+      assert.deepStrictEqual(stored.metadata, { original: true, merged: 1 });
+      // ...and so does the latestRunId pointer written by createRun.
+      assert.equal(await localStore.getLatestRunId(thread.id), run.id);
+    });
   });
 
   describe('runs', () => {

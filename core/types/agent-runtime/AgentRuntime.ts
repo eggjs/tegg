@@ -53,15 +53,15 @@ export interface CreateRunInput {
     messages: import('./AgentMessage').InputMessage[];
   };
   config?: AgentRunConfig;
-  metadata?: Record<string, unknown>;
   /**
-   * Metadata persisted on the thread rather than the run.
-   *
-   * Auto-created threads are initialized with this object. For an existing
-   * thread, keys are shallow-merged and new values overwrite matching keys.
-   * An omitted or empty object leaves the thread metadata unchanged.
+   * Metadata for the run. Stored verbatim on the run record, and additionally
+   * shallow-merged into the thread metadata (`meta.json`):
+   * - For an auto-created thread, it initializes the thread metadata.
+   * - For an existing thread, the keys are shallow-merged: new values overwrite
+   *   matching keys, while keys not present are preserved.
+   * - An omitted or empty object leaves the thread metadata unchanged.
    */
-  threadMetadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 // ===== Thread input =====
