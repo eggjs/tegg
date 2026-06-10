@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.82.2](https://github.com/eggjs/tegg/compare/v3.82.1...v3.82.2) (2026-06-10)
+
+
+### Bug Fixes
+
+* **mcp:** reject pending SSE promises on session close to prevent con… ([#455](https://github.com/eggjs/tegg/issues/455)) ([322dc84](https://github.com/eggjs/tegg/commit/322dc84204add1d89fd19a2a73434da0f58d80e3))
+
+
+
+
+
 ## [3.82.1](https://github.com/eggjs/tegg/compare/v3.82.0...v3.82.1) (2026-06-10)
 
 **Note:** Version bump only for package tegg
