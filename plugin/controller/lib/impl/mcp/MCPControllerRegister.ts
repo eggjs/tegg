@@ -371,6 +371,9 @@ export class MCPControllerRegister implements ControllerRegister {
               if (sessionId) {
                 self.clearStreamMcpServer(sessionId);
               }
+              if (!ctx.res.destroyed) {
+                ctx.res.destroy();
+              }
             }
           };
 
@@ -525,7 +528,13 @@ export class MCPControllerRegister implements ControllerRegister {
       clearInterval(this.pingIntervals[transport.sessionId]);
       delete this.pingIntervals[transport.sessionId];
     }
-    this.sseTransportsRequestMap.delete(transport);
+    const pendingMap = this.sseTransportsRequestMap.get(transport);
+    if (pendingMap) {
+      for (const requestId of Object.keys(pendingMap)) {
+        pendingMap[requestId].reject(new Error(`SSE session ${transport.sessionId} closed`));
+      }
+      this.sseTransportsRequestMap.delete(transport);
+    }
     const connection = this.sseConnections.get(transport.sessionId);
     if (connection) {
       clearInterval(connection.intervalId);
@@ -615,6 +624,8 @@ export class MCPControllerRegister implements ControllerRegister {
             }
           });
         });
+      } catch (e) {
+        self.app.logger.warn('[mcp/sse] onmessage error, session %s: %s', transport.sessionId, e.message);
       } finally {
         if (!res.destroyed) {
           res.destroy();
