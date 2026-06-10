@@ -66,6 +66,12 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
     params: [{ index: 0, type: 'pathParam', name: 'id' }],
   },
   {
+    methodName: 'getLatestRunId',
+    httpMethod: HTTPMethodEnum.GET,
+    path: '/threads/:id/latest-run',
+    params: [{ index: 0, type: 'pathParam', name: 'id' }],
+  },
+  {
     methodName: 'asyncRun',
     httpMethod: HTTPMethodEnum.POST,
     path: '/runs',

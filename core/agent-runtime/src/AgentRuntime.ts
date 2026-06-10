@@ -757,6 +757,17 @@ export class AgentRuntime {
   }
 
   /**
+   * Resolve the most recent run created on a thread. Returns `{ runId: null }`
+   * when the thread exists but has no recorded run (e.g. threads created
+   * before run tracking, or with no runs yet). Throws AgentNotFoundError when
+   * the thread does not exist.
+   */
+  async getLatestRunId(threadId: string): Promise<{ threadId: string; runId: string | null }> {
+    const runId = await this.store.getLatestRunId(threadId);
+    return { threadId, runId };
+  }
+
+  /**
    * Cancel a running task. The call blocks until either (a) the executor
    * reports its session is safely committed to storage, and the task has
    * been aborted and the thread persisted, or (b) the commit watchdog times
