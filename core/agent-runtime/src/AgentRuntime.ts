@@ -19,6 +19,7 @@ import {
   RunStatus,
   AgentObjectType,
   AgentConflictError,
+  AgentInvalidRequestError,
   AgentNotFoundError,
   AgentTimeoutError,
 } from '@eggjs/tegg-types/agent-runtime';
@@ -31,6 +32,14 @@ import type { SSEWriter } from './SSEWriter';
 const HEARTBEAT_INTERVAL_MS = 10_000;
 const EVENT_DIR = join(tmpdir(), 'agent-runtime-events');
 const DEFAULT_CANCEL_COMMIT_TIMEOUT_MS = 30_000;
+
+function validateMetadata(value: unknown): Record<string, unknown> | undefined {
+  if (value === undefined) return undefined;
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    throw new AgentInvalidRequestError("'metadata' must be an object");
+  }
+  return value as Record<string, unknown>;
+}
 
 interface RunEventBuffer {
   filePath: string;
@@ -141,17 +150,35 @@ export class AgentRuntime {
   }
 
   /**
-   * Resolve the thread for a run. If the caller provided a `threadId` we reuse
-   * it as-is. When no `threadId` is present we auto-create an empty thread.
-   * Run metadata belongs to the run record and must not be copied to the thread.
+   * Resolve the thread for a run and persist the run's `metadata` onto the
+   * thread. The same `metadata` is also stored on the run record (see
+   * {@link AgentStore.createRun}); here it initializes an auto-created thread or
+   * is shallow-merged into an existing thread's `meta.json`.
    */
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
+    const metadata = validateMetadata(input.metadata);
     if (input.threadId) {
       const thread = await this.store.getThread(input.threadId);
+      if (metadata && Object.keys(metadata).length > 0) {
+        if (!this.store.updateThreadMetadata) {
+          throw new Error('AgentStore does not support updating thread metadata');
+        }
+        // Best-effort: the same metadata is already persisted on the run record,
+        // so a failure to mirror it onto the thread must not fail run creation.
+        try {
+          await this.store.updateThreadMetadata(input.threadId, metadata);
+        } catch (err) {
+          this.logger.error(
+            '[AgentRuntime] failed to persist metadata onto thread threadId=%s:',
+            input.threadId,
+            err,
+          );
+        }
+      }
       const isResume = thread.messages.length > 0;
       return { threadId: input.threadId, input: { ...input, isResume } };
     }
-    const thread = await this.store.createThread();
+    const thread = await this.store.createThread(metadata);
     return { threadId: thread.id, input: { ...input, threadId: thread.id, isResume: false } };
   }
 

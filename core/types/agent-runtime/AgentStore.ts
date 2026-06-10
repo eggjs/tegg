@@ -77,6 +77,11 @@ export interface AgentStore {
   destroy?(): Promise<void>;
   createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord>;
   getThread(threadId: string, options?: GetThreadOptions): Promise<ThreadRecord>;
+  /**
+   * Shallow-merge metadata into an existing thread.
+   * New values overwrite matching keys; omitted keys are preserved.
+   */
+  updateThreadMetadata?(threadId: string, metadata: Record<string, unknown>): Promise<void>;
   appendMessages(threadId: string, messages: AgentMessage[]): Promise<void>;
   createRun(
     input: InputMessage[],

@@ -149,6 +149,76 @@ describe('test/OSSAgentStore.test.ts', () => {
     });
   });
 
+  describe('thread metadata', () => {
+    it('should shallow-merge metadata and preserve omitted keys', async () => {
+      const thread = await store.createThread({
+        bizId: 'order_123',
+        source: 'customer_service',
+        nested: { old: true },
+      });
+
+      await store.updateThreadMetadata(thread.id, {
+        source: 'operator_console',
+        nested: { replacement: true },
+        nullable: null,
+      });
+
+      assert.deepStrictEqual((await store.getThread(thread.id)).metadata, {
+        bizId: 'order_123',
+        source: 'operator_console',
+        nested: { replacement: true },
+        nullable: null,
+      });
+    });
+
+    it('should reject updating a missing thread', async () => {
+      await assert.rejects(
+        () => store.updateThreadMetadata('thread_missing', { bizId: 'order_123' }),
+        AgentNotFoundError,
+      );
+    });
+
+    it('should serialize concurrent updates in the same process', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread({ original: true });
+      client.delayPutWhenKeyMatches(/threads\/.*\/meta\.json$/, 20);
+
+      await Promise.all([
+        localStore.updateThreadMetadata(thread.id, { first: 1 }),
+        localStore.updateThreadMetadata(thread.id, { second: 2 }),
+      ]);
+
+      assert.deepStrictEqual((await localStore.getThread(thread.id)).metadata, {
+        original: true,
+        first: 1,
+        second: 2,
+      });
+    });
+
+    it('should not clobber metadata when an updateThreadMetadata races a latestRunId write', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread({ original: true });
+      // Both writers do a read-modify-write on the same meta.json; the delay
+      // forces them to overlap so an unsynchronized pair would clobber.
+      client.delayPutWhenKeyMatches(/threads\/.*\/meta\.json$/, 20);
+
+      const [ , run ] = await Promise.all([
+        localStore.updateThreadMetadata(thread.id, { merged: 1 }),
+        // createRun fires recordLatestRunId in the background (latestRunId write).
+        localStore.createRun([{ role: 'user', content: 'Hi' }], thread.id),
+      ]);
+      await localStore.awaitPendingWrites();
+
+      const stored = await localStore.getThread(thread.id);
+      // The metadata merge survives...
+      assert.deepStrictEqual(stored.metadata, { original: true, merged: 1 });
+      // ...and so does the latestRunId pointer written by createRun.
+      assert.equal(await localStore.getLatestRunId(thread.id), run.id);
+    });
+  });
+
   describe('runs', () => {
     it('should create a run', async () => {
       const run = await store.createRun([{ role: 'user', content: 'Hello' }]);
