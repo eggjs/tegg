@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/egg-module-common",
-  "version": "3.82.0",
+  "version": "3.82.1",
   "description": "common module",
   "keywords": [
     "egg",
