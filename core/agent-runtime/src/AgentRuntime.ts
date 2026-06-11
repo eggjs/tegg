@@ -251,6 +251,19 @@ export class AgentRuntime {
         if (this.flushPerMessage) await flushQuietly();
       }
 
+      // A late abort (external signal / destroy) can land while the last
+      // in-loop flush or markCommitted is awaiting; if the executor then ends
+      // naturally we exit the loop without re-checking at the top. Re-check the
+      // local signal before the success path so an aborted run is not marked
+      // Completed (the store-status check below only catches cancelRun, which
+      // writes a terminal-ish status).
+      if (abortController.signal.aborted) {
+        await flushQuietly();
+        await this.finaliseAbortedRun(run.id);
+        const latest = await this.store.getRun(run.id);
+        return RunBuilder.fromRecord(latest).snapshot();
+      }
+
       // TOCTOU: another worker (e.g. cancelRun, or its commit-timeout
       // watchdog which writes Failed) may have terminated this run while
       // we were finishing the last iterator.next(). Respect the already-set
@@ -342,6 +355,15 @@ export class AgentRuntime {
           streamMessages.push(msg);
           await this.markCommittedIfNeeded(task, msg, streamMessages);
           if (this.flushPerMessage) await flushQuietly();
+        }
+
+        // Late-abort re-check (see syncRun): close the window where an external
+        // abort / destroy lands during the final loop body and the executor
+        // then ends naturally, before the success path marks it Completed.
+        if (abortController.signal.aborted) {
+          await flushQuietly();
+          await this.finaliseAbortedRun(run.id);
+          return;
         }
 
         // TOCTOU: respect any terminal-ish status set by another worker
@@ -515,6 +537,16 @@ export class AgentRuntime {
 
         await this.markCommittedIfNeeded(task, msg, streamMessages);
         if (this.flushPerMessage) await flushQuietly();
+      }
+
+      // Late-abort re-check (see syncRun): close the window where an external
+      // abort / destroy lands during the final loop body and the executor then
+      // ends naturally, before the success path marks it Completed.
+      if (abortController.signal.aborted) {
+        await flushQuietly();
+        await this.finaliseAbortedRun(runId);
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+        return;
       }
 
       // TOCTOU: respect any terminal-ish status set by another worker

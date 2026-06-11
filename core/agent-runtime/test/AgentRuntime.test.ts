@@ -1526,5 +1526,41 @@ describe('test/AgentRuntime.test.ts', () => {
         await incrementalRuntime.destroy();
       }
     });
+
+    it('marks the run cancelled when an external abort lands while the executor ends naturally', async () => {
+      // Closes the post-loop window: the executor commits, then ignores the
+      // abort signal and ends naturally right after an external abort fires.
+      // The loop exits without a top-of-loop re-check, so the post-loop abort
+      // re-check must catch it — otherwise the run is wrongly marked Completed
+      // (an external signal does not write a terminal store status).
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        await gate; // ignores the abort signal, then returns (ends naturally)
+      };
+
+      const incrementalRuntime = makeRuntime();
+      try {
+        const thread = await incrementalRuntime.createThread();
+        const ac = new AbortController();
+        const syncPromise = incrementalRuntime.syncRun(
+          { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+          ac.signal,
+        );
+
+        // Wait until the assistant message is incrementally mirrored (committed),
+        // then abort and let the executor finish without observing the signal.
+        await waitUntil(async () => (await store.getThread(thread.id)).messages.length === 2);
+        ac.abort();
+        resolveGate();
+
+        const result = await syncPromise;
+        assert.equal(result.status, RunStatus.Cancelled, 'late external abort must not be marked Completed');
+      } finally {
+        resolveGate();
+        await incrementalRuntime.destroy();
+      }
+    });
   });
 });
