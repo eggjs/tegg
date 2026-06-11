@@ -265,10 +265,12 @@ export class AgentRuntime {
 
       const usage = MessageConverter.extractUsage(streamMessages);
 
-      // Final flush: in 'turn' mode this is the single append of the whole
-      // transcript; in 'message' mode it is a no-op tail. Errors propagate so a
-      // failed persist routes through the catch block, as before.
-      await flush();
+      // Final flush on the success path: forces past the commit gate so a run
+      // that finished normally always persists its full transcript (matching
+      // the pre-incremental unconditional append), even if it never committed.
+      // In 'turn' mode this is the single append; in 'message' mode a no-op
+      // tail. Errors propagate so a failed persist routes through the catch.
+      await flush(true);
 
       await this.store.updateRun(run.id, rb.complete(usage));
 
@@ -353,9 +355,9 @@ export class AgentRuntime {
 
         const usage = MessageConverter.extractUsage(streamMessages);
 
-        // Final flush: single batch append in 'turn' mode, no-op tail in
-        // 'message' mode. Errors route through the catch block, as before.
-        await flush();
+        // Final flush on the success path: forces past the commit gate (see
+        // syncRun) so a normally-finished run always persists its transcript.
+        await flush(true);
 
         await this.store.updateRun(run.id, rb.complete(usage));
       } catch (err: unknown) {
@@ -525,10 +527,10 @@ export class AgentRuntime {
         return;
       }
 
-      // Final flush: single batch append in 'turn' mode, no-op tail in
-      // 'message' mode (excludes stream_event deltas either way).
+      // Final flush on the success path: forces past the commit gate (see
+      // syncRun) so a normally-finished run always persists its transcript.
       const usage = MessageConverter.extractUsage(streamMessages);
-      await flush();
+      await flush(true);
       await this.store.updateRun(runId, rb.complete(usage));
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
@@ -639,12 +641,18 @@ export class AgentRuntime {
    *
    * Semantics it guarantees, regardless of how often it is called:
    *
-   * - **Commit gate**: nothing is written before the executor's session is
-   *   committed (`task.committed`). If a run dies before committing, the thread
-   *   is left untouched so the next run starts fresh instead of trying to
-   *   resume a session that was never created on disk.
+   * - **Commit gate** (default): nothing is written before the executor's
+   *   session is committed (`task.committed`). If a run dies *before* committing
+   *   — an abort or a mid-turn failure — the thread is left untouched so the
+   *   next run starts fresh instead of trying to resume a session that was
+   *   never created on disk. The gate is bypassed by `flush(true)`, used only on
+   *   the *successful* completion path: a run that finished normally must
+   *   persist its full transcript even if `task.committed` was never flipped
+   *   (e.g. a system-only run, or a conservative custom `isSessionCommitted`),
+   *   matching the pre-incremental behaviour where the success path appended
+   *   unconditionally.
    * - **Input-once**: the user input messages are prepended exactly once, on
-   *   the first write after commit.
+   *   the first write.
    * - **At-most-once per message**: a `flushedCount` cursor tracks how far
    *   `streamMessages` has been mirrored; cursor/flags only advance after a
    *   successful append, so a failed append is retried (never duplicated and
@@ -660,12 +668,12 @@ export class AgentRuntime {
     input: CreateRunInput,
     task: RunTaskState,
     streamMessages: AgentMessage[],
-  ): { flush: () => Promise<void>; flushQuietly: () => Promise<void> } {
+  ): { flush: (force?: boolean) => Promise<void>; flushQuietly: () => Promise<void> } {
     let flushedCount = 0;
     let inputFlushed = false;
 
-    const flush = async (): Promise<void> => {
-      if (!task.committed) return;
+    const flush = async (force = false): Promise<void> => {
+      if (!force && !task.committed) return;
       const pending = MessageConverter.filterForStorage(streamMessages.slice(flushedCount));
       const prefix = inputFlushed ? [] : MessageConverter.toAgentMessages(input.input.messages);
       const toAppend = [ ...prefix, ...pending ];
@@ -679,6 +687,8 @@ export class AgentRuntime {
       inputFlushed = true;
     };
 
+    // Gated, error-swallowing flush for the in-loop incremental path and the
+    // abort/failure cleanup paths (never forces past the commit gate).
     const flushQuietly = async (): Promise<void> => {
       try {
         await flush();

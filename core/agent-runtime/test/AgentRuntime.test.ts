@@ -374,6 +374,36 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(persisted.messages[0].type, 'user');
       assert.equal(persisted.messages[1].type, 'assistant');
     });
+
+    it('should persist the full transcript on success even when the run never commits', async () => {
+      // Regression: the success-path flush must NOT be gated on task.committed.
+      // A run that finishes normally but never flips committed (here a custom
+      // isSessionCommitted that always returns false; equally a system-only run)
+      // must still persist its transcript, matching the pre-incremental
+      // behaviour where the success path appended unconditionally — otherwise
+      // the thread is silently left empty and the next run's isResume is wrong.
+      const thread = await runtime.createThread();
+      executor.isSessionCommitted = () => false;
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'done' }] } };
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const result = await runtime.syncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(result.status, RunStatus.Completed);
+
+      const persisted = await store.getThread(thread.id);
+      assert.equal(persisted.messages.length, 2, 'transcript must be persisted on success regardless of commit');
+      assert.equal(persisted.messages[0].type, 'user');
+      assert.equal(persisted.messages[1].type, 'assistant');
+    });
   });
 
   describe('asyncRun', () => {
