@@ -834,5 +834,47 @@ describe('test/OSSAgentStore.test.ts', () => {
       const indexBodyAfter = await client.get(indexKeysAfter[0]);
       assert.equal(indexBodyAfter, indexBodyBefore, 'the index body should be byte-identical');
     });
+
+    it('writes one activity index per append by default (indexThrottleMs unset)', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
+
+      const thread = await withFixedNow(C, () => localStore.createThread({ k: 'v' }));
+      await withFixedNow(C + 100, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 200, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 6000, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // createThread + 3 appends = 4 distinct index entries.
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 4, `expected one index per write, got ${JSON.stringify(indexKeys)}`);
+    });
+
+    it('coalesces activity index writes within indexThrottleMs for appends', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/', indexThrottleMs: 5000 });
+
+      const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
+
+      const thread = await withFixedNow(C, () => localStore.createThread({ k: 'v' }));
+      // First append writes (no prior append). Second is within 5s → throttled.
+      // Third is >5s after the first → writes again.
+      await withFixedNow(C + 100, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 200, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 6000, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // createThread(1) + append@+100(1) + append@+200(throttled) + append@+6000(1) = 3.
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 3, `expected throttled index count, got ${JSON.stringify(indexKeys)}`);
+
+      // The messages.jsonl itself must still contain every appended line.
+      const fetched = await localStore.getThread(thread.id, { includeAllMessages: true });
+      assert.equal(fetched.messages.length, 3, 'all appended messages must be persisted regardless of throttling');
+    });
   });
 });
