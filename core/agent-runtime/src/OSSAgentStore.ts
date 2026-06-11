@@ -27,7 +27,31 @@ export interface OSSAgentStoreOptions {
    * propagated to store callers.
    */
   logger?: OSSAgentStoreWarnLogger;
+  /**
+   * Minimum gap, in milliseconds, between activity-index sidecar writes for a
+   * single thread from `appendMessages`. Defaults to `0` (write on every
+   * append — the historical behaviour).
+   *
+   * Each append otherwise emits a brand-new index object (the key embeds a
+   * millisecond timestamp), so callers that append many times per turn (e.g. a
+   * runtime configured with `flushGranularity: 'message'`) would produce one
+   * sidecar per message. Set a small value (e.g. `5000`) to coalesce those into
+   * roughly one write per interval. The activity index is best-effort and
+   * deduped by readers (max `updatedAt` per thread), so throttling only makes
+   * the displayed `updatedAt` lag by at most this interval; it never drops a
+   * thread from the index. `createThread` and `updateThreadMetadata` are not
+   * throttled — they always write.
+   */
+  indexThrottleMs?: number;
 }
+
+/**
+ * Upper bound on `lastAppendIndexAtMs` entries (only populated when index
+ * throttling is enabled). When exceeded, the oldest-inserted entry is evicted
+ * FIFO so the map cannot grow without bound on a long-lived process. Evicting a
+ * cold thread only costs it one extra (un-throttled) index write next time.
+ */
+const MAX_THROTTLE_ENTRIES = 10_000;
 
 /**
  * Thread metadata stored as a JSON object (excludes messages).
@@ -56,14 +80,18 @@ export class OSSAgentStore implements AgentStore {
   private readonly client: ObjectStorageClient;
   private readonly prefix: string;
   private readonly logger: OSSAgentStoreWarnLogger;
+  private readonly indexThrottleMs: number;
   private readonly pendingIndexWrites = new Set<Promise<void>>();
   private readonly threadMetaWriteTails = new Map<string, Promise<void>>();
+  /** Last `appendMessages` activity-index write time per thread (ms), for throttling. */
+  private readonly lastAppendIndexAtMs = new Map<string, number>();
 
   constructor(options: OSSAgentStoreOptions) {
     this.client = options.client;
     const raw = options.prefix ?? '';
     this.prefix = raw && !raw.endsWith('/') ? raw + '/' : raw;
     this.logger = options.logger ?? { warn: (message, ...args) => console.warn(message, ...args) };
+    this.indexThrottleMs = options.indexThrottleMs && options.indexThrottleMs > 0 ? options.indexThrottleMs : 0;
   }
 
   private threadMetaKey(threadId: string): string {
@@ -247,6 +275,19 @@ export class OSSAgentStore implements AgentStore {
     } else {
       const existing = (await this.client.get(messagesKey)) ?? '';
       await this.client.put(messagesKey, existing + lines);
+    }
+    // Throttle the activity-index sidecar so a burst of appends (e.g. a runtime
+    // flushing one message at a time) does not emit one index object each. The
+    // bookkeeping map is only touched when throttling is enabled, so the
+    // default (indexThrottleMs=0) path is byte-for-byte the historical one.
+    if (this.indexThrottleMs > 0) {
+      const last = this.lastAppendIndexAtMs.get(threadId) ?? 0;
+      if (nowMs - last < this.indexThrottleMs) return;
+      this.lastAppendIndexAtMs.set(threadId, nowMs);
+      if (this.lastAppendIndexAtMs.size > MAX_THROTTLE_ENTRIES) {
+        const oldest = this.lastAppendIndexAtMs.keys().next().value;
+        if (oldest !== undefined) this.lastAppendIndexAtMs.delete(oldest);
+      }
     }
     this.writeThreadActivityIndex(threadId, meta.createdAt, nowMs, meta.metadata);
   }

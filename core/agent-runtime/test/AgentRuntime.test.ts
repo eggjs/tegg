@@ -1404,4 +1404,97 @@ describe('test/AgentRuntime.test.ts', () => {
       store.appendMessages = origAppend;
     });
   });
+
+  describe('flushGranularity: message (incremental mirror)', () => {
+    function makeRuntime(): AgentRuntime {
+      return new AgentRuntime({
+        executor,
+        store,
+        logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
+        flushGranularity: 'message',
+      });
+    }
+
+    async function waitUntil(cond: () => boolean | Promise<boolean>, timeoutMs = 2000): Promise<void> {
+      const start = Date.now();
+      while (!(await cond())) {
+        if (Date.now() - start > timeoutMs) throw new Error('waitUntil timeout');
+        await setTimeout(10);
+      }
+    }
+
+    it('makes a running turn visible to readers before it completes', async () => {
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        await gate;
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const incrementalRuntime = makeRuntime();
+      try {
+        const thread = await incrementalRuntime.createThread();
+        const run = await incrementalRuntime.asyncRun({
+          threadId: thread.id,
+          input: { messages: [{ role: 'user', content: 'Hi' }] },
+        });
+
+        // While the run is still in flight (gate not released), the user +
+        // committed assistant message must already be mirrored to the thread.
+        await waitUntil(async () => (await store.getThread(thread.id)).messages.length === 2);
+        const mid = await store.getRun(run.id);
+        assert.equal(mid.status, RunStatus.InProgress, 'run should still be running when partial is visible');
+        const midThread = await store.getThread(thread.id);
+        assert.equal(midThread.messages[0].type, 'user');
+        assert.equal(midThread.messages[1].type, 'assistant');
+
+        // Let the turn finish; the final transcript must not duplicate anything.
+        resolveGate();
+        await incrementalRuntime.waitForPendingTasks();
+        const done = await store.getRun(run.id);
+        assert.equal(done.status, RunStatus.Completed);
+        const finalThread = await store.getThread(thread.id);
+        assert.equal(finalThread.messages.length, 2, 'no duplicate messages after completion');
+        assert.equal(finalThread.messages[0].type, 'user');
+        assert.equal(finalThread.messages[1].type, 'assistant');
+      } finally {
+        resolveGate();
+        await incrementalRuntime.destroy();
+      }
+    });
+
+    it('keeps the commit gate: nothing is mirrored when aborted before commit', async () => {
+      // Executor blocks before yielding any (committing) message.
+      const resolveRef: { resolve?: () => void } = {};
+      executor.execRun = createBlockingExecRun(resolveRef, [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'never' }] } },
+      ]);
+
+      const incrementalRuntime = makeRuntime();
+      try {
+        const thread = await incrementalRuntime.createThread();
+        const ac = new AbortController();
+        const syncPromise = incrementalRuntime.syncRun(
+          { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+          ac.signal,
+        );
+
+        // Give syncRun time to enter the await on the (never-committing) executor.
+        await setTimeout(20);
+        ac.abort();
+        await syncPromise;
+
+        const persisted = await store.getThread(thread.id);
+        assert.equal(persisted.messages.length, 0, 'thread must stay empty when executor never committed');
+      } finally {
+        resolveRef.resolve?.();
+        await incrementalRuntime.destroy();
+      }
+    });
+  });
 });
