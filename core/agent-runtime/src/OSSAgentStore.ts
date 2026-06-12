@@ -29,21 +29,29 @@ export interface OSSAgentStoreOptions {
   logger?: OSSAgentStoreWarnLogger;
   /**
    * Minimum gap, in milliseconds, between activity-index sidecar writes for a
-   * single thread from `appendMessages`. Defaults to `0` (write on every
-   * append — the historical behaviour).
+   * single thread from `appendMessages`. Defaults to {@link DEFAULT_INDEX_THROTTLE_MS}
+   * (5s); pass `0` to disable throttling and write an index on every append.
    *
-   * Each append otherwise emits a brand-new index object (the key embeds a
-   * millisecond timestamp), so callers that append many times per turn (e.g. a
-   * runtime configured with `flushGranularity: 'message'`) would produce one
-   * sidecar per message. Set a small value (e.g. `5000`) to coalesce those into
-   * roughly one write per interval. The activity index is best-effort and
-   * deduped by readers (max `updatedAt` per thread), so throttling only makes
-   * the displayed `updatedAt` lag by at most this interval; it never drops a
-   * thread from the index. `createThread` and `updateThreadMetadata` are not
-   * throttled — they always write.
+   * The runtime mirrors messages to `appendMessages` one at a time as they are
+   * produced, and each append would otherwise emit a brand-new index object
+   * (the key embeds a millisecond timestamp) — i.e. one index sidecar per
+   * message, which also multiplies the reader's list cost. Throttling coalesces
+   * those into roughly one write per interval. The activity index is
+   * best-effort and deduped by readers (max `updatedAt` per thread), so
+   * throttling only makes the displayed `updatedAt` lag by at most this
+   * interval; it never drops a thread from the index. `createThread` and
+   * `updateThreadMetadata` are not throttled — they always write.
    */
   indexThrottleMs?: number;
 }
+
+/**
+ * Default {@link OSSAgentStoreOptions.indexThrottleMs}. The runtime appends one
+ * message at a time, so an unthrottled index would emit one sidecar object per
+ * message; 5s coalesces that to ~one per thread per interval while keeping the
+ * activity-time ordering fresh enough for an observability dashboard.
+ */
+const DEFAULT_INDEX_THROTTLE_MS = 5_000;
 
 /**
  * Upper bound on `lastAppendIndexAtMs` entries (only populated when index
@@ -91,7 +99,9 @@ export class OSSAgentStore implements AgentStore {
     const raw = options.prefix ?? '';
     this.prefix = raw && !raw.endsWith('/') ? raw + '/' : raw;
     this.logger = options.logger ?? { warn: (message, ...args) => console.warn(message, ...args) };
-    this.indexThrottleMs = options.indexThrottleMs && options.indexThrottleMs > 0 ? options.indexThrottleMs : 0;
+    this.indexThrottleMs = options.indexThrottleMs === undefined
+      ? DEFAULT_INDEX_THROTTLE_MS
+      : Math.max(0, options.indexThrottleMs);
   }
 
   private threadMetaKey(threadId: string): string {
@@ -276,10 +286,10 @@ export class OSSAgentStore implements AgentStore {
       const existing = (await this.client.get(messagesKey)) ?? '';
       await this.client.put(messagesKey, existing + lines);
     }
-    // Throttle the activity-index sidecar so a burst of appends (e.g. a runtime
-    // flushing one message at a time) does not emit one index object each. The
-    // bookkeeping map is only touched when throttling is enabled, so the
-    // default (indexThrottleMs=0) path is byte-for-byte the historical one.
+    // Throttle the activity-index sidecar so the runtime's per-message appends
+    // do not emit one index object each (which would also multiply the reader's
+    // list cost). Enabled by default; `indexThrottleMs: 0` disables it and the
+    // bookkeeping map is then never touched.
     if (this.indexThrottleMs > 0) {
       const last = this.lastAppendIndexAtMs.get(threadId) ?? 0;
       if (nowMs - last < this.indexThrottleMs) return;

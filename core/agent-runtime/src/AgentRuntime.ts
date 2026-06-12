@@ -75,21 +75,6 @@ export interface AgentRuntimeOptions {
    * 30 seconds.
    */
   cancelCommitTimeoutMs?: number;
-  /**
-   * When messages are mirrored to thread storage during a run:
-   *
-   * - `'turn'` (default): the turn's transcript is appended once, after the
-   *   executor stream finishes. Lowest store-write count; a still-running turn
-   *   is not visible to readers until it completes.
-   * - `'message'`: each message is appended as soon as it is produced (after
-   *   the executor session is committed). Lets an OSS-polling observer see a
-   *   running agent's conversation grow in real time, at the cost of one store
-   *   append per message instead of one per turn.
-   *
-   * Both modes are gated on the same commit semantics and converge on an
-   * identical final transcript; the flag only changes *when* the writes happen.
-   */
-  flushGranularity?: 'turn' | 'message';
 }
 
 interface RunTaskState {
@@ -130,7 +115,6 @@ export class AgentRuntime {
   private executor: AgentExecutor;
   private logger: EggLogger;
   private cancelCommitTimeoutMs: number;
-  private flushPerMessage: boolean;
 
   constructor(options: AgentRuntimeOptions) {
     this.executor = options.executor;
@@ -140,7 +124,6 @@ export class AgentRuntime {
     }
     this.logger = options.logger;
     this.cancelCommitTimeoutMs = options.cancelCommitTimeoutMs ?? DEFAULT_CANCEL_COMMIT_TIMEOUT_MS;
-    this.flushPerMessage = options.flushGranularity === 'message';
     this.runningTasks = new Map();
     this.runBuffers = new Map();
   }
@@ -233,8 +216,8 @@ export class AgentRuntime {
     // Mirror the turn's transcript into thread storage. Guarded by
     // task.committed so we never write a thread the executor has not persisted
     // to its own session; idempotent so the success path and any catch-block
-    // persist never duplicate history. With flushGranularity='message' the
-    // in-loop flush makes a running turn visible to readers incrementally.
+    // persist never duplicate history. The in-loop flush makes a running turn
+    // visible to OSS-polling readers incrementally.
     const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
     try {
       await this.store.updateRun(run.id, rb.start());
@@ -248,7 +231,9 @@ export class AgentRuntime {
         }
         streamMessages.push(msg);
         await this.markCommittedIfNeeded(task, msg, streamMessages);
-        if (this.flushPerMessage) await flushQuietly();
+        // Mirror each message as it is produced (gated on commit inside flush)
+        // so an OSS-polling observer sees a running turn grow in real time.
+        await flushQuietly();
       }
 
       // A late abort (external signal / destroy) can land while the last
@@ -279,10 +264,10 @@ export class AgentRuntime {
       const usage = MessageConverter.extractUsage(streamMessages);
 
       // Final flush on the success path: forces past the commit gate so a run
-      // that finished normally always persists its full transcript (matching
-      // the pre-incremental unconditional append), even if it never committed.
-      // In 'turn' mode this is the single append; in 'message' mode a no-op
-      // tail. Errors propagate so a failed persist routes through the catch.
+      // that finished normally always persists its full transcript even if it
+      // never committed (a system-only run, or a conservative isSessionCommitted).
+      // Usually a no-op tail since the loop already mirrored each message.
+      // Errors propagate so a failed persist routes through the catch.
       await flush(true);
 
       await this.store.updateRun(run.id, rb.complete(usage));
@@ -354,7 +339,8 @@ export class AgentRuntime {
           }
           streamMessages.push(msg);
           await this.markCommittedIfNeeded(task, msg, streamMessages);
-          if (this.flushPerMessage) await flushQuietly();
+          // Mirror each message as it is produced (see syncRun).
+          await flushQuietly();
         }
 
         // Late-abort re-check (see syncRun): close the window where an external
@@ -536,7 +522,9 @@ export class AgentRuntime {
         this.pushEvent(buffer, eventType, msg);
 
         await this.markCommittedIfNeeded(task, msg, streamMessages);
-        if (this.flushPerMessage) await flushQuietly();
+        // Mirror each message to the thread as it is produced (see syncRun).
+        // Separate from the SSE event log (pushEvent) above.
+        await flushQuietly();
       }
 
       // Late-abort re-check (see syncRun): close the window where an external
@@ -668,8 +656,9 @@ export class AgentRuntime {
 
   /**
    * Build the per-run helper that mirrors a turn's transcript into thread
-   * storage. The same helper backs every run path (sync/async/stream) and both
-   * flush granularities; only *when* it is called differs.
+   * storage. The same helper backs every run path (sync/async/stream). It is
+   * called once per message inside the run loop (so an OSS-polling observer
+   * sees a running turn grow in real time) and once more on completion.
    *
    * Semantics it guarantees, regardless of how often it is called:
    *
@@ -691,9 +680,8 @@ export class AgentRuntime {
    *   never silently dropped) by the next flush.
    * - **Storage filter**: `stream_event` deltas are never persisted.
    *
-   * Whether called once at turn end (`'turn'`) or once per message
-   * (`'message'`), the final transcript is identical: input messages followed
-   * by every non-`stream_event` message in order.
+   * The persisted transcript is input messages followed by every
+   * non-`stream_event` message in order.
    */
   private createMessageFlusher(
     threadId: string,

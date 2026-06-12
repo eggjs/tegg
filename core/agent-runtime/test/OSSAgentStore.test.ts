@@ -835,9 +835,9 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(indexBodyAfter, indexBodyBefore, 'the index body should be byte-identical');
     });
 
-    it('writes one activity index per append by default (indexThrottleMs unset)', async () => {
+    it('writes one activity index per append when throttling is disabled (indexThrottleMs: 0)', async () => {
       const client = new MapStorageClient();
-      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/', indexThrottleMs: 0 });
 
       const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
       const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
@@ -848,14 +848,15 @@ describe('test/OSSAgentStore.test.ts', () => {
       await withFixedNow(C + 6000, () => localStore.appendMessages(thread.id, msg));
       await localStore.awaitPendingWrites();
 
-      // createThread + 3 appends = 4 distinct index entries.
+      // createThread + 3 appends = 4 distinct index entries (no coalescing).
       const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
       assert.equal(indexKeys.length, 4, `expected one index per write, got ${JSON.stringify(indexKeys)}`);
     });
 
-    it('coalesces activity index writes within indexThrottleMs for appends', async () => {
+    it('coalesces activity index writes by default (indexThrottleMs defaults to 5s)', async () => {
       const client = new MapStorageClient();
-      const localStore = new OSSAgentStore({ client, prefix: 'agent/', indexThrottleMs: 5000 });
+      // No indexThrottleMs → default 5s throttle.
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
 
       const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
       const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];

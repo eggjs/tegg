@@ -1435,13 +1435,12 @@ describe('test/AgentRuntime.test.ts', () => {
     });
   });
 
-  describe('flushGranularity: message (incremental mirror)', () => {
+  describe('incremental mirror (messages persisted as produced)', () => {
     function makeRuntime(): AgentRuntime {
       return new AgentRuntime({
         executor,
         store,
         logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
-        flushGranularity: 'message',
       });
     }
 
