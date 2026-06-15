@@ -156,6 +156,15 @@ export class OSSAgentStore implements AgentStore {
         // outcome). On failure, roll it back so the next append retries the
         // index write instead of being throttled away. The identity check
         // ensures we don't clobber a newer entry from a concurrent append.
+        //
+        // KNOWN LIMITATION (best-effort index): the rollback only re-enables a
+        // *future* append's index write. Appends that were throttled within
+        // this failed write's window are not re-indexed; if no further append
+        // arrives that day, the thread is missing from that day's activity
+        // bucket until its next activity (a cross-day append re-indexes via the
+        // date-bucket rule). messages.jsonl is unaffected. Closing this fully
+        // would need success-gated throttling (which loses burst coalescing) or
+        // tracking + re-writing the latest throttled activity — deferred.
         if (throttleEntry && this.lastAppendIndexAtMs.get(threadId) === throttleEntry) {
           this.lastAppendIndexAtMs.delete(threadId);
         }
