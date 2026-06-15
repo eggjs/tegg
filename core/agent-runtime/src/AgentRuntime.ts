@@ -713,6 +713,17 @@ export class AgentRuntime {
       }
       // Advance only after a successful append (or a genuine no-op) so a
       // throwing append leaves the cursor untouched and is retried next flush.
+      //
+      // KNOWN LIMITATION (at-least-once): this favours no-loss over no-duplicate.
+      // If an append is *ambiguous* — the store committed it but the client saw
+      // an error (timeout / lost response) — the cursor does not advance and the
+      // next flush re-appends the same lines, producing a duplicate (the OSS
+      // append path will HEAD and re-append from the object's end). The previous
+      // turn-batch design had the same ambiguous-retry risk (its catch-block
+      // persist re-appended), just once per turn rather than per message. A
+      // duplicated mirror line is a display/parse nuisance, not a lost turn;
+      // de-duplicating would need idempotent line ids or length reconciliation,
+      // tracked as a follow-up rather than carried here.
       flushedCount = cursorAtRead;
       inputFlushed = true;
     };
