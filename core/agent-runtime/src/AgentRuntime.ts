@@ -660,6 +660,16 @@ export class AgentRuntime {
    * called once per message inside the run loop (so an OSS-polling observer
    * sees a running turn grow in real time) and once more on completion.
    *
+   * **Single active run per thread.** Incremental mirroring assumes at most one
+   * run is advancing a given thread at a time. This is already required by the
+   * executor model — a thread maps to one resumable executor session (e.g. the
+   * Claude Code SDK jsonl), which two concurrent runs would diverge regardless
+   * of how the thread is mirrored. With per-message appends, concurrent runs on
+   * one thread would additionally interleave their messages into a transcript
+   * that cannot be resumed as a valid conversation. Callers must serialize runs
+   * per thread (the typical "one conversation = one sequential thread" model);
+   * the runtime does not enforce it.
+   *
    * Semantics it guarantees, regardless of how often it is called:
    *
    * - **Commit gate** (default): nothing is written before the executor's
