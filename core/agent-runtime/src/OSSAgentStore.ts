@@ -91,8 +91,13 @@ export class OSSAgentStore implements AgentStore {
   private readonly indexThrottleMs: number;
   private readonly pendingIndexWrites = new Set<Promise<void>>();
   private readonly threadMetaWriteTails = new Map<string, Promise<void>>();
-  /** Last `appendMessages` activity-index write time per thread (ms), for throttling. */
-  private readonly lastAppendIndexAtMs = new Map<string, number>();
+  /**
+   * Last `appendMessages` activity-index write per thread — the write time (ms)
+   * and the UTC date bucket it landed in — for throttling. The bucket is part of
+   * the state so a midnight-crossing append is never throttled away from the new
+   * day's index bucket.
+   */
+  private readonly lastAppendIndexAtMs = new Map<string, { ms: number; bucket: string }>();
 
   constructor(options: OSSAgentStoreOptions) {
     this.client = options.client;
@@ -290,10 +295,17 @@ export class OSSAgentStore implements AgentStore {
     // do not emit one index object each (which would also multiply the reader's
     // list cost). Enabled by default; `indexThrottleMs: 0` disables it and the
     // bookkeeping map is then never touched.
+    //
+    // The throttle is scoped to the index's UTC date bucket: when an append
+    // crosses midnight, the new day's bucket must get an entry even if the last
+    // write was <indexThrottleMs ago, otherwise a reader listing the new day
+    // would miss this thread entirely. So we only suppress within the same
+    // bucket (same key prefix the reader scans).
     if (this.indexThrottleMs > 0) {
-      const last = this.lastAppendIndexAtMs.get(threadId) ?? 0;
-      if (nowMs - last < this.indexThrottleMs) return;
-      this.lastAppendIndexAtMs.set(threadId, nowMs);
+      const bucket = dateBucket(nowMs);
+      const last = this.lastAppendIndexAtMs.get(threadId);
+      if (last && last.bucket === bucket && nowMs - last.ms < this.indexThrottleMs) return;
+      this.lastAppendIndexAtMs.set(threadId, { ms: nowMs, bucket });
       if (this.lastAppendIndexAtMs.size > MAX_THROTTLE_ENTRIES) {
         const oldest = this.lastAppendIndexAtMs.keys().next().value;
         if (oldest !== undefined) this.lastAppendIndexAtMs.delete(oldest);

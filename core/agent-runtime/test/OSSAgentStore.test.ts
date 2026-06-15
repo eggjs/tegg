@@ -877,5 +877,28 @@ describe('test/OSSAgentStore.test.ts', () => {
       const fetched = await localStore.getThread(thread.id, { includeAllMessages: true });
       assert.equal(fetched.messages.length, 3, 'all appended messages must be persisted regardless of throttling');
     });
+
+    it('does not throttle across a UTC date boundary (new day bucket always gets an entry)', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' }); // default 5s throttle
+
+      const CREATE = Date.UTC(2025, 10, 12, 10, 0, 0, 0); // 2025-11-12 (separate day, so day-13 count is just the append)
+      const BEFORE_MIDNIGHT = Date.UTC(2025, 10, 13, 23, 59, 58, 0); // 2025-11-13
+      const AFTER_MIDNIGHT = Date.UTC(2025, 10, 14, 0, 0, 1, 0); // 2025-11-14, only 3s later (< 5s)
+      const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
+
+      const thread = await withFixedNow(CREATE, () => localStore.createThread({ k: 'v' }));
+      await withFixedNow(BEFORE_MIDNIGHT, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(AFTER_MIDNIGHT, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // Despite the 3s gap (< 5s throttle), the new day's bucket must contain
+      // the thread, else a reader listing 2025-11-14 would miss it.
+      const day13 = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-13/');
+      const day14 = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-14/');
+      assert.equal(day13.length, 1, `2025-11-13 bucket: ${JSON.stringify(day13)}`);
+      assert.equal(day14.length, 1, `2025-11-14 bucket must not be throttled away: ${JSON.stringify(day14)}`);
+      assert.ok(day14[0].endsWith(`_${thread.id}`));
+    });
   });
 });
