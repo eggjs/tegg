@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import type { AgentMessage } from '@eggjs/tegg-types/agent-runtime';
+import type { AgentMessage, ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
 
 import {
   AgentNotFoundError,
@@ -146,6 +146,28 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.messages.length, 2);
       assert.equal(fetched.messages[0].type, 'user');
       assert.equal(fetched.messages[1].type, 'assistant');
+    });
+
+    it('serializes concurrent appends on the same thread (no lost update in the fallback)', async () => {
+      const client = new MapStorageClientWithoutAppend();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread();
+
+      // Widen the get-concat-put window so a missing per-thread lock would let
+      // the two appends read the same object and clobber each other.
+      client.delayPutWhenKeyMatches(/messages\.jsonl$/, 20);
+
+      const a: AgentMessage[] = [{ type: 'user', message: { role: 'user', content: 'A' } }];
+      const b: AgentMessage[] = [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'B' }] } },
+      ];
+      await Promise.all([
+        localStore.appendMessages(thread.id, a),
+        localStore.appendMessages(thread.id, b),
+      ]);
+
+      const fetched = await localStore.getThread(thread.id, { includeAllMessages: true });
+      assert.equal(fetched.messages.length, 2, 'both concurrent appends must be preserved');
     });
   });
 
@@ -899,6 +921,44 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(day13.length, 1, `2025-11-13 bucket: ${JSON.stringify(day13)}`);
       assert.equal(day14.length, 1, `2025-11-14 bucket must not be throttled away: ${JSON.stringify(day14)}`);
       assert.ok(day14[0].endsWith(`_${thread.id}`));
+    });
+
+    it('rolls back the throttle window when an index PUT fails so the next append retries', async () => {
+      const base = new MapStorageClient();
+      let failNextIndexPut = false;
+      // Custom client: fail the next /index/ PUT exactly once (used to simulate a
+      // transient index-write failure on the first throttled append).
+      const client: ObjectStorageClient = {
+        async put(key: string, value: string): Promise<void> {
+          if (failNextIndexPut && key.includes('/index/threads-by-updated-date/')) {
+            failNextIndexPut = false;
+            throw new Error('transient index put failure');
+          }
+          await base.put(key, value);
+        },
+        get: (key: string) => base.get(key),
+        append: (key: string, value: string) => base.append(key, value),
+      };
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' }); // default 5s throttle
+      const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const msg: AgentMessage[] = [{ type: 'user', message: { role: 'user', content: 'x' } }];
+
+      const thread = await withFixedNow(C, () => localStore.createThread({ k: 'v' }));
+      await localStore.awaitPendingWrites(); // createThread's index lands
+
+      // First append: its index PUT fails → throttle entry must be rolled back.
+      failNextIndexPut = true;
+      await withFixedNow(C + 100, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // Second append within the 5s window: since the throttle was rolled back,
+      // it must write an index (not be suppressed for a write that never landed).
+      await withFixedNow(C + 200, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // createThread(1) + first append (failed, 0) + second append (1) = 2.
+      const indexKeys = base.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 2, `expected the retry to write an index, got ${JSON.stringify(indexKeys)}`);
     });
   });
 });

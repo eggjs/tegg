@@ -92,6 +92,15 @@ export class OSSAgentStore implements AgentStore {
   private readonly pendingIndexWrites = new Set<Promise<void>>();
   private readonly threadMetaWriteTails = new Map<string, Promise<void>>();
   /**
+   * Per-thread serialization for the non-atomic `messages.jsonl` append fallback
+   * (get-concat-put). Only used when the storage client lacks an atomic
+   * `append`; the runtime now appends one message at a time, so concurrent runs
+   * on the same thread would otherwise read-modify-write the same object and
+   * lose lines. Separate from the meta lock so message appends and meta writes
+   * don't serialize against each other.
+   */
+  private readonly threadAppendTails = new Map<string, Promise<void>>();
+  /**
    * Last `appendMessages` activity-index write per thread — the write time (ms)
    * and the UTC date bucket it landed in — for throttling. The bucket is part of
    * the state so a midnight-crossing append is never throttled away from the new
@@ -132,6 +141,7 @@ export class OSSAgentStore implements AgentStore {
     createdAt: number,
     updatedAtMs: number,
     metadata: Record<string, unknown>,
+    throttleEntry?: { ms: number; bucket: string },
   ): void {
     const indexKey = this.threadActivityIndexKey(updatedAtMs, threadId);
     const indexBody = JSON.stringify({
@@ -142,6 +152,13 @@ export class OSSAgentStore implements AgentStore {
     });
     const tracked: Promise<void> = this.client.put(indexKey, indexBody)
       .catch((err: unknown) => {
+        // The throttle timestamp was recorded eagerly (before we knew the PUT
+        // outcome). On failure, roll it back so the next append retries the
+        // index write instead of being throttled away. The identity check
+        // ensures we don't clobber a newer entry from a concurrent append.
+        if (throttleEntry && this.lastAppendIndexAtMs.get(threadId) === throttleEntry) {
+          this.lastAppendIndexAtMs.delete(threadId);
+        }
         const errForLog: Error = err instanceof Error ? err : new Error(String(err));
         this.logger.warn(
           '[OSSAgentStore] failed to write thread activity index threadId=%s key=%s',
@@ -236,21 +253,29 @@ export class OSSAgentStore implements AgentStore {
    * leaves the chain stuck for subsequent waiters.
    */
   private async runExclusiveThreadMetaWrite<T>(threadId: string, fn: () => Promise<T>): Promise<T> {
-    const previous = this.threadMetaWriteTails.get(threadId) ?? Promise.resolve();
+    return this.runExclusive(this.threadMetaWriteTails, threadId, fn);
+  }
+
+  /**
+   * Generic per-key serializer backing {@link runExclusiveThreadMetaWrite} and
+   * the messages-append fallback. See that method's doc for the chain semantics.
+   */
+  private async runExclusive<T>(tails: Map<string, Promise<void>>, key: string, fn: () => Promise<T>): Promise<T> {
+    const previous = tails.get(key) ?? Promise.resolve();
     let release!: () => void;
     const current = new Promise<void>(resolve => {
       release = resolve;
     });
     const tail = previous.then(() => current);
-    this.threadMetaWriteTails.set(threadId, tail);
+    tails.set(key, tail);
 
     await previous;
     try {
       return await fn();
     } finally {
       release();
-      if (this.threadMetaWriteTails.get(threadId) === tail) {
-        this.threadMetaWriteTails.delete(threadId);
+      if (tails.get(key) === tail) {
+        tails.delete(key);
       }
     }
   }
@@ -286,10 +311,20 @@ export class OSSAgentStore implements AgentStore {
     const messagesKey = this.threadMessagesKey(threadId);
 
     if (this.client.append) {
+      // Atomic append: OSS AppendObject is position-serialized server-side, so
+      // concurrent appends to the same object are safe (the client retries on a
+      // position mismatch). No in-process lock needed.
       await this.client.append(messagesKey, lines);
     } else {
-      const existing = (await this.client.get(messagesKey)) ?? '';
-      await this.client.put(messagesKey, existing + lines);
+      // Non-atomic fallback: get-concat-put is a read-modify-write with no
+      // compare-and-swap. Serialize per thread so concurrent runs on the same
+      // thread (now appending one message at a time) cannot read the same
+      // object and clobber each other's lines. Cross-process remains
+      // last-writer-wins (documented on ObjectStorageClient.append).
+      await this.runExclusive(this.threadAppendTails, threadId, async () => {
+        const existing = (await this.client.get(messagesKey)) ?? '';
+        await this.client.put(messagesKey, existing + lines);
+      });
     }
     // Throttle the activity-index sidecar so the runtime's per-message appends
     // do not emit one index object each (which would also multiply the reader's
@@ -301,17 +336,22 @@ export class OSSAgentStore implements AgentStore {
     // write was <indexThrottleMs ago, otherwise a reader listing the new day
     // would miss this thread entirely. So we only suppress within the same
     // bucket (same key prefix the reader scans).
+    let throttleEntry: { ms: number; bucket: string } | undefined;
     if (this.indexThrottleMs > 0) {
       const bucket = dateBucket(nowMs);
       const last = this.lastAppendIndexAtMs.get(threadId);
       if (last && last.bucket === bucket && nowMs - last.ms < this.indexThrottleMs) return;
-      this.lastAppendIndexAtMs.set(threadId, { ms: nowMs, bucket });
+      throttleEntry = { ms: nowMs, bucket };
+      this.lastAppendIndexAtMs.set(threadId, throttleEntry);
       if (this.lastAppendIndexAtMs.size > MAX_THROTTLE_ENTRIES) {
         const oldest = this.lastAppendIndexAtMs.keys().next().value;
         if (oldest !== undefined) this.lastAppendIndexAtMs.delete(oldest);
       }
     }
-    this.writeThreadActivityIndex(threadId, meta.createdAt, nowMs, meta.metadata);
+    // Pass the throttle entry so a failed index PUT rolls it back, letting the
+    // next append retry instead of being throttled away (the eager set above
+    // opens the window before we know the write succeeds).
+    this.writeThreadActivityIndex(threadId, meta.createdAt, nowMs, meta.metadata, throttleEntry);
   }
 
   async createRun(
