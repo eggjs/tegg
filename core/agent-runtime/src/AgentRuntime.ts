@@ -213,28 +213,40 @@ export class AgentRuntime {
     this.runningTasks.set(run.id, task);
 
     const streamMessages: AgentMessage[] = [];
-    // Persist a turn's transcript to the thread at most once, even if a later
-    // store call (e.g. updateRun) throws after a successful append and routes
-    // us through a catch-block persist. Guarded by task.committed so we never
-    // write a thread the executor has not persisted to its own session.
-    let messagesPersisted = false;
-    const persistPartialOnce = async (): Promise<void> => {
-      if (!task.committed || messagesPersisted) return;
-      messagesPersisted = true;
-      await this.persistPartialMessages(threadId, input, streamMessages);
-    };
+    // Mirror the turn's transcript into thread storage. Guarded by
+    // task.committed so we never write a thread the executor has not persisted
+    // to its own session; idempotent so the success path and any catch-block
+    // persist never duplicate history. The in-loop flush makes a running turn
+    // visible to OSS-polling readers incrementally.
+    const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
     try {
       await this.store.updateRun(run.id, rb.start());
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          await persistPartialOnce();
+          await flushQuietly();
           await this.finaliseAbortedRun(run.id);
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
         streamMessages.push(msg);
         await this.markCommittedIfNeeded(task, msg, streamMessages);
+        // Mirror each message as it is produced (gated on commit inside flush)
+        // so an OSS-polling observer sees a running turn grow in real time.
+        await flushQuietly();
+      }
+
+      // A late abort (external signal / destroy) can land while the last
+      // in-loop flush or markCommitted is awaiting; if the executor then ends
+      // naturally we exit the loop without re-checking at the top. Re-check the
+      // local signal before the success path so an aborted run is not marked
+      // Completed (the store-status check below only catches cancelRun, which
+      // writes a terminal-ish status).
+      if (abortController.signal.aborted) {
+        await flushQuietly();
+        await this.finaliseAbortedRun(run.id);
+        const latest = await this.store.getRun(run.id);
+        return RunBuilder.fromRecord(latest).snapshot();
       }
 
       // TOCTOU: another worker (e.g. cancelRun, or its commit-timeout
@@ -243,7 +255,7 @@ export class AgentRuntime {
       // terminal state instead of overwriting it with Completed.
       const currentRun = await this.store.getRun(run.id);
       if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
-        await persistPartialOnce();
+        await flushQuietly();
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
@@ -251,19 +263,19 @@ export class AgentRuntime {
 
       const usage = MessageConverter.extractUsage(streamMessages);
 
-      // Append input messages + stream messages to thread (excluding stream_event deltas)
-      await this.store.appendMessages(threadId, [
-        ...MessageConverter.toAgentMessages(input.input.messages),
-        ...MessageConverter.filterForStorage(streamMessages),
-      ]);
-      messagesPersisted = true;
+      // Final flush on the success path: forces past the commit gate so a run
+      // that finished normally always persists its full transcript even if it
+      // never committed (a system-only run, or a conservative isSessionCommitted).
+      // Usually a no-op tail since the loop already mirrored each message.
+      // Errors propagate so a failed persist routes through the catch.
+      await flush(true);
 
       await this.store.updateRun(run.id, rb.complete(usage));
 
       return rb.snapshot();
     } catch (err: unknown) {
       if (abortController.signal.aborted) {
-        await persistPartialOnce();
+        await flushQuietly();
         await this.finaliseAbortedRun(run.id);
         const latest = await this.store.getRun(run.id);
         return RunBuilder.fromRecord(latest).snapshot();
@@ -272,7 +284,7 @@ export class AgentRuntime {
       // the partial transcript so the thread history keeps the user turn and
       // any committed assistant output instead of silently dropping the run.
       // No-op if the success path already appended (avoids duplicate history).
-      await persistPartialOnce();
+      await flushQuietly();
       try {
         await this.store.updateRun(run.id, rb.fail(err as Error));
       } catch (storeErr) {
@@ -313,24 +325,31 @@ export class AgentRuntime {
 
     (async () => {
       const streamMessages: AgentMessage[] = [];
-      // Persist a turn's transcript to the thread at most once (see syncRun).
-      let messagesPersisted = false;
-      const persistPartialOnce = async (): Promise<void> => {
-        if (!task.committed || messagesPersisted) return;
-        messagesPersisted = true;
-        await this.persistPartialMessages(threadId, input, streamMessages);
-      };
+      // Mirror the turn's transcript into thread storage (see syncRun /
+      // createMessageFlusher for the commit-gate + idempotency semantics).
+      const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
       try {
         await this.store.updateRun(run.id, rb.start());
 
         for await (const msg of this.executor.execRun(input, abortController.signal)) {
           if (abortController.signal.aborted) {
-            await persistPartialOnce();
+            await flushQuietly();
             await this.finaliseAbortedRun(run.id);
             return;
           }
           streamMessages.push(msg);
           await this.markCommittedIfNeeded(task, msg, streamMessages);
+          // Mirror each message as it is produced (see syncRun).
+          await flushQuietly();
+        }
+
+        // Late-abort re-check (see syncRun): close the window where an external
+        // abort / destroy lands during the final loop body and the executor
+        // then ends naturally, before the success path marks it Completed.
+        if (abortController.signal.aborted) {
+          await flushQuietly();
+          await this.finaliseAbortedRun(run.id);
+          return;
         }
 
         // TOCTOU: respect any terminal-ish status set by another worker
@@ -338,18 +357,15 @@ export class AgentRuntime {
         // an external expiration) instead of overwriting it with Completed.
         const currentRun = await this.store.getRun(run.id);
         if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
-          await persistPartialOnce();
+          await flushQuietly();
           return;
         }
 
         const usage = MessageConverter.extractUsage(streamMessages);
 
-        // Append input messages + stream messages to thread (excluding stream_event deltas)
-        await this.store.appendMessages(threadId, [
-          ...MessageConverter.toAgentMessages(input.input.messages),
-          ...MessageConverter.filterForStorage(streamMessages),
-        ]);
-        messagesPersisted = true;
+        // Final flush on the success path: forces past the commit gate (see
+        // syncRun) so a normally-finished run always persists its transcript.
+        await flush(true);
 
         await this.store.updateRun(run.id, rb.complete(usage));
       } catch (err: unknown) {
@@ -358,7 +374,7 @@ export class AgentRuntime {
           // Persist the partial transcript before marking the run failed so
           // the thread history is not silently dropped. No-op if the success
           // path already appended (avoids duplicate history).
-          await persistPartialOnce();
+          await flushQuietly();
           try {
             const currentRun = await this.store.getRun(run.id);
             if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -368,7 +384,7 @@ export class AgentRuntime {
             this.logger.error('[AgentRuntime] failed to update run status after error:', storeErr);
           }
         } else {
-          await persistPartialOnce();
+          await flushQuietly();
           await this.finaliseAbortedRun(run.id);
           this.logger.error('[AgentRuntime] execRun error during abort:', err);
         }
@@ -484,19 +500,16 @@ export class AgentRuntime {
   ): Promise<void> {
     const abortController = task.abortController;
     const streamMessages: AgentMessage[] = [];
-    // Persist a turn's transcript to the thread at most once (see syncRun).
-    let messagesPersisted = false;
-    const persistPartialOnce = async (): Promise<void> => {
-      if (!task.committed || messagesPersisted) return;
-      messagesPersisted = true;
-      await this.persistPartialMessages(threadId, input, streamMessages);
-    };
+    // Mirror the turn's transcript into thread storage (see syncRun /
+    // createMessageFlusher). The SSE event log (pushEvent → JSONL) is separate
+    // and always per-message; this flush controls the persisted thread mirror.
+    const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
     try {
       await this.store.updateRun(runId, rb.start());
 
       for await (const msg of this.executor.execRun(input, abortController.signal)) {
         if (abortController.signal.aborted) {
-          await persistPartialOnce();
+          await flushQuietly();
           await this.finaliseAbortedRun(runId);
           this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
           return;
@@ -509,6 +522,19 @@ export class AgentRuntime {
         this.pushEvent(buffer, eventType, msg);
 
         await this.markCommittedIfNeeded(task, msg, streamMessages);
+        // Mirror each message to the thread as it is produced (see syncRun).
+        // Separate from the SSE event log (pushEvent) above.
+        await flushQuietly();
+      }
+
+      // Late-abort re-check (see syncRun): close the window where an external
+      // abort / destroy lands during the final loop body and the executor then
+      // ends naturally, before the success path marks it Completed.
+      if (abortController.signal.aborted) {
+        await flushQuietly();
+        await this.finaliseAbortedRun(runId);
+        this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
+        return;
       }
 
       // TOCTOU: respect any terminal-ish status set by another worker
@@ -516,18 +542,15 @@ export class AgentRuntime {
       // an external expiration) instead of overwriting it with Completed.
       const currentRun = await this.store.getRun(runId);
       if (AgentRuntime.POST_LOOP_TERMINAL_STATUSES.has(currentRun.status)) {
-        await persistPartialOnce();
+        await flushQuietly();
         this.pushEvent(buffer, 'error', { message: currentRun.status, runId });
         return;
       }
 
-      // Persist to store (excluding stream_event deltas)
+      // Final flush on the success path: forces past the commit gate (see
+      // syncRun) so a normally-finished run always persists its transcript.
       const usage = MessageConverter.extractUsage(streamMessages);
-      await this.store.appendMessages(threadId, [
-        ...MessageConverter.toAgentMessages(input.input.messages),
-        ...MessageConverter.filterForStorage(streamMessages),
-      ]);
-      messagesPersisted = true;
+      await flush(true);
       await this.store.updateRun(runId, rb.complete(usage));
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
@@ -537,7 +560,7 @@ export class AgentRuntime {
         // Persist the partial transcript before marking the run failed so the
         // thread history is not silently dropped. No-op if the success path
         // already appended (avoids duplicate history).
-        await persistPartialOnce();
+        await flushQuietly();
         try {
           const currentRun = await this.store.getRun(runId);
           if (currentRun.status !== RunStatus.Cancelling && currentRun.status !== RunStatus.Cancelled) {
@@ -548,7 +571,7 @@ export class AgentRuntime {
         }
         this.pushEvent(buffer, 'error', { message: (err as Error).message, runId });
       } else {
-        await persistPartialOnce();
+        await flushQuietly();
         await this.finaliseAbortedRun(runId);
         this.logger.error('[AgentRuntime] execRun error during abort:', err);
         this.pushEvent(buffer, 'error', { message: 'cancelled', runId });
@@ -632,35 +655,90 @@ export class AgentRuntime {
   }
 
   /**
-   * Persist input + collected stream messages to the thread when a run ends
-   * on a non-success path — either an abort/cancel, or a mid-turn failure
-   * (e.g. the upstream stream is terminated). Keeping the thread in sync with
-   * any partial state that the executor has already written (e.g. Claude CLI
-   * session file) is what allows subsequent resume requests to continue from a
-   * consistent history instead of diverging and failing at executor startup,
-   * and prevents a failed turn from vanishing entirely from thread history.
+   * Build the per-run helper that mirrors a turn's transcript into thread
+   * storage. The same helper backs every run path (sync/async/stream). It is
+   * called once per message inside the run loop (so an OSS-polling observer
+   * sees a running turn grow in real time) and once more on completion.
    *
-   * Callers must check `task.committed` before invoking this; if the
-   * executor never reached a committed state the thread should be left
-   * untouched so the next run starts fresh instead of trying to resume a
-   * session that was never created on disk.
+   * **Single active run per thread.** Incremental mirroring assumes at most one
+   * run is advancing a given thread at a time. This is already required by the
+   * executor model — a thread maps to one resumable executor session (e.g. the
+   * Claude Code SDK jsonl), which two concurrent runs would diverge regardless
+   * of how the thread is mirrored. With per-message appends, concurrent runs on
+   * one thread would additionally interleave their messages into a transcript
+   * that cannot be resumed as a valid conversation. Callers must serialize runs
+   * per thread (the typical "one conversation = one sequential thread" model);
+   * the runtime does not enforce it.
    *
-   * Errors are swallowed here so a store failure cannot mask the original
-   * abort/failure or prevent the run status from being finalised.
+   * Semantics it guarantees, regardless of how often it is called:
+   *
+   * - **Commit gate** (default): nothing is written before the executor's
+   *   session is committed (`task.committed`). If a run dies *before* committing
+   *   — an abort or a mid-turn failure — the thread is left untouched so the
+   *   next run starts fresh instead of trying to resume a session that was
+   *   never created on disk. The gate is bypassed by `flush(true)`, used only on
+   *   the *successful* completion path: a run that finished normally must
+   *   persist its full transcript even if `task.committed` was never flipped
+   *   (e.g. a system-only run, or a conservative custom `isSessionCommitted`),
+   *   matching the pre-incremental behaviour where the success path appended
+   *   unconditionally.
+   * - **Input-once**: the user input messages are prepended exactly once, on
+   *   the first write.
+   * - **At-most-once per message**: a `flushedCount` cursor tracks how far
+   *   `streamMessages` has been mirrored; cursor/flags only advance after a
+   *   successful append, so a failed append is retried (never duplicated and
+   *   never silently dropped) by the next flush.
+   * - **Storage filter**: `stream_event` deltas are never persisted.
+   *
+   * The persisted transcript is input messages followed by every
+   * non-`stream_event` message in order.
    */
-  private async persistPartialMessages(
+  private createMessageFlusher(
     threadId: string,
     input: CreateRunInput,
+    task: RunTaskState,
     streamMessages: AgentMessage[],
-  ): Promise<void> {
-    try {
-      await this.store.appendMessages(threadId, [
-        ...MessageConverter.toAgentMessages(input.input.messages),
-        ...MessageConverter.filterForStorage(streamMessages),
-      ]);
-    } catch (err) {
-      this.logger.error('[AgentRuntime] failed to persist messages on abort:', err);
-    }
+  ): { flush: (force?: boolean) => Promise<void>; flushQuietly: () => Promise<void> } {
+    let flushedCount = 0;
+    let inputFlushed = false;
+
+    const flush = async (force = false): Promise<void> => {
+      if (!force && !task.committed) return;
+      const pending = MessageConverter.filterForStorage(streamMessages.slice(flushedCount));
+      const prefix = inputFlushed ? [] : MessageConverter.toAgentMessages(input.input.messages);
+      const toAppend = [ ...prefix, ...pending ];
+      const cursorAtRead = streamMessages.length;
+      if (toAppend.length > 0) {
+        await this.store.appendMessages(threadId, toAppend);
+      }
+      // Advance only after a successful append (or a genuine no-op) so a
+      // throwing append leaves the cursor untouched and is retried next flush.
+      //
+      // KNOWN LIMITATION (at-least-once): this favours no-loss over no-duplicate.
+      // If an append is *ambiguous* — the store committed it but the client saw
+      // an error (timeout / lost response) — the cursor does not advance and the
+      // next flush re-appends the same lines, producing a duplicate (the OSS
+      // append path will HEAD and re-append from the object's end). The previous
+      // turn-batch design had the same ambiguous-retry risk (its catch-block
+      // persist re-appended), just once per turn rather than per message. A
+      // duplicated mirror line is a display/parse nuisance, not a lost turn;
+      // de-duplicating would need idempotent line ids or length reconciliation,
+      // tracked as a follow-up rather than carried here.
+      flushedCount = cursorAtRead;
+      inputFlushed = true;
+    };
+
+    // Gated, error-swallowing flush for the in-loop incremental path and the
+    // abort/failure cleanup paths (never forces past the commit gate).
+    const flushQuietly = async (): Promise<void> => {
+      try {
+        await flush();
+      } catch (err) {
+        this.logger.error('[AgentRuntime] failed to persist messages:', err);
+      }
+    };
+
+    return { flush, flushQuietly };
   }
 
   /**

@@ -374,6 +374,36 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(persisted.messages[0].type, 'user');
       assert.equal(persisted.messages[1].type, 'assistant');
     });
+
+    it('should persist the full transcript on success even when the run never commits', async () => {
+      // Regression: the success-path flush must NOT be gated on task.committed.
+      // A run that finishes normally but never flips committed (here a custom
+      // isSessionCommitted that always returns false; equally a system-only run)
+      // must still persist its transcript, matching the pre-incremental
+      // behaviour where the success path appended unconditionally — otherwise
+      // the thread is silently left empty and the next run's isResume is wrong.
+      const thread = await runtime.createThread();
+      executor.isSessionCommitted = () => false;
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'done' }] } };
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const result = await runtime.syncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+      assert.equal(result.status, RunStatus.Completed);
+
+      const persisted = await store.getThread(thread.id);
+      assert.equal(persisted.messages.length, 2, 'transcript must be persisted on success regardless of commit');
+      assert.equal(persisted.messages[0].type, 'user');
+      assert.equal(persisted.messages[1].type, 'assistant');
+    });
   });
 
   describe('asyncRun', () => {
@@ -1402,6 +1432,134 @@ describe('test/AgentRuntime.test.ts', () => {
 
       // Thread append failed — state is empty, but the abort path completed cleanly
       store.appendMessages = origAppend;
+    });
+  });
+
+  describe('incremental mirror (messages persisted as produced)', () => {
+    function makeRuntime(): AgentRuntime {
+      return new AgentRuntime({
+        executor,
+        store,
+        logger: { info() { /* noop */ }, error() { /* noop */ } } as unknown as AgentRuntimeOptions['logger'],
+      });
+    }
+
+    async function waitUntil(cond: () => boolean | Promise<boolean>, timeoutMs = 2000): Promise<void> {
+      const start = Date.now();
+      while (!(await cond())) {
+        if (Date.now() - start > timeoutMs) throw new Error('waitUntil timeout');
+        await setTimeout(10);
+      }
+    }
+
+    it('makes a running turn visible to readers before it completes', async () => {
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        await gate;
+        yield {
+          type: 'result',
+          subtype: 'success',
+          usage: { input_tokens: 1, output_tokens: 1 },
+        } as SDKResultMessage;
+      };
+
+      const incrementalRuntime = makeRuntime();
+      try {
+        const thread = await incrementalRuntime.createThread();
+        const run = await incrementalRuntime.asyncRun({
+          threadId: thread.id,
+          input: { messages: [{ role: 'user', content: 'Hi' }] },
+        });
+
+        // While the run is still in flight (gate not released), the user +
+        // committed assistant message must already be mirrored to the thread.
+        await waitUntil(async () => (await store.getThread(thread.id)).messages.length === 2);
+        const mid = await store.getRun(run.id);
+        assert.equal(mid.status, RunStatus.InProgress, 'run should still be running when partial is visible');
+        const midThread = await store.getThread(thread.id);
+        assert.equal(midThread.messages[0].type, 'user');
+        assert.equal(midThread.messages[1].type, 'assistant');
+
+        // Let the turn finish; the final transcript must not duplicate anything.
+        resolveGate();
+        await incrementalRuntime.waitForPendingTasks();
+        const done = await store.getRun(run.id);
+        assert.equal(done.status, RunStatus.Completed);
+        const finalThread = await store.getThread(thread.id);
+        assert.equal(finalThread.messages.length, 2, 'no duplicate messages after completion');
+        assert.equal(finalThread.messages[0].type, 'user');
+        assert.equal(finalThread.messages[1].type, 'assistant');
+      } finally {
+        resolveGate();
+        await incrementalRuntime.destroy();
+      }
+    });
+
+    it('keeps the commit gate: nothing is mirrored when aborted before commit', async () => {
+      // Executor blocks before yielding any (committing) message.
+      const resolveRef: { resolve?: () => void } = {};
+      executor.execRun = createBlockingExecRun(resolveRef, [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'never' }] } },
+      ]);
+
+      const incrementalRuntime = makeRuntime();
+      try {
+        const thread = await incrementalRuntime.createThread();
+        const ac = new AbortController();
+        const syncPromise = incrementalRuntime.syncRun(
+          { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+          ac.signal,
+        );
+
+        // Give syncRun time to enter the await on the (never-committing) executor.
+        await setTimeout(20);
+        ac.abort();
+        await syncPromise;
+
+        const persisted = await store.getThread(thread.id);
+        assert.equal(persisted.messages.length, 0, 'thread must stay empty when executor never committed');
+      } finally {
+        resolveRef.resolve?.();
+        await incrementalRuntime.destroy();
+      }
+    });
+
+    it('marks the run cancelled when an external abort lands while the executor ends naturally', async () => {
+      // Closes the post-loop window: the executor commits, then ignores the
+      // abort signal and ends naturally right after an external abort fires.
+      // The loop exits without a top-of-loop re-check, so the post-loop abort
+      // re-check must catch it — otherwise the run is wrongly marked Completed
+      // (an external signal does not write a terminal store status).
+      let resolveGate!: () => void;
+      const gate = new Promise<void>(r => { resolveGate = r; });
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'partial' }] } };
+        await gate; // ignores the abort signal, then returns (ends naturally)
+      };
+
+      const incrementalRuntime = makeRuntime();
+      try {
+        const thread = await incrementalRuntime.createThread();
+        const ac = new AbortController();
+        const syncPromise = incrementalRuntime.syncRun(
+          { threadId: thread.id, input: { messages: [{ role: 'user', content: 'Hi' }] } },
+          ac.signal,
+        );
+
+        // Wait until the assistant message is incrementally mirrored (committed),
+        // then abort and let the executor finish without observing the signal.
+        await waitUntil(async () => (await store.getThread(thread.id)).messages.length === 2);
+        ac.abort();
+        resolveGate();
+
+        const result = await syncPromise;
+        assert.equal(result.status, RunStatus.Cancelled, 'late external abort must not be marked Completed');
+      } finally {
+        resolveGate();
+        await incrementalRuntime.destroy();
+      }
     });
   });
 });

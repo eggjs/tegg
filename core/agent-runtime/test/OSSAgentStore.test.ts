@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import type { AgentMessage } from '@eggjs/tegg-types/agent-runtime';
+import type { AgentMessage, ObjectStorageClient } from '@eggjs/tegg-types/agent-runtime';
 
 import {
   AgentNotFoundError,
@@ -146,6 +146,28 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.messages.length, 2);
       assert.equal(fetched.messages[0].type, 'user');
       assert.equal(fetched.messages[1].type, 'assistant');
+    });
+
+    it('serializes concurrent appends on the same thread (no lost update in the fallback)', async () => {
+      const client = new MapStorageClientWithoutAppend();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread();
+
+      // Widen the get-concat-put window so a missing per-thread lock would let
+      // the two appends read the same object and clobber each other.
+      client.delayPutWhenKeyMatches(/messages\.jsonl$/, 20);
+
+      const a: AgentMessage[] = [{ type: 'user', message: { role: 'user', content: 'A' } }];
+      const b: AgentMessage[] = [
+        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'B' }] } },
+      ];
+      await Promise.all([
+        localStore.appendMessages(thread.id, a),
+        localStore.appendMessages(thread.id, b),
+      ]);
+
+      const fetched = await localStore.getThread(thread.id, { includeAllMessages: true });
+      assert.equal(fetched.messages.length, 2, 'both concurrent appends must be preserved');
     });
   });
 
@@ -833,6 +855,110 @@ describe('test/OSSAgentStore.test.ts', () => {
       );
       const indexBodyAfter = await client.get(indexKeysAfter[0]);
       assert.equal(indexBodyAfter, indexBodyBefore, 'the index body should be byte-identical');
+    });
+
+    it('writes one activity index per append when throttling is disabled (indexThrottleMs: 0)', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/', indexThrottleMs: 0 });
+
+      const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
+
+      const thread = await withFixedNow(C, () => localStore.createThread({ k: 'v' }));
+      await withFixedNow(C + 100, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 200, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 6000, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // createThread + 3 appends = 4 distinct index entries (no coalescing).
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 4, `expected one index per write, got ${JSON.stringify(indexKeys)}`);
+    });
+
+    it('coalesces activity index writes by default (indexThrottleMs defaults to 5s)', async () => {
+      const client = new MapStorageClient();
+      // No indexThrottleMs → default 5s throttle.
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' });
+
+      const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
+
+      const thread = await withFixedNow(C, () => localStore.createThread({ k: 'v' }));
+      // First append writes (no prior append). Second is within 5s → throttled.
+      // Third is >5s after the first → writes again.
+      await withFixedNow(C + 100, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 200, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(C + 6000, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // createThread(1) + append@+100(1) + append@+200(throttled) + append@+6000(1) = 3.
+      const indexKeys = client.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 3, `expected throttled index count, got ${JSON.stringify(indexKeys)}`);
+
+      // The messages.jsonl itself must still contain every appended line.
+      const fetched = await localStore.getThread(thread.id, { includeAllMessages: true });
+      assert.equal(fetched.messages.length, 3, 'all appended messages must be persisted regardless of throttling');
+    });
+
+    it('does not throttle across a UTC date boundary (new day bucket always gets an entry)', async () => {
+      const client = new MapStorageClient();
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' }); // default 5s throttle
+
+      const CREATE = Date.UTC(2025, 10, 12, 10, 0, 0, 0); // 2025-11-12 (separate day, so day-13 count is just the append)
+      const BEFORE_MIDNIGHT = Date.UTC(2025, 10, 13, 23, 59, 58, 0); // 2025-11-13
+      const AFTER_MIDNIGHT = Date.UTC(2025, 10, 14, 0, 0, 1, 0); // 2025-11-14, only 3s later (< 5s)
+      const msg: AgentMessage[] = [ { type: 'user', message: { role: 'user', content: 'x' } } as unknown as AgentMessage ];
+
+      const thread = await withFixedNow(CREATE, () => localStore.createThread({ k: 'v' }));
+      await withFixedNow(BEFORE_MIDNIGHT, () => localStore.appendMessages(thread.id, msg));
+      await withFixedNow(AFTER_MIDNIGHT, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // Despite the 3s gap (< 5s throttle), the new day's bucket must contain
+      // the thread, else a reader listing 2025-11-14 would miss it.
+      const day13 = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-13/');
+      const day14 = client.keysWithPrefix('agent/index/threads-by-updated-date/2025-11-14/');
+      assert.equal(day13.length, 1, `2025-11-13 bucket: ${JSON.stringify(day13)}`);
+      assert.equal(day14.length, 1, `2025-11-14 bucket must not be throttled away: ${JSON.stringify(day14)}`);
+      assert.ok(day14[0].endsWith(`_${thread.id}`));
+    });
+
+    it('rolls back the throttle window when an index PUT fails so the next append retries', async () => {
+      const base = new MapStorageClient();
+      let failNextIndexPut = false;
+      // Custom client: fail the next /index/ PUT exactly once (used to simulate a
+      // transient index-write failure on the first throttled append).
+      const client: ObjectStorageClient = {
+        async put(key: string, value: string): Promise<void> {
+          if (failNextIndexPut && key.includes('/index/threads-by-updated-date/')) {
+            failNextIndexPut = false;
+            throw new Error('transient index put failure');
+          }
+          await base.put(key, value);
+        },
+        get: (key: string) => base.get(key),
+        append: (key: string, value: string) => base.append(key, value),
+      };
+      const localStore = new OSSAgentStore({ client, prefix: 'agent/' }); // default 5s throttle
+      const C = Date.UTC(2025, 10, 13, 8, 0, 0, 0);
+      const msg: AgentMessage[] = [{ type: 'user', message: { role: 'user', content: 'x' } }];
+
+      const thread = await withFixedNow(C, () => localStore.createThread({ k: 'v' }));
+      await localStore.awaitPendingWrites(); // createThread's index lands
+
+      // First append: its index PUT fails → throttle entry must be rolled back.
+      failNextIndexPut = true;
+      await withFixedNow(C + 100, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // Second append within the 5s window: since the throttle was rolled back,
+      // it must write an index (not be suppressed for a write that never landed).
+      await withFixedNow(C + 200, () => localStore.appendMessages(thread.id, msg));
+      await localStore.awaitPendingWrites();
+
+      // createThread(1) + first append (failed, 0) + second append (1) = 2.
+      const indexKeys = base.keysWithPrefix('agent/index/threads-by-updated-date/');
+      assert.equal(indexKeys.length, 2, `expected the retry to write an index, got ${JSON.stringify(indexKeys)}`);
     });
   });
 });
