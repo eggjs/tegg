@@ -63,11 +63,18 @@ export interface RunRecord {
   usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
   config?: AgentRunConfig;
   metadata?: Record<string, unknown>;
-  createdAt: number;
-  startedAt?: number | null;
-  completedAt?: number | null;
-  cancelledAt?: number | null;
-  failedAt?: number | null;
+  createdAt: number; // Unix seconds
+  startedAt?: number | null; // Unix seconds (legacy; retained for back-compat)
+  completedAt?: number | null; // Unix seconds
+  cancelledAt?: number | null; // Unix seconds
+  failedAt?: number | null; // Unix seconds
+  // ms-granular timing (new). Naming: absolute epoch-ms points end in `AtMs`, durations in `Ms`.
+  startedAtMs?: number | null;
+  completedAtMs?: number | null;
+  /** completedAtMs - startedAtMs (end-to-end run wall time in ms). */
+  durationMs?: number | null;
+  /** Sum of result.duration_api_ms across the run (pure model API time in ms). */
+  apiDurationMs?: number | null;
 }
 
 // ===== Store interface =====

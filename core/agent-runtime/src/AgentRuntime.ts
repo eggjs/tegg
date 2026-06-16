@@ -100,7 +100,7 @@ export class AgentRuntime {
   // execution loops. Covers a TOCTOU window where another actor (most
   // notably cancelRun's commit-timeout watchdog, which writes Failed) sets
   // a terminal state while this worker has just exited the for-await loop
-  // but hasn't yet written rb.complete(usage). Completed is intentionally
+  // but hasn't yet written rb.complete(). Completed is intentionally
   // excluded so the normal success path is not routed through here.
   private static readonly POST_LOOP_TERMINAL_STATUSES = new Set<RunStatus>([
     RunStatus.Cancelling,
@@ -270,7 +270,7 @@ export class AgentRuntime {
       // Errors propagate so a failed persist routes through the catch.
       await flush(true);
 
-      await this.store.updateRun(run.id, rb.complete(usage));
+      await this.store.updateRun(run.id, rb.complete(usage, MessageConverter.extractApiDurationMs(streamMessages)));
 
       return rb.snapshot();
     } catch (err: unknown) {
@@ -367,7 +367,7 @@ export class AgentRuntime {
         // syncRun) so a normally-finished run always persists its transcript.
         await flush(true);
 
-        await this.store.updateRun(run.id, rb.complete(usage));
+        await this.store.updateRun(run.id, rb.complete(usage, MessageConverter.extractApiDurationMs(streamMessages)));
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
           // Non-abort failure (e.g. upstream stream terminated mid-turn).
@@ -551,7 +551,7 @@ export class AgentRuntime {
       // syncRun) so a normally-finished run always persists its transcript.
       const usage = MessageConverter.extractUsage(streamMessages);
       await flush(true);
-      await this.store.updateRun(runId, rb.complete(usage));
+      await this.store.updateRun(runId, rb.complete(usage, MessageConverter.extractApiDurationMs(streamMessages)));
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {

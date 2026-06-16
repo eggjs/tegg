@@ -36,6 +36,25 @@ export class MessageConverter {
   }
 
   /**
+   * Sum `duration_api_ms` across `result` messages — the run's pure model-API
+   * time in ms. Returns undefined when no result message carried it.
+   */
+  static extractApiDurationMs(messages: AgentMessage[]): number | undefined {
+    let total = 0;
+    let has = false;
+    for (const msg of messages) {
+      if (msg.type === 'result') {
+        const d = (msg as SDKResultMessage & { duration_api_ms?: number }).duration_api_ms;
+        if (typeof d === 'number') {
+          has = true;
+          total += d;
+        }
+      }
+    }
+    return has ? total : undefined;
+  }
+
+  /**
    * Filter out stream_event messages before persisting to thread storage.
    * Stream events are incremental deltas (one per token) only useful during
    * real-time streaming; the final assistant message already contains the

@@ -218,6 +218,58 @@ describe('test/RunBuilder.test.ts', () => {
     });
   });
 
+  describe('ms-granular timing', () => {
+    it('start should set startedAtMs as epoch ms', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
+      const update = rb.start();
+      assert.equal(typeof update.startedAtMs, 'number');
+      assert.ok(update.startedAtMs! >= 1_000_000_000_000); // epoch ms, not seconds
+      assert.equal(typeof rb.snapshot().startedAtMs, 'number');
+    });
+
+    it('complete should set completedAtMs, durationMs and apiDurationMs', () => {
+      const rb = RunBuilder.create(makeRunRecord(), 'thread_1');
+      rb.start();
+      const update = rb.complete({ promptTokens: 1, completionTokens: 2, totalTokens: 3 }, 4200);
+      assert.equal(typeof update.completedAtMs, 'number');
+      assert.equal(typeof update.durationMs, 'number');
+      assert.ok(update.durationMs! >= 0);
+      assert.equal(update.apiDurationMs, 4200);
+      const snap = rb.snapshot();
+      assert.equal(snap.apiDurationMs, 4200);
+      assert.equal(typeof snap.durationMs, 'number');
+    });
+
+    it('complete should null durationMs/apiDurationMs when restored without startedAtMs and no api time', () => {
+      const rb = RunBuilder.create(makeRunRecord({ status: RunStatus.InProgress }), 'thread_1');
+      const update = rb.complete();
+      assert.equal(update.durationMs, null);
+      assert.equal(update.apiDurationMs, null);
+    });
+
+    it('create should restore ms timing fields into snapshot', () => {
+      const snap = RunBuilder.create(makeRunRecord({
+        status: RunStatus.Completed,
+        startedAtMs: 1_700_000_000_000,
+        completedAtMs: 1_700_000_005_000,
+        durationMs: 5000,
+        apiDurationMs: 4200,
+      }), 'thread_1').snapshot();
+      assert.equal(snap.startedAtMs, 1_700_000_000_000);
+      assert.equal(snap.completedAtMs, 1_700_000_005_000);
+      assert.equal(snap.durationMs, 5000);
+      assert.equal(snap.apiDurationMs, 4200);
+    });
+
+    it('snapshot defaults ms timing to null', () => {
+      const snap = RunBuilder.create(makeRunRecord(), 'thread_1').snapshot();
+      assert.equal(snap.startedAtMs, null);
+      assert.equal(snap.completedAtMs, null);
+      assert.equal(snap.durationMs, null);
+      assert.equal(snap.apiDurationMs, null);
+    });
+  });
+
   describe('full lifecycle', () => {
     it('should support queued → in_progress → completed', () => {
       const rb = RunBuilder.create(makeRunRecord(), 'thread_1');

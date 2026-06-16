@@ -100,6 +100,39 @@ describe('test/MessageConverter.test.ts', () => {
     });
   });
 
+  describe('extractApiDurationMs', () => {
+    it('should return undefined when no result messages', () => {
+      assert.equal(MessageConverter.extractApiDurationMs([
+        { type: 'assistant', message: { role: 'assistant', content: [] } },
+      ]), undefined);
+    });
+
+    it('should return undefined when result has no duration_api_ms', () => {
+      assert.equal(MessageConverter.extractApiDurationMs([
+        { type: 'result', subtype: 'success' } as SDKResultMessage,
+      ]), undefined);
+    });
+
+    it('should extract duration_api_ms from a single result', () => {
+      assert.equal(MessageConverter.extractApiDurationMs([
+        { type: 'result', subtype: 'success', duration_api_ms: 5200 } as unknown as SDKResultMessage,
+      ]), 5200);
+    });
+
+    it('should accumulate duration_api_ms across multiple results', () => {
+      assert.equal(MessageConverter.extractApiDurationMs([
+        { type: 'result', subtype: 'success', duration_api_ms: 5200 } as unknown as SDKResultMessage,
+        { type: 'result', subtype: 'success', duration_api_ms: 800 } as unknown as SDKResultMessage,
+      ]), 6000);
+    });
+
+    it('should ignore non-numeric duration_api_ms', () => {
+      assert.equal(MessageConverter.extractApiDurationMs([
+        { type: 'result', subtype: 'success', duration_api_ms: 'x' } as unknown as SDKResultMessage,
+      ]), undefined);
+    });
+  });
+
   describe('filterForStorage', () => {
     it('should filter out stream_event messages', () => {
       const messages: AgentMessage[] = [

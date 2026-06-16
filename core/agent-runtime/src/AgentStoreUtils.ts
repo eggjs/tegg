@@ -4,6 +4,11 @@ export function nowUnix(): number {
   return Math.floor(Date.now() / 1000);
 }
 
+/** Current time as epoch milliseconds — for ms-granular run timing. */
+export function nowMs(): number {
+  return Date.now();
+}
+
 export function newMsgId(): string {
   return `msg_${crypto.randomUUID()}`;
 }
