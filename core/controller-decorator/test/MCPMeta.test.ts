@@ -19,8 +19,11 @@ describe('test/MCPMeta.test.ts', () => {
     assert(fooControllerMetaData.tools[0].name === 'bar');
     assert(fooControllerMetaData.resources[0].name === 'car');
     assert(fooControllerMetaData.resources[0].template instanceof ResourceTemplate);
-    assert(fooControllerMetaData.tools[0].detail?.argsSchema === ToolType);
-    assert(fooControllerMetaData.prompts[0].detail?.argsSchema === PromptType);
+    assert.strictEqual(fooControllerMetaData.tools[0].detail?.argsSchema as unknown, ToolType);
+    assert.strictEqual(fooControllerMetaData.prompts[0].detail?.argsSchema as unknown, PromptType);
+    assert(fooControllerMetaData.prompts[0].contextParamIndex === 0);
+    assert(fooControllerMetaData.tools[0].contextParamIndex === 1);
+    assert(fooControllerMetaData.resources[0].contextParamIndex === 1);
     assert(fooControllerMetaData.timeout === 60000);
   });
 });

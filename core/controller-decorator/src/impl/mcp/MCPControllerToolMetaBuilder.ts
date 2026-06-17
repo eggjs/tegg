@@ -25,10 +25,12 @@ export class MCPControllerToolMetaBuilder {
     const params = MCPInfoUtil.getMCPToolParams(this.clazz, this.methodName);
     const detail = MCPInfoUtil.getMCPToolArgsIndex(this.clazz, this.methodName);
     const extra = MCPInfoUtil.getMCPExtra(this.clazz, this.methodName);
+    const contextParamIndex = MethodInfoUtil.getMethodContextIndex(this.clazz, this.methodName);
 
     return new MCPToolMeta({
       name: this.methodName,
       middlewares,
+      contextParamIndex,
       needAcl,
       aclCode,
       detail,

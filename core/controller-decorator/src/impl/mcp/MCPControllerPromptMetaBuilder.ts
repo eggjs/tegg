@@ -25,10 +25,12 @@ export class MCPControllerPromptMetaBuilder {
     const params = MCPInfoUtil.getMCPPromptParams(this.clazz, this.methodName);
     const detail = MCPInfoUtil.getMCPPromptArgsIndex(this.clazz, this.methodName);
     const extra = MCPInfoUtil.getMCPExtra(this.clazz, this.methodName);
+    const contextParamIndex = MethodInfoUtil.getMethodContextIndex(this.clazz, this.methodName);
 
     return new MCPPromptMeta({
       name: this.methodName,
       middlewares,
+      contextParamIndex,
       needAcl,
       aclCode,
       detail,

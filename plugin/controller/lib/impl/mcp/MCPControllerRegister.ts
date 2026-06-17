@@ -788,6 +788,7 @@ export class MCPControllerRegister implements ControllerRegister {
               `chair-mcp-${metadata.name ?? this.app.name}-server`,
             version: this.controllerMeta.version ?? '1.0.0',
             hooks: MCPControllerRegister.hooks,
+            getContext: () => this.app.currentContext,
           });
         };
         this.mcpStatelessStreamServerInit(metadata.name);

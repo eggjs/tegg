@@ -5,6 +5,7 @@ import { MCPController } from "../../src/decorator/mcp/MCPController";
 import * as z from 'zod/v4';
 import { MCPResource } from "../../src/decorator/mcp/MCPResource";
 import { Extra } from "../../src/decorator/mcp/Extra";
+import { Context } from "../../src/decorator/Context";
 
 export const PromptType = {
   name: z.string(),
@@ -20,7 +21,8 @@ export const ToolType = {
 })
 export class MCPFooController {
   @MCPPrompt()
-  async foo(@PromptArgsSchema(PromptType) args: PromptArgs<typeof PromptType>): Promise<MCPPromptResponse> {
+  async foo(@Context() ctx: object, @PromptArgsSchema(PromptType as any) args: PromptArgs<any>): Promise<MCPPromptResponse> {
+    void ctx;
     return {
       messages: [
         {
@@ -35,7 +37,8 @@ export class MCPFooController {
   }
 
   @MCPTool()
-  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
+  async bar(@ToolArgsSchema(ToolType as any) args: ToolArgs<any>, @Context() ctx: object): Promise<MCPToolResponse> {
+    void ctx;
     return {
       content: [
         {
@@ -55,7 +58,8 @@ export class MCPFooController {
       },
     ],
   })
-  async car(uri: URL, @Extra() extra): Promise<MCPResourceResponse> {
+  async car(uri: URL, @Context() ctx: object, @Extra() extra): Promise<MCPResourceResponse> {
+    void ctx;
     console.log(extra);
     return {
       contents: [{
@@ -65,4 +69,3 @@ export class MCPFooController {
     };
   }
 }
-
