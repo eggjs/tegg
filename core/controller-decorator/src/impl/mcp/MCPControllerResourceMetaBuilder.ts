@@ -24,10 +24,12 @@ export class MCPControllerResourceMetaBuilder {
     const aclCode = MethodInfoUtil.getMethodAcl(this.clazz, this.methodName);
     const params = MCPInfoUtil.getMCPResourceParams(this.clazz, this.methodName);
     const extra = MCPInfoUtil.getMCPExtra(this.clazz, this.methodName);
+    const contextParamIndex = MethodInfoUtil.getMethodContextIndex(this.clazz, this.methodName);
 
     return new MCPResourceMeta({
       name: this.methodName,
       middlewares,
+      contextParamIndex,
       needAcl,
       aclCode,
       extra,

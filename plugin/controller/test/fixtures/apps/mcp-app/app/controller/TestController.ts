@@ -15,7 +15,9 @@ import {
   ToolArgsSchema,
   Extra,
   ToolExtra,
+  Context,
 } from '@eggjs/tegg';
+import type { Context as EggContext } from 'egg';
 import * as z from 'zod/v4';
 
 export const PromptType = {
@@ -93,12 +95,13 @@ export class TestMcpController {
   }
 
   @MCPTool()
-  async testTraceTest(@Extra() extra: ToolExtra): Promise<MCPToolResponse> {
+  async testTraceTest(@Context() ctx: EggContext, @Extra() extra: ToolExtra): Promise<MCPToolResponse> {
+    void extra;
     return {
       content: [
         {
           type: 'text',
-          text: `hello ${extra.requestInfo?.headers.trace}`,
+          text: `hello ${ctx.request.headers.trace}`,
         },
       ],
     };

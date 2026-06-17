@@ -30,6 +30,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       name: 'test',
       version: '1.0.0',
       hooks: [],
+      getContext: () => ({ trace: 'context' }),
     });
 
     const resourceMeta = new MCPResourceMeta({
@@ -37,12 +38,14 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       needAcl: false,
       middlewares: [],
       uri: 'mcp://npm/egg?version=4.10.0',
+      contextParamIndex: 1,
     });
 
     const toolMeta = new MCPToolMeta({
       name: 'testTool',
       needAcl: false,
       middlewares: [],
+      contextParamIndex: 1,
       detail: {
         argsSchema: ToolType,
         index: 0,
@@ -55,6 +58,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       middlewares: [],
       description: 'description',
       title: 'title',
+      contextParamIndex: 1,
       detail: {
         argsSchema: PromptType,
         index: 0,
@@ -62,7 +66,8 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     });
 
     const getOrCreateEggObject = () => ({ obj: {
-      [promptMeta.name]: args => {
+      [promptMeta.name]: (args, ctx) => {
+        assert.deepEqual(ctx, { trace: 'context' });
         return {
           messages: [
             {
@@ -75,7 +80,8 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
           ],
         };
       },
-      [toolMeta.name]: args => {
+      [toolMeta.name]: (args, ctx) => {
+        assert.deepEqual(ctx, { trace: 'context' });
         return {
           content: [
             {
@@ -85,7 +91,8 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
           ],
         };
       },
-      [resourceMeta.name]: uri => {
+      [resourceMeta.name]: (uri, ctx) => {
+        assert.deepEqual(ctx, { trace: 'context' });
         return {
           contents: [
             {

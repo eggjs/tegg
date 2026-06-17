@@ -15,11 +15,14 @@ export interface MCPServerHelperOptions {
   name: string;
   version: string;
   hooks: MCPControllerHook[];
+  getContext?: () => unknown;
 }
 
 export class MCPServerHelper {
   server: McpServer;
   hooks: MCPControllerHook[];
+  private readonly getContext?: () => unknown;
+
   constructor(opts: MCPServerHelperOptions) {
     this.server = new McpServer(
       {
@@ -29,6 +32,46 @@ export class MCPServerHelper {
       { capabilities: { logging: {} } },
     );
     this.hooks = opts.hooks;
+    this.getContext = opts.getContext;
+  }
+
+  private buildResourceArgs(args: any[], resourceMeta: MCPResourceMeta) {
+    const newArgs = [ ...args ];
+    if (resourceMeta.extra !== undefined) {
+      newArgs[resourceMeta.extra] = resourceMeta.template ? args[2] : args[1];
+    }
+    if (resourceMeta.contextParamIndex !== undefined) {
+      newArgs[resourceMeta.contextParamIndex] = this.getContext?.();
+    }
+    return newArgs;
+  }
+
+  private buildToolArgs(args: any[], toolMeta: MCPToolMeta, hasSchema: boolean) {
+    const newArgs = [ ...args ];
+    if (hasSchema && toolMeta.detail) {
+      newArgs[toolMeta.detail.index] = args[0];
+    }
+    if (toolMeta.extra !== undefined) {
+      newArgs[toolMeta.extra] = hasSchema ? args[1] : args[0];
+    }
+    if (toolMeta.contextParamIndex !== undefined) {
+      newArgs[toolMeta.contextParamIndex] = this.getContext?.();
+    }
+    return newArgs;
+  }
+
+  private buildPromptArgs(args: any[], promptMeta: MCPPromptMeta, hasSchema: boolean) {
+    const newArgs = [ ...args ];
+    if (hasSchema && promptMeta.detail) {
+      newArgs[promptMeta.detail.index] = args[0];
+    }
+    if (promptMeta.extra !== undefined) {
+      newArgs[promptMeta.extra] = hasSchema ? args[1] : args[0];
+    }
+    if (promptMeta.contextParamIndex !== undefined) {
+      newArgs[promptMeta.contextParamIndex] = this.getContext?.();
+    }
+    return newArgs;
   }
 
   async mcpResourceRegister(
@@ -43,10 +86,11 @@ export class MCPServerHelper {
       );
       const realObj = eggObj.obj;
       const realMethod = realObj[resourceMeta.name];
+      const newArgs = this.buildResourceArgs(args, resourceMeta);
       return Reflect.apply(
         realMethod,
         realObj,
-        args,
+        newArgs,
       ) as ReturnType<ReadResourceCallback>;
     };
     const name = resourceMeta.mcpName ?? resourceMeta.name;
@@ -87,20 +131,7 @@ export class MCPServerHelper {
       );
       const realObj = eggObj.obj;
       const realMethod = realObj[toolMeta.name];
-      let newArgs: any[] = [];
-      if (schema && toolMeta.detail) {
-        // 如果有 schema 则证明入参第一个就是 schema
-        newArgs[toolMeta.detail.index] = args[0];
-
-        // 如果有 schema 则证明入参第二个就是 extra
-        if (toolMeta.extra) {
-          newArgs[toolMeta.extra] = args[1];
-        }
-      } else if (toolMeta.extra) {
-        // 无 schema, 那么入参第一个就是 extra
-        newArgs[toolMeta.extra] = args[0];
-      }
-      newArgs = [ ...newArgs, ...args ];
+      const newArgs = this.buildToolArgs(args, toolMeta, !!schema);
       return Reflect.apply(realMethod, realObj, newArgs) as ReturnType<ToolCallback>;
     };
     this.server.registerTool(name, {
@@ -133,20 +164,7 @@ export class MCPServerHelper {
       const eggObj = await getOrCreateEggObject(controllerProto, controllerProto.name);
       const realObj = eggObj.obj;
       const realMethod = realObj[promptMeta.name];
-      let newArgs: any[] = [];
-      if (schema && promptMeta.detail) {
-        // 如果有 schema 则证明入参第一个就是 schema
-        newArgs[promptMeta.detail.index] = args[0];
-
-        // 如果有 schema 则证明入参第二个就是 extra
-        if (promptMeta.extra) {
-          newArgs[promptMeta.extra] = args[1];
-        }
-      } else if (promptMeta.extra) {
-        // 无 schema, 那么入参第一个就是 extra
-        newArgs[promptMeta.extra] = args[0];
-      }
-      newArgs = [ ...newArgs, ...args ];
+      const newArgs = this.buildPromptArgs(args, promptMeta, !!schema);
       return Reflect.apply(realMethod, realObj, newArgs) as ReturnType<PromptCallback>;
     };
     this.server.registerPrompt(name, {

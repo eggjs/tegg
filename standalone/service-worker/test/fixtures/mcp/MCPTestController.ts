@@ -1,6 +1,7 @@
-import { MCPController, MCPTool, MCPToolResponse, ToolArgsSchema, ToolArgs, Middleware } from '@eggjs/tegg';
+import { Context, MCPController, MCPTool, MCPToolResponse, ToolArgsSchema, ToolArgs, Middleware } from '@eggjs/tegg';
 import * as z from 'zod/v4';
 import { McpTestAdvice } from './McpTestAdvice';
+import type { ServiceWorkerFetchContext } from '../../../src/http/ServiceWorkerFetchContext';
 
 const EchoArgs = {
   message: z.string().describe('The message to echo'),
@@ -22,7 +23,10 @@ export class MCPTestController {
   }
 
   @MCPTool({ description: 'Add two numbers' })
-  async add(@ToolArgsSchema(AddArgs) args: ToolArgs<typeof AddArgs>): Promise<MCPToolResponse> {
+  async add(@ToolArgsSchema(AddArgs) args: ToolArgs<typeof AddArgs>, @Context() ctx: ServiceWorkerFetchContext): Promise<MCPToolResponse> {
+    if (!ctx?.event?.request) {
+      throw new Error('ctx is required');
+    }
     return {
       content: [{ type: 'text', text: String(args.a + args.b) }],
     };

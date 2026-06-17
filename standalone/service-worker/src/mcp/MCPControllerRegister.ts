@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { IncomingMessage, OutgoingHttpHeader, OutgoingHttpHeaders, ServerResponse } from 'node:http';
 import { Socket } from 'node:net';
 import { Readable, PassThrough } from 'node:stream';
@@ -112,6 +113,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpServerHelperMap: Record<string, () => MCPServerHelper> = {};
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
   middlewaresMap: Record<string, Array<(ctx: ServiceWorkerFetchContext, next: () => Promise<void>) => Promise<void>>> = {};
+  private readonly contextStorage = new AsyncLocalStorage<ServiceWorkerFetchContext>();
   registerMap: Record<string, {
     tools: ServerRegisterRecord<MCPToolMeta>[];
     prompts: ServerRegisterRecord<MCPPromptMeta>[];
@@ -231,7 +233,17 @@ export class MCPControllerRegister implements ControllerRegister {
       const body = await ctx.event.request.json();
 
       // Handle the request (don't await - handleRequest writes to response stream)
-      transport.handleRequest(req, response, body);
+      this.contextStorage.run(ctx, () => {
+        void transport.handleRequest(req, response, body).catch(err => {
+          console.error('handle MCP request failed:', err);
+          if (!response.writableEnded) {
+            if (!response.headersSent) {
+              response.writeHead(500, { 'content-type': 'text/plain' });
+            }
+            response.end(err instanceof Error ? err.message : String(err));
+          }
+        });
+      });
 
       const init = await resPromise;
 
@@ -297,6 +309,7 @@ export class MCPControllerRegister implements ControllerRegister {
           return new MCPServerHelper({
             name: this.controllerMeta.name ?? `mcp-${metadata.name ?? 'default'}-server`,
             version: this.controllerMeta.version ?? '1.0.0',
+            getContext: () => this.contextStorage.getStore(),
           });
         };
       }

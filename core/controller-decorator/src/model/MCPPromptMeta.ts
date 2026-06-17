@@ -1,7 +1,7 @@
-import type { MiddlewareFunc } from '@eggjs/tegg-types';
+import type { MethodMeta, MiddlewareFunc } from '@eggjs/tegg-types';
 import { PromptArgsSchemaDetail } from '../../src/util/MCPInfoUtil';
 
-export class MCPPromptMeta {
+export class MCPPromptMeta implements MethodMeta {
   readonly name: string;
   readonly needAcl: boolean;
   readonly mcpName?: string;
@@ -11,10 +11,12 @@ export class MCPPromptMeta {
   readonly middlewares: readonly MiddlewareFunc[];
   readonly extra?: number;
   readonly title?: string;
+  readonly contextParamIndex: number | undefined;
 
   constructor(opt: {
     name: string;
     middlewares: MiddlewareFunc[];
+    contextParamIndex?: number;
     needAcl?: boolean;
     aclCode?: string,
     description?: string;
@@ -32,5 +34,6 @@ export class MCPPromptMeta {
     this.detail = opt.detail;
     this.extra = opt.extra;
     this.title = opt.title;
+    this.contextParamIndex = opt.contextParamIndex;
   }
 }
