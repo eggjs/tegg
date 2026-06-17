@@ -234,7 +234,15 @@ export class MCPControllerRegister implements ControllerRegister {
 
       // Handle the request (don't await - handleRequest writes to response stream)
       this.contextStorage.run(ctx, () => {
-        transport.handleRequest(req, response, body);
+        void transport.handleRequest(req, response, body).catch(err => {
+          console.error('handle MCP request failed:', err);
+          if (!response.writableEnded) {
+            if (!response.headersSent) {
+              response.writeHead(500, { 'content-type': 'text/plain' });
+            }
+            response.end(err instanceof Error ? err.message : String(err));
+          }
+        });
       });
 
       const init = await resPromise;

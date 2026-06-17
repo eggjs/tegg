@@ -24,7 +24,7 @@ export class MCPTestController {
 
   @MCPTool({ description: 'Add two numbers' })
   async add(@ToolArgsSchema(AddArgs) args: ToolArgs<typeof AddArgs>, @Context() ctx: ServiceWorkerFetchContext): Promise<MCPToolResponse> {
-    if (!ctx.event?.request) {
+    if (!ctx?.event?.request) {
       throw new Error('ctx is required');
     }
     return {
