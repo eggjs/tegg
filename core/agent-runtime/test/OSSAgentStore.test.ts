@@ -76,6 +76,46 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.messages[1].type, 'assistant');
     });
 
+    it('should stamp eggExt.persistedAtMs on every persisted message', async () => {
+      const thread = await store.createThread();
+      const before = Date.now();
+      await store.appendMessages(thread.id, [
+        { type: 'user', message: { role: 'user', content: 'hi' } },
+      ]);
+      const msg = (await store.getThread(thread.id)).messages[0] as AgentMessage & {
+        eggExt?: { persistedAtMs?: number };
+      };
+      assert.equal(typeof msg.eggExt?.persistedAtMs, 'number');
+      assert.ok(msg.eggExt!.persistedAtMs! >= before);
+    });
+
+    it('should not overwrite executor-stamped eggExt.timing', async () => {
+      const thread = await store.createThread();
+      await store.appendMessages(thread.id, [
+        {
+          type: 'assistant',
+          message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] },
+          eggExt: { runId: 'run_1', timing: { receivedAtMs: 111, genMs: 22 } },
+        } as AgentMessage,
+      ]);
+      const msg = (await store.getThread(thread.id)).messages[0] as AgentMessage & {
+        eggExt?: { runId?: string; persistedAtMs?: number; timing?: { receivedAtMs?: number; genMs?: number } };
+      };
+      assert.equal(msg.eggExt?.runId, 'run_1');
+      assert.equal(msg.eggExt?.timing?.receivedAtMs, 111);
+      assert.equal(msg.eggExt?.timing?.genMs, 22);
+      assert.equal(typeof msg.eggExt?.persistedAtMs, 'number');
+    });
+
+    it('should not mutate the caller-provided message objects', async () => {
+      const thread = await store.createThread();
+      const original = { type: 'user', message: { role: 'user', content: 'hi' } } as AgentMessage & {
+        eggExt?: unknown;
+      };
+      await store.appendMessages(thread.id, [ original ]);
+      assert.equal(original.eggExt, undefined); // caller object untouched
+    });
+
     it('should append messages incrementally', async () => {
       const thread = await store.createThread();
       await store.appendMessages(thread.id, [

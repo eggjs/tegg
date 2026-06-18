@@ -1,7 +1,7 @@
 import type { RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
-import { nowUnix } from './AgentStoreUtils';
+import { nowMs, nowUnix } from './AgentStoreUtils';
 
 /** Accumulated token usage — same shape as non-null RunRecord['usage']. */
 export type RunUsage = NonNullable<RunRecord['usage']>;
@@ -26,6 +26,11 @@ export class RunBuilder {
   private completedAt?: number;
   private cancelledAt?: number;
   private failedAt?: number;
+  // ms-granular timing: absolute epoch-ms points (startedAtMs/completedAtMs) and durations (durationMs/apiDurationMs).
+  private startedAtMs?: number;
+  private completedAtMs?: number;
+  private durationMs?: number | null;
+  private apiDurationMs?: number | null;
   private lastError?: { code: string; message: string } | null;
   private usage?: RunUsage;
 
@@ -57,6 +62,10 @@ export class RunBuilder {
     rb.completedAt = run.completedAt ?? undefined;
     rb.cancelledAt = run.cancelledAt ?? undefined;
     rb.failedAt = run.failedAt ?? undefined;
+    rb.startedAtMs = run.startedAtMs ?? undefined;
+    rb.completedAtMs = run.completedAtMs ?? undefined;
+    rb.durationMs = run.durationMs ?? undefined;
+    rb.apiDurationMs = run.apiDurationMs ?? undefined;
     rb.lastError = run.lastError ?? undefined;
     if (run.usage) {
       rb.usage = { ...run.usage };
@@ -70,22 +79,38 @@ export class RunBuilder {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.InProgress);
     }
     this.status = RunStatus.InProgress;
-    this.startedAt = nowUnix();
-    return { status: this.status, startedAt: this.startedAt };
+    // Derive the seconds field from the same ms reading so the two never disagree across a second boundary.
+    this.startedAtMs = nowMs();
+    this.startedAt = Math.floor(this.startedAtMs / 1000);
+    return { status: this.status, startedAt: this.startedAt, startedAtMs: this.startedAtMs };
   }
 
-  /** in_progress -> completed. Returns store update. */
-  complete(usage?: RunUsage): Partial<RunRecord> {
+  /**
+   * in_progress -> completed. Returns store update.
+   *
+   * `apiDurationMs` is the run's summed pure-model-API time (from result
+   * messages' `duration_api_ms`); pass undefined when no result carried it.
+   * `durationMs` is derived as `completedAtMs - startedAtMs` (null if the run
+   * was restored without a startedAtMs).
+   */
+  complete(usage?: RunUsage, apiDurationMs?: number): Partial<RunRecord> {
     if (this.status !== RunStatus.InProgress) {
       throw new InvalidRunStateTransitionError(this.status, RunStatus.Completed);
     }
     this.status = RunStatus.Completed;
-    this.completedAt = nowUnix();
+    // Derive the seconds field from the same ms reading so the two never disagree across a second boundary.
+    this.completedAtMs = nowMs();
+    this.completedAt = Math.floor(this.completedAtMs / 1000);
+    this.durationMs = this.startedAtMs != null ? this.completedAtMs - this.startedAtMs : null;
+    this.apiDurationMs = apiDurationMs ?? null;
     this.usage = usage;
     return {
       status: this.status,
       usage,
       completedAt: this.completedAt,
+      completedAtMs: this.completedAtMs,
+      durationMs: this.durationMs,
+      apiDurationMs: this.apiDurationMs,
     };
   }
 
@@ -152,6 +177,10 @@ export class RunBuilder {
       completedAt: this.completedAt ?? null,
       cancelledAt: this.cancelledAt ?? null,
       failedAt: this.failedAt ?? null,
+      startedAtMs: this.startedAtMs ?? null,
+      completedAtMs: this.completedAtMs ?? null,
+      durationMs: this.durationMs ?? null,
+      apiDurationMs: this.apiDurationMs ?? null,
       usage: this.usage ?? null,
       metadata: this.metadata,
       config: this.config,

@@ -316,7 +316,16 @@ export class OSSAgentStore implements AgentStore {
     const meta = JSON.parse(metaData) as ThreadMetadata;
     const nowMs = Date.now();
 
-    const lines = messages.map(m => JSON.stringify(m)).join('\n') + '\n';
+    // Stamp a server-side persisted-at (epoch ms) into each message's `eggExt`
+    // namespace — a fallback / drift-calibration clock that never overwrites the
+    // executor-stamped per-message `timing`. Shallow-copied so the caller's
+    // message objects are not mutated.
+    const stamped = messages.map(m => {
+      if (!m || typeof m !== 'object') return m;
+      const existing = (m as AgentMessage).eggExt;
+      return { ...m, eggExt: { ...(existing ?? {}), persistedAtMs: nowMs } } as AgentMessage;
+    });
+    const lines = stamped.map(m => JSON.stringify(m)).join('\n') + '\n';
     const messagesKey = this.threadMessagesKey(threadId);
 
     if (this.client.append) {
