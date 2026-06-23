@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.84.0](https://github.com/eggjs/tegg/compare/v3.83.0...v3.84.0) (2026-06-18)
+
+
+### Features
+
+* **agent-runtime:** expose per-message/tool/run timing via eggExt namespace ([#457](https://github.com/eggjs/tegg/issues/457)) ([9f94e2e](https://github.com/eggjs/tegg/commit/9f94e2e21764def338a1cad644170689c60122a3))
+
+
+
+
+
 # [3.83.0](https://github.com/eggjs/tegg/compare/v3.82.2...v3.83.0) (2026-06-17)
 
 
