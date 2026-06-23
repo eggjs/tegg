@@ -9,6 +9,7 @@ export interface MCPConfigOptions {
   statelessStreamPath: string;
   ssePingEnabled?: boolean;
   streamPingEnabled?: boolean;
+  streamSessionIdleTimeout?: number;
   pingElapsed?: number;
   pingInterval?: number;
   sessionIdGenerator?: (ctx: Context) => string;
@@ -30,6 +31,7 @@ export class MCPConfig {
   private _pingInterval: number;
   private _ssePingEnabled: boolean;
   private _streamPingEnabled: boolean;
+  private _streamSessionIdleTimeout: number;
 
   private _multipleServer: Record<string, Partial<MCPConfigOptions>>;
 
@@ -46,6 +48,7 @@ export class MCPConfig {
     this._pingInterval = options.pingInterval ?? 5 * 1000;
     this._ssePingEnabled = options.ssePingEnabled ?? false;
     this._streamPingEnabled = options.streamPingEnabled ?? false;
+    this._streamSessionIdleTimeout = options.streamSessionIdleTimeout ?? 60 * 1000;
 
     this._multipleServer = options.multipleServer ?? {};
   }
@@ -172,6 +175,16 @@ export class MCPConfig {
       return false;
     }
     return this._streamPingEnabled;
+  }
+
+  getStreamSessionIdleTimeout(name?: string) {
+    if (name) {
+      const config = this._multipleServer[name];
+      if (config?.streamSessionIdleTimeout !== undefined) {
+        return config.streamSessionIdleTimeout;
+      }
+    }
+    return this._streamSessionIdleTimeout;
   }
 
   setMultipleServerPath(app: Application, name: string) {

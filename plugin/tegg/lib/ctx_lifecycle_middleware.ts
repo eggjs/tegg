@@ -45,6 +45,6 @@ export default async function ctxLifecycleMiddleware(ctx: TEggPluginContext, nex
   try {
     await next();
   } finally {
-    doDestory();
+    await doDestory();
   }
 }

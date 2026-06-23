@@ -426,6 +426,57 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       assert.ok(pingMessages.length > 0);
     });
 
+    it('streamable idle session should be cleaned when client does not terminate session', async () => {
+      const streamableClient = new Client({
+        name: 'streamable-idle-client',
+        version: '1.0.0',
+      });
+      const baseUrl = await app.httpRequest()
+        .post('/mcp/stream').url;
+      const streamableTransport = new StreamableHTTPClientTransport(
+        new URL(baseUrl),
+        {
+          authProvider: {
+            get redirectUrl() { return 'http://localhost/callback'; },
+            get clientMetadata() { return { redirect_uris: [ 'http://localhost/callback' ] }; },
+            clientInformation: () => ({ client_id: 'test-client-id', client_secret: 'test-client-secret' }),
+            tokens: () => {
+              return {
+                access_token: Buffer.from('akita').toString('base64'),
+                token_type: 'Bearer',
+              };
+            },
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveTokens: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            redirectToAuthorization: () => {},
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            saveCodeVerifier: () => {},
+            codeVerifier: () => '',
+          },
+          requestInit: { headers: { 'custom-session-id': 'custom-session-id-idle' } },
+        },
+      );
+      const register = MCPControllerRegister.instance!;
+      const originalIdleTimeout = (register.mcpConfig as any)._streamSessionIdleTimeout;
+      (register.mcpConfig as any)._streamSessionIdleTimeout = 50;
+      try {
+        await streamableClient.connect(streamableTransport);
+        await listTools(streamableClient);
+        assert.equal(streamableTransport.sessionId, 'custom-session-id-idle');
+        assert.ok(register.streamTransports['custom-session-id-idle']);
+
+        await streamableClient.close();
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        assert.equal(register.streamTransports['custom-session-id-idle'], undefined);
+        assert.equal(register.pingIntervals['custom-session-id-idle'], undefined);
+      } finally {
+        (register.mcpConfig as any)._streamSessionIdleTimeout = originalIdleTimeout;
+        await streamableClient.close().catch(() => undefined);
+      }
+    });
+
     it('stateless streamable should work', async () => {
       const streamableClient = new Client({
         name: 'streamable-demo-client',

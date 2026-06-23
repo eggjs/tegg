@@ -96,6 +96,9 @@ export class MCPControllerRegister implements ControllerRegister {
   private controllerMeta: MCPControllerMeta;
   mcpConfig: MCPConfig;
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
+  private streamServers: Partial<Record<string, { close(): Promise<void> }>> = {};
+  private streamCleanupTimers: Partial<Record<string, NodeJS.Timeout>> = {};
+  private streamClosePromises: Partial<Record<string, Promise<void>>> = {};
   // eslint-disable-next-line no-spaced-func
   sseTransportsRequestMap = new Map<
   InnerSSEServerTransport,
@@ -154,7 +157,14 @@ export class MCPControllerRegister implements ControllerRegister {
 
   static clean() {
     if (this.instance) {
+      for (const timer of Object.values(this.instance.streamCleanupTimers)) {
+        clearTimeout(timer);
+      }
       this.instance.controllerProtos = [];
+      this.instance.streamTransports = {};
+      this.instance.streamServers = {};
+      this.instance.streamCleanupTimers = {};
+      this.instance.streamClosePromises = {};
     }
     this.instance = undefined;
     this.hooks = [];
@@ -339,7 +349,9 @@ export class MCPControllerRegister implements ControllerRegister {
             },
             onsessioninitialized: async sessionId => {
               streamSessionId = sessionId;
+              self.clearStreamCleanupTimer(sessionId);
               self.streamTransports[sessionId] = transport;
+              self.streamServers[sessionId] = mcpServerHelper.server;
               if (MCPControllerRegister.hooks.length > 0) {
                 for (const hook of MCPControllerRegister.hooks) {
                   await hook.onStreamSessionInitialized?.(
@@ -369,7 +381,7 @@ export class MCPControllerRegister implements ControllerRegister {
             } finally {
               const sessionId = transport.sessionId ?? streamSessionId;
               if (sessionId) {
-                self.clearStreamMcpServer(sessionId);
+                await self.closeStreamMcpServer(sessionId, mcpServerHelper.server, transport);
               }
               if (!ctx.res.destroyed) {
                 ctx.res.destroy();
@@ -386,12 +398,16 @@ export class MCPControllerRegister implements ControllerRegister {
             onmessage && await onmessage(message, extra);
           };
 
-          await ctx.app.ctxStorage.run(ctx, async () => {
-            await mw(ctx, async () => {
-              await transport.handleRequest(ctx.req, ctx.res, body);
-              await self.waitResponseClosed(ctx.res);
+          try {
+            await ctx.app.ctxStorage.run(ctx, async () => {
+              await mw(ctx, async () => {
+                await transport.handleRequest(ctx.req, ctx.res, body);
+                await self.waitResponseClosed(ctx.res);
+              });
             });
-          });
+          } finally {
+            self.scheduleStreamMcpServerCleanup(streamSessionId, name);
+          }
         } else {
           ctx.status = 400;
           ctx.body = {
@@ -407,6 +423,7 @@ export class MCPControllerRegister implements ControllerRegister {
       } else if (sessionId) {
         const transport = self.streamTransports[sessionId];
         if (transport) {
+          self.clearStreamCleanupTimer(sessionId);
           if (MCPControllerRegister.hooks.length > 0) {
             for (const hook of MCPControllerRegister.hooks) {
               await hook.preHandle?.(self.app.currentContext);
@@ -417,12 +434,16 @@ export class MCPControllerRegister implements ControllerRegister {
             'content-type': 'text/event-stream',
           });
 
-          await ctx.app.ctxStorage.run(ctx, async () => {
-            await mw(ctx, async () => {
-              await transport.handleRequest(ctx.req, ctx.res);
-              await self.waitResponseClosed(ctx.res);
+          try {
+            await ctx.app.ctxStorage.run(ctx, async () => {
+              await mw(ctx, async () => {
+                await transport.handleRequest(ctx.req, ctx.res);
+                await self.waitResponseClosed(ctx.res);
+              });
             });
-          });
+          } finally {
+            self.scheduleStreamMcpServerCleanup(sessionId, name);
+          }
           return;
         }
         if (MCPControllerRegister.hooks.length > 0) {
@@ -552,8 +573,74 @@ export class MCPControllerRegister implements ControllerRegister {
     ]);
   }
 
+  private clearStreamCleanupTimer(sessionId: string) {
+    const timer = this.streamCleanupTimers[sessionId];
+    if (timer) {
+      clearTimeout(timer);
+      delete this.streamCleanupTimers[sessionId];
+    }
+  }
+
+  private scheduleStreamMcpServerCleanup(sessionId: string | undefined, name?: string) {
+    if (!sessionId || !this.streamTransports[sessionId]) {
+      return;
+    }
+    const timeout = this.mcpConfig.getStreamSessionIdleTimeout(name);
+    if (timeout <= 0) {
+      return;
+    }
+    this.clearStreamCleanupTimer(sessionId);
+    const timer = setTimeout(() => {
+      this.closeStreamMcpServer(sessionId)
+        .catch(error => {
+          this.app.logger.error('[mcp] close idle stream session %s failed: %s', sessionId, error.message);
+        });
+    }, timeout);
+    timer.unref?.();
+    this.streamCleanupTimers[sessionId] = timer;
+  }
+
+  async closeStreamMcpServer(
+    sessionId: string,
+    server?: { close(): Promise<void> },
+    transport?: StreamableHTTPServerTransport,
+  ) {
+    const existingClosePromise = this.streamClosePromises[sessionId];
+    if (existingClosePromise) {
+      await existingClosePromise;
+      return;
+    }
+
+    const closePromise = Promise.resolve().then(async () => {
+      const targetServer = server ?? this.streamServers[sessionId];
+      const targetTransport = transport ?? this.streamTransports[sessionId];
+      this.clearStreamMcpServer(sessionId);
+
+      try {
+        await targetServer?.close();
+      } catch (error) {
+        this.app.logger.error('[mcp] close stream server %s failed: %s', sessionId, error.message);
+      }
+
+      try {
+        await targetTransport?.close();
+      } catch (error) {
+        this.app.logger.error('[mcp] close stream transport %s failed: %s', sessionId, error.message);
+      }
+    });
+
+    this.streamClosePromises[sessionId] = closePromise;
+    try {
+      await closePromise;
+    } finally {
+      delete this.streamClosePromises[sessionId];
+    }
+  }
+
   clearStreamMcpServer(sessionId: string) {
+    this.clearStreamCleanupTimer(sessionId);
     delete this.streamTransports[sessionId];
+    delete this.streamServers[sessionId];
     if (this.pingIntervals[sessionId]) {
       clearInterval(this.pingIntervals[sessionId]);
       delete this.pingIntervals[sessionId];
@@ -759,8 +846,7 @@ export class MCPControllerRegister implements ControllerRegister {
             this.clearSseMcpServer(sseTransport);
             await server.close();
           } else if (streamTransport) {
-            this.clearStreamMcpServer(sessionId);
-            await server.close();
+            await this.closeStreamMcpServer(sessionId, server, streamTransport);
           } else {
             this.app.logger.warn('mcp server ping clear fail, sessionId: ', sessionId);
           }
