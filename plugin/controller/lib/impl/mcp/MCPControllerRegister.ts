@@ -97,6 +97,7 @@ export class MCPControllerRegister implements ControllerRegister {
   mcpConfig: MCPConfig;
   streamTransports: Record<string, StreamableHTTPServerTransport> = {};
   private streamServers: Partial<Record<string, { close(): Promise<void> }>> = {};
+  private streamServerNames: Partial<Record<string, string>> = {};
   private streamCleanupTimers: Partial<Record<string, NodeJS.Timeout>> = {};
   private streamClosePromises: Partial<Record<string, Promise<void>>> = {};
   // eslint-disable-next-line no-spaced-func
@@ -163,6 +164,7 @@ export class MCPControllerRegister implements ControllerRegister {
       this.instance.controllerProtos = [];
       this.instance.streamTransports = {};
       this.instance.streamServers = {};
+      this.instance.streamServerNames = {};
       this.instance.streamCleanupTimers = {};
       this.instance.streamClosePromises = {};
     }
@@ -352,6 +354,10 @@ export class MCPControllerRegister implements ControllerRegister {
               self.clearStreamCleanupTimer(sessionId);
               self.streamTransports[sessionId] = transport;
               self.streamServers[sessionId] = mcpServerHelper.server;
+              if (name) {
+                self.streamServerNames[sessionId] = name;
+              }
+              self.scheduleStreamMcpServerCleanup(sessionId, name);
               if (MCPControllerRegister.hooks.length > 0) {
                 for (const hook of MCPControllerRegister.hooks) {
                   await hook.onStreamSessionInitialized?.(
@@ -423,7 +429,7 @@ export class MCPControllerRegister implements ControllerRegister {
       } else if (sessionId) {
         const transport = self.streamTransports[sessionId];
         if (transport) {
-          self.clearStreamCleanupTimer(sessionId);
+          self.scheduleStreamMcpServerCleanup(sessionId, name);
           if (MCPControllerRegister.hooks.length > 0) {
             for (const hook of MCPControllerRegister.hooks) {
               await hook.preHandle?.(self.app.currentContext);
@@ -581,11 +587,11 @@ export class MCPControllerRegister implements ControllerRegister {
     }
   }
 
-  private scheduleStreamMcpServerCleanup(sessionId: string | undefined, name?: string) {
+  scheduleStreamMcpServerCleanup(sessionId: string | undefined, name?: string) {
     if (!sessionId || !this.streamTransports[sessionId]) {
       return;
     }
-    const timeout = this.mcpConfig.getStreamSessionIdleTimeout(name);
+    const timeout = this.mcpConfig.getStreamSessionIdleTimeout(name ?? this.streamServerNames[sessionId]);
     if (timeout <= 0) {
       return;
     }
@@ -641,6 +647,7 @@ export class MCPControllerRegister implements ControllerRegister {
     this.clearStreamCleanupTimer(sessionId);
     delete this.streamTransports[sessionId];
     delete this.streamServers[sessionId];
+    delete this.streamServerNames[sessionId];
     if (this.pingIntervals[sessionId]) {
       clearInterval(this.pingIntervals[sessionId]);
       delete this.pingIntervals[sessionId];
