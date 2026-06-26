@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.2](https://github.com/eggjs/tegg/compare/v3.84.1...v3.84.2) (2026-06-26)
+
+
+### Bug Fixes
+
+* clean idle mcp stream proxy sessions ([#461](https://github.com/eggjs/tegg/issues/461)) ([717a41a](https://github.com/eggjs/tegg/commit/717a41a06c6d8793d4faa735bf727335abc836f2))
+
+
+
+
+
 ## [3.84.1](https://github.com/eggjs/tegg/compare/v3.84.0...v3.84.1) (2026-06-23)
 
 
