@@ -1,5 +1,9 @@
 import path from 'path';
 import coffee from 'coffee';
+import { HelloService } from './fixtures/modules/dynamicRange/HelloService';
+import { AbstractContextHello } from './fixtures/modules/base/AbstractContextHello';
+import { FactoryQualifierUtil } from '../src/FactoryQualifierUtil';
+import assert from 'assert';
 
 describe('test/typing.test.ts', () => {
   it('should check enum value', async () => {
@@ -22,5 +26,10 @@ describe('test/typing.test.ts', () => {
       .expect('stdout', / Property 'hello' is missing in type 'BarContextHello' but required in type 'AbstractContextHello'/)
       .notExpect('code', 0)
       .end();
+  });
+
+  it('should dynamic range run', async () => {
+    const dynamics = FactoryQualifierUtil.getProperQualifiers(HelloService, 'eggObjectFactory');
+    assert(dynamics.includes(AbstractContextHello));
   });
 });
