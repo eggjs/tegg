@@ -7,6 +7,7 @@ import { ControllerMetadataManager } from '../controller/ControllerMetadataManag
 import { FetchRouter } from '../http/FetchRouter';
 import { HTTPControllerRegister } from '../http/HTTPControllerRegister';
 import { MCPControllerRegister } from '../mcp/MCPControllerRegister';
+import { WebSocketControllerRegister } from '../websocket/WebSocketControllerRegister';
 
 export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly controllerRegisterFactory: ControllerRegisterFactory;
@@ -33,6 +34,15 @@ export class ControllerLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCo
     // Register the MCP controller register creator
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.MCP, (proto: EggPrototype, controllerMeta: ControllerMetadata) => {
       return MCPControllerRegister.create(proto, controllerMeta, this.fetchRouter);
+    });
+
+    // Register the WebSocket controller register creator
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.WEBSOCKET, (proto: EggPrototype, controllerMeta: ControllerMetadata) => {
+      return WebSocketControllerRegister.create(proto, controllerMeta);
+    });
+
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.WEBSOCKET_FETCH, (proto: EggPrototype, controllerMeta: ControllerMetadata) => {
+      return WebSocketControllerRegister.create(proto, controllerMeta);
     });
   }
 

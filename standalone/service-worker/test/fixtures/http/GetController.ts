@@ -22,4 +22,25 @@ export class GetController {
       },
     });
   }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/sse' })
+  async sse(@HTTPQuery() id: string) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(`event: ready\ndata: ${JSON.stringify({ id })}\n\n`));
+        controller.enqueue(encoder.encode('event: done\ndata: ok\n\n'));
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+        connection: 'keep-alive',
+      },
+    });
+  }
 }

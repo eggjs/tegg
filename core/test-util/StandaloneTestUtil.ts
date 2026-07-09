@@ -1,12 +1,15 @@
 import { createServer, IncomingMessage, OutgoingHttpHeaders, Server, ServerOptions, ServerResponse } from 'node:http';
-import { pipeline } from 'node:stream';
+import { Duplex, pipeline } from 'node:stream';
 import { Headers, BodyInit, Request, Response } from 'undici';
-import { FetchEvent } from '@eggjs/tegg-types/standalone';
+import { FetchEvent, WebSocketUpgradeEvent } from '@eggjs/tegg-types/standalone';
 
 export type FetchEventListener = (event: FetchEvent) => Promise<Response>;
+export type WebSocketUpgradeEventListener = (event: WebSocketUpgradeEvent) => Promise<void>;
+export type ServiceWorkerEvent = FetchEvent | WebSocketUpgradeEvent;
+export type ServiceWorkerEventListener = FetchEventListener | WebSocketUpgradeEventListener | ((event: ServiceWorkerEvent) => Promise<Response | void>);
 
 export interface StartHTTPServerOptions extends ServerOptions {
-  listener: FetchEventListener;
+  listener: ServiceWorkerEventListener;
 }
 
 export class StandaloneTestUtil {
@@ -42,13 +45,18 @@ export class StandaloneTestUtil {
     });
   }
 
-  static #createHTTPServerListener(listener: FetchEventListener) {
+  static #createHTTPServerListener(listener: ServiceWorkerEventListener) {
     return async (req: IncomingMessage, res: ServerResponse) => {
       const request = StandaloneTestUtil.#buildRequest(req);
       // TODO currently fake FetchEvent
       const event: any = new Event('fetch');
       event.request = request;
-      const response = await listener(event);
+      const response = await (listener as FetchEventListener)(event);
+      if (!response) {
+        res.writeHead(500);
+        res.end();
+        return;
+      }
 
       const headers: OutgoingHttpHeaders = {};
       for (const [ key, value ] of response.headers) {
@@ -70,9 +78,30 @@ export class StandaloneTestUtil {
     };
   }
 
+  static #createWebSocketUpgradeListener(listener: ServiceWorkerEventListener) {
+    return async (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+      const event: any = new Event('websocket');
+      event.request = req;
+      event.socket = socket;
+      event.head = head;
+
+      try {
+        await listener(event);
+      } catch (error) {
+        if (!socket.destroyed) {
+          const message = 'Internal Server Error';
+          socket.write(`HTTP/1.1 500 ${message}\r\nConnection: close\r\nContent-Length: ${Buffer.byteLength(message)}\r\n\r\n${message}`);
+          socket.destroy();
+        }
+        console.error('websocket upgrade listener failed:', error);
+      }
+    };
+  }
+
   static startHTTPServer(host: string, port: number, { listener, ...options }: StartHTTPServerOptions) {
     const serverListener = StandaloneTestUtil.#createHTTPServerListener(listener);
     const server = createServer(options ?? {}, serverListener);
+    server.on('upgrade', StandaloneTestUtil.#createWebSocketUpgradeListener(listener));
 
     return new Promise<Server>(resolve => {
       server.listen(port, host, () => resolve(server));
