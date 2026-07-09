@@ -62,6 +62,7 @@ export default class ControllerAppBootHook {
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.WEBSOCKET, WebSocketControllerRegister.create);
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.WEBSOCKET_FETCH, WebSocketControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {

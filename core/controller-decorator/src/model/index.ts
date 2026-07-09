@@ -5,6 +5,8 @@ export * from './HTTPResponse';
 export * from './HTTPCookies';
 export * from './WebSocketMethodMeta';
 export * from './WebSocketControllerMeta';
+export * from './WebSocketFetchMethodMeta';
+export * from './WebSocketFetchControllerMeta';
 export * from './MCPControllerMeta';
 export * from './MCPPromptMeta';
 export * from './MCPResourceMeta';

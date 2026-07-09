@@ -87,6 +87,46 @@ export class WebSocketStreamParamMeta extends WebSocketParamMeta {
   }
 }
 
+export class WebSocketDataParamMeta extends WebSocketParamMeta {
+  type = WebSocketParamType.DATA;
+
+  validate() {
+    return;
+  }
+}
+
+export class WebSocketCloseParamMeta extends WebSocketParamMeta {
+  type = WebSocketParamType.CLOSE;
+
+  validate() {
+    return;
+  }
+}
+
+export class WebSocketErrorParamMeta extends WebSocketParamMeta {
+  type = WebSocketParamType.ERROR;
+
+  validate() {
+    return;
+  }
+}
+
+export class WebSocketCloseCodeParamMeta extends WebSocketParamMeta {
+  type = WebSocketParamType.CLOSE_CODE;
+
+  validate() {
+    return;
+  }
+}
+
+export class WebSocketCloseReasonParamMeta extends WebSocketParamMeta {
+  type = WebSocketParamType.CLOSE_REASON;
+
+  validate() {
+    return;
+  }
+}
+
 export class WebSocketMethodMeta implements MethodMeta {
   public readonly name: string;
   public readonly path: string;
@@ -141,6 +181,21 @@ export class WebSocketParamMetaUtil {
       }
       case WebSocketParamType.STREAM: {
         return new WebSocketStreamParamMeta();
+      }
+      case WebSocketParamType.DATA: {
+        return new WebSocketDataParamMeta();
+      }
+      case WebSocketParamType.CLOSE: {
+        return new WebSocketCloseParamMeta();
+      }
+      case WebSocketParamType.ERROR: {
+        return new WebSocketErrorParamMeta();
+      }
+      case WebSocketParamType.CLOSE_CODE: {
+        return new WebSocketCloseCodeParamMeta();
+      }
+      case WebSocketParamType.CLOSE_REASON: {
+        return new WebSocketCloseReasonParamMeta();
       }
       default:
         assert.fail('never arrive');

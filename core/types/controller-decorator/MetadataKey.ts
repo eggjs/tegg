@@ -20,6 +20,7 @@ export const CONTROLLER_WEBSOCKET_METHOD_PATH_MAP = Symbol.for('EggPrototype#con
 export const CONTROLLER_WEBSOCKET_METHOD_PARAM_TYPE_MAP = Symbol.for('EggPrototype#controller#method#websocket#params#type');
 export const CONTROLLER_WEBSOCKET_METHOD_PARAM_NAME_MAP = Symbol.for('EggPrototype#controller#method#websocket#params#name');
 export const CONTROLLER_WEBSOCKET_METHOD_PRIORITY = Symbol.for('EggPrototype#controller#method#websocket#priority');
+export const CONTROLLER_WEBSOCKET_FETCH_METHOD_TYPE_MAP = Symbol.for('EggPrototype#controller#method#websocketFetch#type');
 
 export const METHOD_CONTROLLER_TYPE_MAP = Symbol.for('EggPrototype#controller#mthods');
 export const METHOD_CONTROLLER_HOST = Symbol.for('EggPrototype#controller#mthods#host');

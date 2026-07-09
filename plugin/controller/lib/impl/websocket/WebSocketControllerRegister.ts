@@ -6,13 +6,16 @@ import pathToRegexp from 'path-to-regexp';
 import { Application, Context } from 'egg';
 import { EggRouter } from '@eggjs/router';
 import { FrameworkErrorFormater } from 'egg-errors';
-import { createWebSocketStream, WebSocket, WebSocketServer } from 'ws';
+import { createWebSocketStream, RawData, WebSocket, WebSocketServer } from 'ws';
 import {
   CONTROLLER_META_DATA,
   ControllerMetadata,
   ControllerType,
   Next,
   WebSocketControllerMeta,
+  WebSocketFetchClose,
+  WebSocketFetchControllerMeta,
+  WebSocketFetchMethodMeta,
   WebSocketMethodMeta,
   WebSocketParamType,
   WebSocketPathParamMeta,
@@ -32,13 +35,22 @@ const noop = () => {
 
 interface WebSocketRoute {
   controllerProto: EggPrototype;
-  controllerMeta: WebSocketControllerMeta;
-  methodMeta: WebSocketMethodMeta;
+  controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta;
+  methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta;
   methodRealPath: string;
   methodName: string;
   host?: string;
   keys: pathToRegexp.Key[];
   regexp: RegExp;
+}
+
+interface WebSocketMethodPayload {
+  data?: RawData;
+  close?: WebSocketFetchClose;
+  error?: Error;
+  closeCode?: number;
+  closeReason?: Buffer;
+  getWebSocketStream?: () => Duplex;
 }
 
 export class WebSocketControllerRegister implements ControllerRegister {
@@ -55,8 +67,8 @@ export class WebSocketControllerRegister implements ControllerRegister {
 
   static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
     assert(
-      controllerMeta.type === ControllerType.WEBSOCKET,
-      'controller meta type is not WEBSOCKET',
+      controllerMeta.type === ControllerType.WEBSOCKET || controllerMeta.type === ControllerType.WEBSOCKET_FETCH,
+      'controller meta type is not WEBSOCKET or WEBSOCKET_FETCH',
     );
     if (!WebSocketControllerRegister.instance) {
       WebSocketControllerRegister.instance = new WebSocketControllerRegister(app);
@@ -82,9 +94,9 @@ export class WebSocketControllerRegister implements ControllerRegister {
   }
 
   doRegister() {
-    const methodMap = new Map<WebSocketMethodMeta, EggPrototype>();
+    const methodMap = new Map<WebSocketMethodMeta | WebSocketFetchMethodMeta, EggPrototype>();
     for (const proto of this.controllerProtos) {
-      const metadata = proto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta;
+      const metadata = proto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta;
       for (const method of metadata.methods) {
         methodMap.set(method, proto);
       }
@@ -94,13 +106,13 @@ export class WebSocketControllerRegister implements ControllerRegister {
 
     for (const method of allMethods) {
       const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta;
+      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta;
       this.checkDuplicate(controllerMeta, method);
     }
 
     this.routes = allMethods.flatMap(method => {
       const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta;
+      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta;
       const hosts = this.getMethodHosts(controllerMeta, method) || [ undefined ];
       return hosts.map(host => this.createRoute(controllerProto, controllerMeta, method, host));
     });
@@ -142,8 +154,8 @@ export class WebSocketControllerRegister implements ControllerRegister {
 
   private createRoute(
     controllerProto: EggPrototype,
-    controllerMeta: WebSocketControllerMeta,
-    methodMeta: WebSocketMethodMeta,
+    controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta,
+    methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta,
     host: string | undefined,
   ): WebSocketRoute {
     const methodRealPath = this.getMethodRealPath(controllerMeta, methodMeta);
@@ -161,7 +173,7 @@ export class WebSocketControllerRegister implements ControllerRegister {
     };
   }
 
-  private checkDuplicate(controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta) {
+  private checkDuplicate(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
     let router = this.checkRouters.get('default')!;
     const hosts = this.getMethodHosts(controllerMeta, methodMeta) || [];
     if (!hosts.length) {
@@ -181,13 +193,13 @@ export class WebSocketControllerRegister implements ControllerRegister {
     });
   }
 
-  private registerToRouter(router: EggRouter, controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta) {
+  private registerToRouter(router: EggRouter, controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
     const methodRealPath = this.getMethodRealPath(controllerMeta, methodMeta);
     const methodName = this.getMethodName(controllerMeta, methodMeta);
     Reflect.apply(router.get, router, [ methodName, methodRealPath, noop ]);
   }
 
-  private checkDuplicateInRouter(router: EggRouter, controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta) {
+  private checkDuplicateInRouter(router: EggRouter, controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
     const methodRealPath = this.getMethodRealPath(controllerMeta, methodMeta);
     const matched = router.match(methodRealPath, 'GET');
     const methodName = this.getMethodName(controllerMeta, methodMeta);
@@ -198,20 +210,20 @@ export class WebSocketControllerRegister implements ControllerRegister {
     }
   }
 
-  private getMethodRealPath(controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta) {
-    return controllerMeta.getMethodRealPath(methodMeta);
+  private getMethodRealPath(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
+    return (controllerMeta as any).getMethodRealPath(methodMeta);
   }
 
-  private getMethodHosts(controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta): string[] | undefined {
-    return controllerMeta.getMethodHosts(methodMeta);
+  private getMethodHosts(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta): string[] | undefined {
+    return (controllerMeta as any).getMethodHosts(methodMeta);
   }
 
-  private getMethodName(controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta): string {
-    return controllerMeta.getMethodName(methodMeta);
+  private getMethodName(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta): string {
+    return (controllerMeta as any).getMethodName(methodMeta);
   }
 
-  private getMethodMiddlewares(controllerMeta: WebSocketControllerMeta, methodMeta: WebSocketMethodMeta) {
-    return controllerMeta.getMethodMiddlewares(methodMeta);
+  private getMethodMiddlewares(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
+    return (controllerMeta as any).getMethodMiddlewares(methodMeta);
   }
 
   private async handleUpgrade(req: IncomingMessage, socket: Duplex, head: Buffer) {
@@ -283,7 +295,11 @@ export class WebSocketControllerRegister implements ControllerRegister {
     let invoked = false;
     const handler = async (_ctx: Context, next: Next) => {
       invoked = true;
-      await this.invokeController(route, webSocketCtx);
+      if (route.controllerMeta.type === ControllerType.WEBSOCKET_FETCH) {
+        await this.invokeFetchController(route, webSocketCtx, eggCtx);
+      } else {
+        await this.invokeController(route, webSocketCtx);
+      }
       await next();
     };
     const composed = compose([ ...methodMiddlewares, handler ]);
@@ -304,14 +320,9 @@ export class WebSocketControllerRegister implements ControllerRegister {
 
   private async invokeController(route: WebSocketRoute, webSocketCtx: WebSocketContextImpl) {
     const methodMeta = route.methodMeta as WebSocketMethodMeta;
-    const argsLength = methodMeta.paramMap.size;
-    const hasContext = methodMeta.contextParamIndex !== undefined;
-    const contextIndex = methodMeta.contextParamIndex;
-    const methodArgsLength = argsLength + (hasContext ? 1 : 0);
     const eggObj = await this.eggContainerFactory.getOrCreateEggObject(route.controllerProto, route.controllerProto.name);
     const realObj = eggObj.obj;
     const realMethod = realObj[methodMeta.name];
-    const args: Array<object | string | string[] | undefined> = new Array(methodArgsLength);
     let webSocketStream: Duplex | undefined;
     const getWebSocketStream = () => {
       if (!webSocketStream) {
@@ -319,6 +330,21 @@ export class WebSocketControllerRegister implements ControllerRegister {
       }
       return webSocketStream;
     };
+    const args = this.buildMethodArgs(methodMeta, webSocketCtx, { getWebSocketStream });
+    const result = await Reflect.apply(realMethod, realObj, args);
+    this.pipeResponseStream(result, webSocketCtx.socket, getWebSocketStream);
+  }
+
+  private buildMethodArgs(
+    methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta,
+    webSocketCtx: WebSocketContextImpl,
+    payload: WebSocketMethodPayload,
+  ) {
+    const argsLength = methodMeta.paramMap.size;
+    const hasContext = methodMeta.contextParamIndex !== undefined;
+    const contextIndex = methodMeta.contextParamIndex;
+    const methodArgsLength = argsLength + (hasContext ? 1 : 0);
+    const args: unknown[] = new Array(methodArgsLength);
     if (hasContext) {
       args[contextIndex!] = webSocketCtx;
     }
@@ -352,16 +378,158 @@ export class WebSocketControllerRegister implements ControllerRegister {
           break;
         }
         case WebSocketParamType.STREAM: {
-          args[index] = getWebSocketStream();
+          assert(payload.getWebSocketStream, '@WebSocketStream can not be used here');
+          args[index] = payload.getWebSocketStream();
+          break;
+        }
+        case WebSocketParamType.DATA: {
+          args[index] = payload.data;
+          break;
+        }
+        case WebSocketParamType.CLOSE: {
+          args[index] = payload.close;
+          break;
+        }
+        case WebSocketParamType.ERROR: {
+          args[index] = payload.error;
+          break;
+        }
+        case WebSocketParamType.CLOSE_CODE: {
+          args[index] = payload.closeCode;
+          break;
+        }
+        case WebSocketParamType.CLOSE_REASON: {
+          args[index] = payload.closeReason;
           break;
         }
         default:
           assert.fail('never arrive');
       }
     }
+    return args;
+  }
 
-    const result = await Reflect.apply(realMethod, realObj, args);
-    this.pipeResponseStream(result, webSocketCtx.socket, getWebSocketStream);
+  private async invokeFetchController(route: WebSocketRoute, webSocketCtx: WebSocketContextImpl, eggCtx: Context) {
+    const controllerMeta = route.controllerMeta as WebSocketFetchControllerMeta;
+    const methodMeta = route.methodMeta as WebSocketFetchMethodMeta;
+    const eggObj = await this.eggContainerFactory.getOrCreateEggObject(route.controllerProto, route.controllerProto.name);
+    const realObj = eggObj.obj;
+    const close = this.createFetchClose(webSocketCtx.socket);
+    const invokeMethod = async (
+      targetMethodMeta: WebSocketFetchMethodMeta | undefined,
+      payload: WebSocketMethodPayload = {},
+    ) => {
+      if (!targetMethodMeta) {
+        return;
+      }
+      const realMethod = realObj[targetMethodMeta.name];
+      const args = this.buildMethodArgs(targetMethodMeta, webSocketCtx, {
+        close,
+        ...payload,
+      });
+      return await Reflect.apply(realMethod, realObj, args);
+    };
+    const handleError = async (error: Error) => {
+      if (!controllerMeta.errorMethod) {
+        this.app.logger.error('[tegg/websocket-fetch] handle error: %s', error.stack || error.message);
+        return;
+      }
+      await invokeMethod(controllerMeta.errorMethod, { error });
+    };
+    const closeHandled = new Promise<void>(resolve => {
+      webSocketCtx.socket.once('close', (code, reason) => {
+        this.app.ctxStorage.run(eggCtx, async () => {
+          try {
+            await invokeMethod(controllerMeta.closeMethod, {
+              closeCode: code,
+              closeReason: reason,
+            });
+          } catch (error) {
+            this.app.logger.error('[tegg/websocket-fetch] handle close failed: %s', error.stack || error.message);
+          } finally {
+            resolve();
+          }
+        }).catch(error => {
+          this.app.logger.error('[tegg/websocket-fetch] handle close failed: %s', error.stack || error.message);
+          resolve();
+        });
+      });
+    });
+
+    webSocketCtx.socket.on('message', data => {
+      this.app.ctxStorage.run(eggCtx, async () => {
+        try {
+          const result = await invokeMethod(methodMeta, { data });
+          this.sendFetchResponseStream(result, webSocketCtx.socket, handleError);
+        } catch (error) {
+          await handleError(error);
+        }
+      }).catch(error => {
+        this.app.logger.error('[tegg/websocket-fetch] handle message failed: %s', error.stack || error.message);
+      });
+    });
+    webSocketCtx.socket.on('error', error => {
+      this.app.ctxStorage.run(eggCtx, async () => {
+        await handleError(error);
+      }).catch(error => {
+        this.app.logger.error('[tegg/websocket-fetch] handle socket error failed: %s', error.stack || error.message);
+      });
+    });
+
+    await invokeMethod(controllerMeta.connectionMethod);
+    await invokeMethod(controllerMeta.openMethod);
+    await closeHandled;
+  }
+
+  private createFetchClose(webSocket: WebSocket): WebSocketFetchClose {
+    return (code = 1000, reason?: string | Buffer) => {
+      if (webSocket.readyState !== WebSocket.OPEN && webSocket.readyState !== WebSocket.CONNECTING) {
+        return;
+      }
+      webSocket.close(code, reason);
+    };
+  }
+
+  private sendFetchResponseStream(
+    result: unknown,
+    webSocket: WebSocket,
+    handleError: (error: Error) => Promise<void>,
+  ) {
+    if (result === undefined || result === null) {
+      return;
+    }
+    if (!this.isReadableStream(result)) {
+      handleError(new Error('WebSocketFetch method must return a readable stream or void')).catch(error => {
+        this.app.logger.error('[tegg/websocket-fetch] handle invalid response failed: %s', error.stack || error.message);
+      });
+      return;
+    }
+    result.on('data', chunk => {
+      this.sendFetchChunk(webSocket, chunk, handleError);
+    });
+    result.once('error', error => {
+      handleError(error).catch(err => {
+        this.app.logger.error('[tegg/websocket-fetch] handle stream error failed: %s', err.stack || err.message);
+      });
+    });
+  }
+
+  private sendFetchChunk(
+    webSocket: WebSocket,
+    chunk: unknown,
+    handleError: (error: Error) => Promise<void>,
+  ) {
+    if (webSocket.readyState !== WebSocket.OPEN) {
+      return;
+    }
+    webSocket.send(chunk as any, error => {
+      if (!error) {
+        return;
+      }
+      handleError(error).catch(err => {
+        this.app.logger.error('[tegg/websocket-fetch] handle send error failed: %s', err.stack || err.message);
+      });
+    });
   }
 
   private pipeResponseStream(result: unknown, webSocket: WebSocket, getWebSocketStream: () => Duplex) {

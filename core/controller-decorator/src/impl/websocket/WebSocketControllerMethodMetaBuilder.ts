@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { ClassUtil } from '@eggjs/tegg-metadata';
+import { WebSocketParamType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { WebSocketMethodMeta, WebSocketParamMeta, WebSocketParamMetaUtil } from '../../model';
 import { MethodValidator } from '../../util/validator/MethodValidator';
@@ -45,6 +46,10 @@ export class WebSocketControllerMethodMetaBuilder {
     const paramIndexList = WebSocketInfoUtil.getParamIndexList(this.clazz, this.methodName);
     for (const paramIndex of paramIndexList) {
       const paramType = WebSocketInfoUtil.getWebSocketMethodParamType(paramIndex, this.clazz, this.methodName)!;
+      if (this.isFetchOnlyParamType(paramType)) {
+        const classDesc = ClassUtil.classDescription(this.clazz);
+        throw new Error(`${classDesc}:${this.methodName} param ${paramIndex} is websocket fetch only`);
+      }
       const paramName = WebSocketInfoUtil.getWebSocketMethodParamName(paramIndex, this.clazz, this.methodName);
       const paramMeta = WebSocketParamMetaUtil.createParam(paramType, paramName);
 
@@ -59,6 +64,14 @@ export class WebSocketControllerMethodMetaBuilder {
       paramTypeMap.set(paramIndex, paramMeta);
     }
     return paramTypeMap;
+  }
+
+  private isFetchOnlyParamType(paramType: WebSocketParamType) {
+    return paramType === WebSocketParamType.DATA ||
+      paramType === WebSocketParamType.CLOSE ||
+      paramType === WebSocketParamType.ERROR ||
+      paramType === WebSocketParamType.CLOSE_CODE ||
+      paramType === WebSocketParamType.CLOSE_REASON;
   }
 
   getPriority() {

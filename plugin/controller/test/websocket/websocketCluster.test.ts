@@ -20,6 +20,53 @@ async function receiveJSON(socket: WebSocket): Promise<any> {
   return JSON.parse(data.toString());
 }
 
+function createJSONReceiver(socket: WebSocket) {
+  const messages: any[] = [];
+  const waiters: Array<{ resolve: (value: any) => void; reject: (error: Error) => void }> = [];
+
+  socket.on('message', data => {
+    const message = JSON.parse(data.toString());
+    const waiter = waiters.shift();
+    if (waiter) {
+      waiter.resolve(message);
+      return;
+    }
+    messages.push(message);
+  });
+  socket.once('error', error => {
+    while (waiters.length) {
+      waiters.shift()!.reject(error);
+    }
+  });
+  socket.once('close', () => {
+    while (waiters.length) {
+      waiters.shift()!.reject(new Error('websocket closed before message'));
+    }
+  });
+
+  return {
+    next() {
+      if (messages.length) {
+        return Promise.resolve(messages.shift());
+      }
+      return new Promise((resolve, reject) => {
+        waiters.push({ resolve, reject });
+      });
+    },
+  };
+}
+
+async function receiveClose(socket: WebSocket): Promise<{ code: number; reason: string }> {
+  return await new Promise(resolve => {
+    socket.once('close', (code, reason) => {
+      resolve({
+        code,
+        reason: reason.toString(),
+      });
+    });
+  });
+}
+
 async function createClientWithFirstMessage(url: string) {
   const socket = new WebSocket(url);
   const firstMessage = receiveJSON(socket);
@@ -120,6 +167,73 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       }
     } finally {
       await Promise.all(clients.map(socket => closeClient(socket)));
+    }
+  });
+
+  it('should handle websocket fetch controller in cluster', async () => {
+    const socket = new WebSocket(requestUrl(app, '/ws-fetch/cluster-fetch?name=bar&tag=cluster'), {
+      headers: { 'x-client-id': 'cluster-fetch-client' },
+    });
+    const receiver = createJSONReceiver(socket);
+    await new Promise<void>((resolve, reject) => {
+      socket.once('open', resolve);
+      socket.once('error', reject);
+    });
+    try {
+      const connection = await receiver.next();
+      assert.equal(connection.type, 'connection');
+      assert.equal(connection.header, 'cluster-fetch-client');
+      assert.equal(connection.path, '/ws-fetch/cluster-fetch');
+      assert.equal(typeof connection.pid, 'number');
+
+      const open = await receiver.next();
+      assert.equal(open.type, 'open');
+      assert.equal(open.path, '/ws-fetch/cluster-fetch');
+      assert.equal(typeof open.pid, 'number');
+
+      socket.send(JSON.stringify({
+        content: 'cluster-first',
+      }));
+      const first = await receiver.next();
+      assert.equal(first.type, 'data');
+      assert.equal(first.phase, 1);
+      assert.equal(first.id, 'cluster-fetch');
+      assert.equal(first.name, 'bar');
+      assert.deepEqual(first.tags, [ 'cluster' ]);
+      assert.equal(first.header, 'cluster-fetch-client');
+      assert.equal(first.path, '/ws-fetch/cluster-fetch');
+      assert.equal(first.content, 'cluster-first');
+      assert.deepEqual(await receiver.next(), {
+        type: 'data',
+        phase: 2,
+        id: 'cluster-fetch',
+        content: 'cluster-first',
+        pid: first.pid,
+      });
+      assert.equal(socket.readyState, WebSocket.OPEN);
+
+      const closePromise = receiveClose(socket);
+      socket.send(JSON.stringify({
+        content: 'cluster-done',
+        close: true,
+      }));
+      const closeData = await receiver.next();
+      assert.equal(closeData.type, 'data');
+      assert.equal(closeData.phase, 1);
+      assert.equal(closeData.content, 'cluster-done');
+      assert.deepEqual(await receiver.next(), {
+        type: 'data',
+        phase: 2,
+        id: 'cluster-fetch',
+        content: 'cluster-done',
+        pid: closeData.pid,
+      });
+      assert.deepEqual(await closePromise, {
+        code: 1000,
+        reason: 'server done',
+      });
+    } finally {
+      await closeClient(socket);
     }
   });
 
