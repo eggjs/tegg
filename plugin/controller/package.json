@@ -65,6 +65,7 @@
     "path-to-regexp": "^1.8.0",
     "raw-body": "^2.5.2",
     "sdk-base": "^4.2.0",
+    "ws": "^8.18.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {
@@ -73,6 +74,7 @@
     "@eggjs/tegg-plugin": "^3.84.2",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
+    "@types/ws": "^8.5.12",
     "cross-env": "^7.0.3",
     "egg": "^3.9.1",
     "egg-mock": "^5.5.0",

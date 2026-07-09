@@ -4,6 +4,7 @@ import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook';
 import { GlobalGraph, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister';
+import { WebSocketControllerRegister } from './lib/impl/websocket/WebSocketControllerRegister';
 import { ControllerRegisterFactory } from './lib/ControllerRegisterFactory';
 import { ControllerLoadUnitHandler } from './lib/ControllerLoadUnitHandler';
 import { LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
@@ -60,6 +61,7 @@ export default class ControllerAppBootHook {
       return new EggControllerLoader(unitPath);
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
+    this.controllerRegisterFactory.registerControllerRegister(ControllerType.WEBSOCKET, WebSocketControllerRegister.create);
     this.app.loadUnitFactory.registerLoadUnitCreator(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitLifecycleContext): ControllerLoadUnit => {
@@ -148,8 +150,14 @@ export default class ControllerAppBootHook {
     // The HTTPControllerRegister will collect all the methods
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
+    WebSocketControllerRegister.instance?.doRegister();
+    WebSocketControllerRegister.instance?.listen();
 
     this.app.config.mcp.hooks = this.mcpControllerRegister?.hooks;
+  }
+
+  serverDidReady() {
+    WebSocketControllerRegister.instance?.listen();
   }
 
   configDidLoad() {
@@ -180,6 +188,7 @@ export default class ControllerAppBootHook {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
     HTTPControllerRegister.clean();
+    WebSocketControllerRegister.clean();
     this.mcpControllerRegister?.clean();
   }
 }

@@ -1,8 +1,9 @@
 import assert from 'node:assert';
-import { HTTPParamType } from '@eggjs/tegg-types';
+import { HTTPParamType, WebSocketParamType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, HTTPParamParams, HTTPQueriesParams, HTTPQueryParams } from '@eggjs/tegg-types';
 import HTTPInfoUtil from '../../util/HTTPInfoUtil';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
+import WebSocketInfoUtil from '../../util/WebSocketInfoUtil';
 
 // TODO url params
 // /foo/:id
@@ -28,6 +29,17 @@ export function HTTPHeaders() {
   };
 }
 
+export function Headers() {
+  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
+    assert(typeof propertyKey === 'string',
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
+    const methodName = propertyKey as string;
+    const controllerClazz = target.constructor as EggProtoImplClass;
+    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.HEADERS, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.HEADERS, parameterIndex, controllerClazz, methodName);
+  };
+}
+
 export function HTTPQuery(param?: HTTPQueryParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
     assert(typeof propertyKey === 'string',
@@ -38,6 +50,21 @@ export function HTTPQuery(param?: HTTPQueryParams) {
     const name = param?.name || argNames[parameterIndex];
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERY, parameterIndex, controllerClazz, methodName);
     HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
+  };
+}
+
+export function Query(param?: HTTPQueryParams) {
+  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
+    assert(typeof propertyKey === 'string',
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
+    const methodName = propertyKey as string;
+    const controllerClazz = target.constructor as EggProtoImplClass;
+    const argNames = ObjectUtils.getFunctionArgNameList(target[propertyKey]);
+    const name = param?.name || argNames[parameterIndex];
+    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERY, parameterIndex, controllerClazz, methodName);
+    HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.QUERY, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamName(name, parameterIndex, controllerClazz, methodName);
   };
 }
 
@@ -54,6 +81,21 @@ export function HTTPQueries(param?: HTTPQueriesParams) {
   };
 }
 
+export function Queries(param?: HTTPQueriesParams) {
+  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
+    assert(typeof propertyKey === 'string',
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
+    const methodName = propertyKey as string;
+    const controllerClazz = target.constructor as EggProtoImplClass;
+    const argNames = ObjectUtils.getFunctionArgNameList(target[propertyKey]);
+    const name = param?.name || argNames[parameterIndex];
+    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERIES, parameterIndex, controllerClazz, methodName);
+    HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.QUERIES, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamName(name, parameterIndex, controllerClazz, methodName);
+  };
+}
+
 export function HTTPParam(param?: HTTPParamParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
     assert(typeof propertyKey === 'string',
@@ -67,6 +109,21 @@ export function HTTPParam(param?: HTTPParamParams) {
   };
 }
 
+export function Param(param?: HTTPParamParams) {
+  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
+    assert(typeof propertyKey === 'string',
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
+    const methodName = propertyKey as string;
+    const controllerClazz = target.constructor as EggProtoImplClass;
+    const argNames = ObjectUtils.getFunctionArgNameList(target[propertyKey]);
+    const name = param?.name || argNames[parameterIndex];
+    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.PARAM, parameterIndex, controllerClazz, methodName);
+    HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.PARAM, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamName(name, parameterIndex, controllerClazz, methodName);
+  };
+}
+
 export function Request() {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
     const [ nodeMajor ] = process.versions.node.split('.').map(v => Number(v));
@@ -77,6 +134,7 @@ export function Request() {
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.REQUEST, parameterIndex, controllerClazz, methodName);
+    WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.REQUEST, parameterIndex, controllerClazz, methodName);
   };
 }
 

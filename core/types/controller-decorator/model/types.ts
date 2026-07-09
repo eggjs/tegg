@@ -7,6 +7,7 @@ export type { IncomingHttpHeaders } from 'node:http';
 
 export enum ControllerType {
   HTTP = 'HTTP',
+  WEBSOCKET = 'WEBSOCKET',
   MCP = 'MCP',
   SOFA_RPC = 'SOFA_RPC',
   SOFA_RPC_STREAM = 'SOFA_RPC_STREAM',
@@ -23,6 +24,7 @@ export type ControllerTypeLike = ControllerType | string;
 
 export enum MethodType {
   HTTP = 'HTTP',
+  WEBSOCKET = 'WEBSOCKET',
   SOFA_RPC = 'SOFA_RPC',
   SOFA_RPC_STREAM = 'SOFA_RPC_STREAM',
   MGW_RPC = 'MGW_RPC',
@@ -51,6 +53,16 @@ export enum HTTPParamType {
   REQUEST = 'REQUEST',
   HEADERS = 'HEADERS',
   COOKIES = 'COOKIES',
+}
+
+export enum WebSocketParamType {
+  PARAM = 'PARAM',
+  QUERY = 'QUERY',
+  QUERIES = 'QUERIES',
+  HEADERS = 'HEADERS',
+  REQUEST = 'REQUEST',
+  SOCKET = 'SOCKET',
+  STREAM = 'STREAM',
 }
 
 export enum MCPProtocols {

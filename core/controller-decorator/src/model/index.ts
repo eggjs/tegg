@@ -3,6 +3,8 @@ export * from './HTTPControllerMeta';
 export * from './HTTPRequest';
 export * from './HTTPResponse';
 export * from './HTTPCookies';
+export * from './WebSocketMethodMeta';
+export * from './WebSocketControllerMeta';
 export * from './MCPControllerMeta';
 export * from './MCPPromptMeta';
 export * from './MCPResourceMeta';
