@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
+import type { IncomingMessage } from 'node:http';
 import path from 'node:path';
+import type { Duplex } from 'node:stream';
 import mm from 'egg-mock';
 import WebSocket from 'ws';
 import type { RawData } from 'ws';
@@ -342,6 +344,37 @@ describe('plugin/controller/test/websocket/websocket.test.ts', () => {
     }
   });
 
+  it('should handle websocket fetch connection lifecycle errors before closing', async () => {
+    const socket = new WebSocket(requestUrl(app, '/ws-fetch/connection-error'), {
+      headers: { 'x-client-id': 'connection-error-client' },
+    });
+    const receiver = createJSONReceiver(socket);
+    const closePromise = receiveClose(socket);
+    await new Promise<void>((resolve, reject) => {
+      socket.once('open', resolve);
+      socket.once('error', reject);
+    });
+
+    const error = await receiver.next();
+    assert.deepEqual(error, {
+      type: 'error',
+      message: 'fetch connection error',
+      header: 'connection-error-client',
+      path: '/ws-fetch/connection-error',
+      pid: error.pid,
+    });
+    assert.deepEqual(await closePromise, {
+      code: 1011,
+      reason: 'Internal Server Error',
+    });
+
+    const res = await app.httpRequest()
+      .get('/apps/ws-fetch-close-connection-error')
+      .expect(200);
+    assert.equal(res.body.app.name, 'ws-fetch-close-connection-error');
+    assert.equal(res.body.app.desc, '1011:Internal Server Error');
+  });
+
   it('should serialize websocket fetch messages on the same connection', async () => {
     const socket = new WebSocket(requestUrl(app, '/ws-fetch/serial'));
     const receiver = createJSONReceiver(socket);
@@ -555,10 +588,22 @@ describe('plugin/controller/test/websocket/websocket.test.ts', () => {
     }
   });
 
-  it('should reject unmatched websocket route', async () => {
-    await assert.rejects(
-      () => createClient(requestUrl(app, '/ws/not-found')),
-      /Unexpected server response: 404/,
-    );
+  it('should let another upgrade listener handle an unmatched websocket route', async () => {
+    const handleUpgrade = (request: IncomingMessage, socket: Duplex) => {
+      if (request.url !== '/ws/not-found') {
+        return;
+      }
+      const body = 'handled by another upgrade listener';
+      socket.end(`HTTP/1.1 418 I'm a Teapot\r\nConnection: close\r\nContent-Length: ${Buffer.byteLength(body)}\r\n\r\n${body}`);
+    };
+    app.server.on('upgrade', handleUpgrade);
+    try {
+      await assert.rejects(
+        () => createClient(requestUrl(app, '/ws/not-found')),
+        /Unexpected server response: 418/,
+      );
+    } finally {
+      app.server.removeListener('upgrade', handleUpgrade);
+    }
   });
 });

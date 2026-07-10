@@ -90,6 +90,23 @@ describe('standalone/service-worker/test/websocket/websocket.test.ts', () => {
     await closeClient(ws);
   });
 
+  it('should handle websocket fetch connection lifecycle errors before closing', async () => {
+    const socket = createClient('/ws-fetch/connection-error', {
+      'x-client-id': 'connection-error-client',
+    });
+    const messages = createJSONMessageQueue(socket);
+    const closePromise = waitClose(socket);
+
+    assert.deepStrictEqual(await messages.next(), {
+      type: 'error',
+      message: 'fetch connection error',
+      header: 'connection-error-client',
+      path: '/ws-fetch/connection-error',
+    });
+    await closePromise;
+    await waitFor(() => fetchCloseEvents.includes('connection-error:1011:Internal Server Error'));
+  });
+
   it('should isolate two websocket fetch connections with interleaved responses in standalone service worker', async () => {
     const first = createClient('/ws-fetch/first?name=one&tag=a&tag=b', {
       'x-client-id': 'first-client',

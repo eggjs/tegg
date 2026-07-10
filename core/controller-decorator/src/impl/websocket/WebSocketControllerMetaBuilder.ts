@@ -35,7 +35,7 @@ export class WebSocketControllerMetaBuilder {
   build(): WebSocketControllerMeta {
     ControllerValidator.validate(this.clazz);
     const controllerType = ControllerInfoUtil.getControllerType(this.clazz);
-    assert(controllerType === ControllerType.WEBSOCKET, 'invalidate controller type');
+    assert(controllerType === ControllerType.WEBSOCKET, 'invalid controller type');
     const webSocketPath = WebSocketInfoUtil.getWebSocketPath(this.clazz);
     const middlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
     const methods = this.buildMethod();

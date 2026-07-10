@@ -26,34 +26,11 @@ export function HTTPHeaders() {
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.HEADERS, parameterIndex, controllerClazz, methodName);
-  };
-}
-
-export function Headers() {
-  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
-    const methodName = propertyKey as string;
-    const controllerClazz = target.constructor as EggProtoImplClass;
-    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.HEADERS, parameterIndex, controllerClazz, methodName);
     WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.HEADERS, parameterIndex, controllerClazz, methodName);
   };
 }
 
 export function HTTPQuery(param?: HTTPQueryParams) {
-  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
-    const methodName = propertyKey as string;
-    const controllerClazz = target.constructor as EggProtoImplClass;
-    const argNames = ObjectUtils.getFunctionArgNameList(target[propertyKey]);
-    const name = param?.name || argNames[parameterIndex];
-    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERY, parameterIndex, controllerClazz, methodName);
-    HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
-  };
-}
-
-export function Query(param?: HTTPQueryParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
     assert(typeof propertyKey === 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
@@ -78,38 +55,12 @@ export function HTTPQueries(param?: HTTPQueriesParams) {
     const name = param?.name || argNames[parameterIndex];
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERIES, parameterIndex, controllerClazz, methodName);
     HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
-  };
-}
-
-export function Queries(param?: HTTPQueriesParams) {
-  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
-    const methodName = propertyKey as string;
-    const controllerClazz = target.constructor as EggProtoImplClass;
-    const argNames = ObjectUtils.getFunctionArgNameList(target[propertyKey]);
-    const name = param?.name || argNames[parameterIndex];
-    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.QUERIES, parameterIndex, controllerClazz, methodName);
-    HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
     WebSocketInfoUtil.setWebSocketMethodParamType(WebSocketParamType.QUERIES, parameterIndex, controllerClazz, methodName);
     WebSocketInfoUtil.setWebSocketMethodParamName(name, parameterIndex, controllerClazz, methodName);
   };
 }
 
 export function HTTPParam(param?: HTTPParamParams) {
-  return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
-    assert(typeof propertyKey === 'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);
-    const methodName = propertyKey as string;
-    const controllerClazz = target.constructor as EggProtoImplClass;
-    const argNames = ObjectUtils.getFunctionArgNameList(target[propertyKey]);
-    const name = param?.name || argNames[parameterIndex];
-    HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.PARAM, parameterIndex, controllerClazz, methodName);
-    HTTPInfoUtil.setHTTPMethodParamName(name, parameterIndex, controllerClazz, methodName);
-  };
-}
-
-export function Param(param?: HTTPParamParams) {
   return function(target: any, propertyKey: PropertyKey, parameterIndex: number) {
     assert(typeof propertyKey === 'string',
       `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`);

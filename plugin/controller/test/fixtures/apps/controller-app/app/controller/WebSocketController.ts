@@ -3,11 +3,11 @@ import { PassThrough, pipeline, type Readable } from 'node:stream';
 import type { RawData, WebSocket } from 'ws';
 import {
   Context,
-  Headers,
+  HTTPHeaders,
+  HTTPParam,
+  HTTPQueries,
+  HTTPQuery,
   Inject,
-  Param,
-  Queries,
-  Query,
   Request,
   WebSocketContext,
   WebSocketController,
@@ -52,10 +52,10 @@ export class AppWebSocketController {
   })
   async echo(
     @WebSocketSocket() socket: WebSocket,
-    @Param() id: string,
-    @Query() name: string,
-    @Queries({ name: 'tag' }) tags: string[],
-    @Headers() headers: IncomingHttpHeaders,
+    @HTTPParam() id: string,
+    @HTTPQuery() name: string,
+    @HTTPQueries({ name: 'tag' }) tags: string[],
+    @HTTPHeaders() headers: IncomingHttpHeaders,
     @Request() request: IncomingMessage,
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
@@ -91,8 +91,8 @@ export class AppWebSocketController {
   })
   async stream(
     @WebSocketStream() input: Readable,
-    @Param() id: string,
-    @Query() name: string,
+    @HTTPParam() id: string,
+    @HTTPQuery() name: string,
   ) {
     const output = new PassThrough();
     output.write(JSON.stringify({
@@ -125,9 +125,13 @@ export class AppWebSocketFetchController {
 
   @WebSocketFetchOnConnection()
   onConnection(
-    @Headers() headers: IncomingHttpHeaders,
+    @HTTPParam() id: string,
+    @HTTPHeaders() headers: IncomingHttpHeaders,
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
+    if (id === 'connection-error') {
+      throw new Error('fetch connection error');
+    }
     ctx.socket.send(JSON.stringify({
       type: 'connection',
       header: headers['x-client-id'],
@@ -151,10 +155,10 @@ export class AppWebSocketFetchController {
   onData(
     @WebSocketData() data: RawData,
     @WebSocketClose() close: WebSocketFetchClose,
-    @Param() id: string,
-    @Query() name: string,
-    @Queries({ name: 'tag' }) tags: string[],
-    @Headers() headers: IncomingHttpHeaders,
+    @HTTPParam() id: string,
+    @HTTPQuery() name: string,
+    @HTTPQueries({ name: 'tag' }) tags: string[],
+    @HTTPHeaders() headers: IncomingHttpHeaders,
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
     const body = JSON.parse(data.toString()) as WebSocketFetchRequest;
@@ -225,7 +229,7 @@ export class AppWebSocketFetchController {
   @WebSocketFetchOnError()
   onError(
     @WebSocketError() error: Error,
-    @Headers() headers: IncomingHttpHeaders,
+    @HTTPHeaders() headers: IncomingHttpHeaders,
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
     ctx.socket.send(JSON.stringify({
@@ -241,7 +245,7 @@ export class AppWebSocketFetchController {
   async onClose(
     @WebSocketCloseCode() code: number,
     @WebSocketCloseReason() reason: Buffer,
-    @Param() id: string,
+    @HTTPParam() id: string,
   ) {
     await this.appService.save({
       name: `ws-fetch-close-${id}`,

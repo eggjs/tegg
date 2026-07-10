@@ -76,8 +76,9 @@ export class WebSocketFetchControllerMetaBuilder {
   build(): WebSocketFetchControllerMeta {
     ControllerValidator.validate(this.clazz);
     const controllerType = ControllerInfoUtil.getControllerType(this.clazz);
-    assert(controllerType === ControllerType.WEBSOCKET_FETCH, 'invalidate controller type');
+    assert(controllerType === ControllerType.WEBSOCKET_FETCH, 'invalid controller type');
     const webSocketPath = WebSocketInfoUtil.getWebSocketPath(this.clazz);
+    assert(webSocketPath, `build websocket fetch controller ${ClassUtil.classDescription(this.clazz)} failed: path is required`);
     const middlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
     const { methods, connectionMethod, openMethod, errorMethod, closeMethod } = this.buildMethods();
     assert(methods.length === 1, 'websocket fetch controller must has exactly one @WebSocketFetchMethod');

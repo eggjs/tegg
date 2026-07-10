@@ -7,7 +7,6 @@ export * from './HTTPMethod';
 export * from './HTTPParam';
 export * from './WebSocketController';
 export * from './WebSocketMethod';
-export * from './WebSocketParam';
 export * from './WebSocketContext';
 export * from './WebSocketFetchController';
 export * from './WebSocketFetchMethod';

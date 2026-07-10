@@ -54,7 +54,7 @@
     "path-to-regexp": "^1.8.0",
     "type-is": "^1.6.18",
     "urllib": "^4.0.0",
-    "ws": "^8.18.0"
+    "ws": "^8.21.0"
   },
   "peerDependencies": {
     "@eggjs/tegg": "^3"

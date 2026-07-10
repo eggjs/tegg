@@ -230,7 +230,6 @@ export class WebSocketControllerRegister implements ControllerRegister {
     const url = this.createURL(req);
     const matched = this.matchRoute(req, url);
     if (!matched) {
-      this.rejectSocket(socket, 404, 'Not Found');
       return;
     }
 
@@ -495,14 +494,26 @@ export class WebSocketControllerRegister implements ControllerRegister {
       });
     });
 
+    let lifecycleError: Error | undefined;
     try {
       await invokeMethod(controllerMeta.connectionMethod);
       await invokeMethod(controllerMeta.openMethod);
       controllerReady = true;
+    } catch (error) {
+      lifecycleError = error;
+      await handleError(error).catch(err => {
+        this.app.logger.error('[tegg/websocket-fetch] handle lifecycle error failed: %s', err.stack || err.message);
+      });
+      if (webSocketCtx.socket.readyState === WebSocket.OPEN || webSocketCtx.socket.readyState === WebSocket.CONNECTING) {
+        webSocketCtx.socket.close(1011, 'Internal Server Error');
+      }
     } finally {
       resolveControllerReady();
     }
     await closeHandled;
+    if (lifecycleError) {
+      throw lifecycleError;
+    }
   }
 
   private createFetchClose(webSocket: WebSocket): WebSocketFetchClose {
@@ -539,12 +550,18 @@ export class WebSocketControllerRegister implements ControllerRegister {
       const onData = (chunk: unknown) => {
         this.sendFetchChunk(webSocket, chunk, handleError);
       };
+      let onEnd!: () => void;
+      let onClose!: () => void;
+      let onError!: (error: Error) => void;
       const settle = (error?: Error) => {
         if (settled) {
           return;
         }
         settled = true;
         result.removeListener('data', onData);
+        result.removeListener('end', onEnd);
+        result.removeListener('close', onClose);
+        result.removeListener('error', onError);
         responseStreams.delete(result);
         if (!error || webSocket.readyState !== WebSocket.OPEN) {
           resolve();
@@ -554,9 +571,12 @@ export class WebSocketControllerRegister implements ControllerRegister {
           this.app.logger.error('[tegg/websocket-fetch] handle stream error failed: %s', err.stack || err.message);
         }).finally(resolve);
       };
-      result.once('end', () => settle());
-      result.once('close', () => settle());
-      result.once('error', settle);
+      onEnd = () => settle();
+      onClose = () => settle();
+      onError = error => settle(error);
+      result.once('end', onEnd);
+      result.once('close', onClose);
+      result.once('error', onError);
       result.on('data', onData);
       const state = result as NodeJS.ReadableStream & {
         closed?: boolean;
@@ -564,7 +584,8 @@ export class WebSocketControllerRegister implements ControllerRegister {
         readableEnded?: boolean;
       };
       if (state.errored) {
-        settle(state.errored);
+        const streamError = state.errored;
+        setImmediate(() => settle(streamError));
       } else if (state.closed || state.readableEnded) {
         settle();
       }
@@ -634,8 +655,25 @@ export class WebSocketControllerRegister implements ControllerRegister {
       return Promise.resolve();
     }
     return new Promise(resolve => {
-      webSocket.once('close', () => resolve());
-      webSocket.once('error', () => resolve());
+      let settled = false;
+      let onClose!: () => void;
+      let onError!: (error: Error) => void;
+      const settle = () => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        webSocket.removeListener('close', onClose);
+        webSocket.removeListener('error', onError);
+        resolve();
+      };
+      onClose = () => settle();
+      onError = error => {
+        this.app.logger.error('[tegg/websocket] socket error while waiting for close: %s', error.stack || error.message);
+        settle();
+      };
+      webSocket.once('close', onClose);
+      webSocket.once('error', onError);
     });
   }
 
@@ -644,7 +682,6 @@ export class WebSocketControllerRegister implements ControllerRegister {
       return;
     }
     const body = message;
-    socket.write(`HTTP/1.1 ${status} ${message}\r\nConnection: close\r\nContent-Length: ${Buffer.byteLength(body)}\r\n\r\n${body}`);
-    socket.destroy();
+    socket.end(`HTTP/1.1 ${status} ${message}\r\nConnection: close\r\nContent-Length: ${Buffer.byteLength(body)}\r\n\r\n${body}`);
   }
 }

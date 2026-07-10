@@ -34,7 +34,7 @@ export class WebSocketFetchControllerMethodMetaBuilder {
       const paramType = WebSocketInfoUtil.getWebSocketMethodParamType(i, this.clazz, this.methodName);
       if (!paramType) {
         const classDesc = ClassUtil.classDescription(this.clazz);
-        throw new Error(`${classDesc}:${this.methodName} param ${i} has no websocket fetch param type, Please add @WebSocketData, @WebSocketClose, @WebSocketError, @WebSocketCloseCode, @WebSocketCloseReason, @WebSocketParam, @WebSocketQuery, @WebSocketQueries, @WebSocketHeaders, @WebSocketRequest, @WebSocketSocket or @Context`);
+        throw new Error(`${classDesc}:${this.methodName} param ${i} has no websocket fetch param type, Please add @WebSocketData, @WebSocketClose, @WebSocketError, @WebSocketCloseCode, @WebSocketCloseReason, @HTTPParam, @HTTPQuery, @HTTPQueries, @HTTPHeaders, @Request, @WebSocketSocket or @Context`);
       }
       if (!this.isAllowedParamType(methodType, paramType)) {
         const classDesc = ClassUtil.classDescription(this.clazz);

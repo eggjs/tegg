@@ -34,7 +34,7 @@ export class WebSocketControllerMethodMetaBuilder {
       const paramType = WebSocketInfoUtil.getWebSocketMethodParamType(i, this.clazz, this.methodName);
       if (!paramType) {
         const classDesc = ClassUtil.classDescription(this.clazz);
-        throw new Error(`${classDesc}:${this.methodName} param ${i} has no websocket param type, Please add @WebSocketParam, @WebSocketQuery, @WebSocketQueries, @WebSocketHeaders, @WebSocketRequest, @WebSocketSocket, @WebSocketStream or @Context`);
+        throw new Error(`${classDesc}:${this.methodName} param ${i} has no websocket param type, Please add @HTTPParam, @HTTPQuery, @HTTPQueries, @HTTPHeaders, @Request, @WebSocketSocket, @WebSocketStream or @Context`);
       }
     }
   }
