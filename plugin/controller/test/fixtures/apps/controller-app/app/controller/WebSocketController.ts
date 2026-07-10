@@ -161,7 +161,9 @@ export class AppWebSocketFetchController {
     const source = new PassThrough();
     const output = body.pipeline ? new PassThrough() : source;
     if (body.pipeline) {
-      pipeline(source, output, () => {});
+      pipeline(source, output, () => {
+        // WebSocketFetch observes errors from the returned output stream.
+      });
     }
     source.write(JSON.stringify({
       type: 'data',

@@ -284,14 +284,6 @@ function waitJSONMessage(ws: WebSocket): Promise<any> {
   });
 }
 
-async function waitJSONMessages(ws: WebSocket, count: number) {
-  const messages: unknown[] = [];
-  while (messages.length < count) {
-    messages.push(await waitJSONMessage(ws));
-  }
-  return messages;
-}
-
 function createJSONMessageQueue(ws: WebSocket) {
   const messages: any[] = [];
   const waiters: Array<(value: any) => void> = [];
