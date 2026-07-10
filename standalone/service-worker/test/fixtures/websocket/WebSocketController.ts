@@ -1,5 +1,5 @@
 import type { IncomingHttpHeaders, IncomingMessage } from 'node:http';
-import { PassThrough, type Readable } from 'node:stream';
+import { PassThrough, pipeline, type Readable } from 'node:stream';
 import type { RawData, WebSocket } from 'ws';
 import {
   Context,
@@ -32,9 +32,13 @@ interface WebSocketFetchRequest {
   close?: boolean;
   error?: boolean;
   delayMs?: number;
+  holdOpen?: boolean;
+  observeClose?: boolean;
+  pipeline?: boolean;
 }
 
 export const fetchCloseEvents: string[] = [];
+export const fetchStreamCloseEvents: string[] = [];
 
 @WebSocketController({
   path: '/ws',
@@ -135,8 +139,12 @@ export class StandaloneWebSocketFetchController {
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
     const body = JSON.parse(data.toString()) as WebSocketFetchRequest;
-    const output = new PassThrough();
-    output.write(JSON.stringify({
+    const source = new PassThrough();
+    const output = body.pipeline ? new PassThrough() : source;
+    if (body.pipeline) {
+      pipeline(source, output, () => {});
+    }
+    source.write(JSON.stringify({
       type: 'data',
       phase: 1,
       id,
@@ -147,21 +155,36 @@ export class StandaloneWebSocketFetchController {
       content: body.content,
     }));
 
+    if (body.observeClose) {
+      output.once('close', () => {
+        fetchStreamCloseEvents.push(`${id}:${body.content}:${output.readableEnded}:${output.destroyed}`);
+      });
+      if (body.pipeline) {
+        source.once('close', () => {
+          fetchStreamCloseEvents.push(`source:${id}:${body.content}:${source.readableEnded}:${source.destroyed}`);
+        });
+      }
+    }
+
+    if (body.holdOpen) {
+      return output;
+    }
+
     setTimeout(() => {
-      if (output.destroyed) {
+      if (source.destroyed) {
         return;
       }
       if (body.error) {
-        output.destroy(new Error(`fetch error: ${body.content}`));
+        source.destroy(new Error(`fetch error: ${body.content}`));
         return;
       }
-      output.write(JSON.stringify({
+      source.write(JSON.stringify({
         type: 'data',
         phase: 2,
         id,
         content: body.content,
       }));
-      output.end();
+      source.end();
     }, body.delayMs ?? 10);
 
     if (body.close) {

@@ -15,6 +15,7 @@ import {
 import AppService from '../../modules/multi-module-service/AppService';
 import App from '../../modules/multi-module-common/model/App';
 import { countMw } from '../middleware/count_mw';
+import { webSocketFetchStreamCloseEvents } from './WebSocketTestState';
 
 @HTTPController({
   path: '/apps',
@@ -34,6 +35,17 @@ export class AppController {
     return {
       traceId,
       app,
+    };
+  }
+
+  @HTTPMethod({
+    method: HTTPMethodEnum.GET,
+    path: '/websocket-stream-events/:id',
+  })
+  getWebSocketStreamEvent(@HTTPParam() id: string) {
+    return {
+      event: webSocketFetchStreamCloseEvents.get(id),
+      pid: process.pid,
     };
   }
 

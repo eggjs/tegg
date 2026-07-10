@@ -415,6 +415,14 @@ export class WebSocketControllerRegister implements ControllerRegister {
     const eggObj = await this.eggContainerFactory.getOrCreateEggObject(route.controllerProto, route.controllerProto.name);
     const realObj = eggObj.obj;
     const close = this.createFetchClose(webSocketCtx.socket);
+    const responseStreams = new Set<NodeJS.ReadableStream>();
+    let connectionClosed = false;
+    let controllerReady = false;
+    let resolveControllerReady!: () => void;
+    const controllerReadyHandled = new Promise<void>(resolve => {
+      resolveControllerReady = resolve;
+    });
+    let messageQueue = Promise.resolve();
     const invokeMethod = async (
       targetMethodMeta: WebSocketFetchMethodMeta | undefined,
       payload: WebSocketMethodPayload = {},
@@ -438,6 +446,8 @@ export class WebSocketControllerRegister implements ControllerRegister {
     };
     const closeHandled = new Promise<void>(resolve => {
       webSocketCtx.socket.once('close', (code, reason) => {
+        connectionClosed = true;
+        this.destroyFetchResponseStreams(responseStreams);
         this.app.ctxStorage.run(eggCtx, async () => {
           try {
             await invokeMethod(controllerMeta.closeMethod, {
@@ -457,13 +467,22 @@ export class WebSocketControllerRegister implements ControllerRegister {
     });
 
     webSocketCtx.socket.on('message', data => {
-      this.app.ctxStorage.run(eggCtx, async () => {
-        try {
-          const result = await invokeMethod(methodMeta, { data });
-          this.sendFetchResponseStream(result, webSocketCtx.socket, handleError);
-        } catch (error) {
-          await handleError(error);
+      if (connectionClosed) {
+        return;
+      }
+      messageQueue = messageQueue.then(async () => {
+        await controllerReadyHandled;
+        if (!controllerReady || connectionClosed || webSocketCtx.socket.readyState !== WebSocket.OPEN) {
+          return;
         }
+        await this.app.ctxStorage.run(eggCtx, async () => {
+          try {
+            const result = await invokeMethod(methodMeta, { data });
+            await this.sendFetchResponseStream(result, webSocketCtx.socket, responseStreams, handleError);
+          } catch (error) {
+            await handleError(error);
+          }
+        });
       }).catch(error => {
         this.app.logger.error('[tegg/websocket-fetch] handle message failed: %s', error.stack || error.message);
       });
@@ -476,8 +495,13 @@ export class WebSocketControllerRegister implements ControllerRegister {
       });
     });
 
-    await invokeMethod(controllerMeta.connectionMethod);
-    await invokeMethod(controllerMeta.openMethod);
+    try {
+      await invokeMethod(controllerMeta.connectionMethod);
+      await invokeMethod(controllerMeta.openMethod);
+      controllerReady = true;
+    } finally {
+      resolveControllerReady();
+    }
     await closeHandled;
   }
 
@@ -490,28 +514,80 @@ export class WebSocketControllerRegister implements ControllerRegister {
     };
   }
 
-  private sendFetchResponseStream(
+  private async sendFetchResponseStream(
     result: unknown,
     webSocket: WebSocket,
+    responseStreams: Set<NodeJS.ReadableStream>,
     handleError: (error: Error) => Promise<void>,
-  ) {
+  ): Promise<void> {
     if (result === undefined || result === null) {
       return;
     }
     if (!this.isReadableStream(result)) {
-      handleError(new Error('WebSocketFetch method must return a readable stream or void')).catch(error => {
+      await handleError(new Error('WebSocketFetch method must return a readable stream or void')).catch(error => {
         this.app.logger.error('[tegg/websocket-fetch] handle invalid response failed: %s', error.stack || error.message);
       });
       return;
     }
-    result.on('data', chunk => {
-      this.sendFetchChunk(webSocket, chunk, handleError);
+    if (webSocket.readyState !== WebSocket.OPEN) {
+      this.destroyFetchResponseStream(result);
+      return;
+    }
+    responseStreams.add(result);
+    await new Promise<void>(resolve => {
+      let settled = false;
+      const onData = (chunk: unknown) => {
+        this.sendFetchChunk(webSocket, chunk, handleError);
+      };
+      const settle = (error?: Error) => {
+        if (settled) {
+          return;
+        }
+        settled = true;
+        result.removeListener('data', onData);
+        responseStreams.delete(result);
+        if (!error || webSocket.readyState !== WebSocket.OPEN) {
+          resolve();
+          return;
+        }
+        handleError(error).catch(err => {
+          this.app.logger.error('[tegg/websocket-fetch] handle stream error failed: %s', err.stack || err.message);
+        }).finally(resolve);
+      };
+      result.once('end', () => settle());
+      result.once('close', () => settle());
+      result.once('error', settle);
+      result.on('data', onData);
+      const state = result as NodeJS.ReadableStream & {
+        closed?: boolean;
+        errored?: Error | null;
+        readableEnded?: boolean;
+      };
+      if (state.errored) {
+        settle(state.errored);
+      } else if (state.closed || state.readableEnded) {
+        settle();
+      }
     });
-    result.once('error', error => {
-      handleError(error).catch(err => {
-        this.app.logger.error('[tegg/websocket-fetch] handle stream error failed: %s', err.stack || err.message);
-      });
-    });
+  }
+
+  private destroyFetchResponseStreams(responseStreams: Set<NodeJS.ReadableStream>) {
+    for (const responseStream of responseStreams) {
+      this.destroyFetchResponseStream(responseStream);
+    }
+    responseStreams.clear();
+  }
+
+  private destroyFetchResponseStream(responseStream: NodeJS.ReadableStream) {
+    const destroy = (responseStream as NodeJS.ReadableStream & { destroy?: () => void }).destroy;
+    if (typeof destroy !== 'function') {
+      return;
+    }
+    try {
+      Reflect.apply(destroy, responseStream, []);
+    } catch (error) {
+      this.app.logger.error('[tegg/websocket-fetch] destroy response stream failed: %s', error.stack || error.message);
+    }
   }
 
   private sendFetchChunk(

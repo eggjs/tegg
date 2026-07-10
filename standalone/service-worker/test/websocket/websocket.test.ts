@@ -5,7 +5,7 @@ import { createWebSocketStream, WebSocket } from 'ws';
 import { ServiceWorkerApp } from '../../src/ServiceWorkerApp';
 import { StandaloneTestUtil } from '@eggjs/module-test-util/StandaloneTestUtil';
 import { TestUtils } from '../Utils';
-import { fetchCloseEvents } from '../fixtures/websocket/WebSocketController';
+import { fetchCloseEvents, fetchStreamCloseEvents } from '../fixtures/websocket/WebSocketController';
 
 describe('standalone/service-worker/test/websocket/websocket.test.ts', () => {
   let app: ServiceWorkerApp;
@@ -27,6 +27,7 @@ describe('standalone/service-worker/test/websocket/websocket.test.ts', () => {
 
   beforeEach(() => {
     fetchCloseEvents.length = 0;
+    fetchStreamCloseEvents.length = 0;
   });
 
   it('should handle websocket controller in standalone service worker', async () => {
@@ -173,7 +174,92 @@ describe('standalone/service-worker/test/websocket/websocket.test.ts', () => {
 
     await waitClose(second);
     await waitFor(() => fetchCloseEvents.includes('second:1000:server done'));
+
+    first.send(JSON.stringify({
+      content: 'broken',
+      error: true,
+      pipeline: true,
+    }));
+    assert.deepStrictEqual(await firstMessages.next(), {
+      type: 'data',
+      phase: 1,
+      id: 'first',
+      name: 'one',
+      tags: [ 'a', 'b' ],
+      header: 'first-client',
+      path: '/ws-fetch/first',
+      content: 'broken',
+    });
+    assert.deepStrictEqual(await firstMessages.next(), {
+      type: 'error',
+      message: 'fetch error: broken',
+      header: 'first-client',
+      path: '/ws-fetch/first',
+    });
     await closeClient(first);
+  });
+
+  it('should serialize websocket fetch messages on the same connection in standalone service worker', async () => {
+    const socket = createClient('/ws-fetch/serial');
+    const messages = createJSONMessageQueue(socket);
+    await messages.nextMany(2);
+
+    socket.send(JSON.stringify({
+      content: 'first',
+      delayMs: 60,
+    }));
+    socket.send(JSON.stringify({
+      content: 'second',
+      delayMs: 5,
+    }));
+
+    const responses = await messages.nextMany(4);
+    assert.deepStrictEqual(
+      responses.map(response => `${response.content}:${response.phase}`),
+      [ 'first:1', 'first:2', 'second:1', 'second:2' ],
+    );
+    assert.equal(socket.readyState, WebSocket.OPEN);
+    await closeClient(socket);
+  });
+
+  it('should destroy only the closed connection websocket fetch streams in standalone service worker', async () => {
+    const first = createClient('/ws-fetch/cleanup-first');
+    const second = createClient('/ws-fetch/cleanup-second');
+    const firstMessages = createJSONMessageQueue(first);
+    const secondMessages = createJSONMessageQueue(second);
+
+    await Promise.all([
+      firstMessages.nextMany(2),
+      secondMessages.nextMany(2),
+    ]);
+
+    first.send(JSON.stringify({
+      content: 'hold',
+      holdOpen: true,
+      observeClose: true,
+      pipeline: true,
+    }));
+    second.send(JSON.stringify({
+      content: 'complete',
+      delayMs: 20,
+      observeClose: true,
+    }));
+
+    assert.equal((await firstMessages.next()).phase, 1);
+    assert.equal((await secondMessages.next()).phase, 1);
+    await closeClient(first);
+
+    assert.deepStrictEqual(await secondMessages.next(), {
+      type: 'data',
+      phase: 2,
+      id: 'cleanup-second',
+      content: 'complete',
+    });
+    await waitFor(() => fetchStreamCloseEvents.includes('cleanup-first:hold:false:true'));
+    await waitFor(() => fetchStreamCloseEvents.includes('source:cleanup-first:hold:false:true'));
+    await waitFor(() => fetchStreamCloseEvents.includes('cleanup-second:complete:true:true'));
+
+    await closeClient(second);
   });
 
   function createClient(path: string, headers?: Record<string, string>) {

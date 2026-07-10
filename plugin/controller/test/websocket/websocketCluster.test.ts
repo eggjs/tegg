@@ -87,6 +87,21 @@ async function closeClient(socket: WebSocket) {
   });
 }
 
+async function waitForStreamCloseEvent(app, name: string, timeout = 5000) {
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const res = await app.httpRequest()
+      .get(`/apps/websocket-stream-events/${name}`)
+      .set('connection', 'close')
+      .expect(200);
+    if (res.body.event) {
+      return res.body.event;
+    }
+    await new Promise(resolve => setTimeout(resolve, 20));
+  }
+  assert.fail(`stream close event ${name} should be stored before timeout`);
+}
+
 describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
   let app;
 
@@ -212,6 +227,25 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       });
       assert.equal(socket.readyState, WebSocket.OPEN);
 
+      socket.send(JSON.stringify({
+        content: 'cluster-broken',
+        error: true,
+        pipeline: true,
+      }));
+      const beforeError = await receiver.next();
+      assert.equal(beforeError.type, 'data');
+      assert.equal(beforeError.phase, 1);
+      assert.equal(beforeError.content, 'cluster-broken');
+      const error = await receiver.next();
+      assert.deepEqual(error, {
+        type: 'error',
+        message: 'fetch error: cluster-broken',
+        header: 'cluster-fetch-client',
+        path: '/ws-fetch/cluster-fetch',
+        pid: error.pid,
+      });
+      assert.equal(socket.readyState, WebSocket.OPEN);
+
       const closePromise = receiveClose(socket);
       socket.send(JSON.stringify({
         content: 'cluster-done',
@@ -234,6 +268,108 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       });
     } finally {
       await closeClient(socket);
+    }
+  });
+
+  it('should serialize websocket fetch messages on the same connection in cluster', async () => {
+    const socket = new WebSocket(requestUrl(app, '/ws-fetch/cluster-serial'));
+    const receiver = createJSONReceiver(socket);
+    await new Promise<void>((resolve, reject) => {
+      socket.once('open', resolve);
+      socket.once('error', reject);
+    });
+
+    try {
+      await receiver.next();
+      await receiver.next();
+
+      socket.send(JSON.stringify({
+        content: 'first',
+        delayMs: 60,
+      }));
+      socket.send(JSON.stringify({
+        content: 'second',
+        delayMs: 5,
+      }));
+
+      const messages = [
+        await receiver.next(),
+        await receiver.next(),
+        await receiver.next(),
+        await receiver.next(),
+      ];
+      assert.deepEqual(
+        messages.map(message => `${message.content}:${message.phase}`),
+        [ 'first:1', 'first:2', 'second:1', 'second:2' ],
+      );
+      assert.equal(socket.readyState, WebSocket.OPEN);
+    } finally {
+      await closeClient(socket);
+    }
+  });
+
+  it('should destroy only the closed connection websocket fetch streams in cluster', async () => {
+    const firstSocket = new WebSocket(requestUrl(app, '/ws-fetch/cluster-cleanup-first'));
+    const secondSocket = new WebSocket(requestUrl(app, '/ws-fetch/cluster-cleanup-second'));
+    const firstMessages = createJSONReceiver(firstSocket);
+    const secondMessages = createJSONReceiver(secondSocket);
+
+    await Promise.all([
+      new Promise<void>((resolve, reject) => {
+        firstSocket.once('open', resolve);
+        firstSocket.once('error', reject);
+      }),
+      new Promise<void>((resolve, reject) => {
+        secondSocket.once('open', resolve);
+        secondSocket.once('error', reject);
+      }),
+    ]);
+
+    try {
+      await Promise.all([
+        firstMessages.next(),
+        firstMessages.next(),
+        secondMessages.next(),
+        secondMessages.next(),
+      ]);
+
+      firstSocket.send(JSON.stringify({
+        content: 'hold',
+        holdOpen: true,
+        observeClose: true,
+        pipeline: true,
+      }));
+      secondSocket.send(JSON.stringify({
+        content: 'complete',
+        delayMs: 20,
+        observeClose: true,
+      }));
+
+      assert.equal((await firstMessages.next()).phase, 1);
+      assert.equal((await secondMessages.next()).phase, 1);
+      await closeClient(firstSocket);
+
+      const secondPhase2 = await secondMessages.next();
+      assert.equal(secondPhase2.phase, 2);
+      assert.equal(secondPhase2.content, 'complete');
+
+      assert.equal(
+        await waitForStreamCloseEvent(app, 'ws-fetch-stream-close-cluster-cleanup-first-hold'),
+        'false:true',
+      );
+      assert.equal(
+        await waitForStreamCloseEvent(app, 'ws-fetch-source-close-cluster-cleanup-first-hold'),
+        'false:true',
+      );
+      assert.equal(
+        await waitForStreamCloseEvent(app, 'ws-fetch-stream-close-cluster-cleanup-second-complete'),
+        'true:true',
+      );
+    } finally {
+      await Promise.all([
+        closeClient(firstSocket),
+        closeClient(secondSocket),
+      ]);
     }
   });
 
