@@ -110,7 +110,8 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
     mm(process, 'cwd', () => {
       return pluginRoot;
     });
-    app = mm.cluster({
+    const cluster = mm.cluster as any;
+    app = cluster({
       baseDir: path.join(pluginRoot, 'test/fixtures/apps/controller-app'),
       framework: eggFramework,
       workers: 2,
