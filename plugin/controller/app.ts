@@ -152,7 +152,6 @@ export default class ControllerAppBootHook {
     // and register methods after collect is done.
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
     WebSocketControllerRegister.instance?.doRegister();
-    WebSocketControllerRegister.instance?.listen();
 
     this.app.config.mcp.hooks = this.mcpControllerRegister?.hooks;
   }

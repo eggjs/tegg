@@ -1,5 +1,6 @@
 import type { IncomingHttpHeaders, IncomingMessage } from 'node:http';
 import { PassThrough, pipeline, type Readable } from 'node:stream';
+import type { Context as EggContext } from 'egg';
 import type { RawData, WebSocket } from 'ws';
 import {
   Context,
@@ -7,7 +8,9 @@ import {
   HTTPParam,
   HTTPQueries,
   HTTPQuery,
+  Host,
   Inject,
+  Middleware,
   Request,
   WebSocketContext,
   WebSocketController,
@@ -38,6 +41,14 @@ interface WebSocketFetchRequest {
   holdOpen?: boolean;
   observeClose?: boolean;
   pipeline?: boolean;
+}
+
+async function webSocketShortCircuit(ctx: EggContext) {
+  const webSocketCtx = ctx as WebSocketContext<WebSocket>;
+  webSocketCtx.webSocket.send(JSON.stringify({
+    type: 'middleware',
+    path: ctx.path,
+  }));
 }
 
 @WebSocketController({
@@ -74,6 +85,8 @@ export class AppWebSocketController {
       header: headers['x-client-id'],
       url: request.url,
       path: ctx.path,
+      sameSocket: ctx.webSocket === socket,
+      sameRequest: ctx.req === request,
       pid: process.pid,
     }));
 
@@ -114,6 +127,47 @@ export class AppWebSocketController {
 
     return output;
   }
+
+  @Host('proxy.example.com')
+  @WebSocketMethod({
+    path: '/proxy',
+  })
+  proxy(@Context() ctx: WebSocketContext<WebSocket>) {
+    ctx.webSocket.send(JSON.stringify({
+      type: 'proxy',
+      host: ctx.host,
+      protocol: ctx.protocol,
+    }));
+  }
+
+  @WebSocketMethod({
+    path: '/optional/:id?',
+  })
+  optional(
+    @HTTPParam() id: string | undefined,
+    @WebSocketSocket() socket: WebSocket,
+  ) {
+    socket.send(JSON.stringify({
+      type: 'optional',
+      id: id ?? null,
+    }));
+  }
+
+  @Middleware(webSocketShortCircuit)
+  @WebSocketMethod({
+    path: '/middleware-short-circuit',
+  })
+  middlewareShortCircuit() {
+    throw new Error('middleware should not invoke this method');
+  }
+
+  @WebSocketMethod({
+    path: '/timeout',
+    timeout: 20,
+  })
+  async timeout() {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
 }
 
 @WebSocketFetchController({
@@ -132,7 +186,7 @@ export class AppWebSocketFetchController {
     if (id === 'connection-error') {
       throw new Error('fetch connection error');
     }
-    ctx.socket.send(JSON.stringify({
+    ctx.webSocket.send(JSON.stringify({
       type: 'connection',
       header: headers['x-client-id'],
       path: ctx.path,
@@ -144,7 +198,7 @@ export class AppWebSocketFetchController {
   onOpen(
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
-    ctx.socket.send(JSON.stringify({
+    ctx.webSocket.send(JSON.stringify({
       type: 'open',
       path: ctx.path,
       pid: process.pid,
@@ -232,7 +286,7 @@ export class AppWebSocketFetchController {
     @HTTPHeaders() headers: IncomingHttpHeaders,
     @Context() ctx: WebSocketContext<WebSocket>,
   ) {
-    ctx.socket.send(JSON.stringify({
+    ctx.webSocket.send(JSON.stringify({
       type: 'error',
       message: error.message,
       header: headers['x-client-id'],

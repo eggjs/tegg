@@ -1,0 +1,54 @@
+{
+  "name": "@eggjs/tegg-websocket-runtime",
+  "description": "WebSocket controller runtime for tegg",
+  "version": "3.84.2",
+  "keywords": [
+    "egg",
+    "typescript",
+    "tegg",
+    "websocket"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS='--no-deprecation' mocha",
+    "clean": "tsc -b --clean",
+    "tsc": "ut run clean && tsc -p ./tsconfig.json",
+    "tsc:pub": "ut run clean && tsc -p ./tsconfig.pub.json",
+    "prepublishOnly": "ut tsc:pub"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "homepage": "https://github.com/eggjs/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "core/websocket-runtime"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eggjs/controller-decorator": "^3.84.2",
+    "@eggjs/tegg-common-util": "^3.84.2",
+    "path-to-regexp": "^1.8.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.2.4",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}

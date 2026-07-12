@@ -44,8 +44,9 @@ export class WebSocketControllerMetaBuilder {
     const property = PrototypeUtil.getProperty(this.clazz);
     const protoName = property!.name as string;
     const hosts = ControllerInfoUtil.getControllerHosts(this.clazz);
+    const timeout = ControllerInfoUtil.getControllerTimeout(this.clazz);
     const metadata = new WebSocketControllerMeta(
-      clazzName, protoName, controllerName, webSocketPath, middlewares, methods, hosts);
+      clazzName, protoName, controllerName, webSocketPath, middlewares, methods, hosts, timeout);
     ControllerMetadataUtil.setControllerMetadata(this.clazz, metadata);
     for (const method of metadata.methods) {
       const realPath = metadata.getMethodRealPath(method);

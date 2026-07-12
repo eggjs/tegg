@@ -12,6 +12,7 @@ export class WebSocketFetchControllerMeta implements ControllerMetadata {
   public readonly middlewares: readonly MiddlewareFunc[];
   public readonly methods: readonly WebSocketFetchMethodMeta[];
   public readonly hosts?: string[];
+  public readonly timeout?: number;
   public readonly connectionMethod?: WebSocketFetchMethodMeta;
   public readonly openMethod?: WebSocketFetchMethodMeta;
   public readonly errorMethod?: WebSocketFetchMethodMeta;
@@ -29,6 +30,7 @@ export class WebSocketFetchControllerMeta implements ControllerMetadata {
     openMethod: WebSocketFetchMethodMeta | undefined,
     errorMethod: WebSocketFetchMethodMeta | undefined,
     closeMethod: WebSocketFetchMethodMeta | undefined,
+    timeout?: number,
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;
@@ -41,6 +43,7 @@ export class WebSocketFetchControllerMeta implements ControllerMetadata {
     this.openMethod = openMethod;
     this.errorMethod = errorMethod;
     this.closeMethod = closeMethod;
+    this.timeout = timeout;
   }
 
   getMethodRealPath(method: WebSocketFetchMethodMeta) {
@@ -69,5 +72,9 @@ export class WebSocketFetchControllerMeta implements ControllerMetadata {
       ];
     }
     return [ ...method.middlewares ];
+  }
+
+  getMethodTimeout(method: WebSocketFetchMethodMeta) {
+    return method.timeout ?? this.timeout;
   }
 }

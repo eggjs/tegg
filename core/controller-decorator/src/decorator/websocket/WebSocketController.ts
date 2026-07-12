@@ -14,6 +14,9 @@ export function WebSocketController(param?: WebSocketControllerParams) {
     if (param?.path) {
       WebSocketInfoUtil.setWebSocketPath(param.path, constructor);
     }
+    if (param?.timeout !== undefined) {
+      ControllerInfoUtil.setControllerTimeout(param.timeout, constructor);
+    }
 
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,

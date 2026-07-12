@@ -15,5 +15,8 @@ export function WebSocketMethod(param: WebSocketMethodParams) {
     if (param.priority !== undefined) {
       WebSocketInfoUtil.setWebSocketMethodPriority(param.priority, controllerClazz, methodName);
     }
+    if (param.timeout !== undefined) {
+      MethodInfoUtil.setMethodTimeout(param.timeout, controllerClazz, methodName);
+    }
   };
 }

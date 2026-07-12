@@ -20,7 +20,7 @@ export class WebSocketFetchControllerMethodMetaBuilder {
   private checkParamDecorators(methodType: WebSocketFetchMethodType) {
     const method = this.clazz.prototype[this.methodName];
     const functionLength = method.length;
-    const paramIndexList = WebSocketInfoUtil.getParamIndexList(this.clazz, this.methodName);
+    const paramIndexList = WebSocketInfoUtil.getCompatibleParamIndexList(this.clazz, this.methodName);
     const contextIndex = MethodInfoUtil.getMethodContextIndex(this.clazz, this.methodName);
     const hasAnnotationParamCount = typeof contextIndex === 'undefined'
       ? paramIndexList.length
@@ -31,7 +31,7 @@ export class WebSocketFetchControllerMethodMetaBuilder {
       if (i === contextIndex) {
         continue;
       }
-      const paramType = WebSocketInfoUtil.getWebSocketMethodParamType(i, this.clazz, this.methodName);
+      const paramType = WebSocketInfoUtil.getCompatibleMethodParamType(i, this.clazz, this.methodName);
       if (!paramType) {
         const classDesc = ClassUtil.classDescription(this.clazz);
         throw new Error(`${classDesc}:${this.methodName} param ${i} has no websocket fetch param type, Please add @WebSocketData, @WebSocketClose, @WebSocketError, @WebSocketCloseCode, @WebSocketCloseReason, @HTTPParam, @HTTPQuery, @HTTPQueries, @HTTPHeaders, @Request, @WebSocketSocket or @Context`);
@@ -86,10 +86,10 @@ export class WebSocketFetchControllerMethodMetaBuilder {
     this.checkParamDecorators(methodType);
 
     const paramTypeMap = new Map<number, WebSocketParamMeta>();
-    const paramIndexList = WebSocketInfoUtil.getParamIndexList(this.clazz, this.methodName);
+    const paramIndexList = WebSocketInfoUtil.getCompatibleParamIndexList(this.clazz, this.methodName);
     for (const paramIndex of paramIndexList) {
-      const paramType = WebSocketInfoUtil.getWebSocketMethodParamType(paramIndex, this.clazz, this.methodName)!;
-      const paramName = WebSocketInfoUtil.getWebSocketMethodParamName(paramIndex, this.clazz, this.methodName);
+      const paramType = WebSocketInfoUtil.getCompatibleMethodParamType(paramIndex, this.clazz, this.methodName)!;
+      const paramName = WebSocketInfoUtil.getCompatibleMethodParamName(paramIndex, this.clazz, this.methodName);
       const paramMeta = WebSocketParamMetaUtil.createParam(paramType, paramName);
 
       if (methodType === WebSocketFetchMethodType.DATA) {
@@ -144,7 +144,8 @@ export class WebSocketFetchControllerMethodMetaBuilder {
       : webSocketPath;
     const paramTypeMap = this.buildParamType(realPath, methodType);
     const priority = methodType === WebSocketFetchMethodType.DATA ? this.getPriority() : HTTPPriorityUtil.DEFAULT_PRIORITY;
+    const timeout = MethodInfoUtil.getMethodTimeout(this.clazz, this.methodName);
     return new WebSocketFetchMethodMeta(
-      this.methodName, webSocketPath, middlewares, contextIndex, paramTypeMap, priority, hosts, methodType);
+      this.methodName, webSocketPath, middlewares, contextIndex, paramTypeMap, priority, hosts, methodType, timeout);
   }
 }

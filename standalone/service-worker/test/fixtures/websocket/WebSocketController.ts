@@ -1,5 +1,6 @@
 import type { IncomingHttpHeaders, IncomingMessage } from 'node:http';
 import { PassThrough, pipeline, type Readable } from 'node:stream';
+import type { Context as EggContext } from 'egg';
 import type { RawData, WebSocket } from 'ws';
 import {
   Context,
@@ -7,11 +8,11 @@ import {
   HTTPParam,
   HTTPQueries,
   HTTPQuery,
+  Middleware,
   Request,
   WebSocketClose,
   WebSocketCloseCode,
   WebSocketCloseReason,
-  WebSocketContext,
   WebSocketController,
   WebSocketData,
   WebSocketError,
@@ -26,6 +27,7 @@ import {
   WebSocketSocket,
   WebSocketStream,
 } from '@eggjs/tegg';
+import type { ServiceWorkerWebSocketContext } from '../../../src/websocket/ServiceWorkerWebSocketContext';
 
 interface WebSocketFetchRequest {
   content: string;
@@ -39,6 +41,14 @@ interface WebSocketFetchRequest {
 
 export const fetchCloseEvents: string[] = [];
 export const fetchStreamCloseEvents: string[] = [];
+
+async function webSocketShortCircuit(ctx: EggContext) {
+  const webSocketCtx = ctx as unknown as ServiceWorkerWebSocketContext;
+  webSocketCtx.webSocket.send(JSON.stringify({
+    type: 'middleware',
+    path: ctx.path,
+  }));
+}
 
 @WebSocketController({
   path: '/ws',
@@ -54,7 +64,7 @@ export class StandaloneWebSocketController {
     @HTTPQueries({ name: 'tag' }) tags: string[],
     @HTTPHeaders() headers: IncomingHttpHeaders,
     @Request() request: IncomingMessage,
-    @Context() ctx: WebSocketContext<WebSocket>,
+    @Context() ctx: ServiceWorkerWebSocketContext,
   ) {
     socket.send(JSON.stringify({
       type: 'ready',
@@ -64,6 +74,7 @@ export class StandaloneWebSocketController {
       header: headers['x-client-id'],
       url: request.url,
       path: ctx.path,
+      sameSocket: ctx.webSocket === socket,
     }));
 
     socket.on('message', data => {
@@ -100,6 +111,35 @@ export class StandaloneWebSocketController {
 
     return output;
   }
+
+  @WebSocketMethod({
+    path: '/optional/:id?',
+  })
+  optional(
+    @HTTPParam() id: string | undefined,
+    @WebSocketSocket() socket: WebSocket,
+  ) {
+    socket.send(JSON.stringify({
+      type: 'optional',
+      id: id ?? null,
+    }));
+  }
+
+  @Middleware(webSocketShortCircuit)
+  @WebSocketMethod({
+    path: '/middleware-short-circuit',
+  })
+  middlewareShortCircuit() {
+    throw new Error('middleware should not invoke this method');
+  }
+
+  @WebSocketMethod({
+    path: '/timeout',
+    timeout: 20,
+  })
+  async timeout() {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
 }
 
 @WebSocketFetchController({
@@ -110,12 +150,12 @@ export class StandaloneWebSocketFetchController {
   onConnection(
     @HTTPParam() id: string,
     @HTTPHeaders() headers: IncomingHttpHeaders,
-    @Context() ctx: WebSocketContext<WebSocket>,
+    @Context() ctx: ServiceWorkerWebSocketContext,
   ) {
     if (id === 'connection-error') {
       throw new Error('fetch connection error');
     }
-    ctx.socket.send(JSON.stringify({
+    ctx.webSocket.send(JSON.stringify({
       type: 'connection',
       header: headers['x-client-id'],
       path: ctx.path,
@@ -124,9 +164,9 @@ export class StandaloneWebSocketFetchController {
 
   @WebSocketFetchOnOpen()
   onOpen(
-    @Context() ctx: WebSocketContext<WebSocket>,
+    @Context() ctx: ServiceWorkerWebSocketContext,
   ) {
-    ctx.socket.send(JSON.stringify({
+    ctx.webSocket.send(JSON.stringify({
       type: 'open',
       path: ctx.path,
     }));
@@ -140,7 +180,7 @@ export class StandaloneWebSocketFetchController {
     @HTTPQuery() name: string,
     @HTTPQueries({ name: 'tag' }) tags: string[],
     @HTTPHeaders() headers: IncomingHttpHeaders,
-    @Context() ctx: WebSocketContext<WebSocket>,
+    @Context() ctx: ServiceWorkerWebSocketContext,
   ) {
     const body = JSON.parse(data.toString()) as WebSocketFetchRequest;
     const source = new PassThrough();
@@ -203,9 +243,9 @@ export class StandaloneWebSocketFetchController {
   onError(
     @WebSocketError() error: Error,
     @HTTPHeaders() headers: IncomingHttpHeaders,
-    @Context() ctx: WebSocketContext<WebSocket>,
+    @Context() ctx: ServiceWorkerWebSocketContext,
   ) {
-    ctx.socket.send(JSON.stringify({
+    ctx.webSocket.send(JSON.stringify({
       type: 'error',
       message: error.message,
       header: headers['x-client-id'],

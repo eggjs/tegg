@@ -11,6 +11,7 @@ export class WebSocketFetchMethodMeta implements MethodMeta {
   public readonly priority: number;
   public readonly hosts: string[] | undefined;
   public readonly methodType: WebSocketFetchMethodType;
+  public readonly timeout: number | undefined;
 
   constructor(
     name: string,
@@ -21,6 +22,7 @@ export class WebSocketFetchMethodMeta implements MethodMeta {
     priority: number,
     hosts: string[] | undefined,
     methodType: WebSocketFetchMethodType,
+    timeout?: number,
   ) {
     this.name = name;
     this.path = path;
@@ -30,5 +32,6 @@ export class WebSocketFetchMethodMeta implements MethodMeta {
     this.priority = priority;
     this.hosts = hosts;
     this.methodType = methodType;
+    this.timeout = timeout;
   }
 }

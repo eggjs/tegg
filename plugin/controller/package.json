@@ -56,6 +56,7 @@
     "@eggjs/tegg-loader": "^3.84.2",
     "@eggjs/tegg-metadata": "^3.84.2",
     "@eggjs/tegg-runtime": "^3.84.2",
+    "@eggjs/tegg-websocket-runtime": "^3.84.2",
     "@modelcontextprotocol/sdk": "^1.23.0",
     "await-event": "^2.1.0",
     "content-type": "^1.0.5",

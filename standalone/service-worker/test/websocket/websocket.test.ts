@@ -44,6 +44,7 @@ describe('standalone/service-worker/test/websocket/websocket.test.ts', () => {
       header: 'standalone-client',
       url: '/ws/echo/123?name=tegg&tag=a&tag=b',
       path: '/ws/echo/123',
+      sameSocket: true,
     });
 
     ws.send('hello');
@@ -88,6 +89,45 @@ describe('standalone/service-worker/test/websocket/websocket.test.ts', () => {
 
     input.end();
     await closeClient(ws);
+  });
+
+  it('should handle optional websocket path parameters in standalone service worker', async () => {
+    const ws = createClient('/ws/optional');
+    assert.deepStrictEqual(await waitJSONMessage(ws), {
+      type: 'optional',
+      id: null,
+    });
+    await closeClient(ws);
+  });
+
+  it('should allow standalone websocket middleware to short circuit', async () => {
+    const ws = createClient('/ws/middleware-short-circuit');
+    assert.deepStrictEqual(await waitJSONMessage(ws), {
+      type: 'middleware',
+      path: '/ws/middleware-short-circuit',
+    });
+    assert.equal(ws.readyState, WebSocket.OPEN);
+    await closeClient(ws);
+  });
+
+  it('should close timed out standalone websocket controller methods', async () => {
+    const ws = createClient('/ws/timeout');
+    await waitOpen(ws);
+    assert.deepStrictEqual(await waitCloseInfo(ws), {
+      code: 1011,
+      reason: 'Internal Server Error',
+    });
+  });
+
+  it('should reject malformed and unmatched standalone websocket routes', async () => {
+    await assert.rejects(
+      () => waitOpen(createClient('/ws/echo/%E0%A4%A')),
+      /Unexpected server response: 400/,
+    );
+    await assert.rejects(
+      () => waitOpen(createClient('/ws/not-found')),
+      /Unexpected server response: 404/,
+    );
   });
 
   it('should handle websocket fetch connection lifecycle errors before closing', async () => {
@@ -341,6 +381,15 @@ function waitClose(ws: WebSocket) {
   }
   return new Promise<void>(resolve => {
     ws.once('close', () => resolve());
+  });
+}
+
+function waitCloseInfo(ws: WebSocket): Promise<{ code: number; reason: string }> {
+  return new Promise(resolve => {
+    ws.once('close', (code, reason) => resolve({
+      code,
+      reason: reason.toString(),
+    }));
   });
 }
 

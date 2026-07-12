@@ -1,8 +1,7 @@
 import assert from 'node:assert';
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { Duplex, pipeline } from 'node:stream';
+import { Duplex } from 'node:stream';
 import compose from 'koa-compose';
-import pathToRegexp from 'path-to-regexp';
 import { Application, Context } from 'egg';
 import { EggRouter } from '@eggjs/router';
 import { FrameworkErrorFormater } from 'egg-errors';
@@ -13,45 +12,34 @@ import {
   ControllerType,
   Next,
   WebSocketControllerMeta,
-  WebSocketFetchClose,
   WebSocketFetchControllerMeta,
   WebSocketFetchMethodMeta,
   WebSocketMethodMeta,
-  WebSocketParamType,
-  WebSocketPathParamMeta,
-  WebSocketQueriesParamMeta,
-  WebSocketQueryParamMeta,
 } from '@eggjs/tegg';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { EggPrototype } from '@eggjs/tegg-metadata';
+import {
+  WebSocketControllerRuntime,
+  WebSocketEventStream,
+  WebSocketRoute,
+  createWebSocketRoutes,
+  getWebSocketMethodHosts,
+  getWebSocketMethodMiddlewares,
+  getWebSocketMethodName,
+  getWebSocketMethodRealPath,
+  matchWebSocketRoute,
+  waitForWebSocketClose,
+  WEBSOCKET_INTERNAL_ERROR_CODE,
+  WEBSOCKET_INTERNAL_ERROR_REASON,
+} from '@eggjs/tegg-websocket-runtime';
 import { ROOT_PROTO } from '@eggjs/egg-module-common';
 import { ControllerRegister } from '../../ControllerRegister';
 import { RouterConflictError } from '../../errors';
-import { WebSocketContextImpl } from './WebSocketContext';
+import { extendWebSocketContext } from './WebSocketContext';
 
 const noop = () => {
   // noop
 };
-
-interface WebSocketRoute {
-  controllerProto: EggPrototype;
-  controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta;
-  methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta;
-  methodRealPath: string;
-  methodName: string;
-  host?: string;
-  keys: pathToRegexp.Key[];
-  regexp: RegExp;
-}
-
-interface WebSocketMethodPayload {
-  data?: RawData;
-  close?: WebSocketFetchClose;
-  error?: Error;
-  closeCode?: number;
-  closeReason?: Buffer;
-  getWebSocketStream?: () => Duplex;
-}
 
 export class WebSocketControllerRegister implements ControllerRegister {
   static instance?: WebSocketControllerRegister;
@@ -60,7 +48,7 @@ export class WebSocketControllerRegister implements ControllerRegister {
   private readonly eggContainerFactory: typeof EggContainerFactory;
   private readonly checkRouters: Map<string, EggRouter>;
   private controllerProtos: EggPrototype[] = [];
-  private routes: WebSocketRoute[] = [];
+  private routes: Array<WebSocketRoute<EggPrototype>> = [];
   private webSocketServer?: WebSocketServer;
   private upgradeHandler?: (req: IncomingMessage, socket: Duplex, head: Buffer) => void;
   private listening = false;
@@ -94,28 +82,11 @@ export class WebSocketControllerRegister implements ControllerRegister {
   }
 
   doRegister() {
-    const methodMap = new Map<WebSocketMethodMeta | WebSocketFetchMethodMeta, EggPrototype>();
-    for (const proto of this.controllerProtos) {
-      const metadata = proto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta;
-      for (const method of metadata.methods) {
-        methodMap.set(method, proto);
-      }
-    }
-    const allMethods = Array.from(methodMap.keys())
-      .sort((a, b) => b.priority - a.priority);
-
-    for (const method of allMethods) {
-      const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta;
-      this.checkDuplicate(controllerMeta, method);
-    }
-
-    this.routes = allMethods.flatMap(method => {
-      const controllerProto = methodMap.get(method)!;
-      const controllerMeta = controllerProto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta;
-      const hosts = this.getMethodHosts(controllerMeta, method) || [ undefined ];
-      return hosts.map(host => this.createRoute(controllerProto, controllerMeta, method, host));
-    });
+    this.routes = createWebSocketRoutes(
+      this.controllerProtos,
+      proto => proto.getMetaData(CONTROLLER_META_DATA) as WebSocketControllerMeta | WebSocketFetchControllerMeta,
+      (controllerMeta, methodMeta) => this.checkDuplicate(controllerMeta, methodMeta),
+    );
   }
 
   listen() {
@@ -152,30 +123,9 @@ export class WebSocketControllerRegister implements ControllerRegister {
     this.checkRouters.clear();
   }
 
-  private createRoute(
-    controllerProto: EggPrototype,
-    controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta,
-    methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta,
-    host: string | undefined,
-  ): WebSocketRoute {
-    const methodRealPath = this.getMethodRealPath(controllerMeta, methodMeta);
-    const keys: pathToRegexp.Key[] = [];
-    const regexp = pathToRegexp(methodRealPath, keys, { sensitive: true });
-    return {
-      controllerProto,
-      controllerMeta,
-      methodMeta,
-      methodRealPath,
-      methodName: this.getMethodName(controllerMeta, methodMeta),
-      host,
-      keys,
-      regexp,
-    };
-  }
-
   private checkDuplicate(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
     let router = this.checkRouters.get('default')!;
-    const hosts = this.getMethodHosts(controllerMeta, methodMeta) || [];
+    const hosts = getWebSocketMethodHosts(controllerMeta, methodMeta) || [];
     if (!hosts.length) {
       this.checkDuplicateInRouter(router, controllerMeta, methodMeta);
       this.registerToRouter(router, controllerMeta, methodMeta);
@@ -194,15 +144,15 @@ export class WebSocketControllerRegister implements ControllerRegister {
   }
 
   private registerToRouter(router: EggRouter, controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
-    const methodRealPath = this.getMethodRealPath(controllerMeta, methodMeta);
-    const methodName = this.getMethodName(controllerMeta, methodMeta);
+    const methodRealPath = getWebSocketMethodRealPath(controllerMeta, methodMeta);
+    const methodName = getWebSocketMethodName(controllerMeta, methodMeta);
     Reflect.apply(router.get, router, [ methodName, methodRealPath, noop ]);
   }
 
   private checkDuplicateInRouter(router: EggRouter, controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
-    const methodRealPath = this.getMethodRealPath(controllerMeta, methodMeta);
+    const methodRealPath = getWebSocketMethodRealPath(controllerMeta, methodMeta);
     const matched = router.match(methodRealPath, 'GET');
-    const methodName = this.getMethodName(controllerMeta, methodMeta);
+    const methodName = getWebSocketMethodName(controllerMeta, methodMeta);
     if (matched.route) {
       const [ layer ] = matched.path;
       const err = new RouterConflictError(`register websocket controller ${methodName} failed, ${controllerMeta.type} ${methodRealPath} is conflict with exists rule ${layer.path}`);
@@ -210,471 +160,141 @@ export class WebSocketControllerRegister implements ControllerRegister {
     }
   }
 
-  private getMethodRealPath(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
-    return (controllerMeta as any).getMethodRealPath(methodMeta);
-  }
-
-  private getMethodHosts(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta): string[] | undefined {
-    return (controllerMeta as any).getMethodHosts(methodMeta);
-  }
-
-  private getMethodName(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta): string {
-    return (controllerMeta as any).getMethodName(methodMeta);
-  }
-
-  private getMethodMiddlewares(controllerMeta: WebSocketControllerMeta | WebSocketFetchControllerMeta, methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta) {
-    return (controllerMeta as any).getMethodMiddlewares(methodMeta);
-  }
-
   private async handleUpgrade(req: IncomingMessage, socket: Duplex, head: Buffer) {
-    const url = this.createURL(req);
-    const matched = this.matchRoute(req, url);
+    const res = new ServerResponse(req);
+    const eggCtx = this.app.createContext(req, res) as unknown as Context;
+    const url = this.createURL(eggCtx);
+    let matched: { route: WebSocketRoute<EggPrototype>; params: Record<string, string> } | undefined;
+    try {
+      matched = matchWebSocketRoute(this.routes, url.pathname, eggCtx.host);
+    } catch (error) {
+      if (error instanceof URIError) {
+        this.app.logger.warn('[tegg/websocket] reject malformed request path: %s', req.url);
+        this.rejectSocket(socket, 400, 'Bad Request');
+        return;
+      }
+      throw error;
+    }
     if (!matched) {
+      const initialBytesWritten = this.getSocketBytesWritten(socket);
+      setImmediate(() => {
+        if (
+          socket.destroyed ||
+          socket.writableEnded ||
+          this.getSocketBytesWritten(socket) > initialBytesWritten ||
+          this.hasWebSocketOwner(socket)
+        ) {
+          return;
+        }
+        this.app.logger.warn('[tegg/websocket] no route matched upgrade request: %s', req.url);
+        this.rejectSocket(socket, 404, 'Not Found');
+      });
       return;
     }
 
     this.webSocketServer!.handleUpgrade(req, socket, head, webSocket => {
-      this.handleConnection(matched.route, matched.params, url, req, webSocket)
+      this.handleConnection(matched.route, matched.params, eggCtx, webSocket)
         .catch(error => {
           this.app.logger.error('[tegg/websocket] handle connection failed: %s', error.stack || error.message);
           if (webSocket.readyState === WebSocket.OPEN || webSocket.readyState === WebSocket.CONNECTING) {
-            webSocket.close(1011, 'Internal Server Error');
+            webSocket.close(WEBSOCKET_INTERNAL_ERROR_CODE, WEBSOCKET_INTERNAL_ERROR_REASON);
           }
         });
     });
   }
 
-  private createURL(req: IncomingMessage): URL {
-    const host = req.headers.host || 'localhost';
-    return new URL(req.url || '/', `http://${host}`);
-  }
-
-  private matchRoute(req: IncomingMessage, url: URL): { route: WebSocketRoute; params: Record<string, string> } | undefined {
-    for (const route of this.routes) {
-      if (route.host && !this.matchHost(route.host, req.headers.host)) {
-        continue;
-      }
-      const matched = route.regexp.exec(url.pathname);
-      if (!matched) {
-        continue;
-      }
-      const params: Record<string, string> = {};
-      route.keys.forEach((key, index) => {
-        params[String(key.name)] = decodeURIComponent(matched[index + 1]);
-      });
-      return { route, params };
-    }
-  }
-
-  private matchHost(expectedHost: string, requestHost: string | undefined) {
-    if (!requestHost) {
-      return false;
-    }
-    return requestHost === expectedHost || requestHost.split(':')[0] === expectedHost;
+  private createURL(ctx: Context): URL {
+    const host = ctx.host || 'localhost';
+    return new URL(ctx.url || '/', `${ctx.protocol}://${host}`);
   }
 
   private async handleConnection(
-    route: WebSocketRoute,
+    route: WebSocketRoute<EggPrototype>,
     params: Record<string, string>,
-    url: URL,
-    req: IncomingMessage,
+    eggCtx: Context,
     webSocket: WebSocket,
   ) {
-    const res = new ServerResponse(req);
-    const eggCtx = this.app.createContext(req, res) as unknown as Context;
-    (eggCtx as any)[ROOT_PROTO] = route.controllerProto;
-    const webSocketCtx = new WebSocketContextImpl({
-      socket: webSocket,
-      request: req,
-      url,
-      params,
+    const closeHandled = waitForWebSocketClose(webSocket, error => {
+      this.app.logger.error('[tegg/websocket] socket error while waiting for close: %s', error.stack || error.message);
+    });
+    Reflect.set(eggCtx, ROOT_PROTO, route.controllerProto);
+    const webSocketCtx = extendWebSocketContext(eggCtx, webSocket, params);
+    const fetchEvents = route.controllerMeta.type === ControllerType.WEBSOCKET_FETCH
+      ? new WebSocketEventStream<RawData, Buffer>(webSocket)
+      : undefined;
+    const runtime = new WebSocketControllerRuntime<WebSocket, RawData, Buffer>({
+      context: {
+        context: webSocketCtx,
+        socket: webSocket,
+        params: webSocketCtx.params,
+        query: webSocketCtx.query,
+        queries: webSocketCtx.queries,
+        headers: webSocketCtx.headers,
+        request: webSocketCtx.req,
+      },
+      createWebSocketStream,
+      runInContext: callback => this.app.ctxStorage.run(eggCtx, callback),
+      logger: {
+        debug: message => this.app.logger.debug('[tegg/websocket] %s', message),
+        error: (message, error) => {
+          if (error) {
+            this.app.logger.error('[tegg/websocket] %s: %s', message, error.stack || error.message);
+            return;
+          }
+          this.app.logger.error('[tegg/websocket] %s', message);
+        },
+      },
     });
     const lifecycleMiddleware = this.app.middleware.teggCtxLifecycleMiddleware();
-    const methodMiddlewares = this.getMethodMiddlewares(route.controllerMeta, route.methodMeta);
+    const methodMiddlewares = getWebSocketMethodMiddlewares(route.controllerMeta, route.methodMeta);
     let invoked = false;
     const handler = async (_ctx: Context, next: Next) => {
       invoked = true;
       if (route.controllerMeta.type === ControllerType.WEBSOCKET_FETCH) {
-        await this.invokeFetchController(route, webSocketCtx, eggCtx);
+        await this.invokeFetchController(route, runtime, fetchEvents!);
       } else {
-        await this.invokeController(route, webSocketCtx);
+        await this.invokeController(route, runtime);
       }
       await next();
     };
     const composed = compose([ ...methodMiddlewares, handler ]);
 
-    await this.app.ctxStorage.run(eggCtx, async () => {
-      await lifecycleMiddleware(eggCtx, async () => {
-        await composed(eggCtx, async () => {
-          // final middleware
+    try {
+      await this.app.ctxStorage.run(eggCtx, async () => {
+        await lifecycleMiddleware(eggCtx, async () => {
+          await composed(eggCtx, async () => {
+            // final middleware
+          });
+          if (!invoked) {
+            this.app.logger.debug('[tegg/websocket] %s was short-circuited by middleware', route.methodName);
+          }
+          await closeHandled;
         });
-        if (!invoked) {
-          webSocket.close(1008, 'WebSocket middleware did not call next');
-          return;
-        }
-        await this.waitWebSocketClose(webSocket);
       });
-    });
+    } finally {
+      fetchEvents?.dispose();
+    }
   }
 
-  private async invokeController(route: WebSocketRoute, webSocketCtx: WebSocketContextImpl) {
-    const methodMeta = route.methodMeta as WebSocketMethodMeta;
-    const eggObj = await this.eggContainerFactory.getOrCreateEggObject(route.controllerProto, route.controllerProto.name);
-    const realObj = eggObj.obj;
-    const realMethod = realObj[methodMeta.name];
-    let webSocketStream: Duplex | undefined;
-    const getWebSocketStream = () => {
-      if (!webSocketStream) {
-        webSocketStream = createWebSocketStream(webSocketCtx.socket);
-      }
-      return webSocketStream;
-    };
-    const args = this.buildMethodArgs(methodMeta, webSocketCtx, { getWebSocketStream });
-    const result = await Reflect.apply(realMethod, realObj, args);
-    this.pipeResponseStream(result, webSocketCtx.socket, getWebSocketStream);
-  }
-
-  private buildMethodArgs(
-    methodMeta: WebSocketMethodMeta | WebSocketFetchMethodMeta,
-    webSocketCtx: WebSocketContextImpl,
-    payload: WebSocketMethodPayload,
+  private async invokeController(
+    route: WebSocketRoute<EggPrototype>,
+    runtime: WebSocketControllerRuntime<WebSocket, RawData, Buffer>,
   ) {
-    const argsLength = methodMeta.paramMap.size;
-    const hasContext = methodMeta.contextParamIndex !== undefined;
-    const contextIndex = methodMeta.contextParamIndex;
-    const methodArgsLength = argsLength + (hasContext ? 1 : 0);
-    const args: unknown[] = new Array(methodArgsLength);
-    if (hasContext) {
-      args[contextIndex!] = webSocketCtx;
-    }
-    for (const [ index, param ] of methodMeta.paramMap) {
-      switch (param.type) {
-        case WebSocketParamType.PARAM: {
-          const pathParam = param as WebSocketPathParamMeta;
-          args[index] = webSocketCtx.params[pathParam.name];
-          break;
-        }
-        case WebSocketParamType.QUERY: {
-          const queryParam = param as WebSocketQueryParamMeta;
-          args[index] = webSocketCtx.query[queryParam.name];
-          break;
-        }
-        case WebSocketParamType.QUERIES: {
-          const queryParam = param as WebSocketQueriesParamMeta;
-          args[index] = webSocketCtx.queries[queryParam.name] || [];
-          break;
-        }
-        case WebSocketParamType.HEADERS: {
-          args[index] = webSocketCtx.headers;
-          break;
-        }
-        case WebSocketParamType.REQUEST: {
-          args[index] = webSocketCtx.request;
-          break;
-        }
-        case WebSocketParamType.SOCKET: {
-          args[index] = webSocketCtx.socket;
-          break;
-        }
-        case WebSocketParamType.STREAM: {
-          assert(payload.getWebSocketStream, '@WebSocketStream can not be used here');
-          args[index] = payload.getWebSocketStream();
-          break;
-        }
-        case WebSocketParamType.DATA: {
-          args[index] = payload.data;
-          break;
-        }
-        case WebSocketParamType.CLOSE: {
-          args[index] = payload.close;
-          break;
-        }
-        case WebSocketParamType.ERROR: {
-          args[index] = payload.error;
-          break;
-        }
-        case WebSocketParamType.CLOSE_CODE: {
-          args[index] = payload.closeCode;
-          break;
-        }
-        case WebSocketParamType.CLOSE_REASON: {
-          args[index] = payload.closeReason;
-          break;
-        }
-        default:
-          assert.fail('never arrive');
-      }
-    }
-    return args;
+    const methodMeta = route.methodMeta as WebSocketMethodMeta;
+    const controllerMeta = route.controllerMeta as WebSocketControllerMeta;
+    const eggObj = await this.eggContainerFactory.getOrCreateEggObject(route.controllerProto, route.controllerProto.name);
+    await runtime.invokeController(eggObj.obj, controllerMeta, methodMeta);
   }
 
-  private async invokeFetchController(route: WebSocketRoute, webSocketCtx: WebSocketContextImpl, eggCtx: Context) {
+  private async invokeFetchController(
+    route: WebSocketRoute<EggPrototype>,
+    runtime: WebSocketControllerRuntime<WebSocket, RawData, Buffer>,
+    events: WebSocketEventStream<RawData, Buffer>,
+  ) {
     const controllerMeta = route.controllerMeta as WebSocketFetchControllerMeta;
     const methodMeta = route.methodMeta as WebSocketFetchMethodMeta;
     const eggObj = await this.eggContainerFactory.getOrCreateEggObject(route.controllerProto, route.controllerProto.name);
-    const realObj = eggObj.obj;
-    const close = this.createFetchClose(webSocketCtx.socket);
-    const responseStreams = new Set<NodeJS.ReadableStream>();
-    let connectionClosed = false;
-    let controllerReady = false;
-    let resolveControllerReady!: () => void;
-    const controllerReadyHandled = new Promise<void>(resolve => {
-      resolveControllerReady = resolve;
-    });
-    let messageQueue = Promise.resolve();
-    const invokeMethod = async (
-      targetMethodMeta: WebSocketFetchMethodMeta | undefined,
-      payload: WebSocketMethodPayload = {},
-    ) => {
-      if (!targetMethodMeta) {
-        return;
-      }
-      const realMethod = realObj[targetMethodMeta.name];
-      const args = this.buildMethodArgs(targetMethodMeta, webSocketCtx, {
-        close,
-        ...payload,
-      });
-      return await Reflect.apply(realMethod, realObj, args);
-    };
-    const handleError = async (error: Error) => {
-      if (!controllerMeta.errorMethod) {
-        this.app.logger.error('[tegg/websocket-fetch] handle error: %s', error.stack || error.message);
-        return;
-      }
-      await invokeMethod(controllerMeta.errorMethod, { error });
-    };
-    const closeHandled = new Promise<void>(resolve => {
-      webSocketCtx.socket.once('close', (code, reason) => {
-        connectionClosed = true;
-        this.destroyFetchResponseStreams(responseStreams);
-        this.app.ctxStorage.run(eggCtx, async () => {
-          try {
-            await invokeMethod(controllerMeta.closeMethod, {
-              closeCode: code,
-              closeReason: reason,
-            });
-          } catch (error) {
-            this.app.logger.error('[tegg/websocket-fetch] handle close failed: %s', error.stack || error.message);
-          } finally {
-            resolve();
-          }
-        }).catch(error => {
-          this.app.logger.error('[tegg/websocket-fetch] handle close failed: %s', error.stack || error.message);
-          resolve();
-        });
-      });
-    });
-
-    webSocketCtx.socket.on('message', data => {
-      if (connectionClosed) {
-        return;
-      }
-      messageQueue = messageQueue.then(async () => {
-        await controllerReadyHandled;
-        if (!controllerReady || connectionClosed || webSocketCtx.socket.readyState !== WebSocket.OPEN) {
-          return;
-        }
-        await this.app.ctxStorage.run(eggCtx, async () => {
-          try {
-            const result = await invokeMethod(methodMeta, { data });
-            await this.sendFetchResponseStream(result, webSocketCtx.socket, responseStreams, handleError);
-          } catch (error) {
-            await handleError(error);
-          }
-        });
-      }).catch(error => {
-        this.app.logger.error('[tegg/websocket-fetch] handle message failed: %s', error.stack || error.message);
-      });
-    });
-    webSocketCtx.socket.on('error', error => {
-      this.app.ctxStorage.run(eggCtx, async () => {
-        await handleError(error);
-      }).catch(error => {
-        this.app.logger.error('[tegg/websocket-fetch] handle socket error failed: %s', error.stack || error.message);
-      });
-    });
-
-    let lifecycleError: Error | undefined;
-    try {
-      await invokeMethod(controllerMeta.connectionMethod);
-      await invokeMethod(controllerMeta.openMethod);
-      controllerReady = true;
-    } catch (error) {
-      lifecycleError = error;
-      await handleError(error).catch(err => {
-        this.app.logger.error('[tegg/websocket-fetch] handle lifecycle error failed: %s', err.stack || err.message);
-      });
-      if (webSocketCtx.socket.readyState === WebSocket.OPEN || webSocketCtx.socket.readyState === WebSocket.CONNECTING) {
-        webSocketCtx.socket.close(1011, 'Internal Server Error');
-      }
-    } finally {
-      resolveControllerReady();
-    }
-    await closeHandled;
-    if (lifecycleError) {
-      throw lifecycleError;
-    }
-  }
-
-  private createFetchClose(webSocket: WebSocket): WebSocketFetchClose {
-    return (code = 1000, reason?: string | Buffer) => {
-      if (webSocket.readyState !== WebSocket.OPEN && webSocket.readyState !== WebSocket.CONNECTING) {
-        return;
-      }
-      webSocket.close(code, reason);
-    };
-  }
-
-  private async sendFetchResponseStream(
-    result: unknown,
-    webSocket: WebSocket,
-    responseStreams: Set<NodeJS.ReadableStream>,
-    handleError: (error: Error) => Promise<void>,
-  ): Promise<void> {
-    if (result === undefined || result === null) {
-      return;
-    }
-    if (!this.isReadableStream(result)) {
-      await handleError(new Error('WebSocketFetch method must return a readable stream or void')).catch(error => {
-        this.app.logger.error('[tegg/websocket-fetch] handle invalid response failed: %s', error.stack || error.message);
-      });
-      return;
-    }
-    if (webSocket.readyState !== WebSocket.OPEN) {
-      this.destroyFetchResponseStream(result);
-      return;
-    }
-    responseStreams.add(result);
-    await new Promise<void>(resolve => {
-      let settled = false;
-      const onData = (chunk: unknown) => {
-        this.sendFetchChunk(webSocket, chunk, handleError);
-      };
-      let onEnd!: () => void;
-      let onClose!: () => void;
-      let onError!: (error: Error) => void;
-      const settle = (error?: Error) => {
-        if (settled) {
-          return;
-        }
-        settled = true;
-        result.removeListener('data', onData);
-        result.removeListener('end', onEnd);
-        result.removeListener('close', onClose);
-        result.removeListener('error', onError);
-        responseStreams.delete(result);
-        if (!error || webSocket.readyState !== WebSocket.OPEN) {
-          resolve();
-          return;
-        }
-        handleError(error).catch(err => {
-          this.app.logger.error('[tegg/websocket-fetch] handle stream error failed: %s', err.stack || err.message);
-        }).finally(resolve);
-      };
-      onEnd = () => settle();
-      onClose = () => settle();
-      onError = error => settle(error);
-      result.once('end', onEnd);
-      result.once('close', onClose);
-      result.once('error', onError);
-      result.on('data', onData);
-      const state = result as NodeJS.ReadableStream & {
-        closed?: boolean;
-        errored?: Error | null;
-        readableEnded?: boolean;
-      };
-      if (state.errored) {
-        const streamError = state.errored;
-        setImmediate(() => settle(streamError));
-      } else if (state.closed || state.readableEnded) {
-        settle();
-      }
-    });
-  }
-
-  private destroyFetchResponseStreams(responseStreams: Set<NodeJS.ReadableStream>) {
-    for (const responseStream of responseStreams) {
-      this.destroyFetchResponseStream(responseStream);
-    }
-    responseStreams.clear();
-  }
-
-  private destroyFetchResponseStream(responseStream: NodeJS.ReadableStream) {
-    const destroy = (responseStream as NodeJS.ReadableStream & { destroy?: () => void }).destroy;
-    if (typeof destroy !== 'function') {
-      return;
-    }
-    try {
-      Reflect.apply(destroy, responseStream, []);
-    } catch (error) {
-      this.app.logger.error('[tegg/websocket-fetch] destroy response stream failed: %s', error.stack || error.message);
-    }
-  }
-
-  private sendFetchChunk(
-    webSocket: WebSocket,
-    chunk: unknown,
-    handleError: (error: Error) => Promise<void>,
-  ) {
-    if (webSocket.readyState !== WebSocket.OPEN) {
-      return;
-    }
-    webSocket.send(chunk as any, error => {
-      if (!error) {
-        return;
-      }
-      handleError(error).catch(err => {
-        this.app.logger.error('[tegg/websocket-fetch] handle send error failed: %s', err.stack || err.message);
-      });
-    });
-  }
-
-  private pipeResponseStream(result: unknown, webSocket: WebSocket, getWebSocketStream: () => Duplex) {
-    if (!this.isReadableStream(result)) {
-      return;
-    }
-
-    pipeline(result, getWebSocketStream(), error => {
-      if (!error) {
-        return;
-      }
-      if (webSocket.readyState === WebSocket.CLOSED || webSocket.readyState === WebSocket.CLOSING) {
-        return;
-      }
-      this.app.logger.error('[tegg/websocket] pipe response stream failed: %s', error.stack || error.message);
-      webSocket.close(1011, 'Internal Server Error');
-    });
-  }
-
-  private isReadableStream(result: unknown): result is NodeJS.ReadableStream {
-    return !!result && typeof (result as NodeJS.ReadableStream).pipe === 'function';
-  }
-
-  private waitWebSocketClose(webSocket: WebSocket): Promise<void> {
-    if (webSocket.readyState === WebSocket.CLOSED || webSocket.readyState === WebSocket.CLOSING) {
-      return Promise.resolve();
-    }
-    return new Promise(resolve => {
-      let settled = false;
-      let onClose!: () => void;
-      let onError!: (error: Error) => void;
-      const settle = () => {
-        if (settled) {
-          return;
-        }
-        settled = true;
-        webSocket.removeListener('close', onClose);
-        webSocket.removeListener('error', onError);
-        resolve();
-      };
-      onClose = () => settle();
-      onError = error => {
-        this.app.logger.error('[tegg/websocket] socket error while waiting for close: %s', error.stack || error.message);
-        settle();
-      };
-      webSocket.once('close', onClose);
-      webSocket.once('error', onError);
-    });
+    await runtime.invokeFetchController(eggObj.obj, controllerMeta, methodMeta, events);
   }
 
   private rejectSocket(socket: Duplex, status: number, message: string) {
@@ -683,5 +303,15 @@ export class WebSocketControllerRegister implements ControllerRegister {
     }
     const body = message;
     socket.end(`HTTP/1.1 ${status} ${message}\r\nConnection: close\r\nContent-Length: ${Buffer.byteLength(body)}\r\n\r\n${body}`);
+  }
+
+  private getSocketBytesWritten(socket: Duplex): number {
+    return (socket as Duplex & { bytesWritten?: number }).bytesWritten || 0;
+  }
+
+  private hasWebSocketOwner(socket: Duplex): boolean {
+    return Object.getOwnPropertySymbols(socket).some(symbol => {
+      return symbol.description === 'websocket' && Boolean(Reflect.get(socket, symbol));
+    });
   }
 }

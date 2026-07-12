@@ -12,6 +12,7 @@ export class WebSocketControllerMeta implements ControllerMetadata {
   public readonly middlewares: readonly MiddlewareFunc[];
   public readonly methods: readonly WebSocketMethodMeta[];
   public readonly hosts?: string[];
+  public readonly timeout?: number;
 
   constructor(
     className: string,
@@ -21,6 +22,7 @@ export class WebSocketControllerMeta implements ControllerMetadata {
     middlewares: MiddlewareFunc[],
     methods: WebSocketMethodMeta[],
     hosts: string[] | undefined,
+    timeout?: number,
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;
@@ -29,6 +31,7 @@ export class WebSocketControllerMeta implements ControllerMetadata {
     this.middlewares = middlewares;
     this.methods = methods;
     this.hosts = hosts;
+    this.timeout = timeout;
   }
 
   getMethodRealPath(method: WebSocketMethodMeta) {
@@ -57,5 +60,9 @@ export class WebSocketControllerMeta implements ControllerMetadata {
       ];
     }
     return [ ...method.middlewares ];
+  }
+
+  getMethodTimeout(method: WebSocketMethodMeta) {
+    return method.timeout ?? this.timeout;
   }
 }

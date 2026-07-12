@@ -135,6 +135,7 @@ export class WebSocketMethodMeta implements MethodMeta {
   public readonly paramMap: Map<number, WebSocketParamMeta>;
   public readonly priority: number;
   public readonly hosts: string[] | undefined;
+  public readonly timeout: number | undefined;
 
   constructor(
     name: string,
@@ -144,6 +145,7 @@ export class WebSocketMethodMeta implements MethodMeta {
     paramMap: Map<number, WebSocketParamMeta>,
     priority: number,
     hosts: string[] | undefined,
+    timeout?: number,
   ) {
     this.name = name;
     this.path = path;
@@ -152,6 +154,7 @@ export class WebSocketMethodMeta implements MethodMeta {
     this.paramMap = paramMap;
     this.priority = priority;
     this.hosts = hosts;
+    this.timeout = timeout;
   }
 }
 

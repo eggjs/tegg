@@ -81,15 +81,16 @@ export class WebSocketFetchControllerMetaBuilder {
     assert(webSocketPath, `build websocket fetch controller ${ClassUtil.classDescription(this.clazz)} failed: path is required`);
     const middlewares = ControllerInfoUtil.getControllerMiddlewares(this.clazz);
     const { methods, connectionMethod, openMethod, errorMethod, closeMethod } = this.buildMethods();
-    assert(methods.length === 1, 'websocket fetch controller must has exactly one @WebSocketFetchMethod');
+    assert(methods.length === 1, 'websocket fetch controller must have exactly one @WebSocketFetchMethod');
     const clazzName = this.clazz.name;
     const controllerName = ControllerInfoUtil.getControllerName(this.clazz) || clazzName;
     const property = PrototypeUtil.getProperty(this.clazz);
     const protoName = property!.name as string;
     const hosts = ControllerInfoUtil.getControllerHosts(this.clazz);
+    const timeout = ControllerInfoUtil.getControllerTimeout(this.clazz);
     const metadata = new WebSocketFetchControllerMeta(
       clazzName, protoName, controllerName, webSocketPath, middlewares, methods, hosts,
-      connectionMethod, openMethod, errorMethod, closeMethod);
+      connectionMethod, openMethod, errorMethod, closeMethod, timeout);
     ControllerMetadataUtil.setControllerMetadata(this.clazz, metadata);
     for (const method of metadata.methods) {
       const realPath = metadata.getMethodRealPath(method);

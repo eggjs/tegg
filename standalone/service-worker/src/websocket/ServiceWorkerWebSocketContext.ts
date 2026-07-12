@@ -1,9 +1,9 @@
 import type { IncomingHttpHeaders, IncomingMessage } from 'node:http';
 import type { WebSocket } from 'ws';
-import type { WebSocketContext } from '@eggjs/tegg';
 
-export class ServiceWorkerWebSocketContext implements WebSocketContext<WebSocket> {
+export class ServiceWorkerWebSocketContext {
   readonly socket: WebSocket;
+  readonly webSocket: WebSocket;
   readonly request: IncomingMessage;
   readonly url: URL;
   readonly method = 'GET';
@@ -21,6 +21,7 @@ export class ServiceWorkerWebSocketContext implements WebSocketContext<WebSocket
     params: Record<string, string>;
   }) {
     this.socket = options.socket;
+    this.webSocket = options.socket;
     this.request = options.request;
     this.url = options.url;
     this.path = options.url.pathname;

@@ -200,6 +200,8 @@ describe('plugin/controller/test/websocket/websocket.test.ts', () => {
         header: 'client-1',
         url: '/ws/echo/foo?name=bar&tag=a&tag=b',
         path: '/ws/echo/foo',
+        sameSocket: true,
+        sameRequest: true,
         pid: ready.pid,
       });
       assert.equal(typeof ready.pid, 'number');
@@ -240,6 +242,69 @@ describe('plugin/controller/test/websocket/websocket.test.ts', () => {
     } finally {
       await closeClient(socket);
     }
+  });
+
+  it('should use Egg proxy host and protocol for websocket routing', async () => {
+    const { socket, firstMessage } = await createClientWithFirstMessage(
+      requestUrl(app, '/ws/proxy'),
+      {
+        'x-forwarded-host': 'proxy.example.com',
+        'x-forwarded-proto': 'https',
+      },
+    );
+    try {
+      assert.deepEqual(await firstMessage, {
+        type: 'proxy',
+        host: 'proxy.example.com',
+        protocol: 'https',
+      });
+    } finally {
+      await closeClient(socket);
+    }
+  });
+
+  it('should keep an omitted optional websocket path parameter undefined', async () => {
+    const { socket, firstMessage } = await createClientWithFirstMessage(
+      requestUrl(app, '/ws/optional'),
+    );
+    try {
+      assert.deepEqual(await firstMessage, {
+        type: 'optional',
+        id: null,
+      });
+    } finally {
+      await closeClient(socket);
+    }
+  });
+
+  it('should reject malformed websocket path encoding with 400', async () => {
+    await assert.rejects(
+      () => createClient(requestUrl(app, '/ws/echo/%E0%A4%A')),
+      /Unexpected server response: 400/,
+    );
+  });
+
+  it('should allow websocket middleware to short circuit without closing', async () => {
+    const { socket, firstMessage } = await createClientWithFirstMessage(
+      requestUrl(app, '/ws/middleware-short-circuit'),
+    );
+    try {
+      assert.deepEqual(await firstMessage, {
+        type: 'middleware',
+        path: '/ws/middleware-short-circuit',
+      });
+      assert.equal(socket.readyState, WebSocket.OPEN);
+    } finally {
+      await closeClient(socket);
+    }
+  });
+
+  it('should close a timed out websocket controller method', async () => {
+    const socket = await createClient(requestUrl(app, '/ws/timeout'));
+    assert.deepEqual(await receiveClose(socket), {
+      code: 1011,
+      reason: 'Internal Server Error',
+    });
   });
 
   it('should handle websocket fetch controller', async () => {
@@ -605,5 +670,12 @@ describe('plugin/controller/test/websocket/websocket.test.ts', () => {
     } finally {
       app.server.removeListener('upgrade', handleUpgrade);
     }
+  });
+
+  it('should reject an unmatched websocket route when no other listener handles it', async () => {
+    await assert.rejects(
+      () => createClient(requestUrl(app, '/ws/not-found-without-listener')),
+      /Unexpected server response: 404/,
+    );
   });
 });

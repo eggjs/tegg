@@ -152,7 +152,7 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       for (const [ index, echo ] of echoMessages.entries()) {
         assert.equal(echo.type, 'echo');
         assert.equal(echo.data, `hello-${index}`);
-        assert.equal(typeof echo.pid, 'number');
+        assert.equal(echo.pid, readyMessages[index].pid);
       }
     } finally {
       await Promise.all(clients.map(socket => closeClient(socket)));
@@ -179,7 +179,7 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       for (const [ index, echo ] of echoMessages.entries()) {
         assert.equal(echo.type, 'stream');
         assert.equal(echo.data, `stream-${index}`);
-        assert.equal(typeof echo.pid, 'number');
+        assert.equal(echo.pid, readyMessages[index].pid);
       }
     } finally {
       await Promise.all(clients.map(socket => closeClient(socket)));
@@ -205,7 +205,7 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       const open = await receiver.next();
       assert.equal(open.type, 'open');
       assert.equal(open.path, '/ws-fetch/cluster-fetch');
-      assert.equal(typeof open.pid, 'number');
+      assert.equal(open.pid, connection.pid);
 
       socket.send(JSON.stringify({
         content: 'cluster-first',
@@ -219,6 +219,7 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       assert.equal(first.header, 'cluster-fetch-client');
       assert.equal(first.path, '/ws-fetch/cluster-fetch');
       assert.equal(first.content, 'cluster-first');
+      assert.equal(first.pid, connection.pid);
       assert.deepEqual(await receiver.next(), {
         type: 'data',
         phase: 2,
@@ -237,13 +238,14 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       assert.equal(beforeError.type, 'data');
       assert.equal(beforeError.phase, 1);
       assert.equal(beforeError.content, 'cluster-broken');
+      assert.equal(beforeError.pid, connection.pid);
       const error = await receiver.next();
       assert.deepEqual(error, {
         type: 'error',
         message: 'fetch error: cluster-broken',
         header: 'cluster-fetch-client',
         path: '/ws-fetch/cluster-fetch',
-        pid: error.pid,
+        pid: connection.pid,
       });
       assert.equal(socket.readyState, WebSocket.OPEN);
 
@@ -256,6 +258,7 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
       assert.equal(closeData.type, 'data');
       assert.equal(closeData.phase, 1);
       assert.equal(closeData.content, 'cluster-done');
+      assert.equal(closeData.pid, connection.pid);
       assert.deepEqual(await receiver.next(), {
         type: 'data',
         phase: 2,
@@ -281,8 +284,9 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
     });
 
     try {
-      await receiver.next();
-      await receiver.next();
+      const connection = await receiver.next();
+      const open = await receiver.next();
+      assert.equal(open.pid, connection.pid);
 
       socket.send(JSON.stringify({
         content: 'first',
@@ -303,6 +307,7 @@ describe('plugin/controller/test/websocket/websocketCluster.test.ts', () => {
         messages.map(message => `${message.content}:${message.phase}`),
         [ 'first:1', 'first:2', 'second:1', 'second:2' ],
       );
+      assert.deepEqual(new Set(messages.map(message => message.pid)), new Set([ connection.pid ]));
       assert.equal(socket.readyState, WebSocket.OPEN);
     } finally {
       await closeClient(socket);
