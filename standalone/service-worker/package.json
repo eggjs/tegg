@@ -49,11 +49,13 @@
     "@eggjs/tegg-metadata": "^3.84.2",
     "@eggjs/tegg-standalone": "^3.84.2",
     "@eggjs/tegg-types": "^3.84.2",
+    "@eggjs/tegg-websocket-runtime": "^3.84.2",
     "@modelcontextprotocol/sdk": "1.24.3",
     "egg-errors": "^2.3.0",
     "path-to-regexp": "^1.8.0",
     "type-is": "^1.6.18",
-    "urllib": "^4.0.0"
+    "urllib": "^4.0.0",
+    "ws": "^8.21.0"
   },
   "peerDependencies": {
     "@eggjs/tegg": "^3"
@@ -64,6 +66,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.2.4",
     "@types/type-is": "^1.6.6",
+    "@types/ws": "^8.5.12",
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
     "supertest": "^7.1.1",

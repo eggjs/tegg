@@ -6,7 +6,6 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { CallToolResultSchema, ListToolsResultSchema, LoggingMessageNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { CallToolRequest, ListToolsRequest, JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 import assert from 'assert';
-import { MCPControllerRegister } from '../../lib/impl/mcp/MCPControllerRegister';
 
 async function listTools(client: Client) {
   const toolsRequest: ListToolsRequest = {
@@ -71,6 +70,8 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
   if (parseInt(process.version.slice(1, 3)) > 17) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { MCPControllerRegister } = require('../../lib/impl/mcp/MCPControllerRegister');
     let app;
 
     after(async () => {

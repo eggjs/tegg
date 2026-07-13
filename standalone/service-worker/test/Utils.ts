@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { Response as UndiciResponse } from 'undici';
 import { ServiceWorkerApp, ServiceWorkerAppOptions } from '../src/ServiceWorkerApp';
 import { StandaloneTestUtil } from '@eggjs/module-test-util/StandaloneTestUtil';
 
@@ -22,7 +23,7 @@ export class TestUtils {
     const app = await TestUtils.createApp(name, init);
     // Use port 0 to let the OS assign a free port
     const server = await StandaloneTestUtil.startHTTPServer('127.0.0.1', 0, {
-      listener: e => app.handleEvent(e),
+      listener: e => app.handleEvent<UndiciResponse | void>(e),
     });
 
     return { app, server };

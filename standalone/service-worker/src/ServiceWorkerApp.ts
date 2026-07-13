@@ -20,6 +20,8 @@ import { LoadUnitInnerClassHook } from './hook/LoadUnitInnerClassHook';
 import { ServiceWorkerRunner } from './ServiceWorkerRunner';
 import { StandaloneEggObjectFactory } from './StandaloneEggObjectFactory';
 import { FetchEventHandler } from './http/FetchEventHandler';
+import { WebSocketEventHandler } from './websocket/WebSocketEventHandler';
+import { WebSocketControllerRegister } from './websocket/WebSocketControllerRegister';
 
 export interface ServiceWorkerAppOptions {
   innerObjectHandlers?: RunnerOptions['innerObjectHandlers'];
@@ -78,7 +80,7 @@ export class ServiceWorkerApp {
       innerObjectHandlers.httpclient = [{ obj: getDefaultHttpClient() }];
     }
 
-    this.loadUnitInnerClassHook = new LoadUnitInnerClassHook([ StandaloneEggObjectFactory, ServiceWorkerRunner, FetchEventHandler ]);
+    this.loadUnitInnerClassHook = new LoadUnitInnerClassHook([ StandaloneEggObjectFactory, ServiceWorkerRunner, FetchEventHandler, WebSocketEventHandler ]);
 
     LoadUnitLifecycleUtil.registerLifecycle(this.loadUnitInnerClassHook);
 
@@ -104,6 +106,7 @@ export class ServiceWorkerApp {
     // Clean up static singletons
     HTTPControllerRegister.clean();
     MCPControllerRegister.clean();
+    WebSocketControllerRegister.clean();
 
     // Unregister lifecycle hooks
     LoadUnitLifecycleUtil.deleteLifecycle(this.contextProtoLoadUnitHook);
