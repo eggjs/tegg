@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-websocket-runtime",
   "description": "WebSocket controller runtime for tegg",
-  "version": "3.84.2",
+  "version": "3.84.4",
   "keywords": [
     "egg",
     "typescript",
@@ -39,8 +39,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@eggjs/controller-decorator": "^3.84.2",
-    "@eggjs/tegg-common-util": "^3.84.2",
+    "@eggjs/controller-decorator": "^3.84.4",
+    "@eggjs/tegg-common-util": "^3.84.4",
     "path-to-regexp": "^1.8.0"
   },
   "devDependencies": {
