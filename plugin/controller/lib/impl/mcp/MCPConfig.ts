@@ -103,9 +103,8 @@ export class MCPConfig {
       if (config?.sessionIdGenerator) {
         return config.sessionIdGenerator;
       }
-      return () => randomUUID();
     }
-    return this._sessionIdGenerator;
+    return this._sessionIdGenerator || (() => randomUUID());
   }
 
   getEventStore(name?: string) {
@@ -114,7 +113,6 @@ export class MCPConfig {
       if (config?.eventStore) {
         return config.eventStore;
       }
-      return undefined;
     }
     return this._eventStore;
   }
@@ -125,9 +123,8 @@ export class MCPConfig {
       if (config?.sseHeartTime) {
         return config.sseHeartTime;
       }
-      return 25000;
     }
-    return this._sseHeartTime;
+    return this._sseHeartTime ?? 25000;
   }
 
   getMultipleServerNames() {
@@ -150,9 +147,8 @@ export class MCPConfig {
       if (config?.pingInterval !== undefined) {
         return config.pingInterval;
       }
-      return 5 * 1000;
     }
-    return this._pingInterval;
+    return this._pingInterval ?? 5 * 1000;
   }
 
   getSsePingEnabled(name?: string) {
@@ -161,9 +157,8 @@ export class MCPConfig {
       if (config?.ssePingEnabled !== undefined) {
         return config.ssePingEnabled;
       }
-      return false;
     }
-    return this._ssePingEnabled;
+    return !!this._ssePingEnabled;
   }
 
   getStreamPingEnabled(name?: string) {
@@ -172,9 +167,8 @@ export class MCPConfig {
       if (config?.streamPingEnabled !== undefined) {
         return config.streamPingEnabled;
       }
-      return false;
     }
-    return this._streamPingEnabled;
+    return !!this._streamPingEnabled;
   }
 
   getStreamSessionIdleTimeout(name?: string) {
