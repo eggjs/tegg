@@ -17,6 +17,12 @@ describe('test/MCPMeta.test.ts', () => {
     assert(fooControllerMetaData.className === 'MCPFooController');
     assert(fooControllerMetaData.prompts[0].name === 'foo');
     assert(fooControllerMetaData.tools[0].name === 'bar');
+    assert.deepStrictEqual(fooControllerMetaData.tools[0].meta, {
+      ui: {
+        resourceUri: 'ui://test/tool',
+        visibility: [ 'model', 'app' ],
+      },
+    });
     assert(fooControllerMetaData.resources[0].name === 'car');
     assert(fooControllerMetaData.resources[0].template instanceof ResourceTemplate);
     assert.strictEqual(fooControllerMetaData.tools[0].detail?.argsSchema as unknown, ToolType);
