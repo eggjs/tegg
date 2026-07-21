@@ -125,6 +125,7 @@ export class MCPServerHelper {
     this.server.registerTool(name, {
       description,
       inputSchema: schema,
+      _meta: toolMeta.meta,
     }, handler);
   }
 

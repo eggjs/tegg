@@ -45,6 +45,12 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       name: 'testTool',
       needAcl: false,
       middlewares: [],
+      meta: {
+        ui: {
+          resourceUri: 'ui://test/tool',
+          visibility: [ 'model', 'app' ],
+        },
+      },
       contextParamIndex: 1,
       detail: {
         argsSchema: ToolType,
@@ -128,10 +134,16 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     ]);
     const tools = await client.listTools();
 
-    assert.deepEqual(tools.tools.map(tool => ({ name: tool.name, description: tool.description })), [
+    assert.deepEqual(tools.tools.map(tool => ({ name: tool.name, description: tool.description, _meta: tool._meta })), [
       {
         description: undefined,
         name: 'testTool',
+        _meta: {
+          ui: {
+            resourceUri: 'ui://test/tool',
+            visibility: [ 'model', 'app' ],
+          },
+        },
       },
     ]);
 

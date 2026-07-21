@@ -15,7 +15,15 @@ const AddArgs = {
 @Middleware(McpTestAdvice)
 @MCPController({ name: 'test-server', version: '1.0.0' })
 export class MCPTestController {
-  @MCPTool({ description: 'Echo the input message' })
+  @MCPTool({
+    description: 'Echo the input message',
+    meta: {
+      ui: {
+        resourceUri: 'ui://test/echo',
+        visibility: [ 'model' ],
+      },
+    },
+  })
   async echo(@ToolArgsSchema(EchoArgs) args: ToolArgs<typeof EchoArgs>): Promise<MCPToolResponse> {
     return {
       content: [{ type: 'text', text: args.message }],

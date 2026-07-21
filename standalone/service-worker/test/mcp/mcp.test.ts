@@ -47,6 +47,12 @@ describe('standalone/service-worker/test/mcp/mcp.test.ts', () => {
 
     const echoTool = result.tools.find(t => t.name === 'echo');
     assert.strictEqual(echoTool?.description, 'Echo the input message');
+    assert.deepStrictEqual(echoTool?._meta, {
+      ui: {
+        resourceUri: 'ui://test/echo',
+        visibility: [ 'model' ],
+      },
+    });
 
     const addTool = result.tools.find(t => t.name === 'add');
     assert.strictEqual(addTool?.description, 'Add two numbers');
