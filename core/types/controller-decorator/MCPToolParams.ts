@@ -7,9 +7,20 @@ export type ToolExtra = Parameters<Parameters<McpServer['tool']>['4']>['1'];
 
 export type MCPToolResponse = CallToolResult;
 
+export type MCPToolVisibility = 'model' | 'app';
+
+export interface MCPToolUIMeta {
+  resourceUri?: string;
+  visibility?: MCPToolVisibility[];
+}
+
+export type MCPToolRegistrationMeta = {
+  ui: MCPToolUIMeta;
+};
+
 export interface MCPToolParams {
   name?: string;
   description?: string;
   timeout?: number;
+  meta?: MCPToolRegistrationMeta;
 }
-

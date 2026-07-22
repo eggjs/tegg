@@ -36,7 +36,14 @@ export class MCPFooController {
     };
   }
 
-  @MCPTool()
+  @MCPTool({
+    meta: {
+      ui: {
+        resourceUri: 'ui://test/tool',
+        visibility: [ 'model', 'app' ],
+      },
+    },
+  })
   async bar(@ToolArgsSchema(ToolType as any) args: ToolArgs<any>, @Context() ctx: object): Promise<MCPToolResponse> {
     void ctx;
     return {
