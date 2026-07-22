@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.85.0](https://github.com/eggjs/tegg/compare/v3.84.4...v3.85.0) (2026-07-22)
+
+
+### Features
+
+* **mcp:** support UI metadata for tool registration ([#463](https://github.com/eggjs/tegg/issues/463)) ([caebf68](https://github.com/eggjs/tegg/commit/caebf688b2923b11ff8a9f88b191612dcd463962))
+
+
+
+
+
 ## [3.84.4](https://github.com/eggjs/tegg/compare/v3.84.2...v3.84.4) (2026-07-13)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
