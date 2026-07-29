@@ -1,6 +1,7 @@
 import type { Application, Context, Router } from 'egg';
 
 import assert from 'node:assert';
+import { webcrypto } from 'node:crypto';
 import http, { IncomingMessage, ServerResponse } from 'node:http';
 import { Socket } from 'node:net';
 
@@ -32,6 +33,15 @@ import contentType from 'content-type';
 import { MCPConfig } from './MCPConfig';
 import { MCPServerHelper } from './MCPServerHelper';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+
+// The MCP SDK uses the Web Crypto global for stream IDs. Node.js 18 exposes
+// Web Crypto from node:crypto but does not install it globally in script files.
+if (typeof globalThis.crypto === 'undefined') {
+  Object.defineProperty(globalThis, 'crypto', {
+    configurable: true,
+    value: webcrypto,
+  });
+}
 
 export interface MCPControllerHook {
   // SSE
