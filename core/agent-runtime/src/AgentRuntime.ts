@@ -158,7 +158,9 @@ export class AgentRuntime {
   private async ensureThread(input: CreateRunInput): Promise<{ threadId: string; input: CreateRunInput }> {
     const metadata = validateMetadata(input.metadata);
     if (input.threadId) {
-      const thread = await this.store.getThread(input.threadId);
+      const isResume = this.store.hasMessages
+        ? await this.store.hasMessages(input.threadId)
+        : (await this.store.getThread(input.threadId)).messages.length > 0;
       if (metadata && Object.keys(metadata).length > 0) {
         if (!this.store.updateThreadMetadata) {
           throw new Error('AgentStore does not support updating thread metadata');
@@ -175,7 +177,6 @@ export class AgentRuntime {
           );
         }
       }
-      const isResume = thread.messages.length > 0;
       return { threadId: input.threadId, input: { ...input, isResume } };
     }
     const thread = await this.store.createThread(metadata);

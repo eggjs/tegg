@@ -13,6 +13,15 @@ export interface ObjectStorageClient {
   get(key: string): Promise<string | null>;
 
   /**
+   * Read an inclusive byte range from the object at `key`.
+   * Returns `null` if the object does not exist.
+   *
+   * This method is optional. Callers must treat a trailing partial UTF-8
+   * sequence or record as incomplete because `end` is a byte offset.
+   */
+  getRange?(key: string, start: number, end: number): Promise<string | null>;
+
+  /**
    * Append `value` to an existing Appendable Object.
    * If the object does not exist yet, create it.
    *

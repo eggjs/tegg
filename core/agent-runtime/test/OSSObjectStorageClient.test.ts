@@ -123,6 +123,42 @@ describe('test/OSSObjectStorageClient.test.ts', () => {
     });
   });
 
+  describe('getRange', () => {
+    it('should pass an inclusive byte range to the SDK', async () => {
+      mockOSS.get.mockResolvedValue({
+        content: Buffer.from('partial', 'utf-8'),
+      });
+
+      const result = await client.getRange('threads/t1.json', 0, 63);
+
+      assert.equal(result, 'partial');
+      assert.deepStrictEqual(mockOSS.get.mock.calls[0], [
+        'threads/t1.json',
+        { headers: { range: 'bytes=0-63' } },
+      ]);
+    });
+
+    it('should return null for NoSuchKey and an empty string for InvalidRange', async () => {
+      const missing = new Error('Object not exists');
+      (missing as Error & { code: string }).code = 'NoSuchKey';
+      mockOSS.get.mockRejectedValueOnce(missing);
+      assert.equal(await client.getRange('missing', 0, 63), null);
+
+      const empty = new Error('Requested range is not satisfiable');
+      (empty as Error & { code: string }).code = 'InvalidRange';
+      mockOSS.get.mockRejectedValueOnce(empty);
+      assert.equal(await client.getRange('empty', 0, 63), '');
+    });
+
+    it('should reject invalid byte ranges before calling the SDK', async () => {
+      await assert.rejects(
+        () => client.getRange('threads/t1.json', 10, 9),
+        RangeError,
+      );
+      assert.equal(mockOSS.get.mock.calls.length, 0);
+    });
+  });
+
   describe('append', () => {
     it('should create new object with position 0 on first append', async () => {
       mockOSS.append.mockResolvedValue({ nextAppendPosition: '13' });

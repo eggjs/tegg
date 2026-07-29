@@ -53,6 +53,41 @@ export class OSSObjectStorageClient implements ObjectStorageClient {
     }
   }
 
+  async getRange(key: string, start: number, end: number): Promise<string | null> {
+    if (
+      !Number.isSafeInteger(start) ||
+      !Number.isSafeInteger(end) ||
+      start < 0 ||
+      end < start
+    ) {
+      throw new RangeError(`Invalid object byte range: ${start}-${end}`);
+    }
+
+    try {
+      const result = await this.client.get(key, {
+        headers: {
+          range: `bytes=${start}-${end}`,
+        },
+      });
+      if (result.content === undefined || result.content === null) {
+        return '';
+      }
+      return Buffer.isBuffer(result.content)
+        ? result.content.toString('utf-8')
+        : String(result.content);
+    } catch (err: unknown) {
+      if (isOSSError(err, 'NoSuchKey')) {
+        return null;
+      }
+      // OSS returns InvalidRange when reading from an empty object or when the
+      // requested start offset is beyond the end of the object.
+      if (isOSSError(err, 'InvalidRange')) {
+        return '';
+      }
+      throw err;
+    }
+  }
+
   /**
    * Append data to an OSS Appendable Object.
    *

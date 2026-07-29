@@ -64,6 +64,12 @@ export class MapStorageClient implements ObjectStorageClient {
     return this.store.get(key) ?? null;
   }
 
+  async getRange(key: string, start: number, end: number): Promise<string | null> {
+    const value = this.store.get(key);
+    if (value === undefined) return null;
+    return Buffer.from(value, 'utf8').subarray(start, end + 1).toString('utf8');
+  }
+
   async append(key: string, value: string): Promise<void> {
     const existing = this.store.get(key) ?? '';
     this.store.set(key, existing + value);

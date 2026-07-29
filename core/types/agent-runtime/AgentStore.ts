@@ -85,6 +85,16 @@ export interface AgentStore {
   createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord>;
   getThread(threadId: string, options?: GetThreadOptions): Promise<ThreadRecord>;
   /**
+   * Return whether the thread contains at least one conversation message
+   * (user or assistant), matching the default filtering semantics of
+   * {@link getThread}.
+   *
+   * Stores may implement this optional capability with a lightweight existence
+   * check. Implementations must throw `AgentNotFoundError` when the thread does
+   * not exist. AgentRuntime falls back to `getThread()` when it is absent.
+   */
+  hasMessages?(threadId: string): Promise<boolean>;
+  /**
    * Shallow-merge metadata into an existing thread.
    * New values overwrite matching keys; omitted keys are preserved.
    */
