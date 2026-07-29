@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.85.1](https://github.com/eggjs/tegg/compare/v3.85.0...v3.85.1) (2026-07-29)
+
+**Note:** Version bump only for package @eggjs/tegg-runtime
+
+
+
+
+
 # [3.85.0](https://github.com/eggjs/tegg/compare/v3.84.4...v3.85.0) (2026-07-22)
 
 **Note:** Version bump only for package @eggjs/tegg-runtime
