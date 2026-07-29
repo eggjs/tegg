@@ -11,6 +11,28 @@ import { AgentObjectType, RunStatus, AgentNotFoundError } from '@eggjs/tegg-type
 
 import { dateBucket, newRunId, newThreadId, nowUnix, reverseMs } from './AgentStoreUtils';
 
+const HAS_MESSAGES_PREFIX_END = 64 * 1024 - 1;
+
+function isConversationMessage(message: AgentMessage): boolean {
+  return message.type === 'user' || message.type === 'assistant';
+}
+
+function containsConversationMessage(data: string, completeLinesOnly: boolean): boolean {
+  let parseable = data;
+  if (completeLinesOnly) {
+    const lastNewline = data.lastIndexOf('\n');
+    if (lastNewline < 0) return false;
+    parseable = data.slice(0, lastNewline);
+  } else {
+    parseable = data.trim();
+  }
+
+  return parseable
+    .split('\n')
+    .filter(line => line.length > 0)
+    .some(line => isConversationMessage(JSON.parse(line) as AgentMessage));
+}
+
 /**
  * Warn logger used when a background thread activity-index write fails.
  * `console` and `egg-logger` both satisfy this shape.
@@ -247,6 +269,38 @@ export class OSSAgentStore implements AgentStore {
     }
 
     return { ...meta, messages };
+  }
+
+  async hasMessages(threadId: string): Promise<boolean> {
+    const messagesKey = this.threadMessagesKey(threadId);
+    const [ metaData, messagesPrefix ] = await Promise.all([
+      this.client.get(this.threadMetaKey(threadId)),
+      this.client.getRange
+        ? this.client.getRange(messagesKey, 0, HAS_MESSAGES_PREFIX_END)
+        : Promise.resolve(undefined),
+    ]);
+    if (!metaData) {
+      throw new AgentNotFoundError(`Thread ${threadId} not found`);
+    }
+    // Preserve getThread's behavior for corrupt metadata even though this
+    // lightweight path only needs the thread's existence.
+    JSON.parse(metaData);
+
+    if (messagesPrefix === null || messagesPrefix === '') return false;
+    if (
+      messagesPrefix !== undefined &&
+      containsConversationMessage(messagesPrefix, true)
+    ) {
+      return true;
+    }
+
+    // A range can end in the middle of a JSONL record. Fall back to the full
+    // object when the prefix is inconclusive so large leading system events or
+    // legacy records without a trailing newline cannot produce false negatives.
+    const messagesData = await this.client.get(messagesKey);
+    return messagesData
+      ? containsConversationMessage(messagesData, false)
+      : false;
   }
 
   /**

@@ -1,7 +1,17 @@
 import http from 'node:http';
+import { webcrypto } from 'node:crypto';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import * as z from 'zod/v4';
+
+// The MCP SDK uses the Web Crypto global for stream IDs. Node.js 18 exposes
+// Web Crypto from node:crypto but does not install it globally in script files.
+if (typeof globalThis.crypto === 'undefined') {
+  Object.defineProperty(globalThis, 'crypto', {
+    configurable: true,
+    value: webcrypto,
+  });
+}
 
 // Create an MCP server
 const server = new McpServer({

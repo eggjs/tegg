@@ -293,6 +293,51 @@ describe('test/AgentRuntime.test.ts', () => {
       assert.equal(capturedInput!.isResume, true);
     });
 
+    it('should use store.hasMessages without loading the full thread', async () => {
+      let hasMessagesCalls = 0;
+      let getThreadCalls = 0;
+      const originalHasMessages = store.hasMessages.bind(store);
+      const originalGetThread = store.getThread.bind(store);
+      store.hasMessages = async threadId => {
+        hasMessagesCalls++;
+        return await originalHasMessages(threadId);
+      };
+      store.getThread = async (threadId, options) => {
+        getThreadCalls++;
+        return await originalGetThread(threadId, options);
+      };
+
+      const thread = await runtime.createThread();
+      await runtime.syncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      assert.equal(hasMessagesCalls, 1);
+      assert.equal(getThreadCalls, 0);
+    });
+
+    it('should fall back to getThread when store.hasMessages is unavailable', async () => {
+      let getThreadCalls = 0;
+      const originalGetThread = store.getThread.bind(store);
+      Object.defineProperty(store, 'hasMessages', {
+        configurable: true,
+        value: undefined,
+      });
+      store.getThread = async (threadId, options) => {
+        getThreadCalls++;
+        return await originalGetThread(threadId, options);
+      };
+
+      const thread = await runtime.createThread();
+      await runtime.syncRun({
+        threadId: thread.id,
+        input: { messages: [{ role: 'user', content: 'Hi' }] },
+      });
+
+      assert.equal(getThreadCalls, 1);
+    });
+
     it('should not throw when store.updateRun fails in catch block', async () => {
       executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
         throw new Error('exec failed');

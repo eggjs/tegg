@@ -52,8 +52,8 @@ export interface CreateRunInput {
   threadId?: string;
   /**
    * Populated by AgentRuntime before calling execRun.
-   * - true: threadId was provided (resume existing conversation)
-   * - false: no threadId provided, new thread created
+   * - true: the thread contains persisted user or assistant messages
+   * - false: the thread is new or does not contain conversation messages
    */
   isResume?: boolean;
   input: {

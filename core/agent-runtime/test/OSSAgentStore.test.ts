@@ -170,6 +170,87 @@ describe('test/OSSAgentStore.test.ts', () => {
       assert.equal(fetched.messages[1].type, 'user');
       assert.equal(fetched.messages[2].type, 'result');
     });
+
+    it('should report whether a thread contains conversation messages', async () => {
+      const thread = await store.createThread();
+      assert.equal(await store.hasMessages(thread.id), false);
+
+      await store.appendMessages(thread.id, [
+        { type: 'system', subtype: 'init', session_id: 'sess-1' },
+        { type: 'result', subtype: 'success', usage: { input_tokens: 0, output_tokens: 0 } },
+      ]);
+      assert.equal(await store.hasMessages(thread.id), false);
+
+      await store.appendMessages(thread.id, [
+        { type: 'user', message: { role: 'user', content: 'Hello' } },
+      ]);
+      assert.equal(await store.hasMessages(thread.id), true);
+    });
+
+    it('should throw AgentNotFoundError when checking a missing thread', async () => {
+      await assert.rejects(
+        () => store.hasMessages('thread_non_existent'),
+        AgentNotFoundError,
+      );
+    });
+
+    it('should use a range read without fetching the full message object when the prefix is decisive', async () => {
+      class TrackingStorageClient extends MapStorageClient {
+        readonly fullReads: string[] = [];
+        readonly rangeReads: string[] = [];
+
+        override async get(key: string): Promise<string | null> {
+          this.fullReads.push(key);
+          return await super.get(key);
+        }
+
+        override async getRange(key: string, start: number, end: number): Promise<string | null> {
+          this.rangeReads.push(key);
+          return await super.getRange(key, start, end);
+        }
+      }
+
+      const client = new TrackingStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread();
+      await localStore.appendMessages(thread.id, [
+        { type: 'user', message: { role: 'user', content: 'Hello' } },
+      ]);
+
+      client.fullReads.length = 0;
+      assert.equal(await localStore.hasMessages(thread.id), true);
+
+      const messageKey = `threads/${thread.id}/messages.jsonl`;
+      assert.deepStrictEqual(client.rangeReads, [ messageKey ]);
+      assert(!client.fullReads.includes(messageKey));
+    });
+
+    it('should fall back to a full read when the range ends inside a leading record', async () => {
+      class TrackingStorageClient extends MapStorageClient {
+        readonly fullReads: string[] = [];
+
+        override async get(key: string): Promise<string | null> {
+          this.fullReads.push(key);
+          return await super.get(key);
+        }
+      }
+
+      const client = new TrackingStorageClient();
+      const localStore = new OSSAgentStore({ client });
+      const thread = await localStore.createThread();
+      await localStore.appendMessages(thread.id, [
+        {
+          type: 'system',
+          subtype: 'init',
+          session_id: 'x'.repeat(70 * 1024),
+        },
+        { type: 'assistant', message: { role: 'assistant', content: [] } },
+      ]);
+
+      client.fullReads.length = 0;
+      assert.equal(await localStore.hasMessages(thread.id), true);
+      assert(client.fullReads.includes(`threads/${thread.id}/messages.jsonl`));
+    });
   });
 
   describe('threads (without append)', () => {
