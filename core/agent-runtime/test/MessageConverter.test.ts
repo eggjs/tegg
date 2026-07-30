@@ -1,6 +1,11 @@
 import assert from 'node:assert';
 
-import type { AgentMessage, InputMessage, SDKResultMessage } from '@eggjs/tegg-types/agent-runtime';
+import type {
+  AgentMessage,
+  InputMessage,
+  SDKAssistantMessage,
+  SDKResultMessage,
+} from '@eggjs/tegg-types/agent-runtime';
 
 import { MessageConverter } from '../src/MessageConverter';
 
@@ -134,13 +139,29 @@ describe('test/MessageConverter.test.ts', () => {
   });
 
   describe('filterForStorage', () => {
-    it('should filter out stream_event messages', () => {
+    it('should filter out stream_event and thinking_tokens messages', () => {
+      const assistant = {
+        type: 'assistant',
+        message: {
+          role: 'assistant',
+          content: [
+            { type: 'thinking', thinking: 'complete reasoning' },
+            { type: 'text', text: 'hi' },
+          ],
+        },
+      } satisfies SDKAssistantMessage;
       const messages: AgentMessage[] = [
         { type: 'system', subtype: 'init', session_id: 'sess-1' },
         { type: 'user', message: { role: 'user', content: 'hello' } },
+        {
+          type: 'system',
+          subtype: 'thinking_tokens',
+          estimated_tokens: 1,
+          estimated_tokens_delta: 1,
+        },
         { type: 'stream_event', event: { type: 'content_block_delta' }, session_id: 'sess-1' },
         { type: 'stream_event', event: { type: 'content_block_delta' }, session_id: 'sess-1' },
-        { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },
+        assistant,
         { type: 'result', subtype: 'success', usage: { input_tokens: 10, output_tokens: 5 } } as SDKResultMessage,
       ];
       const result = MessageConverter.filterForStorage(messages);
@@ -149,9 +170,14 @@ describe('test/MessageConverter.test.ts', () => {
       assert.equal(result[1].type, 'user');
       assert.equal(result[2].type, 'assistant');
       assert.equal(result[3].type, 'result');
+      assert.strictEqual(result[2], assistant);
+      assert.deepStrictEqual(assistant.message.content, [
+        { type: 'thinking', thinking: 'complete reasoning' },
+        { type: 'text', text: 'hi' },
+      ]);
     });
 
-    it('should return all messages when no stream_event present', () => {
+    it('should return all messages when no transient messages are present', () => {
       const messages: AgentMessage[] = [
         { type: 'user', message: { role: 'user', content: 'hello' } },
         { type: 'assistant', message: { role: 'assistant', content: [{ type: 'text', text: 'hi' }] } },

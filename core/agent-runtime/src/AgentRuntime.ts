@@ -689,10 +689,11 @@ export class AgentRuntime {
    *   `streamMessages` has been mirrored; cursor/flags only advance after a
    *   successful append, so a failed append is retried (never duplicated and
    *   never silently dropped) by the next flush.
-   * - **Storage filter**: `stream_event` deltas are never persisted.
+   * - **Storage filter**: `stream_event` deltas and
+   *   `system/thinking_tokens` progress counters are never persisted.
    *
-   * The persisted transcript is input messages followed by every
-   * non-`stream_event` message in order.
+   * The persisted transcript is input messages followed by every non-transient
+   * message emitted by the executor.
    */
   private createMessageFlusher(
     threadId: string,

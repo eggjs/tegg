@@ -55,13 +55,16 @@ export class MessageConverter {
   }
 
   /**
-   * Filter out stream_event messages before persisting to thread storage.
-   * Stream events are incremental deltas (one per token) only useful during
-   * real-time streaming; the final assistant message already contains the
-   * complete response.
+   * Filter transient progress messages before persisting to thread storage.
+   * Stream events are incremental content deltas, while thinking_tokens only
+   * reports estimated token-count progress. The final assistant messages
+   * already contain the complete response and thinking content.
    */
   static filterForStorage(messages: AgentMessage[]): AgentMessage[] {
-    return messages.filter(m => m.type !== 'stream_event');
+    return messages.filter(
+      m => m.type !== 'stream_event' &&
+        !(m.type === 'system' && m.subtype === 'thinking_tokens'),
+    );
   }
 
   /**
