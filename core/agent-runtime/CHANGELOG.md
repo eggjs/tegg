@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.85.2](https://github.com/eggjs/tegg/compare/v3.85.1...v3.85.2) (2026-07-31)
+
+
+### Performance Improvements
+
+* **agent-runtime:** skip thinking token progress persistence ([#465](https://github.com/eggjs/tegg/issues/465)) ([82c1e1f](https://github.com/eggjs/tegg/commit/82c1e1fc910c615515c0b9d1759bff896584832d))
+
+
+
+
+
 ## [3.85.1](https://github.com/eggjs/tegg/compare/v3.85.0...v3.85.1) (2026-07-29)
 
 
