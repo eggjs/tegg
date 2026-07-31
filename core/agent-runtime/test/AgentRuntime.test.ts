@@ -5,6 +5,7 @@ import type {
   RunRecord,
   CreateRunInput,
   AgentMessage,
+  SDKAssistantMessage,
   SDKResultMessage,
   StreamEvent,
 } from '@eggjs/tegg-types/agent-runtime';
@@ -623,6 +624,56 @@ describe('test/AgentRuntime.test.ts', () => {
       assert(eventTypes.includes('system'), 'should forward system event');
       assert(eventTypes.includes('stream_event'), 'should forward stream_event');
       assert(eventTypes.includes('assistant'), 'should forward assistant event');
+    });
+
+    it('should forward thinking_tokens without persisting them', async () => {
+      const thinkingTokens: AgentMessage = {
+        type: 'system',
+        subtype: 'thinking_tokens',
+        estimated_tokens: 1,
+        estimated_tokens_delta: 1,
+      };
+      const assistant: SDKAssistantMessage = {
+        type: 'assistant',
+        message: {
+          role: 'assistant',
+          content: [
+            { type: 'thinking', thinking: 'complete reasoning' },
+            { type: 'text', text: 'Hello' },
+          ],
+        },
+      };
+      executor.execRun = async function* (): AsyncGenerator<AgentMessage> {
+        yield { type: 'system', subtype: 'init', session_id: 'sess-1' };
+        yield thinkingTokens;
+        yield assistant;
+      };
+
+      const writer = new MockSSEWriter();
+      await runtime.streamRun({ input: { messages: [{ role: 'user', content: 'Hi' }] } }, writer);
+
+      const thinkingEvent = writer.events.find(event => {
+        if (event.event !== 'system') return false;
+        const streamEvent = event.data as StreamEvent;
+        return (streamEvent.data as AgentMessage).subtype === 'thinking_tokens';
+      });
+      assert.ok(thinkingEvent, 'should forward thinking_tokens over SSE');
+      assert.deepStrictEqual((thinkingEvent.data as StreamEvent).data, thinkingTokens);
+
+      const runCreated = writer.events[0].data as StreamEvent;
+      const threadId = (runCreated.data as { threadId: string }).threadId;
+      const thread = await runtime.getThread(threadId);
+      assert.equal(
+        thread.messages.some(message =>
+          message.type === 'system' && message.subtype === 'thinking_tokens',
+        ),
+        false,
+      );
+      const persistedAssistant = thread.messages.find(
+        (message): message is SDKAssistantMessage => message.type === 'assistant',
+      );
+      assert.ok(persistedAssistant);
+      assert.deepStrictEqual(persistedAssistant.message, assistant.message);
     });
 
     it('should pass through SDK message directly as event data', async () => {
