@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.86.0](https://github.com/eggjs/tegg/compare/v3.85.2...v3.86.0) (2026-08-05)
+
+
+### Features
+
+* **mcp:** support tool output schema ([#466](https://github.com/eggjs/tegg/issues/466)) ([2d14184](https://github.com/eggjs/tegg/commit/2d14184ce08c6807056d42b9f9165a08ca4d0259))
+
+
+
+
+
 ## [3.85.2](https://github.com/eggjs/tegg/compare/v3.85.1...v3.85.2) (2026-07-31)
 
 
