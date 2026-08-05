@@ -4,6 +4,7 @@ import {
   MCPPromptMeta,
 } from '@eggjs/controller-decorator';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import * as z from 'zod/v4';
 import assert from 'assert';
 
@@ -26,6 +27,11 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       name: z.string().describe('npm package name'),
     };
 
+    const ToolOutputType = {
+      packageName: z.string(),
+      found: z.boolean(),
+    };
+
     const helper = new MCPServerHelper({
       name: 'test',
       version: '1.0.0',
@@ -45,6 +51,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
       name: 'testTool',
       needAcl: false,
       middlewares: [],
+      outputSchema: ToolOutputType,
       meta: {
         ui: {
           resourceUri: 'ui://test/tool',
@@ -56,6 +63,13 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
         argsSchema: ToolType,
         index: 0,
       },
+    });
+
+    const invalidOutputToolMeta = new MCPToolMeta({
+      name: 'invalidOutputTool',
+      needAcl: false,
+      middlewares: [],
+      outputSchema: ToolOutputType,
     });
 
     const promptMeta = new MCPPromptMeta({
@@ -95,6 +109,19 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
               text: `npm package: ${args.name} not found`,
             },
           ],
+          structuredContent: {
+            packageName: args.name,
+            found: false,
+          },
+        };
+      },
+      [invalidOutputToolMeta.name]: () => {
+        return {
+          content: [{ type: 'text', text: 'invalid output' }],
+          structuredContent: {
+            packageName: 'aaa',
+            found: 'not-a-boolean',
+          },
         };
       },
       [resourceMeta.name]: (uri, ctx) => {
@@ -111,6 +138,7 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     } });
 
     await helper.mcpToolRegister(getOrCreateEggObject as any, { getMetaData: () => ({}) } as any, toolMeta);
+    await helper.mcpToolRegister(getOrCreateEggObject as any, { getMetaData: () => ({}) } as any, invalidOutputToolMeta);
     await helper.mcpResourceRegister(getOrCreateEggObject as any, { getMetaData: () => ({}) } as any, resourceMeta);
     await helper.mcpPromptRegister(getOrCreateEggObject as any, { getMetaData: () => ({}) } as any, promptMeta);
 
@@ -134,6 +162,12 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     ]);
     const tools = await client.listTools();
 
+    assert.deepEqual(tools.tools[0].outputSchema?.properties, {
+      packageName: { type: 'string' },
+      found: { type: 'boolean' },
+    });
+    assert.deepEqual(tools.tools[0].outputSchema?.required, [ 'packageName', 'found' ]);
+
     assert.deepEqual(tools.tools.map(tool => ({ name: tool.name, description: tool.description, _meta: tool._meta })), [
       {
         description: undefined,
@@ -145,6 +179,11 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
           },
         },
       },
+      {
+        description: undefined,
+        name: 'invalidOutputTool',
+        _meta: undefined,
+      },
     ]);
 
     const toolRes = await client.callTool({
@@ -155,7 +194,21 @@ describe('plugin/controller/test/mcp/mcp.test.ts', () => {
     });
     assert.deepEqual(toolRes, {
       content: [{ type: 'text', text: 'npm package: aaa not found' }],
+      structuredContent: {
+        packageName: 'aaa',
+        found: false,
+      },
     });
+    const invalidOutputToolRes = await client.callTool({
+      name: 'invalidOutputTool',
+      arguments: {},
+    }) as CallToolResult;
+    assert.equal(invalidOutputToolRes.isError, true);
+    const invalidOutputContent = invalidOutputToolRes.content[0];
+    assert.equal(invalidOutputContent.type, 'text');
+    if (invalidOutputContent.type === 'text') {
+      assert.match(invalidOutputContent.text, /Output validation error/);
+    }
     const resources = await client.listResources();
     assert.deepEqual(resources, {
       resources: [

@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { ControllerType } from '@eggjs/tegg-types';
-import { MCPFooController, ToolType, PromptType } from './fixtures/MCPController';
+import { MCPFooController, ToolType, ToolOutputType, PromptType } from './fixtures/MCPController';
 import { ControllerMetaBuilderFactory, MCPControllerMeta } from '..';
 import { ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -23,6 +23,7 @@ describe('test/MCPMeta.test.ts', () => {
         visibility: [ 'model', 'app' ],
       },
     });
+    assert.strictEqual(fooControllerMetaData.tools[0].outputSchema, ToolOutputType);
     assert(fooControllerMetaData.resources[0].name === 'car');
     assert(fooControllerMetaData.resources[0].template instanceof ResourceTemplate);
     assert.strictEqual(fooControllerMetaData.tools[0].detail?.argsSchema as unknown, ToolType);
