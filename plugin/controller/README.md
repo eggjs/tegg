@@ -236,7 +236,7 @@ import {
   Inject,
   ToolArgsSchema,
 } from '@eggjs/tegg';
-import * as z from 'zod/v4';
+import { z } from '@eggjs/tegg/zod';
 
 export const PromptType = {
   name: z.string(),
@@ -244,6 +244,11 @@ export const PromptType = {
 
 export const ToolType = {
   name: z.string().describe('npm package name'),
+};
+
+export const ToolOutputType = {
+  packageName: z.string(),
+  found: z.boolean(),
 };
 
 @MCPController()
@@ -268,8 +273,12 @@ export class McpController {
     };
   }
 
-  @MCPTool()
-  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse> {
+  @MCPTool({ outputSchema: ToolOutputType })
+  async bar(@ToolArgsSchema(ToolType) args: ToolArgs<typeof ToolType>): Promise<MCPToolResponse<typeof ToolOutputType>> {
+    const output = {
+      packageName: args.name,
+      found: false,
+    };
     return {
       content: [
         {
@@ -277,6 +286,7 @@ export class McpController {
           text: `npm package: ${args.name} not found`,
         },
       ],
+      structuredContent: output,
     };
   }
 

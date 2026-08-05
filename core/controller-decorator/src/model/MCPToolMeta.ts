@@ -9,6 +9,7 @@ export class MCPToolMeta implements MethodMeta {
   readonly mcpName?: string;
   readonly description?: string;
   readonly meta?: MCPToolParams['meta'];
+  readonly outputSchema?: MCPToolParams['outputSchema'];
   readonly detail?: ToolArgsSchemaDetail;
   readonly middlewares: readonly MiddlewareFunc[];
   readonly extra?: number;
@@ -22,6 +23,7 @@ export class MCPToolMeta implements MethodMeta {
     aclCode?: string,
     description?: string;
     meta?: MCPToolParams['meta'];
+    outputSchema?: MCPToolParams['outputSchema'];
     mcpName?: string;
     detail?: ToolArgsSchemaDetail;
     extra?: number;
@@ -30,6 +32,7 @@ export class MCPToolMeta implements MethodMeta {
     this.needAcl = !!opt.needAcl;
     this.description = opt.description;
     this.meta = opt.meta;
+    this.outputSchema = opt.outputSchema;
     this.mcpName = opt.mcpName;
     this.middlewares = opt.middlewares;
     this.aclCode = opt.aclCode;

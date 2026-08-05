@@ -15,6 +15,11 @@ export const ToolType = {
   name: z.string().describe('npm package name'),
 }
 
+export const ToolOutputType = {
+  packageName: z.string(),
+  found: z.boolean(),
+}
+
 @MCPController({
   name: "HelloChairMCP",
   timeout: 60000,
@@ -37,6 +42,7 @@ export class MCPFooController {
   }
 
   @MCPTool({
+    outputSchema: ToolOutputType,
     meta: {
       ui: {
         resourceUri: 'ui://test/tool',
@@ -44,7 +50,7 @@ export class MCPFooController {
       },
     },
   })
-  async bar(@ToolArgsSchema(ToolType as any) args: ToolArgs<any>, @Context() ctx: object): Promise<MCPToolResponse> {
+  async bar(@ToolArgsSchema(ToolType as any) args: ToolArgs<any>, @Context() ctx: object): Promise<MCPToolResponse<typeof ToolOutputType>> {
     void ctx;
     return {
       content: [
@@ -53,6 +59,10 @@ export class MCPFooController {
           text: `海兔 npm 包: ${args.name} 不存在`,
         },
       ],
+      structuredContent: {
+        packageName: args.name,
+        found: false,
+      },
     };
   }
 

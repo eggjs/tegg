@@ -56,6 +56,10 @@ describe('standalone/service-worker/test/mcp/mcp.test.ts', () => {
 
     const addTool = result.tools.find(t => t.name === 'add');
     assert.strictEqual(addTool?.description, 'Add two numbers');
+    assert.deepStrictEqual(addTool?.outputSchema?.properties, {
+      result: { type: 'number' },
+    });
+    assert.deepStrictEqual(addTool?.outputSchema?.required, [ 'result' ]);
   });
 
   it('should call echo tool', async () => {
@@ -93,6 +97,7 @@ describe('standalone/service-worker/test/mcp/mcp.test.ts', () => {
     });
     assert.deepStrictEqual(result, {
       content: [{ type: 'text', text: '8' }],
+      structuredContent: { result: 8 },
     });
   });
 
