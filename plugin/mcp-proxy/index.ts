@@ -1,4 +1,4 @@
-import { APIClientBase } from 'cluster-client';
+import clusterClient, { APIClientBase } from 'cluster-client';
 import { MCPProxyDataClient } from './lib/MCPProxyDataClient';
 import { Application, Context, EggLogger, Messenger } from 'egg';
 import getRawBody from 'raw-body';
@@ -267,7 +267,14 @@ export class MCPProxyApiClient extends APIClientBase {
     app: Application;
     isAgent?: boolean;
   }) {
-    super(Object.assign({}, options, { initMethod: '_init' }));
+    const connectTimeout = options.app.config.mcp?.proxyConnectTimeout;
+    super(Object.assign({}, options, {
+      initMethod: '_init',
+      cluster: (DataClient, clusterOptions) => clusterClient(DataClient, {
+        ...clusterOptions,
+        ...(connectTimeout === undefined ? {} : { connectTimeout }),
+      }),
+    }));
     this.logger = options.logger;
     this.port = 0;
     this.app = options.app;

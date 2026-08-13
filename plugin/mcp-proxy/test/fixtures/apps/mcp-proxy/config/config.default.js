@@ -11,6 +11,9 @@ module.exports = function() {
     bodyParser: {
       enable: false,
     },
+    mcp: {
+      proxyConnectTimeout: 30000,
+    },
   };
   return config;
 };
