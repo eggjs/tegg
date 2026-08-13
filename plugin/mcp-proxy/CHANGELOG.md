@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.87.0](https://github.com/eggjs/tegg/compare/v3.86.0...v3.87.0) (2026-08-13)
+
+
+### Features
+
+* support mcp proxy connect timeout config ([#467](https://github.com/eggjs/tegg/issues/467)) ([f905185](https://github.com/eggjs/tegg/commit/f9051852331c9cdbb011424ad3612719422d901d))
+
+
+
+
+
 # [3.86.0](https://github.com/eggjs/tegg/compare/v3.85.2...v3.86.0) (2026-08-05)
 
 **Note:** Version bump only for package @eggjs/mcp-proxy
