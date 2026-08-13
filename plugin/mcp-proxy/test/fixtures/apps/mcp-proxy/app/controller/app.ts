@@ -129,6 +129,12 @@ export class InMemoryEventStore implements EventStore {
 const transports: Record<string, StreamableHTTPServerTransport | SSEServerTransport> = {};
 
 export default class App extends Controller {
+  async clusterOptions() {
+    this.ctx.body = {
+      proxyConnectTimeout: (this.app.mcpProxy as any)._client.options.connectTimeout,
+    };
+  }
+
   async ssePostHandler(req, res) {
     const sessionId = req.query?.sessionId ?? querystring.parse(url.parse(req.url).query ?? '').sessionId as string;
     let transport: SSEServerTransport;

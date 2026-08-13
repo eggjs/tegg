@@ -95,6 +95,15 @@ describe('plugin/mcp-proxy/test/proxy.test.ts', () => {
       return app.close();
     });
 
+    it('should configure cluster client connect timeout', async () => {
+      const response = await app.httpRequest()
+        .get('/cluster-options')
+        .expect(200);
+      assert.deepEqual(response.body, {
+        proxyConnectTimeout: 30000,
+      });
+    });
+
     it('sse should work', async () => {
       const sseClient = new Client({
         name: 'sse-demo-client',
