@@ -48,4 +48,21 @@ describe('plugin/tegg/test/DynamicInject.test.ts', () => {
       'hello, bar(singleton:1)',
     ]);
   });
+
+  it('dynamic range should work', async () => {
+    app.mockCsrf();
+    const res = await app.httpRequest()
+      .get('/factoryQualifier')
+      .expect(200);
+    assert.deepStrictEqual(res.body, [
+      'AbstractContextHello is not in dynamic range: AbstractSingletonHello',
+    ]);
+    const res2 = await app.httpRequest()
+      .get('/singletonDynamicInject')
+      .expect(200);
+    assert.deepStrictEqual(res2.body, [
+      'hello, foo(singleton:2)',
+      'hello, bar(singleton:2)',
+    ]);
+  });
 });

@@ -16,4 +16,10 @@ export default class App extends Controller {
     this.ctx.status = 200;
     this.ctx.body = msgs;
   }
+  async factoryQualifier() {
+    const helloService: HelloService = await (this.ctx.module as any).dynamicInjectModule.factoryQualifierService;
+    const msgs = await helloService.hello();
+    this.ctx.status = 200;
+    this.ctx.body = msgs;
+  }
 }
