@@ -2,6 +2,7 @@ import Base from 'sdk-base';
 import { Application, Context } from 'egg';
 import {
   EggLoadUnitType,
+  GlobalGraphBuildHook,
   LoadUnit,
   LoadUnitFactory,
 } from '@eggjs/tegg-metadata';
@@ -21,6 +22,10 @@ export class ModuleHandler extends Base {
     super();
     this.app = app;
     this.loadUnitLoader = new EggModuleLoader(this.app);
+  }
+
+  registerGlobalGraphBuildHook(hook: GlobalGraphBuildHook) {
+    this.loadUnitLoader.registerBuildHook(hook);
   }
 
   async init() {

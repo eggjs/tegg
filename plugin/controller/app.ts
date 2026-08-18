@@ -1,7 +1,7 @@
 import { Application } from 'egg';
 import { CONTROLLER_LOAD_UNIT, ControllerLoadUnit } from './lib/ControllerLoadUnit';
 import { AppLoadUnitControllerHook } from './lib/AppLoadUnitControllerHook';
-import { GlobalGraph, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
 import { HTTPControllerRegister } from './lib/impl/http/HTTPControllerRegister';
 import { WebSocketControllerRegister } from './lib/impl/websocket/WebSocketControllerRegister';
@@ -161,7 +161,7 @@ export default class ControllerAppBootHook {
   }
 
   configDidLoad() {
-    GlobalGraph.instance!.registerBuildHook(middlewareGraphHook);
+    this.app.moduleHandler.registerGlobalGraphBuildHook(middlewareGraphHook);
   }
 
   async willReady() {

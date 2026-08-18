@@ -1,5 +1,4 @@
 import type { Application, IBoot } from 'egg';
-import { GlobalGraph } from '@eggjs/tegg-metadata';
 import { GraphObjectHook } from './lib/graph/GraphObjectHook';
 import { GraphLoadUnitHook } from './lib/graph/GraphLoadUnitHook';
 import { CompiledStateGraphProto } from './lib/graph/CompiledStateGraphProto';
@@ -32,7 +31,7 @@ export default class ModuleLangChainHook implements IBoot {
   }
 
   configDidLoad() {
-    GlobalGraph.instance!.registerBuildHook(GraphBuildHook);
+    this.#app.moduleHandler.registerGlobalGraphBuildHook(GraphBuildHook);
   }
 
   async beforeClose() {
