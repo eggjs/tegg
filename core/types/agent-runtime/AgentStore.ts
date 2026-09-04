@@ -53,6 +53,19 @@ export interface ThreadRecord {
   latestRunId?: string;
 }
 
+/**
+ * Accumulated token usage for a run.
+ *
+ * Lives in the types package so both the runtime implementation and the
+ * `AgentHandler` contract (controller-decorator) can reference it without a
+ * cross-package dependency on the implementation.
+ */
+export interface RunUsage {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}
+
 export interface RunRecord {
   id: string;
   object: typeof AgentObjectType.ThreadRun;
@@ -60,7 +73,7 @@ export interface RunRecord {
   status: RunStatus;
   input: InputMessage[];
   lastError?: { code: string; message: string } | null;
-  usage?: { promptTokens: number; completionTokens: number; totalTokens: number } | null;
+  usage?: RunUsage | null;
   config?: AgentRunConfig;
   metadata?: Record<string, unknown>;
   createdAt: number; // Unix seconds
@@ -85,9 +98,15 @@ export interface AgentStore {
   createThread(metadata?: Record<string, unknown>): Promise<ThreadRecord>;
   getThread(threadId: string, options?: GetThreadOptions): Promise<ThreadRecord>;
   /**
-   * Return whether the thread contains at least one conversation message
-   * (user or assistant), matching the default filtering semantics of
-   * {@link getThread}.
+   * Return whether the thread contains at least one conversation message,
+   * matching the default filtering semantics of {@link getThread}.
+   *
+   * Use the exported `isConversationMessage()` from `@eggjs/agent-runtime` to
+   * make that call rather than testing `type` directly. Under V1 the two agree —
+   * a conversation message is a `user` or `assistant` one — but a V2 record's
+   * payload is opaque and declares its own status, so a hard-coded `type` check
+   * would report an established V2 thread as empty and make the runtime restart
+   * it as a fresh session instead of resuming.
    *
    * Stores may implement this optional capability with a lightweight existence
    * check. Implementations must throw `AgentNotFoundError` when the thread does

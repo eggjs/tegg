@@ -13,7 +13,7 @@ import { EggControllerPrototypeHook } from './lib/EggControllerPrototypeHook';
 import { RootProtoManager } from './lib/RootProtoManager';
 import { EggControllerLoader } from './lib/EggControllerLoader';
 import { middlewareGraphHook } from './lib/MiddlewareGraphHook';
-import { AGENT_CONTROLLER_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
+import { AGENT_CONTROLLER_PROTO_IMPL_TYPE, AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE } from '@eggjs/tegg-types';
 import { AgentControllerProto } from './lib/AgentControllerProto';
 import { AgentControllerObject } from './lib/AgentControllerObject';
 import assert from 'node:assert';
@@ -43,6 +43,12 @@ export default class ControllerAppBootHook {
     this.controllerPrototypeHook = new EggControllerPrototypeHook();
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
       AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+      AgentControllerProto.createProto,
+    );
+    // V2 shares the prototype creator: routes and wiring are identical, only the
+    // executor's message contract differs, and that is resolved in the runtime.
+    this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
+      AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE,
       AgentControllerProto.createProto,
     );
     AgentControllerObject.setLogger(this.app.logger);

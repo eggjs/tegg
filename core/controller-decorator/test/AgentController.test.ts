@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict';
 
-import { ControllerType, HTTPMethodEnum } from '@eggjs/tegg-types';
+import { PrototypeUtil } from '@eggjs/core-decorator';
+import {
+  AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+  AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE,
+  ControllerType,
+  HTTPMethodEnum,
+} from '@eggjs/tegg-types';
 
 import {
   AgentInfoUtil,
@@ -14,6 +20,7 @@ import {
 import HTTPInfoUtil from '../src/util/HTTPInfoUtil';
 import { HTTPControllerMeta } from '../src/model/index';
 import { AgentFooController } from './fixtures/AgentFooController';
+import { AgentBarControllerV2 } from './fixtures/AgentBarControllerV2';
 
 describe('core/controller-decorator/test/AgentController.test.ts', () => {
   describe('decorator metadata', () => {
@@ -230,6 +237,52 @@ describe('core/controller-decorator/test/AgentController.test.ts', () => {
         const realPath = meta.getMethodRealPath(method);
         assert(realPath.startsWith('/'), `${method.name} real path "${realPath}" should start with /`);
       }
+    });
+  });
+
+  // V2 is an addition, not a migration: it must expose the same routes under its
+  // own prefix and its own proto impl type, without disturbing V1's metadata.
+  describe('AgentControllerV2', () => {
+    it('should mount the same route table at /api/v2', () => {
+      const v1 = ControllerMetaBuilderFactory.build(AgentFooController, ControllerType.HTTP) as HTTPControllerMeta;
+      const v2 = ControllerMetaBuilderFactory.build(AgentBarControllerV2, ControllerType.HTTP) as HTTPControllerMeta;
+
+      assert.strictEqual(v2.path, '/api/v2');
+      assert.strictEqual(v2.methods.length, v1.methods.length);
+      // Same names, verbs and paths — only the prefix differs, so the two versions
+      // cannot silently drift apart.
+      const shape = (m: HTTPControllerMeta) => m.methods
+        .map(x => `${x.method} ${x.path} ${x.name}`)
+        .sort();
+      assert.deepStrictEqual(shape(v2), shape(v1));
+    });
+
+    it('should carry the same class-level metadata as V1', () => {
+      assert.strictEqual(ControllerInfoUtil.getControllerType(AgentBarControllerV2), ControllerType.HTTP);
+      assert.strictEqual(AgentInfoUtil.isAgentController(AgentBarControllerV2), true);
+      assert.strictEqual(HTTPInfoUtil.getHTTPPath(AgentBarControllerV2), '/api/v2');
+    });
+
+    it('should use its own proto impl type so the plugin can bind each contract separately', () => {
+      const v1Type = PrototypeUtil.getProperty(AgentFooController)?.protoImplType;
+      const v2Type = PrototypeUtil.getProperty(AgentBarControllerV2)?.protoImplType;
+      assert.strictEqual(v1Type, AGENT_CONTROLLER_PROTO_IMPL_TYPE);
+      assert.strictEqual(v2Type, AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE);
+      assert.notStrictEqual(v1Type, v2Type);
+    });
+
+    it('should leave V1 metadata untouched', () => {
+      // Regression: an earlier attempt shared one decorator between the versions
+      // and left V1's base path undefined.
+      assert.strictEqual(HTTPInfoUtil.getHTTPPath(AgentFooController), '/api/v1');
+      const v1 = ControllerMetaBuilderFactory.build(AgentFooController, ControllerType.HTTP) as HTTPControllerMeta;
+      assert.strictEqual(v1.path, '/api/v1');
+      assert.strictEqual(v1.methods.length, 9);
+    });
+
+    it('should inject not-implemented stubs for methods the V2 handler omits', async () => {
+      const instance = new AgentBarControllerV2() as any;
+      await assert.rejects(() => instance.cancelRun('run_1'), /cancelRun not implemented/);
     });
   });
 });

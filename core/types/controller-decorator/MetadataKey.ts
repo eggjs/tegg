@@ -49,3 +49,4 @@ export const CONTROLLER_AGENT_NOT_IMPLEMENTED = Symbol.for('EggPrototype#control
 export const CONTROLLER_AGENT_ENHANCED = Symbol.for('EggPrototype#controller#agent#enhanced');
 
 export const AGENT_CONTROLLER_PROTO_IMPL_TYPE = 'AGENT_CONTROLLER_PROTO';
+export const AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE = 'AGENT_CONTROLLER_V2_PROTO';

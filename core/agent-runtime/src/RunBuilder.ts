@@ -1,10 +1,16 @@
-import type { RunObject, RunRecord, AgentRunConfig } from '@eggjs/tegg-types/agent-runtime';
+import type { RunObject, RunRecord, AgentRunConfig, RunUsage } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowMs, nowUnix } from './AgentStoreUtils';
 
-/** Accumulated token usage — same shape as non-null RunRecord['usage']. */
-export type RunUsage = NonNullable<RunRecord['usage']>;
+/**
+ * Accumulated token usage — same shape as non-null RunRecord['usage'].
+ *
+ * Now defined in `@eggjs/tegg-types/agent-runtime` so the `AgentHandler`
+ * contract can reference it too; re-exported here to keep existing imports
+ * from this module working.
+ */
+export type { RunUsage };
 
 /**
  * Encapsulates run state transitions.

@@ -96,7 +96,9 @@ export interface StreamEvent {
 // ===== Get thread options =====
 
 export interface GetThreadOptions {
-  /** When true, return all message types (system, result, stream_event, etc.).
-   *  Defaults to false — only user and assistant messages are returned. */
+  /** When true, return every stored record (system, result, etc.).
+   *  Defaults to false — only conversation messages are returned, which under V1
+   *  means `user` and `assistant`, and under V2 whatever the executor declared
+   *  via `RuntimeMessage.conversational`. See `isConversationMessage()`. */
   includeAllMessages?: boolean;
 }

@@ -4,6 +4,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import {
   AccessLevel,
   AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+  AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE,
   ControllerType,
   HTTPMethodEnum,
   HTTPParamType,
@@ -112,18 +113,30 @@ const AGENT_ROUTES: AgentRouteDefinition[] = [
   },
 ];
 
-export function AgentController(): (constructor: EggProtoImplClass) => void {
+/**
+ * Shared wiring for the agent controller versions.
+ *
+ * Route table, parameter metadata and prototype registration are identical
+ * across versions; only the HTTP prefix and the proto impl type differ — the
+ * latter being what lets the controller plugin bind each version to its own
+ * executor contract. Keeping this in one place means a new version cannot
+ * silently drift from the routes the other one exposes.
+ */
+function defineAgentController(
+  basePath: string,
+  protoImplType: string,
+): (constructor: EggProtoImplClass) => void {
   return function(constructor: EggProtoImplClass): void {
     // Set controller type as HTTP so existing infrastructure handles it
     ControllerInfoUtil.setControllerType(constructor, ControllerType.HTTP);
 
     // Set the fixed base HTTP path
-    HTTPInfoUtil.setHTTPPath('/api/v1', constructor);
+    HTTPInfoUtil.setHTTPPath(basePath, constructor);
 
     // Apply SingletonProto with custom proto impl type
     const func = SingletonProto({
       accessLevel: AccessLevel.PUBLIC,
-      protoImplType: AGENT_CONTROLLER_PROTO_IMPL_TYPE,
+      protoImplType,
     });
     func(constructor);
 
@@ -164,4 +177,29 @@ export function AgentController(): (constructor: EggProtoImplClass) => void {
     // Mark the class as an AgentController for precise detection
     AgentInfoUtil.setAgentController(constructor);
   };
+}
+
+/**
+ * Mounts the agent HTTP surface at `/api/v1`.
+ *
+ * The executor yields Claude Code SDK shaped `AgentMessage`s and the runtime
+ * infers persistence, SSE event names and usage from them. Behaviour and data
+ * format are frozen — existing deployments depend on both.
+ */
+export function AgentController(): (constructor: EggProtoImplClass) => void {
+  return defineAgentController('/api/v1', AGENT_CONTROLLER_PROTO_IMPL_TYPE);
+}
+
+/**
+ * Mounts the same agent HTTP surface at `/api/v2`, for executors speaking the
+ * self-describing {@link RuntimeMessage} contract.
+ *
+ * V2 exists so a runtime can host any agent SDK — Claude, Pi, Codex — without the
+ * framework interpreting vendor-specific message shapes. It is an addition rather
+ * than a migration: both versions can be mounted side by side, each as its own
+ * controller class with its own store prefix, and callers move over at their own
+ * pace.
+ */
+export function AgentControllerV2(): (constructor: EggProtoImplClass) => void {
+  return defineAgentController('/api/v2', AGENT_CONTROLLER_V2_PROTO_IMPL_TYPE);
 }
