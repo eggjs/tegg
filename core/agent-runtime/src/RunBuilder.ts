@@ -1,16 +1,14 @@
+// `RunUsage` used to be declared here. It now lives in
+// `@eggjs/tegg-types/agent-runtime` so the `AgentHandler` contract can reference
+// it too, and the package index re-exports it from there — so the public surface
+// is unchanged. It is deliberately not re-exported from this module: `src/` is
+// not published (see `files` in package.json), so nothing outside the package
+// can import from here, and a second export of the same name would collide with
+// the types re-export in index.ts.
 import type { RunObject, RunRecord, AgentRunConfig, RunUsage } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowMs, nowUnix } from './AgentStoreUtils';
-
-/**
- * Accumulated token usage — same shape as non-null RunRecord['usage'].
- *
- * Now defined in `@eggjs/tegg-types/agent-runtime` so the `AgentHandler`
- * contract can reference it too; re-exported here to keep existing imports
- * from this module working.
- */
-export type { RunUsage };
 
 /**
  * Encapsulates run state transitions.

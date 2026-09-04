@@ -5,7 +5,7 @@ import type {
 } from '@eggjs/tegg-types/agent-runtime';
 import { RUNTIME_MESSAGE_PROTOCOL } from '@eggjs/tegg-types/agent-runtime';
 
-import type { RunUsage } from './RunBuilder';
+import type { RunUsage } from '@eggjs/tegg-types/agent-runtime';
 
 /**
  * Whether a stored record belongs to the user-visible conversation — the set

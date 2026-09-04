@@ -4,7 +4,7 @@ import type { RunRecord } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentObjectType, AgentErrorCode, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { RunBuilder } from '../src/RunBuilder';
-import type { RunUsage } from '../src/RunBuilder';
+import type { RunUsage } from '@eggjs/tegg-types/agent-runtime';
 
 function makeRunRecord(overrides?: Partial<RunRecord>): RunRecord {
   return {
