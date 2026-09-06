@@ -1,14 +1,20 @@
-// `RunUsage` used to be declared here. It now lives in
-// `@eggjs/tegg-types/agent-runtime` so the `AgentHandler` contract can reference
-// it too, and the package index re-exports it from there — so the public surface
-// is unchanged. It is deliberately not re-exported from this module: `src/` is
-// not published (see `files` in package.json), so nothing outside the package
-// can import from here, and a second export of the same name would collide with
-// the types re-export in index.ts.
 import type { RunObject, RunRecord, AgentRunConfig, RunUsage } from '@eggjs/tegg-types/agent-runtime';
 import { RunStatus, AgentErrorCode, AgentObjectType, InvalidRunStateTransitionError } from '@eggjs/tegg-types/agent-runtime';
 
 import { nowMs, nowUnix } from './AgentStoreUtils';
+
+/**
+ * `RunUsage` used to be declared here; it now lives in
+ * `@eggjs/tegg-types/agent-runtime` so the `AgentHandler` contract can reference
+ * it too.
+ *
+ * Kept re-exported because `dist/src/*` is a published, importable path (there
+ * is no `exports` field narrowing the package), and dropping it would remove a
+ * type other packages may be deep-importing. The package index takes `RunUsage`
+ * from the types re-export instead of this module's wildcard, so the two do not
+ * collide.
+ */
+export type { RunUsage };
 
 /**
  * Encapsulates run state transitions.
