@@ -11,6 +11,7 @@ import {
   ContextHandler,
   EggContainerFactory,
   EggContext,
+  EggContextLifecycleUtil,
   EggObjectLifecycleUtil,
   LoadUnitInstance,
   LoadUnitInstanceFactory,
@@ -38,6 +39,7 @@ import { InnerObject, StandaloneLoadUnit, StandaloneLoadUnitType } from './Stand
 import { StandaloneContext } from './StandaloneContext';
 import { StandaloneContextHandler } from './StandaloneContextHandler';
 import { ConfigSourceLoadUnitHook } from './ConfigSourceLoadUnitHook';
+import { StandaloneAopContextHook } from './StandaloneAopContextHook';
 import { DalTableEggPrototypeHook } from '@eggjs/tegg-dal-plugin/lib/DalTableEggPrototypeHook';
 import { DalModuleLoadUnitHook } from '@eggjs/tegg-dal-plugin/lib/DalModuleLoadUnitHook';
 import { MysqlDataSourceManager } from '@eggjs/tegg-dal-plugin';
@@ -80,6 +82,7 @@ export class Runner {
   private readonly loadUnitAopHook: LoadUnitAopHook;
   private readonly eggPrototypeCrossCutHook: EggPrototypeCrossCutHook;
   private readonly eggObjectAopHook: EggObjectAopHook;
+  private standaloneAopContextHook: StandaloneAopContextHook;
 
   loadUnits: LoadUnit[] = [];
   loadUnitInstances: LoadUnitInstance[] = [];
@@ -224,6 +227,11 @@ export class Runner {
       instances.push(instance);
     }
     this.loadUnitInstances = instances;
+
+    // Register AOP context hook to pre-create ContextProto advice objects
+    this.standaloneAopContextHook = new StandaloneAopContextHook(this.loadUnitInstances);
+    EggContextLifecycleUtil.registerLifecycle(this.standaloneAopContextHook);
+
     const runnerClass = StandaloneUtil.getMainRunner();
     if (!runnerClass) {
       throw new Error('not found runner class. Do you add @Runner decorator?');
@@ -280,6 +288,9 @@ export class Runner {
     }
     if (this.eggObjectAopHook) {
       EggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);
+    }
+    if (this.standaloneAopContextHook) {
+      EggContextLifecycleUtil.deleteLifecycle(this.standaloneAopContextHook);
     }
 
     if (this.loadUnitMultiInstanceProtoHook) {

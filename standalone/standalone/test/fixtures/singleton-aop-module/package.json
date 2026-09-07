@@ -1,0 +1,6 @@
+{
+  "name": "singleton-aop-module",
+  "eggModule": {
+    "name": "singletonAopModule"
+  }
+}
