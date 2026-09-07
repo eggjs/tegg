@@ -3,9 +3,9 @@ import path from 'path';
 
 export class ModuleScanner {
   private readonly baseDir: string;
-  private readonly readModuleOptions: ReadModuleReferenceOptions;
+  private readonly readModuleOptions?: ReadModuleReferenceOptions;
 
-  constructor(baseDir: string, readModuleOptions: ReadModuleReferenceOptions) {
+  constructor(baseDir: string, readModuleOptions?: ReadModuleReferenceOptions) {
     this.baseDir = baseDir;
     this.readModuleOptions = readModuleOptions;
   }
