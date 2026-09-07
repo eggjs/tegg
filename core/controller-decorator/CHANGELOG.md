@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.88.0](https://github.com/eggjs/tegg/compare/v3.87.0...v3.88.0) (2026-09-07)
+
+
+### Features
+
+* **agent-runtime:** add provider-agnostic V2 agent controller ([#469](https://github.com/eggjs/tegg/issues/469)) ([79380e1](https://github.com/eggjs/tegg/commit/79380e18b344db296dc521a40fea6dafb147aeb7))
+
+
+
+
+
 # [3.87.0](https://github.com/eggjs/tegg/compare/v3.86.0...v3.87.0) (2026-08-13)
 
 **Note:** Version bump only for package @eggjs/controller-decorator
