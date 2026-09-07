@@ -10,12 +10,10 @@ import type {
 import { AgentObjectType, RunStatus, AgentNotFoundError } from '@eggjs/tegg-types/agent-runtime';
 
 import { dateBucket, newRunId, newThreadId, nowUnix, reverseMs } from './AgentStoreUtils';
+import { isConversationMessage } from './MessageConverter';
 
 const HAS_MESSAGES_PREFIX_END = 64 * 1024 - 1;
 
-function isConversationMessage(message: AgentMessage): boolean {
-  return message.type === 'user' || message.type === 'assistant';
-}
 
 function containsConversationMessage(data: string, completeLinesOnly: boolean): boolean {
   let parseable = data;
@@ -265,7 +263,7 @@ export class OSSAgentStore implements AgentStore {
     // entries (system events, tool results, etc.); the filter
     // narrows the visible set to the application-level conversation.
     if (!options?.includeAllMessages) {
-      messages = messages.filter(m => m.type === 'user' || m.type === 'assistant');
+      messages = messages.filter(isConversationMessage);
     }
 
     return { ...meta, messages };

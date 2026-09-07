@@ -1,10 +1,34 @@
 import type {
   AgentMessage,
   InputMessage,
+  RunUsage,
   SDKResultMessage,
 } from '@eggjs/tegg-types/agent-runtime';
+import { RUNTIME_MESSAGE_PROTOCOL } from '@eggjs/tegg-types/agent-runtime';
 
-import type { RunUsage } from './RunBuilder';
+/**
+ * Whether a stored record belongs to the user-visible conversation — the set
+ * `getThread` returns without `includeAllMessages`, and the set `hasMessages`
+ * asks about.
+ *
+ * Exported for `AgentStore` implementors: call this rather than testing `type`
+ * directly. Under V1 the two agree (a conversation message is a `user` or
+ * `assistant` one), but a V2 record's payload is opaque and declares its own
+ * status, so a hard-coded `type` check would report an established V2 thread as
+ * empty and make the runtime restart it instead of resuming.
+ *
+ * The declaration counts only when the record also carries the V2 protocol
+ * stamp. A bare boolean is not enough: a V1 executor may already have been using
+ * `conversational` as its own `eggExt` field, and honouring that would change
+ * how its existing history reads after the upgrade.
+ */
+export function isConversationMessage(message: AgentMessage): boolean {
+  const ext = message.eggExt;
+  if (ext?.runtimeProtocol === RUNTIME_MESSAGE_PROTOCOL && typeof ext.conversational === 'boolean') {
+    return ext.conversational;
+  }
+  return message.type === 'user' || message.type === 'assistant';
+}
 
 export class MessageConverter {
   /**
@@ -60,11 +84,19 @@ export class MessageConverter {
    * reports estimated token-count progress. The final assistant messages
    * already contain the complete response and thinking content.
    */
+  /**
+   * V1's rule for messages that are streamed but never persisted.
+   *
+   * Extracted so {@link filterForStorage} and the runtime's V1 normalization
+   * path share a single definition and cannot drift apart.
+   */
+  static isTransientMessage(msg: AgentMessage): boolean {
+    return msg.type === 'stream_event' ||
+      (msg.type === 'system' && msg.subtype === 'thinking_tokens');
+  }
+
   static filterForStorage(messages: AgentMessage[]): AgentMessage[] {
-    return messages.filter(
-      m => m.type !== 'stream_event' &&
-        !(m.type === 'system' && m.subtype === 'thinking_tokens'),
-    );
+    return messages.filter(m => !MessageConverter.isTransientMessage(m));
   }
 
   /**

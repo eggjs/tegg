@@ -13,9 +13,16 @@ import type {
   RunObject,
   AgentMessage,
   AgentStore,
+  RunUsage,
+  RuntimeMessage,
   StreamEvent,
 } from '@eggjs/tegg-types/agent-runtime';
 import {
+  hasRuntimeMessageProtocol,
+  runtimeMessageViolation,
+  RUNTIME_MESSAGE_CONVERSATIONAL_KEY,
+  RUNTIME_MESSAGE_PROTOCOL_KEY,
+  RUNTIME_MESSAGE_PROTOCOL,
   RunStatus,
   AgentObjectType,
   AgentConflictError,
@@ -61,8 +68,37 @@ export const AGENT_RUNTIME: unique symbol = Symbol('agentRuntime');
  * for the semantics and the default heuristic used when this hook is absent.
  */
 export interface AgentExecutor {
-  execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage>;
+  execRun(input: CreateRunInput, signal?: AbortSignal): AsyncGenerator<AgentMessage | RuntimeMessage>;
   isSessionCommitted?(msg: AgentMessage, history: AgentMessage[]): boolean | Promise<boolean>;
+}
+
+/**
+ * What the runtime actually needs to know about a message, once the
+ * version-specific details are stripped away.
+ *
+ * Both contracts converge here, so everything downstream — the run state machine,
+ * the SSE event log and its `lastSeq` replay, the cancel watchdog, the persistence
+ * cursor — is written once and shared:
+ *
+ *   V1 (`@AgentController`)   Claude-shaped `AgentMessage` → inferred via heuristics
+ *   V2 (`@AgentControllerV2`) self-describing `RuntimeMessage` → read off its fields
+ */
+interface NormalizedMessage {
+  /** Which contract produced this message; decides the fallbacks that apply. */
+  readonly protocol: 'v1' | 'v2';
+  /** The value handed to the store and to SSE consumers. */
+  readonly message: AgentMessage;
+  readonly eventType: string;
+  readonly durable: boolean;
+  readonly conversational: boolean;
+  /**
+   * V1 leaves this undefined so the hook/heuristic decides. V2 states it, and a
+   * missing value means "not committed" — the runtime cannot inspect an opaque
+   * payload, so there is nothing to fall back to.
+   */
+  readonly sessionCommitted?: boolean;
+  readonly usage?: RunUsage;
+  readonly apiDurationMs?: number;
 }
 
 export interface AgentRuntimeOptions {
@@ -214,12 +250,17 @@ export class AgentRuntime {
     this.runningTasks.set(run.id, task);
 
     const streamMessages: AgentMessage[] = [];
+    // Normalization results in yield order, parallel to `streamMessages`.
+    // Deliberately not keyed by the message object: a V2 payload may be any
+    // object, including one yielded more than once, so identity is not a usable
+    // key — and a primitive would not be a valid WeakMap key at all.
+    const normalized: NormalizedMessage[] = [];
     // Mirror the turn's transcript into thread storage. Guarded by
     // task.committed so we never write a thread the executor has not persisted
     // to its own session; idempotent so the success path and any catch-block
     // persist never duplicate history. The in-loop flush makes a running turn
     // visible to OSS-polling readers incrementally.
-    const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
+    const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, normalized);
     try {
       await this.store.updateRun(run.id, rb.start());
 
@@ -230,8 +271,10 @@ export class AgentRuntime {
           const latest = await this.store.getRun(run.id);
           return RunBuilder.fromRecord(latest).snapshot();
         }
-        streamMessages.push(msg);
-        await this.markCommittedIfNeeded(task, msg, streamMessages);
+        const n = this.normalize(msg);
+        streamMessages.push(n.message);
+        normalized.push(n);
+        await this.markCommittedIfNeeded(task, n, streamMessages);
         // Mirror each message as it is produced (gated on commit inside flush)
         // so an OSS-polling observer sees a running turn grow in real time.
         await flushQuietly();
@@ -262,7 +305,7 @@ export class AgentRuntime {
         return RunBuilder.fromRecord(latest).snapshot();
       }
 
-      const usage = MessageConverter.extractUsage(streamMessages);
+      const usage = this.resolveUsage(normalized);
 
       // Final flush on the success path: forces past the commit gate so a run
       // that finished normally always persists its full transcript even if it
@@ -271,7 +314,7 @@ export class AgentRuntime {
       // Errors propagate so a failed persist routes through the catch.
       await flush(true);
 
-      await this.store.updateRun(run.id, rb.complete(usage, MessageConverter.extractApiDurationMs(streamMessages)));
+      await this.store.updateRun(run.id, rb.complete(usage, this.resolveApiDurationMs(normalized)));
 
       return rb.snapshot();
     } catch (err: unknown) {
@@ -326,9 +369,11 @@ export class AgentRuntime {
 
     (async () => {
       const streamMessages: AgentMessage[] = [];
+      // Normalization results in yield order, parallel to `streamMessages` (see syncRun).
+      const normalized: NormalizedMessage[] = [];
       // Mirror the turn's transcript into thread storage (see syncRun /
       // createMessageFlusher for the commit-gate + idempotency semantics).
-      const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
+      const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, normalized);
       try {
         await this.store.updateRun(run.id, rb.start());
 
@@ -338,8 +383,10 @@ export class AgentRuntime {
             await this.finaliseAbortedRun(run.id);
             return;
           }
-          streamMessages.push(msg);
-          await this.markCommittedIfNeeded(task, msg, streamMessages);
+          const n = this.normalize(msg);
+          streamMessages.push(n.message);
+          normalized.push(n);
+          await this.markCommittedIfNeeded(task, n, streamMessages);
           // Mirror each message as it is produced (see syncRun).
           await flushQuietly();
         }
@@ -362,13 +409,13 @@ export class AgentRuntime {
           return;
         }
 
-        const usage = MessageConverter.extractUsage(streamMessages);
+        const usage = this.resolveUsage(normalized);
 
         // Final flush on the success path: forces past the commit gate (see
         // syncRun) so a normally-finished run always persists its transcript.
         await flush(true);
 
-        await this.store.updateRun(run.id, rb.complete(usage, MessageConverter.extractApiDurationMs(streamMessages)));
+        await this.store.updateRun(run.id, rb.complete(usage, this.resolveApiDurationMs(normalized)));
       } catch (err: unknown) {
         if (!abortController.signal.aborted) {
           // Non-abort failure (e.g. upstream stream terminated mid-turn).
@@ -501,10 +548,12 @@ export class AgentRuntime {
   ): Promise<void> {
     const abortController = task.abortController;
     const streamMessages: AgentMessage[] = [];
+    // Normalization results in yield order, parallel to `streamMessages` (see syncRun).
+    const normalized: NormalizedMessage[] = [];
     // Mirror the turn's transcript into thread storage (see syncRun /
     // createMessageFlusher). The SSE event log (pushEvent → JSONL) is separate
     // and always per-message; this flush controls the persisted thread mirror.
-    const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, streamMessages);
+    const { flush, flushQuietly } = this.createMessageFlusher(threadId, input, task, normalized);
     try {
       await this.store.updateRun(runId, rb.start());
 
@@ -516,13 +565,15 @@ export class AgentRuntime {
           return;
         }
 
-        streamMessages.push(msg);
+        const n = this.normalize(msg);
+        streamMessages.push(n.message);
+        normalized.push(n);
 
-        // Pass through SDK message directly as event data
-        const eventType = msg.type || 'message';
-        this.pushEvent(buffer, eventType, msg);
+        // Event name and payload both come from the normalized view: V1 derives
+        // them from the Claude-shaped message, V2 states them explicitly.
+        this.pushEvent(buffer, n.eventType, n.message);
 
-        await this.markCommittedIfNeeded(task, msg, streamMessages);
+        await this.markCommittedIfNeeded(task, n, streamMessages);
         // Mirror each message to the thread as it is produced (see syncRun).
         // Separate from the SSE event log (pushEvent) above.
         await flushQuietly();
@@ -550,9 +601,9 @@ export class AgentRuntime {
 
       // Final flush on the success path: forces past the commit gate (see
       // syncRun) so a normally-finished run always persists its transcript.
-      const usage = MessageConverter.extractUsage(streamMessages);
+      const usage = this.resolveUsage(normalized);
       await flush(true);
-      await this.store.updateRun(runId, rb.complete(usage, MessageConverter.extractApiDurationMs(streamMessages)));
+      await this.store.updateRun(runId, rb.complete(usage, this.resolveApiDurationMs(normalized)));
 
       this.pushEvent(buffer, 'done', { result: 'success', runId });
     } catch (err: unknown) {
@@ -584,31 +635,143 @@ export class AgentRuntime {
   }
 
   /**
-   * Flip the task's `committed` flag the first time the executor's current
-   * message indicates its session has been persisted to storage. Uses the
-   * executor's `isSessionCommitted` hook when available, otherwise a default
-   * heuristic where any message with `type !== 'system'` counts as committed
-   * (the Claude Code SDK writes the jsonl around the first non-system event).
+   * Collapse either contract into {@link NormalizedMessage}.
+   *
+   * The V1 branch reproduces the runtime's original inline logic verbatim, so a
+   * `@AgentController` app observes no behavioural change: `stream_event` (and the
+   * `system/thinking_tokens` bookkeeping message) stay out of thread history,
+   * `msg.type` doubles as the SSE event name, and usage keeps coming from
+   * Claude-shaped `result` messages via {@link MessageConverter.extractUsage}.
+   *
+   * The V2 branch simply reads the fields the executor declared, and exposes
+   * `payload` as the stored/streamed value — the framework never inspects it.
+   */
+  private normalize(msg: AgentMessage | RuntimeMessage): NormalizedMessage {
+    if (hasRuntimeMessageProtocol(msg)) {
+      // Branded but malformed: fail the run loudly. Letting it fall through to
+      // the V1 branch would silently rename the event, persist the envelope
+      // rather than the payload, and mark the session committed on the spot.
+      const violation = runtimeMessageViolation(msg);
+      if (violation) {
+        throw new AgentInvalidRequestError(`invalid RuntimeMessage: ${violation}`);
+      }
+      const v2 = msg as RuntimeMessage;
+      return {
+        protocol: 'v2',
+        message: v2.payload as AgentMessage,
+        eventType: v2.eventType,
+        durable: v2.persistence === 'durable',
+        conversational: v2.conversational ?? true,
+        sessionCommitted: v2.sessionCommitted ?? false,
+        usage: v2.usage,
+        apiDurationMs: v2.apiDurationMs,
+      };
+    }
+    const v1 = msg as AgentMessage;
+    return {
+      protocol: 'v1',
+      message: v1,
+      eventType: v1.type || 'message',
+      durable: !MessageConverter.isTransientMessage(v1),
+      conversational: v1.type === 'user' || v1.type === 'assistant',
+      sessionCommitted: undefined,
+      usage: undefined,
+      apiDurationMs: undefined,
+    };
+  }
+
+  /**
+   * Flip the task's `committed` flag the first time the session is known to be
+   * persisted, so a pending `cancelRun` may safely abort.
+   *
+   * V1 asks the executor's `isSessionCommitted` hook, falling back to "any
+   * non-system message counts". V2 reads the flag off the envelope and does
+   * *not* fall back: the payload is opaque, so the Claude-shaped heuristic would
+   * be meaningless — and would wrongly commit on the very first progress event.
    */
   private async markCommittedIfNeeded(
     task: RunTaskState,
-    msg: AgentMessage,
+    normalized: NormalizedMessage,
     history: AgentMessage[],
   ): Promise<void> {
     if (task.committed) return;
     let committed: boolean;
-    try {
-      committed = typeof this.executor.isSessionCommitted === 'function'
-        ? await this.executor.isSessionCommitted(msg, history)
-        : msg.type !== 'system';
-    } catch (err) {
-      this.logger.error('[AgentRuntime] isSessionCommitted threw, treating as not committed:', err);
-      committed = false;
+    if (normalized.protocol === 'v2') {
+      committed = normalized.sessionCommitted === true;
+    } else {
+      try {
+        committed = typeof this.executor.isSessionCommitted === 'function'
+          ? await this.executor.isSessionCommitted(normalized.message, history)
+          : normalized.message.type !== 'system';
+      } catch (err) {
+        this.logger.error('[AgentRuntime] isSessionCommitted threw, treating as not committed:', err);
+        committed = false;
+      }
     }
     if (committed) {
       task.committed = true;
       task.emitter.emit('commit');
     }
+  }
+
+  /**
+   * Token usage for the run.
+   *
+   * A V2 executor declares it; the Claude-shaped extractor only ever sees V1
+   * messages, so an opaque V2 payload that happens to resemble a `result`
+   * message cannot be mined for numbers it never meant to report.
+   */
+  private resolveUsage(normalized: NormalizedMessage[]): RunUsage | undefined {
+    let declared: RunUsage | undefined;
+    for (const n of normalized) {
+      if (n.usage) declared = n.usage;
+    }
+    if (declared) return declared;
+    // Both extractors return undefined for an empty list, so a pure-V2 stream
+    // resolves to undefined and a pure-V1 stream is byte-for-byte the old call.
+    return MessageConverter.extractUsage(AgentRuntime.v1MessagesOf(normalized));
+  }
+
+  /** Pure model API time, resolved the same way as {@link resolveUsage}. */
+  private resolveApiDurationMs(normalized: NormalizedMessage[]): number | undefined {
+    let declared: number | undefined;
+    for (const n of normalized) {
+      if (n.apiDurationMs !== undefined) declared = n.apiDurationMs;
+    }
+    if (declared !== undefined) return declared;
+    return MessageConverter.extractApiDurationMs(AgentRuntime.v1MessagesOf(normalized));
+  }
+
+  /**
+   * The Claude-shaped messages in a stream. Keeping V2 out means an opaque
+   * payload that happens to resemble a `result` message cannot be mined for
+   * numbers it never meant to report.
+   */
+  private static v1MessagesOf(normalized: NormalizedMessage[]): AgentMessage[] {
+    return normalized.filter(n => n.protocol === 'v1').map(n => n.message);
+  }
+
+  /**
+   * Stamp a V2 record with its `conversational` declaration so reads can honour
+   * it without inspecting the payload. V1 messages are stored untouched — their
+   * conversational status is still derived from `type` on read, as before.
+   *
+   * The protocol stamp rides along so the declaration is attributable: without
+   * it, a V1 record that already used `conversational` as its own extension
+   * field would start being read as a V2 declaration after the upgrade, hiding
+   * assistant messages or exposing system ones.
+   */
+  private annotateForStorage(normalized: NormalizedMessage): AgentMessage {
+    if (normalized.protocol === 'v1') return normalized.message;
+    const msg = normalized.message as AgentMessage & { eggExt?: Record<string, unknown> };
+    return {
+      ...msg,
+      eggExt: {
+        ...(msg.eggExt ?? {}),
+        [RUNTIME_MESSAGE_PROTOCOL_KEY]: RUNTIME_MESSAGE_PROTOCOL,
+        [RUNTIME_MESSAGE_CONVERSATIONAL_KEY]: normalized.conversational,
+      },
+    } as AgentMessage;
   }
 
   /**
@@ -699,17 +862,23 @@ export class AgentRuntime {
     threadId: string,
     input: CreateRunInput,
     task: RunTaskState,
-    streamMessages: AgentMessage[],
+    normalized: NormalizedMessage[],
   ): { flush: (force?: boolean) => Promise<void>; flushQuietly: () => Promise<void> } {
     let flushedCount = 0;
     let inputFlushed = false;
 
     const flush = async (force = false): Promise<void> => {
       if (!force && !task.committed) return;
-      const pending = MessageConverter.filterForStorage(streamMessages.slice(flushedCount));
+      // Persistence follows the normalized view, read positionally. Not keyed by
+      // the message object: a V2 payload is opaque and may be the very same
+      // object yielded more than once, so identity is not a usable key.
+      const pending = normalized
+        .slice(flushedCount)
+        .filter(n => n.durable)
+        .map(n => this.annotateForStorage(n));
       const prefix = inputFlushed ? [] : MessageConverter.toAgentMessages(input.input.messages);
       const toAppend = [ ...prefix, ...pending ];
-      const cursorAtRead = streamMessages.length;
+      const cursorAtRead = normalized.length;
       if (toAppend.length > 0) {
         await this.store.appendMessages(threadId, toAppend);
       }

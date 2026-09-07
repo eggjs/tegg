@@ -87,6 +87,21 @@ export interface EggExt {
    * messages (which carry no `timing`) this is their only time field.
    */
   persistedAtMs?: number;
+  /**
+   * The message contract this record was written under. Present only on V2
+   * records, where it authenticates the `conversational` declaration below.
+   */
+  runtimeProtocol?: string;
+  /**
+   * Whether this record belongs to the user-visible conversation, as declared by
+   * a V2 executor (see `RuntimeMessage.conversational`).
+   *
+   * Only honoured alongside `runtimeProtocol`: their payload is opaque, so
+   * `getThread` cannot fall back to V1's "keep `user` and `assistant`" rule.
+   * Absent on V1 records and on anything written before V2 existed, where that
+   * rule still applies.
+   */
+  conversational?: boolean;
 }
 
 /** Mixin giving every AgentMessage member the `eggExt` extension namespace. */
