@@ -59,6 +59,57 @@ describe('test/LoadUnit/Graph.test.ts', () => {
       const loopPath = graph.loopPath();
       assert(!loopPath);
     });
+
+    it('should expand a shared dependency only once per cycle check', () => {
+      const graph = new Graph();
+      const root = new GraphNode(new GraphNodeVal('root'));
+      const left = new GraphNode(new GraphNodeVal('left'));
+      const right = new GraphNode(new GraphNodeVal('right'));
+      const shared = new GraphNode(new GraphNodeVal('shared'));
+      const leaf = new GraphNode(new GraphNodeVal('leaf'));
+      for (const node of [ root, left, right, shared, leaf ]) {
+        graph.addVertex(node);
+      }
+      graph.addEdge(root, left);
+      graph.addEdge(root, right);
+      graph.addEdge(left, shared);
+      graph.addEdge(right, shared);
+      graph.addEdge(shared, leaf);
+
+      let expansions = 0;
+      const edges = shared.toNodeMap.values.bind(shared.toNodeMap);
+      shared.toNodeMap.values = () => {
+        expansions++;
+        return edges();
+      };
+
+      assert.strictEqual(graph.loopPath(), undefined);
+      assert.strictEqual(expansions, 1);
+    });
+
+    it('should report a newly added cycle with its incoming path and edge metadata', () => {
+      const graph = new Graph();
+      const root = new GraphNode(new GraphNodeVal('root'));
+      const first = new GraphNode(new GraphNodeVal('first'));
+      const second = new GraphNode(new GraphNodeVal('second'));
+      for (const node of [ root, first, second ]) {
+        graph.addVertex(node);
+      }
+      graph.addEdge(root, first);
+      graph.addEdge(first, second);
+      assert.strictEqual(graph.loopPath(), undefined);
+
+      const backEdge = {
+        equal: () => false,
+        toString: () => 'back edge',
+      };
+      graph.addEdge(second, first, backEdge);
+
+      const loopPath = graph.loopPath();
+      assert(loopPath);
+      assert.deepStrictEqual(loopPath.nodes.map(entry => entry.node), [ root, first, second, first ]);
+      assert.strictEqual(loopPath.nodes[3].meta, backEdge);
+    });
   });
 
   describe('sort', () => {
