@@ -135,10 +135,18 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
   loopPath(): GraphPath<T, M> | undefined {
     const accessPath = new GraphPath<T, M>();
     const completed = new Set<string>();
+    const seenNodes = new Map<string, GraphNode<T, M>>();
+    let hasAliasedId = false;
     const hasLoopFrom = (node: GraphNode<T, M>, meta?: M): boolean => {
+      const seenNode = seenNodes.get(node.id);
+      if (seenNode && seenNode !== node) {
+        hasAliasedId = true;
+        return true;
+      }
       if (completed.has(node.id)) {
         return false;
       }
+      seenNodes.set(node.id, node);
       if (!accessPath.pushVertex(node, meta)) {
         return true;
       }
@@ -154,6 +162,18 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
 
     for (const node of this.nodes.values()) {
       if (hasLoopFrom(node)) {
+        if (!hasAliasedId) return accessPath;
+        // A shared ID can form a loop only on a particular path through a previously checked subgraph.
+        return this.loopPathWithoutDeduplication();
+      }
+    }
+    return;
+  }
+
+  private loopPathWithoutDeduplication(): GraphPath<T, M> | undefined {
+    const accessPath = new GraphPath<T, M>();
+    for (const node of Array.from(this.nodes.values())) {
+      if (!this.appendVertexToPath(node, accessPath)) {
         return accessPath;
       }
     }
