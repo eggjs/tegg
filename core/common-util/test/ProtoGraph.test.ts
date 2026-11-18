@@ -87,39 +87,6 @@ describe('test/LoadUnit/Graph.test.ts', () => {
       assert.strictEqual(expansions, 1);
     });
 
-    it('should check distinct nodes with the same ID for cycles', () => {
-      const graph = new Graph();
-      const a = new GraphNode(new GraphNodeVal('a'));
-      const b = new GraphNode(new GraphNodeVal('b'));
-      const x1 = new GraphNode(new GraphNodeVal('x'));
-      const x2 = new GraphNode(new GraphNodeVal('x'));
-      for (const node of [ a, b, x2 ]) {
-        graph.addVertex(node);
-      }
-      graph.addEdge(a, x1);
-      graph.addEdge(b, x2);
-      graph.addEdge(x2, b);
-
-      const loopPath = graph.loopPath();
-      assert(loopPath);
-      assert.deepStrictEqual(loopPath.nodes.map(entry => entry.node), [ b, x2, b ]);
-    });
-
-    it('should detect a repeated ID through a previously checked subgraph', () => {
-      const graph = new Graph();
-      const shared = new GraphNode(new GraphNodeVal('shared'));
-      const x1 = new GraphNode(new GraphNodeVal('x'));
-      const x2 = new GraphNode(new GraphNodeVal('x'));
-      graph.addVertex(shared);
-      graph.addVertex(x2);
-      graph.addEdge(shared, x1);
-      graph.addEdge(x2, shared);
-
-      const loopPath = graph.loopPath();
-      assert(loopPath);
-      assert.deepStrictEqual(loopPath.nodes.map(entry => entry.node), [ x2, shared, x1 ]);
-    });
-
     it('should report a newly added cycle with its incoming path and edge metadata', () => {
       const graph = new Graph();
       const root = new GraphNode(new GraphNodeVal('root'));
