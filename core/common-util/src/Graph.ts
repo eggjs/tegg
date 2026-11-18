@@ -132,6 +132,10 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return true;
   }
 
+  /**
+   * Runs in O(V + E) when each reachable ID identifies a single node object.
+   * If distinct nodes share an ID, restarts with the legacy traversal, which can revisit shared subgraphs exponentially.
+   */
   loopPath(): GraphPath<T, M> | undefined {
     const accessPath = new GraphPath<T, M>();
     const completed = new Set<string>();
