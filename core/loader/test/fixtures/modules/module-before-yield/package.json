@@ -1,0 +1,7 @@
+{
+  "name": "module-before-yield",
+  "eggModule": {
+    "name": "module-before-yield"
+  },
+  "main": "index.js"
+}

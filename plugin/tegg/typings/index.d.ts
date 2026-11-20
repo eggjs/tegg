@@ -20,10 +20,23 @@ import {
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { IdenticalUtil, EggProtoImplClass, QualifierInfo } from '@eggjs/tegg';
+import { ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
 import { ModuleHandler } from '../lib/ModuleHandler';
 import { EggContextHandler } from '../lib/EggContextHandler';
 
 declare module 'egg' {
+  export interface TeggPluginConfig {
+    readModuleOptions?: ReadModuleReferenceOptions;
+    /** Load TEgg module files asynchronously during didLoad. Defaults to false. */
+    asyncLoad?: boolean;
+    /** Maximum cumulative synchronous top-level require time within each module. Defaults to 50ms. */
+    asyncLoadYieldIntervalMs?: number;
+  }
+
+  export interface EggAppConfig {
+    tegg?: TeggPluginConfig;
+  }
+
   export interface EggModule {
   }
 

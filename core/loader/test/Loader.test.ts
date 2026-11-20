@@ -34,6 +34,22 @@ describe('test/loader/Loader.test.ts', () => {
       const prototypes = loader.load();
       assert(prototypes.length === 1);
     });
+
+    it('should yield to the event loop between top-level requires while loading asynchronously', async () => {
+      const moduleReferences = [{
+        name: 'module-before-yield',
+        path: path.join(__dirname, './fixtures/modules/module-before-yield'),
+      }];
+
+      try {
+        const descriptors = await LoaderFactory.loadAppAsync(moduleReferences, { yieldIntervalMs: 10 });
+        const observedProto = descriptors[0].clazzList.find(t => t.name === 'ObserveYield');
+        assert(observedProto);
+        assert.equal((observedProto as any).eventLoopYielded, true);
+      } finally {
+        delete (global as any).__teggLoaderEventLoopYielded;
+      }
+    });
   });
 
   if (process.env.TS_NODE_TRANSPILE_ONLY !== 'true') {

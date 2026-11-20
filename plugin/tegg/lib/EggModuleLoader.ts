@@ -1,19 +1,33 @@
 import {
   EggLoadUnitType,
   LoadUnitFactory,
-  GlobalGraph, ModuleDescriptorDumper,
+  GlobalGraph, GlobalGraphBuildHook, ModuleDescriptor, ModuleDescriptorDumper,
 } from '@eggjs/tegg-metadata';
-import { LoaderFactory } from '@eggjs/tegg-loader';
+import { DEFAULT_ASYNC_LOAD_YIELD_INTERVAL_MS, LoaderFactory } from '@eggjs/tegg-loader';
 import { EggAppLoader } from './EggAppLoader';
 import { Application } from 'egg';
 
 export class EggModuleLoader {
   app: Application;
   globalGraph: GlobalGraph;
+  private readonly asyncLoad: boolean;
+  private pendingBuildHooks: GlobalGraphBuildHook[] = [];
+  private initGraphPromise?: Promise<void>;
 
   constructor(app) {
     this.app = app;
-    GlobalGraph.instance = this.globalGraph = this.buildAppGraph();
+    this.asyncLoad = this.app.config.tegg?.asyncLoad === true;
+    if (!this.asyncLoad) {
+      GlobalGraph.instance = this.globalGraph = this.buildAppGraph();
+    }
+  }
+
+  registerBuildHook(hook: GlobalGraphBuildHook) {
+    if (this.globalGraph) {
+      this.globalGraph.registerBuildHook(hook);
+      return;
+    }
+    this.pendingBuildHooks.push(hook);
   }
 
   private async loadApp() {
@@ -22,7 +36,7 @@ export class EggModuleLoader {
     this.app.moduleHandler.loadUnits.push(loadUnit);
   }
 
-  private buildAppGraph() {
+  private prepareModuleReferences() {
     for (const plugin of Object.values(this.app.plugins)) {
       if (!plugin.enable) continue;
       const modulePlugin = this.app.moduleReferences.find(t => t.path === plugin.path);
@@ -30,7 +44,9 @@ export class EggModuleLoader {
         modulePlugin.optional = false;
       }
     }
-    const moduleDescriptors = LoaderFactory.loadApp(this.app.moduleReferences);
+  }
+
+  private createGraph(moduleDescriptors: ModuleDescriptor[]): GlobalGraph {
     for (const moduleDescriptor of moduleDescriptors) {
       ModuleDescriptorDumper.dump(moduleDescriptor, {
         dumpDir: this.app.baseDir,
@@ -39,8 +55,18 @@ export class EggModuleLoader {
         this.app.logger.warn(e);
       });
     }
-    const graph = GlobalGraph.create(moduleDescriptors);
-    return graph;
+    return GlobalGraph.create(moduleDescriptors);
+  }
+
+  private buildAppGraph(): GlobalGraph {
+    this.prepareModuleReferences();
+    return this.createGraph(LoaderFactory.loadApp(this.app.moduleReferences));
+  }
+
+  private async buildAppGraphAsync(): Promise<GlobalGraph> {
+    this.prepareModuleReferences();
+    const yieldIntervalMs = this.app.config.tegg?.asyncLoadYieldIntervalMs ?? DEFAULT_ASYNC_LOAD_YIELD_INTERVAL_MS;
+    return this.createGraph(await LoaderFactory.loadAppAsync(this.app.moduleReferences, { yieldIntervalMs }));
   }
 
   private async loadModule() {
@@ -55,7 +81,24 @@ export class EggModuleLoader {
     }
   }
 
+  private async doInitGraph() {
+    GlobalGraph.instance = this.globalGraph = await this.buildAppGraphAsync();
+    for (const hook of this.pendingBuildHooks) {
+      this.globalGraph.registerBuildHook(hook);
+    }
+    this.pendingBuildHooks = [];
+  }
+
+  async initGraph() {
+    if (this.globalGraph) return;
+    if (!this.initGraphPromise) {
+      this.initGraphPromise = this.doInitGraph();
+    }
+    await this.initGraphPromise;
+  }
+
   async load() {
+    await this.initGraph();
     await this.loadApp();
     await this.loadModule();
   }

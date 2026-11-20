@@ -8,7 +8,6 @@ import {
   pointCutGraphHook,
 } from '@eggjs/tegg-aop-runtime';
 import { AopContextHook } from './lib/AopContextHook';
-import { GlobalGraph } from '@eggjs/tegg-metadata';
 
 export default class AopAppHook {
   private readonly app: Application;
@@ -31,8 +30,8 @@ export default class AopAppHook {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
-    GlobalGraph.instance!.registerBuildHook(crossCutGraphHook);
-    GlobalGraph.instance!.registerBuildHook(pointCutGraphHook);
+    this.app.moduleHandler.registerGlobalGraphBuildHook(crossCutGraphHook);
+    this.app.moduleHandler.registerGlobalGraphBuildHook(pointCutGraphHook);
   }
 
   async didLoad() {
