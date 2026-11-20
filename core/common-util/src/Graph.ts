@@ -132,11 +132,31 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return true;
   }
 
+  /**
+   * Runs in O(V + E) when each reachable ID identifies a single node object.
+   */
   loopPath(): GraphPath<T, M> | undefined {
     const accessPath = new GraphPath<T, M>();
-    const nodes = Array.from(this.nodes.values());
-    for (const node of nodes) {
-      if (!this.appendVertexToPath(node, accessPath)) {
+    const completed = new Set<string>();
+    const hasLoopFrom = (node: GraphNode<T, M>, meta?: M): boolean => {
+      if (completed.has(node.id)) {
+        return false;
+      }
+      if (!accessPath.pushVertex(node, meta)) {
+        return true;
+      }
+      for (const edge of node.toNodeMap.values()) {
+        if (hasLoopFrom(edge.node, edge.meta)) {
+          return true;
+        }
+      }
+      accessPath.popVertex();
+      completed.add(node.id);
+      return false;
+    };
+
+    for (const node of this.nodes.values()) {
+      if (hasLoopFrom(node)) {
         return accessPath;
       }
     }
