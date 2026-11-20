@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.88.2](https://github.com/eggjs/tegg/compare/v3.88.1...v3.88.2) (2026-11-20)
+
+**Note:** Version bump only for package @eggjs/tegg-standalone
+
+
+
+
+
 ## [3.88.1](https://github.com/eggjs/tegg/compare/v3.88.0...v3.88.1) (2026-09-07)
 
 **Note:** Version bump only for package @eggjs/tegg-standalone

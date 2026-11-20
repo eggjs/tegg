@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.88.2](https://github.com/eggjs/tegg/compare/v3.88.1...v3.88.2) (2026-11-20)
+
+
+### Performance Improvements
+
+* **common-util:** make cycle detection linear ([#470](https://github.com/eggjs/tegg/issues/470)) ([9a7a326](https://github.com/eggjs/tegg/commit/9a7a3265c828f281018c1ec9d26f71a2c3784236)), closes [eggjs/egg#6024](https://github.com/eggjs/egg/issues/6024)
+
+
+
+
+
 ## [3.88.1](https://github.com/eggjs/tegg/compare/v3.88.0...v3.88.1) (2026-09-07)
 
 **Note:** Version bump only for package tegg
