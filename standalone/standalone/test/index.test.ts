@@ -217,6 +217,44 @@ describe('standalone/standalone/test/index.test.ts', () => {
     });
   });
 
+  describe('aop runtime with SingletonProto + ContextProto Advice', () => {
+    const fixturePath = path.join(__dirname, './fixtures/singleton-aop-module');
+
+    it('should work when SingletonProto uses ContextProto Advice', async () => {
+      // This test case reproduces the "EggObject xxx not found" error
+      // when a SingletonProto uses a ContextProto Advice (default for @Advice)
+      const msg = await main(fixturePath);
+      assert.equal(msg, 'Tool executed: [advised:1] test-input');
+    });
+
+    it('should work across multiple requests (Singleton reused)', async () => {
+      // This is the critical test case that reproduces the user's issue:
+      // 1. First request: Singleton with AOP is created, ContextProto Advice is created
+      // 2. First request ends, ContextProto Advice is destroyed
+      // 3. Second request: Singleton is reused, but Advice doesn't exist yet
+      // 4. AOP tries to access Advice -> "EggObject not found" error
+      //
+      // Without the fix (StandaloneAopContextHook), this test would fail on the second request.
+      const runner = new Runner(fixturePath);
+      await runner.init();
+
+      // First request - Singleton is created, Advice is created in this context
+      const result1 = await runner.run();
+      assert.equal(result1, 'Tool executed: [advised:1] test-input');
+
+      // Second request - Singleton is reused, Advice must be re-created
+      // This would fail without StandaloneAopContextHook!
+      const result2 = await runner.run();
+      assert.equal(result2, 'Tool executed: [advised:1] test-input');
+
+      // Third request - verify it continues to work
+      const result3 = await runner.run();
+      assert.equal(result3, 'Tool executed: [advised:1] test-input');
+
+      await runner.destroy();
+    });
+  });
+
   describe('load', () => {
     let runner: Runner;
     afterEach(async () => {
